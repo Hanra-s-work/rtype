@@ -1,6 +1,7 @@
 *.o
 *.vscode
 *.DS_Store
+*tmp*
 r-type_server
 r-type_client
 bootstrap
