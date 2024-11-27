@@ -1,0 +1,7 @@
+@startuml GUI module desing
+
+namespace gui {
+
+}
+
+@enduml
