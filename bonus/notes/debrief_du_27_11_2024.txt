@@ -1,0 +1,19 @@
+GUI:
+    Poc modules (send, keys, etc)
+
+Server:
+    Comm avec Protocol
+
+Setup:
+    Google calendar
+    Github projects
+    huly
+
+Repartition:
+   GUI: Henry Letellier
+   Server: Alexandre Senechal, Tristan Wehrle
+   Logic: Arthur Sardella; Marianne Titova
+
+
+SCRUM:
+ Date: every Wednesday at 10h00
