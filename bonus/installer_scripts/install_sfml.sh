@@ -1,4 +1,10 @@
 #!/bin/bash
+##
+## EPITECH PROJECT, 2024
+## rtype
+## File description:
+## install_sfml.sh
+##
 
 # The link to run sudo on the user
 SUDO=/usr/bin/sudo
