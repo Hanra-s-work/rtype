@@ -9,7 +9,7 @@
  * @brief Represents a base class for all game objects.
  *
  * The GameObject class serves as a foundational building block for game entities.
- * It includes properties such as collider, sprite and a tag for identification, and defines virtual 
+ * It includes properties such as sprite and a tag for identification, and defines virtual 
  * lifecycle and event handling methods that can be overridden in derived classes.
  */
 class GameObject {
@@ -22,5 +22,5 @@ public:
 
     virtual void OnCreate(void) {}
     virtual void OnDestroy(void) {}
-    virtual void OnCollision(void) {}
+    virtual void OnCollision(GameObject *other) {}
 };
