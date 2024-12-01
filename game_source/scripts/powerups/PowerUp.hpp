@@ -7,7 +7,7 @@
  * @class PowerUp
  * @brief Represents a collectible power-up item.
  */
-class PowerUp : public GameObject, public Pickable {
+class PowerUp : public GameObject, public IPickable {
 public:
     enum PowerType { DEFAULT };
     PowerType power;

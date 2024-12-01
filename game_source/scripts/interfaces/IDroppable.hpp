@@ -3,10 +3,10 @@
 class GameObject;
 
 /**
- * @class Droppable
+ * @class IDroppable
  * @brief Interface for objects that can drop other objects upon destruction.
  */
-class Droppable {
+class IDroppable {
 public:
     virtual GameObject *Drop(void) = 0;
 };

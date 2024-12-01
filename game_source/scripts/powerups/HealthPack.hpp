@@ -7,7 +7,7 @@
  * @class HealthPack
  * @brief Represents a collectible health pack.
  */
-class HealthPack : public GameObject, public Pickable {
+class HealthPack : public GameObject, public IPickable {
 public:
     void Heal(GameObject *picker);
     void PickUp(GameObject *picker) override { Heal(picker); }

@@ -7,7 +7,7 @@
  * @class DroppableMonster
  * @brief Represents a monster that drops an item upon destruction.
  */
-class DroppableMonster : public Monster, public Droppable {
+class DroppableMonster : public Monster, public IDroppable {
 public:
     GameObject* drop;
 
