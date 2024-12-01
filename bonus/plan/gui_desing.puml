@@ -1,101 +1,142 @@
-@startuml GUI module desing
+@startuml Updated GUI Module Design
 
 namespace GUI {
     namespace Factory {
+        class TextFactory {
+            +createText(std::string text, std::string font_file): Text
+        }
+        class ImageFactory {
+            +createImage(std::string file_path): Image
+        }
+        class MusicFactory {
+            +createMusic(std::string file_path, bool loop): Music
+        }
+        class ShapeFactory {
+            +createShape(std::string shape_type, std::string color): Shape
+        }
+    }
+
+    namespace Components {
         class Text {
             +Text(std::string text, std::string font_file)
             +setPosition(double x, double y)
             +setText(std::string text)
             +setFontSize(int size)
-            +setForegroundColour(sf::Color colour)
-            +setBackgroundColour(sf::Color colour)
+            +setTextColour(sf::Color colour)
             +setFontFamily(std::string font_file)
-            -sf::Text _the_text
-            -sf::Font _the_font
+            +getText(): std::string
+            -sf::Text _sfml_text
+            -sf::Font _sfml_font
         }
+
         class Music {
-            +Music()
-            +setMusic(std:string file_path, std:bool loop)
-            +playMusic()
-            +stopMusic()
-            +pauseMusic()
-            +resumeMusic()
-            +setVolume()
-            -sf::Music _audio_file
+            +Music(std::string file_path, bool loop)
+            +play()
+            +pause()
+            +stop()
+            +setVolume(float volume)
+            -sf::Music _sfml_music
         }
+
         class Image {
-            +Image()
-            +setImage(std::string file_path)
+            +Image(std::string file_path)
             +setPosition(double x, double y)
             +setScale(double scale)
             +setRotation(double rotation)
-            +setForegroundColour(sf::Color colour)
-            +setBackgroundColour(sf::Color colour)
-            +setVisible(std::bool show_sprite)
+            +setVisibility(bool visible)
             +setFillColour(sf::Color colour)
             +removeFillColour()
-            -sf::Sprite _the_sprite
-            -sf::Texture _the_texture
+            +getSize(): sf::Vector2f
+            +getPosition(): sf::Vector2f
+            -sf::Sprite _sfml_sprite
+            -sf::Texture _sfml_texture
         }
+
+        class Animation {
+            +Animation(std::map<unsigned int, sf::Texture> &frames)
+            +setFrameDuration(unsigned int microseconds)
+            +createAnimation(std::string animation_name, std::vector<unsigned int> frames)
+            +getAnimation(std::string animation_name): std::vector<unsigned int>
+            +updateAnimation(std::string animation_name, std::vector<unsigned int> frames)
+            +playAnimation(std::string animation_name)
+            +stopAnimation()
+            +isPlaying(): std::bool
+            +getAnimationName():std::string
+            +getFrameDuration():unsigned int
+            +tick()
+            -std::map<unsigned int, sf::Texture> _sfml_textures
+            -std::map<std::string, std::vector<unsigned int>> _sfml_animations
+            -std::string _current_animation
+            -unsigned int _animation_frame
+            -std::bool _loop
+            -unsigned int _frame_duration
+        }
+
         class Sprite {
             +Sprite()
-            +stepAnimation()
-            +stopAnimation()
-            +resetAnimation()
-            +setFrame(unsigned int index)
-            +setAnimation(std::string animation_name)
             +playAnimation(std::string animation_name)
-            +tick(): The function that will run any actions scheduled in the sprite.
-            +setSpriteSize(sf::Vector2i dim, std::bool move_left, std::bool start_bottom)
-            +createAnimation(std::string animation_name, std::vector<unsigned int> frames)
-            -std::map<unsigned int, sf::Texture> frames
-            -std::map<std::string, std::vector<unsigned int>> animations
+            +setFrame(unsigned int frame_index)
+            -std::map<std::string, std::vector<unsigned int>> _animations
             -std::string _current_animation
         }
-        class Event {
-            +Event()
-            +updateEvents()
-            +getKey()
-            +getMouseClick()
-            +getMousePosition()
-            +getMouseRelease()
-            -sf::Event _event
-        }
-        class Clock {
-            +Clock()
-            +stopClock()
-            +startClock()
-            +restartClock()
-            +getElapsedTime()
-            +getElapsedSeconds()
-            -sf::Clock _clock
-        }
+
         class Shape {
             +Shape()
-            +setShapeType(std::enum shape_type)
-            +setShapePosition(unsigned double x, unsigned double y)
-            +setShapeSize(unsigned double width, unsigned double height)
-            +setShapeForeground(sf::Color colour)
-            +setShapeBackground(sf::Color colour)
-            +setShapeFillColour(sf::Color colour)
-            +setShapeOutlineColour(sf::Color colour)
-            +setShapeOutlineThickness(unsigned int thickness)
-            +setShapeOutlineStyle(std::enum outline_style)
-            +removeShapeFillColour()
-            +removeShapeOutlineColour()
-            -sf::Texture _shape;
-        }
-        Image --> Sprite
-    }
-    namespace Components {
-        class Button {
-            +Button(std::string text, std::string font, std::string font_size
+            +setShapeType(ShapeType type)
+            +setPosition(double x, double y)
+            +setSize(double width, double height)
+            +setFillColour(sf::Color colour)
+            +setOutlineColour(sf::Color colour)
+            +setOutlineThickness(double thickness)
+            -sf::Shape _sfml_shape
         }
     }
-    class Main {
-        +Main()
-        +~Main()
+
+    namespace Input {
+        class EventHandler {
+            +EventHandler()
+            +update()
+            +isKeyPressed(sf::Keyboard::Key key): bool
+            +getMousePosition(): sf::Vector2i
+            +isMousePressed(sf::Mouse::Button button): bool
+            -sf::Event _sfml_event
+        }
     }
+
+    namespace Utilities {
+        class Clock {
+            +Clock()
+            +start()
+            +stop()
+            +restart()
+            +getElapsedTime(): sf::Time
+            +isRunning(): bool
+            -sf::Clock _sfml_clock
+        }
+    }
+
+    namespace Interfaces {
+        interface Renderable {
+            +render(sf::RenderWindow& window)
+        }
+    }
+    
+    ' Relationships
+    Factory.TextFactory --> Components.Text
+    Factory.ImageFactory --> Components.Image
+    Factory.MusicFactory --> Components.Music
+    Factory.ShapeFactory --> Components.Shape
+    Components.Image --> Components.Sprite
+    Components.Animation --> Components.Sprite
+    Utilities.Clock --> Components.Animation
+
+    Components.Text ..|> Interfaces.Renderable
+    Components.Image ..|> Interfaces.Renderable
+    Components.Sprite ..|> Interfaces.Renderable
+    Components.Shape ..|> Interfaces.Renderable
+
+    sf.Event--> Input.EventHandler 
+    sf.Clock --> Utilities.Clock
 }
 
 @enduml
