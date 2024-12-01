@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <IRenderable.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
 /**
@@ -12,7 +13,7 @@
  * It includes properties such as sprite and a tag for identification, and defines virtual 
  * lifecycle and event handling methods that can be overridden in derived classes.
  */
-class GameObject {
+class GameObject : public IRenderable {
 public:
     sf::Sprite sprite;
     std::string tag;
