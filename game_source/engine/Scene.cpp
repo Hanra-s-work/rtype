@@ -16,4 +16,5 @@ void Scene::Instantiate(GameObject &obj)
 void Scene::DestroyObject(GameObject &obj)
 {
     Game::currentScene.removeObject(obj);
+    delete &obj;
 }
