@@ -16,8 +16,3 @@ int main() {
     return 0;
 }
 
-
-// position de souris
-// bouton de souris cliqué ou pas 
-// touches pressées -> envoi régulier
-

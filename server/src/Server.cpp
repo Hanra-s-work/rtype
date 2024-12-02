@@ -20,7 +20,7 @@ void Server::Build() {
     networkManager.Initialize();
     gameManager.Initialize();
     threadPool.Initialize();
-    std::cout << "Server components buid : ✅" << std::endl;
+    std::cout << "Server components build : ✅" << std::endl;
 }
 
 void Server::Start() {
@@ -36,7 +36,7 @@ void Server::Stop() {
 }
 
 void Server::SendMessage(const std::string& message, const std::string& address) {
-    networkManager.SendMessage(message, address);
+    networkManager.SendMessage(message, address, 4242);
 }
 
 void Server::HandleMessages() {
@@ -50,9 +50,7 @@ void Server::RunLoop() {
         HandleMessages();
         gameManager.Update(0.016f);
 
-        /* Mayby temporary */
         auto endTime = std::chrono::steady_clock::now();
         std::this_thread::sleep_for(std::chrono::milliseconds(16) - (endTime - startTime));
-        /* Mayby temporary */
     }
 }

@@ -13,6 +13,7 @@
     class IServer {
         public:
             virtual ~IServer() = default;
+
             virtual void Build() = 0;
             virtual void Start() = 0;
             virtual void Stop() = 0;

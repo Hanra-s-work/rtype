@@ -8,15 +8,15 @@
 #ifndef SERVER_H
     #define SERVER_H
 
-    #include "./IServer.hpp"
     #include "./NetworkManager.hpp"
     #include "./GameManager.hpp"
     #include "./ThreadPool.hpp"
+    #include "./IServer.hpp"
 
     class Server : public IServer {
         public:
             Server();
-            ~Server() override;
+            ~Server();
 
             void Build() override;
             void Start() override;
@@ -33,4 +33,4 @@
             ThreadPool threadPool;
     };
 
-    #endif // SERVER_H
+#endif // SERVER_H

@@ -12,6 +12,7 @@
         public:
             void Initialize();
             void Update(float deltaTime);
+            // TO DO / IMPLEMENT
     };
 
 #endif // GAME_MANAGER_H

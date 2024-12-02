@@ -14,4 +14,5 @@ void GameManager::Initialize() {
 
 void GameManager::Update(float deltaTime) {
     // std::cout << "Updating game logic with deltaTime: " << deltaTime << "s." << std::endl;
+    // TO DO
 }
