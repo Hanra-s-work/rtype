@@ -4,7 +4,10 @@
 #include "Monster.hpp"
 #include "Scene.hpp"
 
-void AllyMissile::OnCollision(GameObject *other) {
+AllyMissile::AllyMissile(sf::Vector2<int> direction) : GameObject("", "allyMissile") {}
+
+void AllyMissile::OnCollision(GameObject *other)
+{
     if (DestroyableObstacle *destroyable = dynamic_cast<DestroyableObstacle*>(other)) {
         destroyable->TakeDamage(1);
         Scene::DestroyObject(*this);

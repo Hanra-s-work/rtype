@@ -8,5 +8,7 @@
  */
 class EnemyMissile : public Missile {
 public:
+    EnemyMissile(sf::Vector2<int> direction);
+
     void OnCollision(GameObject *other) override;
 };

@@ -18,6 +18,7 @@ public:
     sf::Sprite sprite;
     std::string tag;
 
+    GameObject() = default;
     GameObject(const std::string &asset, const std::string &tag);
     virtual ~GameObject() { OnDestroy(); }
 
