@@ -24,6 +24,7 @@ public:
     sf::Sprite &GetSprite(void) override { return this->sprite; }
 
     virtual void OnCreate(void) {}
+    virtual void Update(void) {}
     virtual void OnDestroy(void) {}
     virtual void OnCollision(GameObject *other) {}
 };

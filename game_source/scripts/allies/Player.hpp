@@ -8,6 +8,8 @@
  */
 class Player : public Ally {
 public:
+    void OnCreate() override;
+    void Update() override;
     void OnMovement();
     void OnFire();
 };
