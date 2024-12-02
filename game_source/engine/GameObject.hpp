@@ -21,6 +21,8 @@ public:
     GameObject(std::string &asset, std::string &tag) { this->tag = tag; }
     virtual ~GameObject() { OnDestroy(); }
 
+    sf::Sprite &GetSprite(void) override { return this->sprite; }
+
     virtual void OnCreate(void) {}
     virtual void OnDestroy(void) {}
     virtual void OnCollision(GameObject *other) {}
