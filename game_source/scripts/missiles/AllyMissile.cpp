@@ -4,7 +4,7 @@
 #include "Monster.hpp"
 #include "Scene.hpp"
 
-AllyMissile::AllyMissile(sf::Vector2<int> direction) : GameObject("", "allyMissile") {}
+AllyMissile::AllyMissile(sf::Vector2<int> direction) : GameObject("", "allyMissile") { OnCreate(); }
 
 void AllyMissile::OnCollision(GameObject *other)
 {

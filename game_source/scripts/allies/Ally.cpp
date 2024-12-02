@@ -2,7 +2,7 @@
 #include "Scene.hpp"
 
 Ally::Ally(const std::string& username, int initialHealth)
-        : username(username), health(initialHealth), GameObject("", "Ally") {}
+        : username(username), health(initialHealth), GameObject("", "Ally") { OnCreate(); }
 
 void Ally::OnCreate() {
     std::cout << "Ally \"" << username << "\" has been created with " << health << " health points.\n";

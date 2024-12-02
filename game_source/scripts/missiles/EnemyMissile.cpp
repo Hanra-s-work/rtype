@@ -4,7 +4,7 @@
 #include "Ally.hpp"
 #include "Scene.hpp"
 
-EnemyMissile::EnemyMissile(sf::Vector2<int> direction) : GameObject("", "enemyMissile") {}
+EnemyMissile::EnemyMissile(sf::Vector2<int> direction) : GameObject("", "enemyMissile") { OnCreate(); }
 
 void EnemyMissile::OnCollision(GameObject *other)
 {

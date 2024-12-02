@@ -1,7 +1,7 @@
 #include "Player.hpp"
 #include "InputManager.hpp"
 
-Player::Player(const std::string &username, const int initialHealth) : Ally(username, initialHealth) {}
+Player::Player(const std::string &username, const int initialHealth) : Ally(username, initialHealth) { OnCreate(); }
 
 void Player::OnCreate()
 {
