@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(src/includes)
 
+include_directories(/usr/include/asio)
+
 set(SOURCES
     src/GameManager.cpp
     src/main.cpp
