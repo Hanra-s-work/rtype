@@ -3,6 +3,39 @@
 title "The design of the GUI window"
 
 namespace GUI {
+    namespace sf {
+        class Text {}
+        class Font {}
+        class Music {}
+        class Clock {}
+        class Color {}
+        class Image {}
+        class Shape {}
+        class Event {}
+        class Sprite {}
+    }
+
+    namespace Enums {
+        enum ShapeType {
+            +Circle
+            +Rectangle
+            +Triangle
+            +Polygon
+        }
+
+        enum ItemType {
+            +ItemText
+            +ItemMusic
+            +ItemAsset
+            +ItemSprite
+        }
+        enum ColourValues {
+            +CRed
+            +CGreen
+            +CBlue
+            +CAlpha
+        }
+    }
     namespace Interfaces {
         interface IComponent {
             +virtual ~IComponent() = default
@@ -21,30 +54,12 @@ namespace GUI {
             +createMusic(std::string file_path, bool loop): Music
         }
         class ShapeFactory {
-            +createShape(std::string shape_type, std::string color): Shape
+            +createShape(Enums::ShapeType shape_type, Utilities::Colour &colour): Shape
         }
     }
 
 
     namespace BaseComponents {
-
-        class Dimensions {
-            +Dimensions()
-            +setPosition(int x, int y)
-            +setDimensions(int width, int height)
-            +getPosition(): sf::Vector2i
-            +getDimensions(): sf::Vector2i
-            +updatePosition(int x, int y)
-            +updateDimensions(int width, int height)
-            - sf::FloatRect dimensions
-        }
-
-        class CollisionCheck {
-            +CollisionCheck()
-            +isColliding(Shape shape1, Shape shape2): bool
-            +isHovering(Shape shape, sf::Vector2f mouse_pos): bool
-            +isClicked(Shape shape, sf::Vector2f mouse_pos): bool
-        }
 
         class Animation {
             +Animation(std::map<unsigned int, sf::Texture> &frames)
@@ -58,12 +73,12 @@ namespace GUI {
             +getAnimationName():std::string
             +getFrameDuration():unsigned int
             +tick()
-            -std::map<unsigned int, sf::Texture> _sfml_textures
-            -std::map<std::string, std::vector<unsigned int>> _sfml_animations
-            -std::string _current_animation
-            -unsigned int _animation_frame
             -bool _loop
             -unsigned int _frame_duration
+            -unsigned int _animation_frame
+            -std::string _current_animation
+            -std::map<unsigned int, sf::Texture> _sfml_textures
+            -std::map<std::string, std::vector<unsigned int>> _sfml_animations
         }
 
         class Text {
@@ -71,7 +86,7 @@ namespace GUI {
             +setPosition(double x, double y)
             +setText(std::string text)
             +setFontSize(int size)
-            +setTextColour(sf::Color colour)
+            +setTextColour(Utilities::Colour colour)
             +setFontFamily(std::string font_file)
             +getText(): std::string
             -sf::Text _sfml_text
@@ -93,7 +108,7 @@ namespace GUI {
             +setScale(double scale)
             +setRotation(double rotation)
             +setVisibility(bool visible)
-            +setFillColour(sf::Color colour)
+            +setFillColour(Utilities::Colour colour)
             +removeFillColour()
             +getSize(): sf::Vector2f
             +getPosition(): sf::Vector2f
@@ -109,20 +124,13 @@ namespace GUI {
             -std::string _current_animation
         }
 
-        enum ShapeType {
-            +Circle
-            +Rectangle
-            +Triangle
-            +Polygon
-        }
-
         class Shape {
             +Shape()
-            +setShapeType(ShapeType type)
+            +setShapeType(Enums::ShapeType type)
             +setPosition(double x, double y)
             +setSize(double width, double height)
-            +setFillColour(sf::Color colour)
-            +setOutlineColour(sf::Color colour)
+            +setFillColour(Utilities::Colour colour)
+            +setOutlineColour(Utilities::Colour colour)
             +setOutlineThickness(double thickness)
             -sf::Shape _sfml_shape
         }
@@ -167,30 +175,34 @@ namespace GUI {
             +isRunning(): bool
             -sf::Clock _sfml_clock
         }
-    }
-
-    
-    namespace sf {
-        class Text {}
-        class Font {}
-        class Music {}
-        class Clock {}
-        class Image {}
-        class Shape {}
-        class Event {}
-    }
-
-    enum ItemType {
-        +ItemText
-        +ItemMusic
-        +ItemAsset
-        +ItemSprite
+        class Colour {
+            +Colour(UInt8 r, UInt8 g, UInt8 b, UInt8 a)
+            +Colour(sf::Color colour)
+            +getColour(): std::map<Enums::ColourValues, UInt8>
+            - sf::Color _user_colour
+        }
+        class Dimensions {
+            +Dimensions()
+            +setPosition(int x, int y)
+            +setDimensions(int width, int height)
+            +getPosition(): sf::Vector2i
+            +getDimensions(): sf::Vector2i
+            +updatePosition(int x, int y)
+            +updateDimensions(int width, int height)
+            - sf::FloatRect dimensions
+        }
+        class CollisionCheck {
+            +CollisionCheck()
+            +isColliding(Utilities::Dimensions Dimensions1, Utilities::Dimensions Dimensions2): bool
+            +isHovering(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
+            +isClicked(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
+        }
     }
 
     class ItemCreator {
         +ItemCreator()
         +createItem(ItemType item, &args)
-        - std::vector<std::map<std::string, ItemType, IComponent>> _items
+        - std::vector<std::map<std::string, Enums::ItemType, IComponent>> _items
     }
 
     class Main {
@@ -203,13 +215,27 @@ namespace GUI {
     }
 
     ' Base sfml classes
-    sf.Event --> Input.EventHandler
-    sf.Clock --> Utilities.Clock
-    sf.Text --> BaseComponents.Text
-    sf.Font --> BaseComponents.Text
-    sf.Music --> BaseComponents.Music
-    sf.Image --> BaseComponents.Image
-    sf.Shape --> BaseComponents.Shape
+    sf.Event --|> Input.EventHandler
+    sf.Clock --|> Utilities.Clock
+    sf.Color --|> Utilities.Colour
+    sf.Text --|> BaseComponents.Text
+    sf.Font --|> BaseComponents.Text
+    sf.Music --|> BaseComponents.Music
+    sf.Image --|> BaseComponents.Image
+    sf.Shape --|> BaseComponents.Shape
+    sf.Sprite --|> BaseComponents.Sprite
+
+    ' Enums
+    Enums.ItemType --|> ItemCreator
+    Enums.ShapeType --|> Factory.ShapeFactory
+    Enums.ShapeType --|> BaseComponents.Shape
+    Enums.ColourValues --|> Utilities.Colour
+
+    ' The colour links
+    Utilities.Colour --|> Factory.ShapeFactory
+    Utilities.Colour --|> BaseComponents.Text
+    Utilities.Colour --|> BaseComponents.Image
+    Utilities.Colour --|> BaseComponents.Shape
 
     ' Generic component for polymorphism
     Interfaces.IComponent --> Utilities.Clock
@@ -225,25 +251,27 @@ namespace GUI {
     Factory.MusicFactory --> BaseComponents.Music
 
     ' Item position tracking
-    BaseComponents.Dimensions --> BaseComponents.Text
-    BaseComponents.Dimensions --> BaseComponents.Image
-    BaseComponents.Dimensions --> BaseComponents.Shape
+    Utilities.Dimensions --> BaseComponents.Text
+    Utilities.Dimensions --> BaseComponents.Image
+    Utilities.Dimensions --> BaseComponents.Shape
+    Utilities.Dimensions --|> Utilities.CollisionCheck
+
+    ' Collision check class linking
+    Utilities.CollisionCheck --> BaseComponents.Text
+    Utilities.CollisionCheck --> BaseComponents.Image
+    Utilities.CollisionCheck --> BaseComponents.Shape
 
     ' Base components
     BaseComponents.Image --> BaseComponents.Sprite
     BaseComponents.Animation --|> BaseComponents.Sprite
     Utilities.Clock --> BaseComponents.Animation
-    BaseComponents.ShapeType --> BaseComponents.Shape
 
     ' UI ready components
     BaseComponents.Shape --> UIComponents.Button
 
-    ' Showing the inheritance for the Item creator class
-    ItemType --> ItemCreator
-
     ' All the Components are linked to the ItemCreator
     BaseComponents.Text --|> ItemCreator
-    BaseComponents.CollisionCheck --|> ItemCreator
+    Utilities.CollisionCheck --|> ItemCreator
     BaseComponents.Animation --|> ItemCreator
     BaseComponents.Music --|> ItemCreator
     BaseComponents.Image --|> ItemCreator
