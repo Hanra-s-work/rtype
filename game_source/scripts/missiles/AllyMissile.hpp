@@ -6,7 +6,7 @@
  * @class PlayerMissile
  * @brief Represents a missile fired by the player.
  */
-class PlayerMissile : public Missile {
+class AllyMissile : public Missile {
 public:
     void OnCollision(GameObject* other) override;
 };
