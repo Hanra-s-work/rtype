@@ -8,7 +8,9 @@
  */
 class DestroyableObstacle : public Obstacle {
 public:
-    void TakeDamage(int damage) {}
+    DestroyableObstacle(const std::string &image);
+
+    void TakeDamage(int damage);
 
 private:
     int health;

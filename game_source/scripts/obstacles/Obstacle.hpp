@@ -8,5 +8,7 @@
  */
 class Obstacle : public GameObject {
 public:
+    Obstacle(const std::string &image);
+
     void OnCollision(GameObject *other) override;
 };
