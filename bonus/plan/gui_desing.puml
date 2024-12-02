@@ -49,19 +49,24 @@ namespace GUI {
     namespace Utilities {
         class Clock {
             +Clock()
-            +start()
             +stop()
+            +start()
+            +reset()
             +restart()
             +getElapsedTime(): sf::Time
             +isRunning(): bool
             -sf::Clock _sfml_clock
         }
+
         class Colour {
             +Colour(UInt8 r, UInt8 g, UInt8 b, UInt8 a)
-            +Colour(sf::Color colour)
-            +getColour(): std::map<Enums::ColourValues, UInt8>
+            +Colour(const sf::Color &colour)
+            +getColour(): std::map<Enums::ColourValues, sf::UInt8>
+            +getSystemColours(): std::map<std::string, sf::Color>
             - sf::Color _user_colour
+            - std::map<std::string, sf::Color> _system_colours;
         }
+
         class Dimensions {
             +Dimensions()
             +setPosition(int x, int y)
@@ -70,13 +75,14 @@ namespace GUI {
             +getDimensions(): sf::Vector2i
             +updatePosition(int x, int y)
             +updateDimensions(int width, int height)
-            - sf::FloatRect dimensions
+            - sf::IntRect _dimensions
         }
+
         class CollisionCheck {
             +CollisionCheck()
-            +isColliding(Utilities::Dimensions Dimensions1, Utilities::Dimensions Dimensions2): bool
-            +isHovering(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
-            +isClicked(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
+            +isColliding(const Utilities::Dimensions &Dimensions1, const Utilities::Dimensions &Dimensions2): bool
+            +isHovering(const Utilities::Dimensions &Dimensions, const sf::Vector2f &mouse_pos): bool
+            +isClicked(const Utilities::Dimensions &Dimensions, const sf::Vector2f &mouse_pos): bool
         }
     }
 
@@ -99,9 +105,9 @@ namespace GUI {
     namespace BaseComponents {
 
         class Animation {
-            +Animation(std::map<unsigned int, sf::Texture> &frames)
+            +Animation(std::map<unsigned int, sf::Texture> &frames, bool loop = false)
             +setFrameDuration(unsigned int microseconds)
-            +createAnimation(std::string animation_name, std::vector<unsigned int> frames)
+            +createAnimation(std::string animation_name, std::vector<unsigned int> &frames)
             +getAnimation(std::string animation_name): std::vector<unsigned int>
             +updateAnimation(std::string animation_name, std::vector<unsigned int> frames)
             +playAnimation(std::string animation_name)
@@ -109,10 +115,10 @@ namespace GUI {
             +isPlaying(): bool
             +getAnimationName():std::string
             +getFrameDuration():unsigned int
-            +tick()
+            +tick(): unsigned int
             -bool _loop
             -unsigned int _frame_duration
-            -unsigned int _animation_frame
+            -unsigned int _current_frame
             -std::string _current_animation
             -std::map<unsigned int, sf::Texture> _sfml_textures
             -std::map<std::string, std::vector<unsigned int>> _sfml_animations
@@ -120,37 +126,54 @@ namespace GUI {
 
         class Text {
             +Text(std::string text, std::string font_file)
+            +Text(std::string text, std::string font_file, sf::Vector2f position)
             +setPosition(double x, double y)
             +setText(std::string text)
-            +setFontSize(int size)
-            +setTextColour(Utilities::Colour colour)
+            +setFont(const std::string &font_file)
+            +setFontSize(const unsigned int size)
+            +setFontColour(Utilities::Colour colour)
             +setFontFamily(std::string font_file)
             +getText(): std::string
+            +getFontFamily(): std::string
+            +getColour(): Utilities::Colour
             -sf::Text _sfml_text
             -sf::Font _sfml_font
         }
 
         class Music {
-            +Music(std::string file_path, bool loop)
+            +Music(std::string file_path, bool loop = false)
             +play()
-            +pause()
             +stop()
-            +setVolume(float volume)
+            +pause()
+            +setVolume(const double volume)
+            +setLoop(bool loop)
+            +isPlaying(): bool
+            +getVolume(): double
+            +getLoop(): bool
+            -bool _loop
             -sf::Music _sfml_music
+            -std::string _file_path
         }
 
         class Image {
-            +Image(std::string file_path)
+            +Image(const std::string &file_path)
             +setPosition(double x, double y)
             +setScale(double scale)
             +setRotation(double rotation)
             +setVisibility(bool visible)
             +setFillColour(Utilities::Colour colour)
             +removeFillColour()
-            +getSize(): sf::Vector2f
             +getPosition(): sf::Vector2f
+            +getScale(): sf::Vector2f
+            +getVisible(): bool
+            +getFillColour(): Utilities::Colour
+            -bool _visible
+            -bool _overlay_present
             -sf::Sprite _sfml_sprite
             -sf::Texture _sfml_texture
+            -Utilities::Dimensions _image_info
+            -Utilities::Colour _image_overlay
+
         }
 
         class Sprite {
@@ -164,28 +187,53 @@ namespace GUI {
         class Shape {
             +Shape()
             +setShapeType(Enums::ShapeType type)
-            +setPosition(double x, double y)
-            +setSize(double width, double height)
-            +setFillColour(Utilities::Colour colour)
-            +setOutlineColour(Utilities::Colour colour)
-            +setOutlineThickness(double thickness)
-            -sf::Shape _sfml_shape
+            +setPosition(const double x, const double y)
+            +setSize(const double width, const double height)
+            +setFillColour(const sf::Color &colour)
+            +setFillColour(const Utilities::Colour &colour)
+            +setFillColour(const sf::Uint8 red, const sf::Uint8 green, const sf::Uint8 blue, const sf::Uint8 alpha = 255)
+            +setOutlineColour(const sf::Color &colour)
+            +setOutlineColour(const Utilities::Colour &colour)
+            +setOutlineColour(const sf::Uint8 red, const sf::Uint8 green, const sf::Uint8 blue, const sf::Uint8 alpha = 255)
+            +setOutlineThickness(const double thickness)
+            +getOutlineThickness(): double
+            +getOutlineColour(): Utilities::Colour
+            +getFillColour(): Utilities::Colour
+            +getShapeType(): Enums::ShapeType
+            -double _outline_thickness;
+            -Enums::ShapeType _shape_type;
+            -Utilities::Colour _fill_colour;
+            -Utilities::Colour _outline_colour;
+            -Utilities::Dimensions _shape_dimensions;
         }
     }
 
     namespace UIComponents {
         class Button {
             +Button()
-            +setSize(double width, double height)
-            +setPosition(double x, double y)
-            +setText(std::string label)
-            +setOnClickCallback(void (*callback)())
+            +Button(const double width, const double height)
+            +setText(const std::string &label)
+            +setBorderHoverColour(const Utilities::Colour &colour)
+            +setHoverColour(const Utilities::Colour &colour)
+            +setTextHoverColour(const Utilities::Colour &colour)
+            +setBorderClickedColour(const Utilities::Colour &colour)
+            +setClickedColour(const Utilities::Colour &colour)
+            +setTextClickedColour(const Utilities::Colour &colour)
+            +setOnClickCallback(const std::function<void()> &callback)
             +setHoverEffect(bool enable)
             +isHovered(): bool
+            +isClicked(): bool
             -std::string _label
             -std::function<void()> _onClick
             -bool _hoverEffect
             -Shape _shape
+            -Text _text
+            -Utilities::Colour _borderHoverColour
+            -Utilities::Colour _hoverColour
+            -Utilities::Colour _textHoverColour
+            -Utilities::Colour _borderClickedColour
+            -Utilities::Colour _clickedColour
+            -Utilities::Colour _textClickedColour
         }
 
     }
@@ -254,9 +302,9 @@ namespace GUI {
     Factory.MusicFactory --> BaseComponents.Music
 
     ' Item position tracking
-    Utilities.Dimensions --> BaseComponents.Text
-    Utilities.Dimensions --> BaseComponents.Image
-    Utilities.Dimensions --> BaseComponents.Shape
+    Utilities.Dimensions --|> BaseComponents.Text
+    Utilities.Dimensions --|> BaseComponents.Image
+    Utilities.Dimensions --|> BaseComponents.Shape
     Utilities.Dimensions --|> Utilities.CollisionCheck
 
     ' Collision check class linking
