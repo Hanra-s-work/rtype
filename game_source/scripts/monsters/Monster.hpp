@@ -8,9 +8,12 @@
  */
 class Monster : public GameObject {
 public:
-    int health;
-    std::string trajectory;
+    Monster(const int initialHealth);
 
-    void Fire() {}
-    void TakeDamage(int damage) {}
+    void OnCreate() override;
+    void Update() override;
+    void Fire();
+    void TakeDamage(int damage);
+private:
+    int health;
 };

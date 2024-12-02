@@ -11,6 +11,8 @@ class DroppableMonster : public Monster, public IDroppable {
 public:
     GameObject *drop;
 
+    DroppableMonster(const int initialHealth, GameObject *drop_pointer);
+
     void OnDestroy() override { Drop(); }
     GameObject *Drop() override;
 };
