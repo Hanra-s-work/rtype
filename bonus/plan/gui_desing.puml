@@ -24,11 +24,14 @@ namespace GUI {
         }
 
         enum ItemType {
+            +ItemEND
+            +ItemNONE
             +ItemText
             +ItemMusic
             +ItemAsset
             +ItemSprite
         }
+
         enum ColourValues {
             +CRed
             +CGreen
@@ -40,6 +43,40 @@ namespace GUI {
         interface IComponent {
             +virtual ~IComponent() = default
             +virtual void render(sf::Window& window) = 0
+        }
+    }
+
+    namespace Utilities {
+        class Clock {
+            +Clock()
+            +start()
+            +stop()
+            +restart()
+            +getElapsedTime(): sf::Time
+            +isRunning(): bool
+            -sf::Clock _sfml_clock
+        }
+        class Colour {
+            +Colour(UInt8 r, UInt8 g, UInt8 b, UInt8 a)
+            +Colour(sf::Color colour)
+            +getColour(): std::map<Enums::ColourValues, UInt8>
+            - sf::Color _user_colour
+        }
+        class Dimensions {
+            +Dimensions()
+            +setPosition(int x, int y)
+            +setDimensions(int width, int height)
+            +getPosition(): sf::Vector2i
+            +getDimensions(): sf::Vector2i
+            +updatePosition(int x, int y)
+            +updateDimensions(int width, int height)
+            - sf::FloatRect dimensions
+        }
+        class CollisionCheck {
+            +CollisionCheck()
+            +isColliding(Utilities::Dimensions Dimensions1, Utilities::Dimensions Dimensions2): bool
+            +isHovering(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
+            +isClicked(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
         }
     }
 
@@ -162,40 +199,6 @@ namespace GUI {
             +isMousePressed(sf::Mouse::Button button): bool
             +getKeys(): std::vector<sf::Event>
             -sf::Event _sfml_event
-        }
-    }
-
-    namespace Utilities {
-        class Clock {
-            +Clock()
-            +start()
-            +stop()
-            +restart()
-            +getElapsedTime(): sf::Time
-            +isRunning(): bool
-            -sf::Clock _sfml_clock
-        }
-        class Colour {
-            +Colour(UInt8 r, UInt8 g, UInt8 b, UInt8 a)
-            +Colour(sf::Color colour)
-            +getColour(): std::map<Enums::ColourValues, UInt8>
-            - sf::Color _user_colour
-        }
-        class Dimensions {
-            +Dimensions()
-            +setPosition(int x, int y)
-            +setDimensions(int width, int height)
-            +getPosition(): sf::Vector2i
-            +getDimensions(): sf::Vector2i
-            +updatePosition(int x, int y)
-            +updateDimensions(int width, int height)
-            - sf::FloatRect dimensions
-        }
-        class CollisionCheck {
-            +CollisionCheck()
-            +isColliding(Utilities::Dimensions Dimensions1, Utilities::Dimensions Dimensions2): bool
-            +isHovering(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
-            +isClicked(Utilities::Dimensions Dimensions, sf::Vector2f mouse_pos): bool
         }
     }
 
