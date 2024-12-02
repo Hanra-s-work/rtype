@@ -2,8 +2,8 @@
 
 #include <string>
 #include <iostream>
-#include <IRenderable.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include "IRenderable.hpp"
 
 /**
  * @class GameObject
@@ -18,7 +18,7 @@ public:
     sf::Sprite sprite;
     std::string tag;
 
-    GameObject(std::string asset, std::string tag) { this->tag = tag; }
+    GameObject(std::string &asset, std::string &tag) { this->tag = tag; }
     virtual ~GameObject() { OnDestroy(); }
 
     virtual void OnCreate(void) {}

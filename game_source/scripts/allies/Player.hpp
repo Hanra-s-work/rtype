@@ -1,14 +1,13 @@
 #pragma once
 
-#include <Ally.hpp>
-#include <IInput.hpp>
+#include "Ally.hpp"
 
 /**
  * @class Player
  * @brief Represents the player character.
  */
-class Player : public Ally, public IInput {
+class Player : public Ally {
 public:
-    void OnMovement() override;
-    void OnFire() override;
+    void OnMovement();
+    void OnFire();
 };

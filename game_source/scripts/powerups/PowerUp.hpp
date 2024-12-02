@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameObject.hpp>
-#include <Pickable.hpp>
+#include "GameObject.hpp"
+#include "IPickable.hpp"
 
 /**
  * @class PowerUp

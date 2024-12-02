@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Obstacle.hpp>
+#include "Obstacle.hpp"
 
 /**
  * @class DestroyableObstacle

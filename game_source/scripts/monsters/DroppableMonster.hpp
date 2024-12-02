@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Monster.hpp>
-#include <Droppable.hpp>
+#include "Monster.hpp"
+#include "IDroppable.hpp"
 
 /**
  * @class DroppableMonster
@@ -9,8 +9,8 @@
  */
 class DroppableMonster : public Monster, public IDroppable {
 public:
-    GameObject* drop;
+    GameObject *drop;
 
     void OnDestroy() override { Drop(); }
-    GameObject* Drop() override;
+    GameObject *Drop() override;
 };

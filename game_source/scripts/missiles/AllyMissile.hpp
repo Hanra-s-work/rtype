@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Missile.hpp>
+#include "Missile.hpp"
 
 /**
  * @class PlayerMissile
@@ -8,5 +8,5 @@
  */
 class AllyMissile : public Missile {
 public:
-    void OnCollision(GameObject* other) override;
+    void OnCollision(GameObject *other) override;
 };

@@ -16,14 +16,14 @@
 
 class InputManager {
 private:
-    static InputManager* instance;
+    static InputManager *instance;
     std::unordered_map<std::string, sf::Keyboard::Key> keyMap;
     InputManager() {}
 
 public:
     static InputManager& getInstance();
-    void registerKey(const std::string& name, sf::Keyboard::Key key);
-    bool isKeyPressed(const std::string& name);
+    void registerKey(const std::string &name, sf::Keyboard::Key key);
+    bool isKeyPressed(const std::string &name);
 
     InputManager(const InputManager&) = delete;
     InputManager& operator=(const InputManager&) = delete;
