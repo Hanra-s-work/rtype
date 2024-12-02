@@ -18,7 +18,7 @@ public:
     sf::Sprite sprite;
     std::string tag;
 
-    GameObject(std::string &asset, std::string &tag) { this->tag = tag; }
+    GameObject(const std::string &asset, const std::string &tag);
     virtual ~GameObject() { OnDestroy(); }
 
     sf::Sprite &GetSprite(void) override { return this->sprite; }

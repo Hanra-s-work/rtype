@@ -1,5 +1,9 @@
 #pragma once
 
+#include <unordered_map>
+#include <string>
+#include <SFML/Window/Keyboard.hpp>
+
 /**
  * @class InputManager
  * @brief A singleton class for managing and mapping input actions to keys.
@@ -9,11 +13,6 @@
  * check if those keys are pressed. This class is implemented as a singleton to ensure
  * that only one instance exists across the application.
  */
-
-#include <unordered_map>
-#include <string>
-#include <SFML/Window/Keyboard.hpp>
-
 class InputManager {
 private:
     static InputManager *instance;
