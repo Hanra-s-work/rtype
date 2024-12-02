@@ -1,6 +1,15 @@
 @startuml Updated GUI Module Design
 
+title "The design of the GUI window"
+
 namespace GUI {
+    namespace Interfaces {
+        interface IComponent {
+            +virtual ~IComponent() = default
+            +virtual void render(sf::Window& window) = 0
+        }
+    }
+
     namespace Factory {
         class TextFactory {
             +createText(std::string text, std::string font_file): Text
@@ -16,7 +25,47 @@ namespace GUI {
         }
     }
 
-    namespace Components {
+
+    namespace BaseComponents {
+
+        class Dimensions {
+            +Dimensions()
+            +setPosition(int x, int y)
+            +setDimensions(int width, int height)
+            +getPosition(): sf::Vector2i
+            +getDimensions(): sf::Vector2i
+            +updatePosition(int x, int y)
+            +updateDimensions(int width, int height)
+            - sf::FloatRect dimensions
+        }
+
+        class CollisionCheck {
+            +CollisionCheck()
+            +isColliding(Shape shape1, Shape shape2): bool
+            +isHovering(Shape shape, sf::Vector2f mouse_pos): bool
+            +isClicked(Shape shape, sf::Vector2f mouse_pos): bool
+        }
+
+        class Animation {
+            +Animation(std::map<unsigned int, sf::Texture> &frames)
+            +setFrameDuration(unsigned int microseconds)
+            +createAnimation(std::string animation_name, std::vector<unsigned int> frames)
+            +getAnimation(std::string animation_name): std::vector<unsigned int>
+            +updateAnimation(std::string animation_name, std::vector<unsigned int> frames)
+            +playAnimation(std::string animation_name)
+            +stopAnimation()
+            +isPlaying(): bool
+            +getAnimationName():std::string
+            +getFrameDuration():unsigned int
+            +tick()
+            -std::map<unsigned int, sf::Texture> _sfml_textures
+            -std::map<std::string, std::vector<unsigned int>> _sfml_animations
+            -std::string _current_animation
+            -unsigned int _animation_frame
+            -bool _loop
+            -unsigned int _frame_duration
+        }
+
         class Text {
             +Text(std::string text, std::string font_file)
             +setPosition(double x, double y)
@@ -52,32 +101,19 @@ namespace GUI {
             -sf::Texture _sfml_texture
         }
 
-        class Animation {
-            +Animation(std::map<unsigned int, sf::Texture> &frames)
-            +setFrameDuration(unsigned int microseconds)
-            +createAnimation(std::string animation_name, std::vector<unsigned int> frames)
-            +getAnimation(std::string animation_name): std::vector<unsigned int>
-            +updateAnimation(std::string animation_name, std::vector<unsigned int> frames)
-            +playAnimation(std::string animation_name)
-            +stopAnimation()
-            +isPlaying(): std::bool
-            +getAnimationName():std::string
-            +getFrameDuration():unsigned int
-            +tick()
-            -std::map<unsigned int, sf::Texture> _sfml_textures
-            -std::map<std::string, std::vector<unsigned int>> _sfml_animations
-            -std::string _current_animation
-            -unsigned int _animation_frame
-            -std::bool _loop
-            -unsigned int _frame_duration
-        }
-
         class Sprite {
             +Sprite()
             +playAnimation(std::string animation_name)
             +setFrame(unsigned int frame_index)
             -std::map<std::string, std::vector<unsigned int>> _animations
             -std::string _current_animation
+        }
+
+        enum ShapeType {
+            +Circle
+            +Rectangle
+            +Triangle
+            +Polygon
         }
 
         class Shape {
@@ -92,6 +128,23 @@ namespace GUI {
         }
     }
 
+    namespace UIComponents {
+        class Button {
+            +Button()
+            +setSize(double width, double height)
+            +setPosition(double x, double y)
+            +setText(std::string label)
+            +setOnClickCallback(void (*callback)())
+            +setHoverEffect(bool enable)
+            +isHovered(): bool
+            -std::string _label
+            -std::function<void()> _onClick
+            -bool _hoverEffect
+            -Shape _shape
+        }
+
+    }
+
     namespace Input {
         class EventHandler {
             +EventHandler()
@@ -99,6 +152,7 @@ namespace GUI {
             +isKeyPressed(sf::Keyboard::Key key): bool
             +getMousePosition(): sf::Vector2i
             +isMousePressed(sf::Mouse::Button button): bool
+            +getKeys(): std::vector<sf::Event>
             -sf::Event _sfml_event
         }
     }
@@ -115,28 +169,91 @@ namespace GUI {
         }
     }
 
-    namespace Interfaces {
-        interface Renderable {
-            +render(sf::RenderWindow& window)
-        }
-    }
     
-    ' Relationships
-    Factory.TextFactory --> Components.Text
-    Factory.ImageFactory --> Components.Image
-    Factory.MusicFactory --> Components.Music
-    Factory.ShapeFactory --> Components.Shape
-    Components.Image --> Components.Sprite
-    Components.Animation --> Components.Sprite
-    Utilities.Clock --> Components.Animation
+    namespace sf {
+        class Text {}
+        class Font {}
+        class Music {}
+        class Clock {}
+        class Image {}
+        class Shape {}
+        class Event {}
+    }
 
-    Components.Text ..|> Interfaces.Renderable
-    Components.Image ..|> Interfaces.Renderable
-    Components.Sprite ..|> Interfaces.Renderable
-    Components.Shape ..|> Interfaces.Renderable
+    enum ItemType {
+        +ItemText
+        +ItemMusic
+        +ItemAsset
+        +ItemSprite
+    }
 
-    sf.Event--> Input.EventHandler 
+    class ItemCreator {
+        +ItemCreator()
+        +createItem(ItemType item, &args)
+        - std::vector<std::map<std::string, ItemType, IComponent>> _items
+    }
+
+    class Main {
+        +Main()
+        -mainLoop()
+        -Initialise()
+        -initialiseConnection()
+        -create_item()
+        Input::EventHandler _events
+    }
+
+    ' Base sfml classes
+    sf.Event --> Input.EventHandler
     sf.Clock --> Utilities.Clock
+    sf.Text --> BaseComponents.Text
+    sf.Font --> BaseComponents.Text
+    sf.Music --> BaseComponents.Music
+    sf.Image --> BaseComponents.Image
+    sf.Shape --> BaseComponents.Shape
+
+    ' Generic component for polymorphism
+    Interfaces.IComponent --> Utilities.Clock
+    Interfaces.IComponent --> Factory.TextFactory
+    Interfaces.IComponent --> Factory.ImageFactory
+    Interfaces.IComponent --> Factory.ShapeFactory
+    Interfaces.IComponent --> Factory.MusicFactory
+
+    ' Factory components
+    Factory.TextFactory --> BaseComponents.Text
+    Factory.ImageFactory --> BaseComponents.Image
+    Factory.ShapeFactory --> BaseComponents.Shape
+    Factory.MusicFactory --> BaseComponents.Music
+
+    ' Item position tracking
+    BaseComponents.Dimensions --> BaseComponents.Text
+    BaseComponents.Dimensions --> BaseComponents.Image
+    BaseComponents.Dimensions --> BaseComponents.Shape
+
+    ' Base components
+    BaseComponents.Image --> BaseComponents.Sprite
+    BaseComponents.Animation --|> BaseComponents.Sprite
+    Utilities.Clock --> BaseComponents.Animation
+    BaseComponents.ShapeType --> BaseComponents.Shape
+
+    ' UI ready components
+    BaseComponents.Shape --> UIComponents.Button
+
+    ' Showing the inheritance for the Item creator class
+    ItemType --> ItemCreator
+
+    ' All the Components are linked to the ItemCreator
+    BaseComponents.Text --|> ItemCreator
+    BaseComponents.CollisionCheck --|> ItemCreator
+    BaseComponents.Animation --|> ItemCreator
+    BaseComponents.Music --|> ItemCreator
+    BaseComponents.Image --|> ItemCreator
+    BaseComponents.Sprite --|> ItemCreator
+    BaseComponents.Shape --|> ItemCreator
+    UIComponents.Button --|> ItemCreator
+
+    ' The root linker
+    Input.EventHandler --|> Main: uses
+    ItemCreator --> Main
 }
 
 @enduml
