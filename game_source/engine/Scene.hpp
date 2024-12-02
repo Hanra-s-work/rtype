@@ -20,6 +20,6 @@ public:
     void addObject(GameObject &obj) { objects.push_front(obj); }
     void removeObject(GameObject &obj) { objects.remove(obj); }
     bool checkCollision(GameObject &first, GameObject &second);
-    static void Instatiate(GameObject &obj);
+    static void Instantiate(GameObject &obj);
     static void DestroyObject(GameObject &obj);
 };

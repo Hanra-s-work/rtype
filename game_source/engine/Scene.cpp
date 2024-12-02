@@ -8,7 +8,7 @@ bool Scene::checkCollision(GameObject &first, GameObject &second)
     return first.sprite.getGlobalBounds().intersects(second.sprite.getGlobalBounds());
 }
 
-void Scene::Instatiate(GameObject &obj)
+void Scene::Instantiate(GameObject &obj)
 {
     Game::currentScene.addObject(obj);
 }
