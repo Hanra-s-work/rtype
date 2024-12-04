@@ -19,20 +19,20 @@ typename DenseArray<Component, Allocator>::size_type DenseArray<Component, Alloc
 }
 
 template <typename Component, typename Allocator>
-void DenseArray<Component, Allocator>::insert(size_type id, const Component& component) {
+void DenseArray<Component, Allocator>::insert_at(size_type id, const Component& component) {
     ensure_sparse_size(id);
     _data[id] = component;
 }
 
 template <typename Component, typename Allocator>
-void DenseArray<Component, Allocator>::insert(size_type id, Component&& component) {
+void DenseArray<Component, Allocator>::insert_at(size_type id, Component&& component) {
     ensure_sparse_size(id);
     _data[id] = std::move(component);
 }
 
 template <typename Component, typename Allocator>
 template <typename... Params>
-void DenseArray<Component, Allocator>::emplace(size_type id, Params&&... params) {
+void DenseArray<Component, Allocator>::emplace_at(size_type id, Params&&... params) {
     ensure_sparse_size(id);
     _data[id].emplace(std::forward<Params>(params)...);
 }
@@ -60,3 +60,4 @@ void DenseArray<Component, Allocator>::ensure_size(size_type pos) {
     if (pos >= _data.size()) {
         _data.resize(pos + 1);
     }
+}
