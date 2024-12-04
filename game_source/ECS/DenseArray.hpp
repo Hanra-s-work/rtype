@@ -10,8 +10,14 @@ template <typename Component, typename Allocator = std::allocator<Component>>
 class DenseArray {
 public:
     using value_type = Component;
-    using container_t = std::vector<std::optional<Component>, Allocator>;
-    using size_type = typename container_t::size_type;
+    using reference_type = value_type&;
+    using const_reference_type = const value_type&;
+    using id_type = size_t;
+    using id_container_t = std::vector<id_type>;
+    using component_container_t = std::vector<value_type, Allocator>;
+    using size_type = typename component_container_t::size_type;
+    using iterator = typename component_container_t::iterator;
+    using const_iterator = typename component_container_t::const_iterator;
 
     DenseArray() = default;
     DenseArray(const DenseArray& other) = default;
@@ -20,15 +26,15 @@ public:
 
     DenseArray& operator=(const DenseArray& other) = default;
     DenseArray& operator=(DenseArray&& other) noexcept = default;
-    Component& operator[](size_type idx);
-    const Component& operator[](size_type idx) const;
+    reference_type operator[](size_type idx);
+    const_reference_type operator[](size_type idx) const;
 
-    typename container_t::iterator begin();
-    typename container_t::const_iterator begin() const;
-    typename container_t::const_iterator cbegin() const;
-    typename container_t::iterator end();
-    typename container_t::const_iterator end() const;
-    typename container_t::const_iterator cend() const;
+    iterator begin();
+    const_iterator begin() const;
+    const_iterator cbegin() const;
+    iterator end();
+    const_iterator end() const;
+    const_iterator cend() const;
 
     size_type size() const;
     void insert_at(size_type id, const Component& component);
@@ -37,11 +43,12 @@ public:
     template <typename... Params>
     void emplace_at(size_type id, Params&&... params);
     void erase(size_type id);
-    size_type get_index(const value_type& component) const;
+    id_type get_index(const value_type& component) const;
 
 private:
     void ensure_size(size_type pos);
 
-    container_t _data;
+    id_container_t _ids;
+    component_container_t _components;
     Allocator _allocator;
 };

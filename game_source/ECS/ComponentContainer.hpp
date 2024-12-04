@@ -21,6 +21,7 @@ public:
 
     void insert(size_type id, const Component& component);
     std::optional<Component> get(size_type id) const;
+    void ComponentContainer::erase(size_type id);
     void resize(size_type new_size);
     void optimize_storage(size_type sparse_threshold, size_type dense_threshold);
 

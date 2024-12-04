@@ -37,6 +37,27 @@ std::optional<Component> ComponentContainer<Component, Allocator>::get(size_type
 }
 
 template <typename Component, typename Allocator>
+void ComponentContainer<Component, Allocator>::erase(size_type id)
+{
+    std::visit([id](auto& storage) {
+        using T = std::decay_t<decltype(storage)>;
+        if constexpr (std::is_same_v<T, sparse_storage_t>) {
+            if (id < storage.size()) {
+                storage[id].reset();
+            }
+        } else if constexpr (std::is_same_v<T, dense_storage_t>) {
+            auto& [ids, components] = storage;
+            auto it = std::find(ids.begin(), ids.end(), id);
+            if (it != ids.end()) {
+                size_t index = std::distance(ids.begin(), it);
+                ids.erase(it);
+                components.erase(components.begin() + index);
+            }
+        }
+    }, _storage);
+}
+
+template <typename Component, typename Allocator>
 void ComponentContainer<Component, Allocator>::resize(size_type new_size) {
     if (std::holds_alternative<sparse_storage_t>(_storage)) {
         auto& sparse = std::get<sparse_storage_t>(_storage);
