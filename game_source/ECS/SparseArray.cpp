@@ -91,13 +91,6 @@ void SparseArray<Component, Allocator>::erase(size_type pos) {
 }
 
 template <typename Component, typename Allocator>
-typename SparseArray<Component, Allocator>::size_type
-SparseArray<Component, Allocator>::get_index(const value_type& component) const {
-    auto it = std::find(_data.begin(), _data.end(), component);
-    return it != _data.end() ? std::distance(_data.begin(), it) : size_type(-1);
-}
-
-template <typename Component, typename Allocator>
 void SparseArray<Component, Allocator>::ensure_size(size_type pos) {
     if (pos >= _data.size()) {
         _data.resize(pos + 1);

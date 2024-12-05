@@ -39,11 +39,9 @@ public:
     size_type size() const;
     void insert_at(size_type id, const Component& component);
     void insert_at(size_type id, Component&& component);
-
     template <typename... Params>
     void emplace_at(size_type id, Params&&... params);
     void erase(size_type id);
-    id_type get_index(const value_type& component) const;
 
 private:
     void ensure_size(size_type pos);

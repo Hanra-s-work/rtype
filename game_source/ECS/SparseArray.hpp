@@ -39,7 +39,6 @@ public:
     template <class... Params>
     reference_type emplace_at(size_type pos, Params&&... params);
     void erase(size_type pos);
-    size_type get_index(const value_type& component) const;
 
 private:
     void ensure_size(size_type pos);

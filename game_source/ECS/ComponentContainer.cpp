@@ -16,7 +16,8 @@ ComponentContainer<Component, Allocator>::const_reference ComponentContainer<Com
 }
 
 template <typename Component, typename Allocator>
-void ComponentContainer<Component, Allocator>::insert(size_type id, const Component& component) {
+void ComponentContainer<Component, Allocator>::insert_at(size_type id, const Component &component)
+{
     if (std::holds_alternative<sparse_storage_t>(_storage)) {
         auto& sparse = std::get<sparse_storage_t>(_storage);
         if (id >= sparse.size()) {
@@ -31,7 +32,42 @@ void ComponentContainer<Component, Allocator>::insert(size_type id, const Compon
 }
 
 template <typename Component, typename Allocator>
-std::optional<Component> ComponentContainer<Component, Allocator>::get(size_type id) const {
+void ComponentContainer<Component, Allocator>::insert_at(size_type id, Component &&component)
+{
+    if (std::holds_alternative<sparse_storage_t>(_storage)) {
+        auto& sparse = std::get<sparse_storage_t>(_storage);
+        if (id >= sparse.size()) {
+            sparse.resize(id + 1);
+        }
+        sparse[id] = std::forward<Component>(component);
+    } else {
+        auto& dense = std::get<dense_storage_t>(_storage);
+        dense.first.push_back(id);
+        dense.second.push_back(std::forward<Component>(component));
+    }
+}
+
+template <typename Component, typename Allocator>
+template <typename... Params>
+void ComponentContainer<Component, Allocator>::emplace_at(size_type id, Params &&...params)
+{
+    if (std::holds_alternative<sparse_storage_t>(_storage)) {
+        auto& sparse = std::get<sparse_storage_t>(_storage);
+        if (id >= sparse.size()) {
+            sparse.resize(id + 1);
+        }
+
+        sparse[id].emplace(std::forward<Params>(params)...);
+    } else {
+        auto& dense = std::get<dense_storage_t>(_storage);
+        
+        dense.first.push_back(id);
+        dense.second.emplace_back(std::forward<Params>(params)...);
+    }
+}
+
+template <typename Component, typename Allocator>
+std::optional<Component> ComponentContainer<Component, Allocator>::get(const value_type& id) const {
     if (std::holds_alternative<sparse_storage_t>(_storage)) {
         const auto& sparse = std::get<sparse_storage_t>(_storage);
         if (id < sparse.size()) {
@@ -99,7 +135,8 @@ void ComponentContainer<Component, Allocator>::optimize_storage(size_type sparse
 
 template <typename Component, typename Allocator>
 template <typename NewContainer>
-void ComponentContainer<Component, Allocator>::migrate_storage(NewContainer& new_storage) {
+void ComponentContainer<Component, Allocator>::migrate_storage(NewContainer &new_storage)
+{
     if (std::holds_alternative<sparse_storage_t>(_storage)) {
         const auto& sparse = std::get<sparse_storage_t>(_storage);
         for (size_type i = 0; i < sparse.size(); ++i) {

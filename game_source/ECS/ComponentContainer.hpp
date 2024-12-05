@@ -29,8 +29,12 @@ public:
     reference operator[](size_t idx);
     const_reference operator[](size_t idx) const;
 
-    void insert(size_type id, const Component& component);
-    std::optional<Component> get(size_type id) const;
+    void insert_at(size_type id, const Component& component);
+    void insert_at(size_type id, Component&& component);
+
+    template <typename... Params>
+    void emplace_at(size_type id, Params&&... params);
+    std::optional<Component> get(const value_type& component) const;
     void ComponentContainer::erase(size_type id);
     void resize(size_type new_size);
     void optimize_storage(size_type sparse_threshold, size_type dense_threshold);

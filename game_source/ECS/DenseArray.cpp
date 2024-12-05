@@ -79,16 +79,6 @@ void DenseArray<Component, Allocator>::erase(size_type id) {
 }
 
 template <typename Component, typename Allocator>
-DenseArray<Component, Allocator>::id_type DenseArray<Component, Allocator>::get_index(const Component& component) const {
-    for (size_type i = 0; i < _data.size(); ++i) {
-        if (_data[i] && *_data[i] == component) {
-            return i;
-        }
-    }
-    return static_cast<size_type>(-1);
-}
-
-template <typename Component, typename Allocator>
 void DenseArray<Component, Allocator>::ensure_size(size_type pos) {
     if (pos >= _components.size()) {
         _ids.resize(pos + 1);
