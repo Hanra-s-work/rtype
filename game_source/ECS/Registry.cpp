@@ -1,8 +1,5 @@
 #include "Registry.hpp"
 
-template<typename Component>
-using reference_type = typename ComponentContainer<Component>::reference_type;
-
 template <typename... Components, typename Function>
 void Registry::add_system(Function &&f)
 {
@@ -54,17 +51,19 @@ ComponentContainer<Component> &Registry::get_components()
 }
 
 template <typename Component>
-reference_type<Component> Registry::add_component(const Entity &entity, Component &&component)
+Registry::reference<Component> Registry::add_component(const Entity &entity, Component &&component)
 {
     auto& array = get_components<Component>();
-    return array.insert_at(entity.id(), std::forward<Component>(component));
+    array.insert_at(entity.id(), std::forward<Component>(component));
+    return array[entity];
 }
 
 template <typename Component, typename... Params>
-reference_type<Component> Registry::emplace_component(const Entity &entity, Params &&...params)
+Registry::reference<Component> Registry::emplace_component(const Entity &entity, Params &&...params)
 {
     auto& array = get_components<Component>();
-    return array.emplace_at(entity.id(), std::forward<Params>(params)...);
+    array.emplace_at(entity.id(), std::forward<Params>(params)...);
+    return array[entity];
 }
 
 template <typename Component>

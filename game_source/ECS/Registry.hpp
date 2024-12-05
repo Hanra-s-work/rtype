@@ -12,7 +12,7 @@
 class Registry {
 public:
     template<typename Component>
-    using reference_type = typename ComponentContainer<Component>::reference_type;
+    using reference = typename ComponentContainer<Component>::reference;
     using eraseFunc = std::function<void(Registry&, Entity const&)>;
 
     Registry() = default;
@@ -29,9 +29,9 @@ public:
     ComponentContainer<Component>& get_components();
 
     template <typename Component>
-    reference_type<Component> add_component(const Entity& entity, Component&& component);
+    reference<Component> add_component(const Entity& entity, Component&& component);
     template <typename Component, typename... Params>
-    reference_type<Component> emplace_component(const Entity& entity, Params&&... params);
+    reference<Component> emplace_component(const Entity& entity, Params&&... params);
     template <typename Component>
     void remove_component(const Entity& entity);
 
