@@ -1,26 +1,32 @@
 #include "CollisionSystem.hpp"
 
-void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2) {
+void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2)
+{
 
 }
 
-void collision_monster_missile(Registry &r, size_t &entity1, size_t &entity2) {
+void collision_monster_missile(Registry &r, size_t &entity1, size_t &entity2)
+{
 
 }
 
-void collision_player_obstacle(Registry &r, size_t &entity1, size_t &entity2) {
+void collision_player_obstacle(Registry &r, size_t &entity1, size_t &entity2)
+{
 
 }
 
-void collision_monster_obstacle(Registry &r, size_t &entity1, size_t &entity2) {
+void collision_monster_obstacle(Registry &r, size_t &entity1, size_t &entity2)
+{
 
 }
 
-void collision_player_powerup(Registry &r, size_t &entity1, size_t &entity2) {
+void collision_player_powerup(Registry &r, size_t &entity1, size_t &entity2)
+{
 
 }
 
-void collision_obstacle_missile(Registry &r, size_t &entity1, size_t &entity2) {
+void collision_obstacle_missile(Registry &r, size_t &entity1, size_t &entity2)
+{
 
 }
 
@@ -33,7 +39,8 @@ const std::unordered_map<std::pair<type_enum, type_enum>, std::function<void(Reg
     {std::make_pair(type_enum::OBSTACLE, type_enum::MISSILE), collision_obstacle_missile}
 };
 
-void collision_system(Registry &r) {
+void collision_system(Registry &r)
+{
     auto &positions = r.get_components<Position>();
     auto &colliders = r.get_components<Collider>();
     auto &types = r.get_components<Type>();

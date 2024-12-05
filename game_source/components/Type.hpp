@@ -9,5 +9,5 @@ enum type_enum{
 };
 
 struct Type {
-    type_enum type;
+    const type_enum type;
 };

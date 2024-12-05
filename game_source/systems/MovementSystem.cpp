@@ -1,6 +1,7 @@
 #include "MovementSystem.hpp"
 
-void movement_system(Registry &r) {
+void movement_system(Registry &r)
+{
     auto &positions = r.get_components<Position>();
     auto &velocities = r.get_components<Velocity>();
 
