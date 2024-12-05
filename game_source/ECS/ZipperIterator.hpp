@@ -10,7 +10,7 @@ class ZipperIterator {
     using iterator_t = typename Container::iterator;
 
     template <class Container>
-    using it_reference_t = typename iterator_t<Container>::reference;
+    using it_reference_t = decltype(std::declval<Container>()[0]);
 
 public:
     using value_type = std::tuple<it_reference_t<Containers>...>;

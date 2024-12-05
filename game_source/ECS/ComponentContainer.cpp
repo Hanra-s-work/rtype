@@ -4,6 +4,18 @@ template <typename Component, typename Allocator>
 ComponentContainer<Component, Allocator>::ComponentContainer() : _storage(sparse_storage_t()) {}
 
 template <typename Component, typename Allocator>
+ComponentContainer<Component, Allocator>::reference ComponentContainer<Component, Allocator>::operator[](size_t idx)
+{
+    return std::visit([&](auto& storage) -> reference { return storage[idx]; }, storage_);
+}
+
+template <typename Component, typename Allocator>
+ComponentContainer<Component, Allocator>::const_reference ComponentContainer<Component, Allocator>::operator[](size_t idx) const
+{
+    return std::visit([&](auto const& storage) -> const_reference { return storage[idx]; }, storage_);
+}
+
+template <typename Component, typename Allocator>
 void ComponentContainer<Component, Allocator>::insert(size_type id, const Component& component) {
     if (std::holds_alternative<sparse_storage_t>(_storage)) {
         auto& sparse = std::get<sparse_storage_t>(_storage);
