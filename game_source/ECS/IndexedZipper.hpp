@@ -1,9 +1,9 @@
-#include "ZipperIterator.hpp"
+#include "IndexedZipperIterator.hpp"
 
 template <class... Containers>
 class IndexedZipper {
 public:
-    using iterator = ZipperIterator<Containers...>;
+    using iterator = IndexedZipperIterator<Containers...>;
     using iterator_tuple = typename iterator::iterator_tuple;
 
     IndexedZipper(Containers&... cs);

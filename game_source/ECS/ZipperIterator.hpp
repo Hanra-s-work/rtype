@@ -1,3 +1,5 @@
+#pragma once
+
 #include <tuple>
 #include <optional>
 #include <type_traits>
@@ -14,7 +16,7 @@ class ZipperIterator {
 
 public:
     using value_type = std::tuple<it_reference_t<Containers>...>;
-    using reference = value_type;
+    using reference = value_type &;
     using pointer = void;
     using difference_type = size_t;
     using iterator_category = std::input_iterator_tag;
@@ -23,15 +25,15 @@ public:
 
     friend class Zipper<Containers...>;
 
-    ZipperIterator(iterator_tuple const& it_tuple, size_t max);
-    ZipperIterator(const ZipperIterator& z);
+    ZipperIterator(iterator_tuple const &it_tuple, size_t max);
+    ZipperIterator(const ZipperIterator &z);
 
     ZipperIterator& operator++();
     ZipperIterator operator++(int);
     value_type operator*();
     value_type* operator->();
-    friend bool operator==(const ZipperIterator& lhs, const ZipperIterator& rhs);
-    friend bool operator!=(const ZipperIterator& lhs, const ZipperIterator& rhs);
+    friend bool operator==(const ZipperIterator &lhs, const ZipperIterator &rhs);
+    friend bool operator!=(const ZipperIterator &lhs, const ZipperIterator &rhs);
 private:
     template <size_t... Is>
     void incr_all(std::index_sequence<Is...>);
