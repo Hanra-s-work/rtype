@@ -27,7 +27,7 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const std
     Entity player = r.spawn_entity();
     r.add_component<Position>(player, {pos_x, pos_y});
     r.add_component<Velocity>(player, {0.f, 0.f});
-    //r.add_component<Image>(player, {image_id, width, height});
+    r.add_component<Image>(player, {image_enum::PLAYER, 20.f, 20.f});
     r.add_component<Collider>(player, {10.f});
     r.add_component<Health>(player, {3, 3});
     r.add_component<Weapon>(player, {1, .5f, 0.f});
@@ -41,7 +41,7 @@ void spawn_monster(Registry &r, const float &pos_x, const float &pos_y)
     Entity monster = r.spawn_entity();
     r.add_component<Position>(monster, {pos_x, pos_y});
     r.add_component<Velocity>(monster, {-1.f, 0.f});
-    //r.add_component<Image>(monster, {image_id, width, height});
+    r.add_component<Image>(monster, {image_enum::MONSTER1, 20.f, 20.f});
     r.add_component<Collider>(monster, {10.f});
     r.add_component<Health>(monster, {3, 3});
     //optional r.add_component<Weapon>(monster, {1, .5f, 1.f});
@@ -55,8 +55,8 @@ void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y)
 {
     Entity obstacle = r.spawn_entity();
     r.add_component<Position>(obstacle, {pos_x, pos_y});
-    r.add_component<Velocity>(obstacle, {-.25f, 0});
-    //r.add_component<Image>(obstacle, {image_id, width, height});
+    r.add_component<Velocity>(obstacle, {-.25f, 0.f});
+    r.add_component<Image>(obstacle, {image_enum::OBSTACLE1, 20.f, 20.f});
     //r.add_component<Collider>(obstacle, {10.f});
     //optional r.add_component<Health>(obstacle, {3, 3});
     r.add_component<Type>(obstacle, {type_enum::OBSTACLE});
@@ -67,8 +67,8 @@ void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const ty
 {
     Entity missile = r.spawn_entity();
     r.add_component<Position>(missile, {pos_x, pos_y});
-    r.add_component<Velocity>(missile, {1.f, 0});
-    //r.add_component<Image>(missile, {image_id, width, height});
+    r.add_component<Velocity>(missile, {1.f, 0.f});
+    r.add_component<Image>(missile, {image_enum::MISSILE1, 20.f, 20.f});
     r.add_component<Collider>(missile, {10.f});
     r.add_component<Type>(missile, {type_enum::MISSILE});
     if (owner == type_enum::PLAYER)
@@ -83,7 +83,7 @@ void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y /*, const
     Entity powerup = r.spawn_entity();
     r.add_component<Position>(powerup, {pos_x, pos_y});
     r.add_component<Velocity>(powerup, {0.f, 0.f});
-    //r.add_component<Image>(powerup, {image_id, width, height});
+    r.add_component<Image>(powerup, {image_enum::POWERUP, 20.f, 20.f});
     r.add_component<Collider>(powerup, {10.f});
     r.add_component<Type>(powerup, {type_enum::POWERUP});
     //r.add_component<LootDrop>(powerup, {type});

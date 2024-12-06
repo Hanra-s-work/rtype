@@ -3,6 +3,7 @@
 #include "Registry.hpp"
 #include "Position.hpp"
 #include "Velocity.hpp"
+#include "Image.hpp"
 #include "Collider.hpp"
 #include "Weapon.hpp"
 #include "Health.hpp"
