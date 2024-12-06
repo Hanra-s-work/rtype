@@ -2,32 +2,47 @@
 
 void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
-
+    auto &&[healths, teams] = r.get_component_array<Health, Team>();
+    if (teams[entity2]->team == team_enum::MONSTER) {
+        healths[entity1]->current -= 1;
+        r.kill_entity(Entity(entity2));
+    }
 }
 
 void collision_monster_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
-
+    auto &&[healths, teams] = r.get_component_array<Health, Team>();
+    if (teams[entity2]->team == team_enum::ALLY) {
+        healths[entity1]->current -= 1;
+        r.kill_entity(Entity(entity2));
+    }
 }
 
 void collision_player_obstacle(Registry &r, size_t &entity1, size_t &entity2)
 {
-
+    auto &healths = r.get_components<Health>();
+    healths[entity1]->current -= 1;
 }
 
 void collision_monster_obstacle(Registry &r, size_t &entity1, size_t &entity2)
 {
-
+    //idk
 }
 
 void collision_player_powerup(Registry &r, size_t &entity1, size_t &entity2)
 {
-
+    //get lootdrops component
+    //if lootdrop == health
+    auto &healths = r.get_components<Health>();
+    healths[entity1]->current = healths[entity1]->max;
+    //else
+    auto &powerups = r.get_components<PowerUp>();
+    powerups[entity1]->enabled = true;
 }
 
 void collision_obstacle_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
-
+    r.kill_entity(Entity(entity2));
 }
 
 const std::unordered_map<std::pair<type_enum, type_enum>, std::function<void(Registry &, size_t &, size_t &)>> collisions = {

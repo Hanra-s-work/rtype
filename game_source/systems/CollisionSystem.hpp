@@ -7,6 +7,9 @@
 #include "Collider.hpp"
 #include "Position.hpp"
 #include "Type.hpp"
+#include "Team.hpp"
+#include "Health.hpp"
+#include "PowerUp.hpp"
 #include "IndexedZipper.hpp"
 
 void collision_system(Registry &r);
