@@ -5,6 +5,10 @@ void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2)
     auto &&[healths, teams] = r.get_component_array<Health, Team>();
     if (teams[entity2]->team == team_enum::MONSTER) {
         healths[entity1]->current -= 1;
+        if (healths[entity1]->current == 0) {
+            //also send game over msg to client
+            r.kill_entity(Entity(entity1));
+        }
         r.kill_entity(Entity(entity2));
     }
 }
