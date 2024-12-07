@@ -78,7 +78,7 @@ void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const ty
     r.add_component<Lifetime>(missile, {10.f});
 }
 
-void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y /*, const loot_enum type*/)
+void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum type)
 {
     Entity powerup = r.spawn_entity();
     r.add_component<Position>(powerup, {pos_x, pos_y});
@@ -86,5 +86,5 @@ void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y /*, const
     r.add_component<Image>(powerup, {image_enum::POWERUP, 20.f, 20.f});
     r.add_component<Collider>(powerup, {10.f});
     r.add_component<Type>(powerup, {type_enum::POWERUP});
-    //r.add_component<LootDrop>(powerup, {type});
+    r.add_component<LootDrop>(powerup, {type});
 }

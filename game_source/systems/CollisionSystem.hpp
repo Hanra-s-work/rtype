@@ -10,6 +10,8 @@
 #include "Team.hpp"
 #include "Health.hpp"
 #include "PowerUp.hpp"
+#include "LootDrop.hpp"
 #include "IndexedZipper.hpp"
+#include "SpawnSystem.hpp"
 
 void collision_system(Registry &r);
