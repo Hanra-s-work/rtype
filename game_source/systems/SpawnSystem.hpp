@@ -11,6 +11,7 @@
 #include "Type.hpp"
 #include "Lifetime.hpp"
 #include "PowerUp.hpp"
+#include "LootDrop.hpp"
 #include "Team.hpp"
 
 #define DEFAULT_TIMER 5.0f
@@ -24,4 +25,4 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const std
 void spawn_monster(Registry &r, const float &pos_x, const float &pos_y);
 void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y);
 void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const type_enum &owner);
-void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y);
+void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum &);

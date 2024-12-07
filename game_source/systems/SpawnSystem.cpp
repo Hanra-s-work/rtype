@@ -78,7 +78,7 @@ void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const ty
     r.add_component<Lifetime>(missile, {10.f});
 }
 
-void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum type)
+void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum &type)
 {
     Entity powerup = r.spawn_entity();
     r.add_component<Position>(powerup, {pos_x, pos_y});
