@@ -243,8 +243,8 @@ namespace GUI {
             +EventHandler()
             +update()
             +isKeyPressed(sf::Keyboard::Key key): bool
-            +getMousePosition(): sf::Vector2i
             +isMousePressed(sf::Mouse::Button button): bool
+            +getMousePosition(): sf::Vector2i
             +getKeys(): std::vector<sf::Event>
             -sf::Event _sfml_event
         }
