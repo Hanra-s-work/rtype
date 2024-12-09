@@ -2,8 +2,7 @@
 ** EPITECH PROJECT, 2024
 ** rtype (Workspace)
 ** File description:
-** GUI.hpp
+** MusicComponent.hpp
 */
 
 #pragma once
-
