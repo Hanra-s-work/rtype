@@ -1,0 +1,123 @@
+@startuml Updated ECS-Based GUI Module Design
+
+title "Updated ECS-Based GUI Architecture"
+
+namespace ECS {
+    class EntityNode {
+        +id: uint32
+    }
+
+    class Component {
+        +entity_id: uint32
+    }
+
+    namespace Components {
+        class PositionComponent {
+            +x: float
+            +y: float
+        }
+
+        class RenderComponent {
+            +texture: sf::Texture
+            +visible: bool
+        }
+
+        class AnimationComponent {
+            +frames: std::vector<sf::Texture>
+            +loop: bool
+            +frame_duration: uint32
+            +current_frame: uint32
+        }
+
+        class TextComponent {
+            +text: std::string
+            +font: sf::Font
+            +size: uint32
+            +color: sf::Color
+        }
+
+        class ButtonComponent {
+            +callback: std::function<void()>
+            +hover_color: sf::Color
+            +clicked_color: sf::Color
+        }
+
+        class MusicComponent {
+            +file_path: std::string
+            +is_looping: bool
+            +volume: float
+        }
+
+        class CollisionComponent {
+            +width: float
+            +height: float
+            +is_hovered: bool
+            +is_clicked: bool
+        }
+    }
+
+    namespace Systems {
+        class RenderSystem {
+            +render(window: sf::RenderWindow, entities: std::vector<EntityNode>)
+        }
+
+        class AnimationSystem {
+            +update(delta_time: float, entities: std::vector<EntityNode>)
+        }
+
+        class InputSystem {
+            +handle_input(events: std::vector<sf::Event>, entities: std::vector<EntityNode>)
+        }
+
+        class ButtonSystem {
+            +process_buttons(mouse_pos: sf::Vector2f, window: sf::RenderWindow, entities: std::vector<EntityNode>)
+        }
+    }
+
+    namespace Utilities {
+        class Clock {
+            +get_elapsed_time(): sf::Time
+            +restart()
+        }
+
+        class EventManager {
+            +poll_events(window: sf::RenderWindow): std::vector<sf::Event>
+        }
+    }
+
+    ' Entity-Component relationships
+    EntityNode --> Component : has
+    EntityNode --> Components.PositionComponent
+    EntityNode --> Components.RenderComponent
+    EntityNode --> Components.AnimationComponent
+    EntityNode --> Components.TextComponent
+    EntityNode --> Components.ButtonComponent
+    EntityNode --> Components.MusicComponent
+    EntityNode --> Components.CollisionComponent
+
+    ' Component-System interactions
+    Components.PositionComponent --|> Systems.RenderSystem
+    Components.RenderComponent --|> Systems.RenderSystem
+
+    Components.AnimationComponent --|> Systems.AnimationSystem
+
+    Components.TextComponent --> Systems.RenderSystem
+    Components.ButtonComponent --> Systems.ButtonSystem
+    Components.CollisionComponent --> Systems.ButtonSystem
+    Systems.ButtonSystem --|> Systems.RenderSystem
+
+    Components.MusicComponent --> Systems.InputSystem
+
+    ' Utilities and System relationships
+    Utilities.Clock --> Systems.AnimationSystem
+    Utilities.Clock --> Systems.InputSystem
+    Utilities.EventManager --> Systems.InputSystem
+    Utilities.EventManager --> Systems.ButtonSystem
+
+    ' Window and Event handling
+    Systems.RenderSystem --> sf.RenderWindow
+    Systems.InputSystem --> Utilities.EventManager
+    Systems.ButtonSystem --> sf.RenderWindow
+}
+
+@enduml
