@@ -4,6 +4,7 @@
 *.DS_Store
 *.code-workspace
 CMakeCache.txt
+CMakeFiles/**
 
 # No temporary files
 *tmp*
