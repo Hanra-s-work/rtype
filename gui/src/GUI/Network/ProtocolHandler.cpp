@@ -5,7 +5,7 @@
 ** Handle message format Sent/received to/from the server
 */
 
-#include "ProtocolHandler.hpp"
+#include "GUI/Network/ProtocolHandler.hpp"
 
 Packet::Packet(MessageType type, const std::vector<uint8_t> &payload)
     : type(type), size(static_cast<uint16_t>(payload.size())), payload(payload)

@@ -5,8 +5,8 @@
 ** Handle UDP sockets & Send/Receive messages between server and client
 */
 
-#include "NetworkManager.hpp"
 #include <iostream>
+#include "GUI/Network/NetworkManager.hpp"
 
 NetworkManager::NetworkManager() {}
 

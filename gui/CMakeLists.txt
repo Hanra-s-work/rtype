@@ -11,23 +11,23 @@ set(SOURCES
     src/Main.cpp
     src/RealMain.cpp
     src/ExceptionHandling.cpp
-    src/Network/NetworkManager.cpp
-    src/Network/ProtocolHandler.cpp
-    src/ECS/Component.cpp
-    src/ECS/EntityNode.cpp
-    src/ECS/Components/AnimationComponent.cpp
-    src/ECS/Components/ButtonComponent.cpp
-    src/ECS/Components/CollisionComponent.cpp
-    src/ECS/Components/MusicComponent.cpp
-    src/ECS/Components/PositionComponent.cpp
-    src/ECS/Components/RenderComponent.cpp
-    src/ECS/Components/TextComponent.cpp
-    src/ECS/Systems/AnimationSystem.cpp
-    src/ECS/Systems/ButtonSystem.cpp
-    src/ECS/Systems/InputSystem.cpp
-    src/ECS/Systems/RenderSystem.cpp
-    src/ECS/Systems/Utilities/Clock.cpp
-    src/ECS/Systems/Utilities/EventManager.cp
+    src/GUI/Network/NetworkManager.cpp
+    src/GUI/Network/ProtocolHandler.cpp
+    src/GUI/ECS/Component.cpp
+    src/GUI/ECS/EntityNode.cpp
+    src/GUI/ECS/Components/AnimationComponent.cpp
+    src/GUI/ECS/Components/ButtonComponent.cpp
+    src/GUI/ECS/Components/CollisionComponent.cpp
+    src/GUI/ECS/Components/MusicComponent.cpp
+    src/GUI/ECS/Components/PositionComponent.cpp
+    src/GUI/ECS/Components/RenderComponent.cpp
+    src/GUI/ECS/Components/TextComponent.cpp
+    src/GUI/ECS/Systems/AnimationSystem.cpp
+    src/GUI/ECS/Systems/ButtonSystem.cpp
+    src/GUI/ECS/Systems/InputSystem.cpp
+    src/GUI/ECS/Systems/RenderSystem.cpp
+    src/GUI/ECS/Utilities/Clock.cpp
+    src/GUI/ECS/Utilities/EventManager.cpp
 )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
