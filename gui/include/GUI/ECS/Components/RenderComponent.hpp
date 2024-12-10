@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <SFML/Graphics/Texture.hpp>
 namespace GUI
 {
     namespace ECS
@@ -19,6 +20,9 @@ namespace GUI
                 RenderComponent &operator=(const RenderComponent &) = delete;
                 ~RenderComponent() = default;
 
+                private:
+                bool visible;
+                sf::Texture texture;
             };
         }
     }

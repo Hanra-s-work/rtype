@@ -11,10 +11,13 @@ set(SOURCES
     src/Main.cpp
     src/RealMain.cpp
     src/ExceptionHandling.cpp
+
     src/GUI/Network/NetworkManager.cpp
     src/GUI/Network/ProtocolHandler.cpp
+
     src/GUI/ECS/Component.cpp
     src/GUI/ECS/EntityNode.cpp
+
     src/GUI/ECS/Components/AnimationComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
     src/GUI/ECS/Components/CollisionComponent.cpp
@@ -22,10 +25,12 @@ set(SOURCES
     src/GUI/ECS/Components/PositionComponent.cpp
     src/GUI/ECS/Components/RenderComponent.cpp
     src/GUI/ECS/Components/TextComponent.cpp
+
     src/GUI/ECS/Systems/AnimationSystem.cpp
     src/GUI/ECS/Systems/ButtonSystem.cpp
     src/GUI/ECS/Systems/InputSystem.cpp
     src/GUI/ECS/Systems/RenderSystem.cpp
+
     src/GUI/ECS/Utilities/Clock.cpp
     src/GUI/ECS/Utilities/EventManager.cpp
 )

@@ -16,6 +16,12 @@ namespace GUI
                 public:
                 CollisionComponent() = default;
                 ~CollisionComponent() = default;
+
+                private:
+                float width;
+                float height;
+                bool is_hovered;
+                bool is_clicked;
             };
         }
     }

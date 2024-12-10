@@ -6,6 +6,8 @@
 */
 
 #pragma once
+#include <string>
+#include <SFML/Audio.hpp>
 namespace GUI
 {
     namespace ECS
@@ -16,6 +18,11 @@ namespace GUI
                 public:
                 MusicComponents() = default;
                 ~MusicComponents() = default;
+
+                private:
+                float volume;
+                bool is_looping;
+                std::string file_path;
             };
         }
     }

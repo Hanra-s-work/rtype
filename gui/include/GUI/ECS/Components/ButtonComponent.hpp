@@ -6,6 +6,8 @@
 */
 
 #pragma once
+#include <functional>
+#include <SFML/Graphics/Color.hpp>
 namespace GUI
 {
     namespace ECS
@@ -16,6 +18,11 @@ namespace GUI
                 public:
                 ButtonComponent() = default;
                 ~ButtonComponent() = default;
+                std::function<void()> callback();
+
+                private:
+                sf::Color hover_color;
+                sf::Color clicked_color;
             };
         }
     }
