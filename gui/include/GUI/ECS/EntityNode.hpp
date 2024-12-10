@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include <cstdint>
 
 namespace GUI
 {
@@ -13,8 +14,12 @@ namespace GUI
     {
         class EntityNode {
             public:
-            EntityNode();
-            ~EntityNode();
+            explicit EntityNode(std::uint32_t entity_id) : _entity_id(entity_id) {};
+            virtual ~EntityNode() = default;
+            virtual std::uint32_t GetEntityNodeId() = 0;
+
+            protected:
+            std::uint32_t _entity_id;
         };
     }
 }
