@@ -6,3 +6,20 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Systems
+        {
+            class InputSystem {
+                public:
+                InputSystem();
+                ~InputSystem();
+                void update();
+            };
+        }
+    }
+}
+
+

@@ -6,3 +6,20 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Systems
+        {
+            class ButtonSystem {
+                public:
+                ButtonSystem();
+                ~ButtonSystem();
+                void update();
+            };
+        }
+    }
+}
+
+

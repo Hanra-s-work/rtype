@@ -6,3 +6,20 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Systems
+        {
+            class RenderSystem {
+                public:
+                RenderSystem();
+                ~RenderSystem();
+                void update();
+            };
+        }
+    }
+}
+
+

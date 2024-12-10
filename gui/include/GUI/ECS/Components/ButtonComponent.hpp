@@ -6,3 +6,18 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Components
+        {
+            class ButtonComponent {
+                public:
+                ButtonComponent() = default;
+                ~ButtonComponent() = default;
+            };
+        }
+    }
+}
+

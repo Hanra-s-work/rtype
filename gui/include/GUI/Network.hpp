@@ -6,3 +6,5 @@
 */
 
 #pragma once
+#include "Network/NetworkManager.hpp"
+#include "Network/ProtocolHandler.hpp"

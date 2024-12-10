@@ -6,3 +6,15 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        class Component {
+            public:
+            virtual ~Component() = default;
+        };
+    }
+}
+
+

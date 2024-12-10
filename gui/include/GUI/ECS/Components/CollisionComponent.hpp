@@ -6,3 +6,18 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Components
+        {
+            class CollisionComponent {
+                public:
+                CollisionComponent() = default;
+                ~CollisionComponent() = default;
+            };
+        }
+    }
+}
+

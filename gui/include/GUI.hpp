@@ -6,4 +6,5 @@
 */
 
 #pragma once
-
+#include "GUI/ECS.hpp"
+#include "GUI/Network.hpp"

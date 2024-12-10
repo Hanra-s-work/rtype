@@ -6,3 +6,17 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Components
+        {
+            class AnimationComponents {
+                public:
+                AnimationComponents() = default;
+                ~AnimationComponents() = default;
+            };
+        }
+    }
+}

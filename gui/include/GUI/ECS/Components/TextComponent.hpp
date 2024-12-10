@@ -6,3 +6,18 @@
 */
 
 #pragma once
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Components
+        {
+            class TextComponent {
+                public:
+                TextComponent();
+                ~TextComponent();
+            };
+        }
+    }
+}
+
