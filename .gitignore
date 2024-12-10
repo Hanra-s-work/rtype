@@ -1,8 +1,9 @@
-# No build/chache files
+# No build/cache files
 *.o
 *.vscode
 *.DS_Store
 *.code-workspace
+CMakeCache.txt
 
 # No temporary files
 *tmp*
