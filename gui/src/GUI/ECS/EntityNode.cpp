@@ -11,8 +11,6 @@ namespace GUI
 {
     namespace ECS
     {
-        EntityNode::~EntityNode() {};
-
         std::uint32_t EntityNode::GetEntityNodeId()
         {
             return _entity_id;

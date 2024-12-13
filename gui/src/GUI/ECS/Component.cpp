@@ -11,8 +11,6 @@ namespace GUI
 {
     namespace ECS
     {
-        Component::~Component() {};
-
         std::uint32_t Component::GetComponentId()
         {
             return _entity_id;
