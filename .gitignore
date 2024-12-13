@@ -3,8 +3,10 @@
 *.vscode
 *.DS_Store
 *.code-workspace
-CMakeCache.txt
+Makefile
 CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
 
 # No temporary files
 *tmp*
@@ -13,6 +15,8 @@ CMakeFiles
 r-type_server
 r-type_client
 rtype
+rtype_gui
+rtype_server
 
 # No build files
 bootstrap
