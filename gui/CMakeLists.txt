@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(RTypeGUI)
+project(r-type_client)
 
 set(CMAKE_CXX_STANDARD 17)
 
