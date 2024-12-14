@@ -38,6 +38,11 @@ set(SOURCES
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 
+add_custom_target(fclean
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}
+    COMMENT "Removing all build artifacts and directories"
+)
+
 find_package(Threads REQUIRED)
 
 add_executable(r-type_client ${SOURCES})

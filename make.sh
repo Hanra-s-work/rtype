@@ -161,7 +161,7 @@ fi
 if [ "$FCLEAN" == "$TRUE" ]; then
     for i in "${SOURCE_DIRS[@]}"; do
         cache_dir_name="fclean: $(basename "$i")"
-        clean "$i" "$DESTINATION_DIR"
+        fclean "$i" "$DESTINATION_DIR"
         STATUS=$?
         if [ $STATUS -ne 0 ]; then
             echo "Error: $cache_dir_name, code $STATUS"
