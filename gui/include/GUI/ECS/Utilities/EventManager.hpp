@@ -6,9 +6,11 @@
 */
 
 #pragma once
-#include <map>
+#include <any>
+#include <vector>
 #include <string>
 #include <functional>
+#include <SFML/Window/Event.hpp>
 namespace GUI
 {
     namespace ECS
@@ -19,12 +21,18 @@ namespace GUI
                 public:
                 EventManager();
                 ~EventManager();
-                void addEvent(const std::string &name, const std::function<void()> &callback);
-                void removeEvent(const std::string &name);
-                void triggerEvent(const std::string &name);
                 void clearEvents();
+                bool isLeftButtonClicked() const;
+                bool isRightButtonClicked() const;
+                sf::Vector2f getMousePosition() const;
+                std::vector<std::any> getKeys() const;
                 private:
-                std::map<std::string, std::function<void()>> _events;
+                void processEvents();
+                sf::Event _event;
+                bool _leftButtonClicked = false;
+                bool _rightButtonClicked = false;
+                sf::Vector2f _mousePosition;
+                std::vector<std::any> _keys;
             };
         }
     }

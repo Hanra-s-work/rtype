@@ -14,8 +14,8 @@ namespace GUI
         {
             class ButtonSystem {
                 public:
-                ButtonSystem();
-                ~ButtonSystem();
+                ButtonSystem() = default;
+                ~ButtonSystem() = default;
                 void update();
             };
         }

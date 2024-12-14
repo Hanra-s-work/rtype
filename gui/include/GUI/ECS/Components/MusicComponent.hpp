@@ -19,10 +19,30 @@ namespace GUI
                 MusicComponents() = default;
                 ~MusicComponents() = default;
 
+                virtual void setVolume(float volume) = 0;
+                virtual void setLoopMusic(bool loop) = 0;
+                virtual void setMusicName(const std::string &name) = 0;
+                virtual void setFilePath(const std::string &filePath) = 0;
+
+                virtual void play() = 0;
+                virtual void stop() = 0;
+                virtual void pause() = 0;
+
+                virtual bool isPaused() const = 0;
+                virtual bool isPlaying() const = 0;
+                virtual bool isLooping() const = 0;
+
+                virtual float getVolume() const = 0;
+                virtual std::string getMusicName() const = 0;
+                virtual std::string getFilePath() const = 0;
+
                 private:
-                float volume;
-                bool is_looping;
-                std::string file_path;
+                float _volume;
+                bool _isLooping = false;
+                bool _isPlaying = false;
+                bool _isPaused = false;
+                std::string _name = "";
+                std::string _filePath = "";
             };
         }
     }

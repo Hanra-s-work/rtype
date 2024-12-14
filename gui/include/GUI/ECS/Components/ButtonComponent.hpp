@@ -18,11 +18,22 @@ namespace GUI
                 public:
                 ButtonComponent() = default;
                 ~ButtonComponent() = default;
+                void setHoverColor(sf::Color hoverColor);
+                void setNormalColor(sf::Color normalColor);
+                void setClickedColor(sf::Color clickedColor);
+                void setCallback(std::function<void()> callback);
+
                 std::function<void()> callback();
 
+                const sf::Color getClickedColor();
+                const sf::Color getNormalColor();
+                const sf::Color getHoverColor();
+
                 private:
-                sf::Color hover_color;
-                sf::Color clicked_color;
+                sf::Color _hoverColor;
+                sf::Color _normalColor;
+                sf::Color _clickedColor;
+                std::function<void()> _callback;
             };
         }
     }

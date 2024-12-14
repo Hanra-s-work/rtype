@@ -19,10 +19,14 @@ namespace GUI
                 RenderComponent(const RenderComponent &) = delete;
                 RenderComponent &operator=(const RenderComponent &) = delete;
                 ~RenderComponent() = default;
+                void setTexture(const sf::Texture &texture);
+                void setVisible(const bool visible);
+                sf::Texture getTexture() const;
+                bool getVisible() const;
 
                 private:
-                bool visible;
-                sf::Texture texture;
+                bool _visible;
+                sf::Texture _texture;
             };
         }
     }

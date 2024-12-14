@@ -7,13 +7,10 @@
 
 #include "GUI/ECS/EntityNode.hpp"
 
-namespace GUI
+GUI::ECS::EntityNode::EntityNode(std::uint32_t entity_id) : _entityID(entity_id) {};
+
+std::uint32_t GUI::ECS::EntityNode::getEntityNodeId()
 {
-    namespace ECS
-    {
-        std::uint32_t EntityNode::GetEntityNodeId()
-        {
-            return _entity_id;
-        }
-    }
+    return _entityID;
 }
+

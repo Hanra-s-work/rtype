@@ -5,14 +5,10 @@
 ** InputSystem.cpp
 */
 
+#include <iostream>
 #include "GUI/ECS/Systems/InputSystem.hpp"
-namespace GUI
-{
-    namespace ECS
-    {
-        namespace Systems
-        {
 
-        }
-    }
+void GUI::ECS::Systems::InputSystem::update()
+{
+    std::cout << "Implement the update function " << std::endl;
 }

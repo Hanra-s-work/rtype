@@ -5,14 +5,10 @@
 ** RenderSystem.cpp
 */
 
+#include <iostream>
 #include "GUI/ECS/Systems/RenderSystem.hpp"
-namespace GUI
-{
-    namespace ECS
-    {
-        namespace Systems
-        {
 
-        }
-    }
+void GUI::ECS::Systems::RenderSystem::update()
+{
+    std::cout << "Implement the update function " << std::endl;
 }

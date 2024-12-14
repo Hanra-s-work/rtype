@@ -14,11 +14,16 @@ namespace GUI
         {
             class PositionComponent {
                 public:
-                PositionComponent(float x, float y) : x(x), y(y) {}
+                PositionComponent(float x, float y);
+                ~PositionComponent();
+                void setX(float x);
+                void setY(float y);
+                float getX() const;
+                float getY() const;
 
                 private:
-                float x;
-                float y;
+                float _x;
+                float _y;
             };
         }
     }

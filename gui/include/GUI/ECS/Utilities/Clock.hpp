@@ -6,6 +6,8 @@
 */
 
 #pragma once
+#include <SFML/System/Clock.hpp>
+
 namespace GUI
 {
     namespace ECS
@@ -17,10 +19,14 @@ namespace GUI
                 Clock();
                 ~Clock();
                 void reset();
-                float getElapsedTime();
-                void start();
+                sf::Time getElapsedTime() const;
                 void stop();
-                bool isRunning();
+                void start();
+                bool isRunning() const;
+
+                private:
+                bool _isRunning;
+                sf::Clock _clock;
             };
         }
     }

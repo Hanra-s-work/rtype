@@ -14,8 +14,8 @@ namespace GUI
         {
             class InputSystem {
                 public:
-                InputSystem();
-                ~InputSystem();
+                InputSystem() = default;
+                ~InputSystem() = default;
                 void update();
             };
         }

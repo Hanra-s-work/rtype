@@ -5,15 +5,10 @@
 ** AnimationSystem.cpp
 */
 
+#include <iostream>
 #include "GUI/ECS/Systems/AnimationSystem.hpp"
 
-namespace GUI
+void GUI::ECS::Systems::AnimationSystem::update(float dt)
 {
-    namespace ECS
-    {
-        namespace Systems
-        {
-
-        }
-    }
+    std::cout << "Implement update feature" << std::endl;
 }

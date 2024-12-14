@@ -14,12 +14,12 @@ namespace GUI
     {
         class EntityNode {
             public:
-            explicit EntityNode(std::uint32_t entity_id) : _entity_id(entity_id) {};
+            explicit EntityNode(std::uint32_t entity_id = 0);
             virtual ~EntityNode() = default;
-            virtual std::uint32_t GetEntityNodeId() = 0;
+            virtual std::uint32_t getEntityNodeId() = 0;
 
             protected:
-            std::uint32_t _entity_id;
+            std::uint32_t _entityID;
         };
     }
 }

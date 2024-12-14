@@ -14,8 +14,8 @@ namespace GUI
         {
             class RenderSystem {
                 public:
-                RenderSystem();
-                ~RenderSystem();
+                RenderSystem() = default;
+                ~RenderSystem() = default;
                 void update();
             };
         }
