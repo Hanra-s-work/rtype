@@ -14,6 +14,7 @@
 #include <string>
 #include <SFML/Audio.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -21,7 +22,7 @@ namespace GUI
     {
         namespace Components
         {
-            class MusicComponents {
+            class MusicComponents : EntityNode {
                 public:
                 MusicComponents() = default;
                 ~MusicComponents() = default;

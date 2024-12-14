@@ -13,6 +13,7 @@
 #pragma once
 #include <SFML/System/Clock.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -20,7 +21,7 @@ namespace GUI
     {
         namespace Utilities
         {
-            class Clock {
+            class Clock : EntityNode {
                 public:
                 Clock();
                 ~Clock();

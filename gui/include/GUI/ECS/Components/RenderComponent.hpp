@@ -13,6 +13,7 @@
 #pragma once
 #include <SFML/Graphics/Texture.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -20,7 +21,7 @@ namespace GUI
     {
         namespace Components
         {
-            class RenderComponent {
+            class RenderComponent : EntityNode {
                 public:
                 RenderComponent() = default;
                 RenderComponent(const RenderComponent &) = delete;

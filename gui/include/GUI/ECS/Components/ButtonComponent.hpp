@@ -14,6 +14,7 @@
 #include <functional>
 #include <SFML/Graphics/Color.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -21,7 +22,7 @@ namespace GUI
     {
         namespace Components
         {
-            class ButtonComponent {
+            class ButtonComponent : EntityNode {
                 public:
                 ButtonComponent() = default;
                 ~ButtonComponent() = default;

@@ -179,12 +179,22 @@ bool Main::_isFilePresent(const std::string &filepath)
 }
 
 /**
+ *@brief This is the function in charge of initialise the default ressources for the class.
+ *
+ */
+void Main::_initialiseRessources()
+{
+
+}
+
+/**
  *@brief This is the function used to start the program's main section.
  *
  * @return int The status of the execution of that section of the program.
  */
 int Main::run()
 {
+    _initialiseRessources();
     return SUCCESS;
 }
 

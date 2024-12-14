@@ -18,8 +18,9 @@
 #include <iostream>
 #include <stdexcept>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
-class Packet {
+class Packet : GUI::ECS::EntityNode {
     public:
     enum class MessageType : uint8_t {
         CONNECT = 1,

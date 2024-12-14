@@ -17,6 +17,7 @@
 #include <functional>
 #include <SFML/Window/Event.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -24,7 +25,7 @@ namespace GUI
     {
         namespace Utilities
         {
-            class EventManager {
+            class EventManager : EntityNode {
                 public:
                 EventManager();
                 ~EventManager();

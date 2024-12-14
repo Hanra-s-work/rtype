@@ -15,6 +15,7 @@
 #include <cstdint>
 #include <SFML/Graphics/Vertex.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -22,7 +23,7 @@ namespace GUI
     {
         namespace Components
         {
-            class CollisionComponent {
+            class CollisionComponent : EntityNode {
                 public:
                 CollisionComponent() = default;
                 ~CollisionComponent() = default;

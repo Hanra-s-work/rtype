@@ -16,6 +16,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -23,7 +24,7 @@ namespace GUI
     {
         namespace Components
         {
-            class TextComponent {
+            class TextComponent : EntityNode {
                 public:
                 TextComponent(std::string fontPath = "", sf::Color color = sf::Color::Black, std::string text = "Sample Text", std::uint32_t size = 12);
                 ~TextComponent();

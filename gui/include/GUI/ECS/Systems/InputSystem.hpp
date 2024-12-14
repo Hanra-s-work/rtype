@@ -12,6 +12,7 @@
 
 #pragma once
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
 namespace GUI
 {
@@ -19,7 +20,7 @@ namespace GUI
     {
         namespace Systems
         {
-            class InputSystem {
+            class InputSystem : EntityNode {
                 public:
                 InputSystem() = default;
                 ~InputSystem() = default;

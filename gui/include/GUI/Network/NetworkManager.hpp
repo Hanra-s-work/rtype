@@ -17,8 +17,9 @@
 #include <asio.hpp>
 #include "ProtocolHandler.hpp"
 #include "Debug.hpp"
+#include "EntityNode.hpp"
 
-class NetworkManager {
+class NetworkManager : GUI::ECS::EntityNode {
     public:
     NetworkManager();
     void Initialize();
