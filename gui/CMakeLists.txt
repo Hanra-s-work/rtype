@@ -4,9 +4,9 @@ project(r-type_client)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
-
 include_directories(/usr/include/asio)
 
+# Set the source files
 set(SOURCES
     src/Main.cpp
     src/RealMain.cpp
@@ -36,15 +36,28 @@ set(SOURCES
     src/GUI/ECS/Utilities/EventManager.cpp
 )
 
-set(THREADS_PREFER_PTHREAD_FLAG ON)
+# Find SFML
+find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio network)
 
+# Check for threads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+# Add the executable
+add_executable(r-type_client ${SOURCES})
+
+# Link SFML and Threads to the executable
+target_link_libraries(r-type_client
+    Threads::Threads
+    sfml-system
+    sfml-window
+    sfml-graphics
+    sfml-audio
+    sfml-network
+)
+
+# Custom target for cleaning build artifacts
 add_custom_target(fclean
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}
     COMMENT "Removing all build artifacts and directories"
 )
-
-find_package(Threads REQUIRED)
-
-add_executable(r-type_client ${SOURCES})
-
-target_link_libraries(r-type_client Threads::Threads)
