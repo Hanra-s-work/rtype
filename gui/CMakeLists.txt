@@ -10,6 +10,7 @@ include_directories(/usr/include/asio)
 set(SOURCES
     src/Main.cpp
     src/RealMain.cpp
+    src/MainClass.cpp
     src/ExceptionHandling.cpp
 
     src/GUI/Network/NetworkManager.cpp

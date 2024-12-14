@@ -5,6 +5,9 @@
 ** ExceptionHandling.cpp
 */
 
+#include <string>
+#include <cstring>
+
 #include "ExceptionHandling.hpp"
 
 namespace MyException
@@ -15,9 +18,48 @@ namespace MyException
         return error;
     }
 
+    FileNotFound::FileNotFound(std::string error)
+        : _error(error)
+    {
+    };
+
+    FileNotFound::~FileNotFound() {};
+
     const char *FileNotFound::what() const noexcept
     {
-        const char *error = "Error: The file provided was not found or readable.";
-        return error;
+        std::string error = "Error: The file provided was not found or readable.";
+        return error.c_str();
+    }
+
+    IpIncorrect::IpIncorrect(std::string error)
+        : _error(error)
+    {
+    };
+
+    IpIncorrect::~IpIncorrect() {};
+
+    const char *IpIncorrect::what() const noexcept
+    {
+        std::string data = "Error: The ip you provided '";
+        data += _error;
+        data += "' is incorrect.";
+
+        return data.c_str();
+    }
+
+    PortIncorrect::PortIncorrect(std::string error)
+        : _error(error)
+    {
+    };
+
+    PortIncorrect::~PortIncorrect() {};
+
+    const char *PortIncorrect::what() const noexcept
+    {
+        std::string data = "Error: The port you provided '";
+        data += _error;
+        data += "' is incorrect.";
+
+        return data.c_str();
     }
 }
