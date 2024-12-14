@@ -9,6 +9,7 @@ include_directories(/usr/include/asio)
 # Set the source files
 set(SOURCES
     src/Main.cpp
+    src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
     src/ExceptionHandling.cpp
