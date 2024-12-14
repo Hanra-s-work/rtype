@@ -11,6 +11,8 @@
 #include <string>
 #include <functional>
 #include <SFML/Window/Event.hpp>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

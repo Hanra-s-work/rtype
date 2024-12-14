@@ -6,6 +6,8 @@
 */
 
 #pragma once
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

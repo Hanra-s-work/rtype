@@ -10,6 +10,8 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

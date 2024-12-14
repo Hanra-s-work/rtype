@@ -7,13 +7,7 @@
 
 #include "GUI/ECS/Component.hpp"
 
-namespace GUI
+std::uint32_t GUI::ECS::Component::GetComponentId()
 {
-    namespace ECS
-    {
-        std::uint32_t Component::GetComponentId()
-        {
-            return _entity_id;
-        }
-    }
+    return _entity_id;
 }

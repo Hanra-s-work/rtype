@@ -37,16 +37,43 @@ std::vector<std::string> extract_argument(char *arg)
     std::string arg_str(arg);
     size_t pos = arg_str.find('=');
     std::vector<std::string> resp;
+
+    if (arg_str.find("--") == 0) {
+        flag = arg_str.substr(2);
+    } else if (arg_str.find("-") == 0) {
+        flag = arg_str.find("-");
+    } else if (arg_str.find("/") == 0) {
+        flag = arg_str.substr(1);
+    } else {
+        flag = arg_str;
+    }
+
     if (pos == std::string::npos) {
-        resp.push_back(arg_str);
+        resp.push_back(flag);
         resp.push_back("");
         return resp;
     }
+
     flag = arg_str.substr(0, pos);
     value = arg_str.substr(pos + 1);
     resp.push_back(flag);
     resp.push_back(value);
+
     return resp;
+}
+
+/**
+ *@brief Process the single argument that is provided.
+ *
+ * @param main
+ * @param args
+ */
+void process_given_argument(const Main &main, const std::vector<std::string> &args, std::string const &binName)
+{
+    if (args[0] == "help" || args[0] == "h" || args[0] == "?") {
+        DisplayHelp(binName);
+        throw MyException::HelpFound();
+    }
 }
 
 /**
@@ -61,11 +88,13 @@ std::vector<std::string> extract_argument(char *arg)
  */
 void process_arguments(const Main &main, int argc, char **argv)
 {
-    unsigned int index = 0;
-    std::cout << "Dumping arguments" << std::endl;
+    unsigned int index = 1;
+    Debug::getInstance() << "Dumping arguments" << std::endl;
+    std::string binName(argv[0]);
     while (index < argc) {
         std::vector<std::string> arg = extract_argument(argv[index]);
         std::cout << "Flag: " << arg[0] << ", Value: " << arg[1] << std::endl;
+        process_given_argument(main, arg, binName);
         index++;
     }
 }
@@ -85,17 +114,36 @@ void process_arguments(const Main &main, int argc, char **argv)
 int RealMain(int argc, char **argv)
 {
     int status = SUCCESS;
+    bool help_found = false;
 
-    Main Main("127.0.0.1", 5000, 800, 800, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20);
+    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, true);
 
-    process_arguments(Main, argc, argv);
+    if (argc > 1) {
+        try {
+            process_arguments(MyMain, argc, argv);
+        }
+        catch (const MyException::HelpFound &e) {
+            status = SUCCESS;
+            help_found = true;
+            Debug::getInstance() << "Help was found: '" << e.what() << "'." << std::endl;
+        }
+        catch (const std::exception &e) {
+            status = ERROR;
+            Debug::getInstance() << "An error occurred: '" << e.what() << "'." << std::endl;
+        }
+    }
+
+    if (help_found || status == ERROR) {
+        return status;
+    }
 
     try {
-        status = Main.run();
+        status = MyMain.run();
     }
     catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         status = ERROR;
     }
+    std::cout << "Exit status : '" << status << "'." << std::endl;
     return status;
 }

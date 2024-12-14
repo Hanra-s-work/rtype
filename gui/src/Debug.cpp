@@ -18,25 +18,6 @@ void Debug::setDebugEnabled(bool enabled)
     _debugEnabled = enabled;
 }
 
-template <typename T>
-Debug &Debug::operator<<(const T &message)
-{
-    if (_debugEnabled) {
-        std::lock_guard<std::mutex> lock(_mtx);
-        std::cout << getCurrentDateTime() << " DEBUG: " << message;
-    }
-    return *this;
-}
-
-Debug &Debug::operator<<(std::ostream &(*os)(std::ostream &))
-{
-    if (_debugEnabled) {
-        std::lock_guard<std::mutex> lock(_mtx);
-        os(std::cout);  // Apply the manipulator (e.g., std::endl)
-    }
-    return *this;
-}
-
 void Debug::log(const std::string &message)
 {
     if (_debugEnabled) {

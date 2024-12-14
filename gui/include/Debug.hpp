@@ -6,12 +6,12 @@
 */
 
 #pragma once
-#include <iostream>
+#include <ctime>
+#include <mutex>
 #include <string>
 #include <chrono>
-#include <ctime>
 #include <sstream>
-#include <mutex>
+#include <iostream>
 
 class Debug {
     public:
@@ -23,8 +23,23 @@ class Debug {
     void log(const char *message);
 
     template <typename T>
-    Debug &operator<<(const T &message);
-    Debug &operator<<(std::ostream &(*os)(std::ostream &));
+    Debug &operator<<(const T &message)
+    {
+        if (_debugEnabled) {
+            std::lock_guard<std::mutex> lock(_mtx);
+            std::cout << getCurrentDateTime() << " DEBUG: " << message;
+        }
+        return *this;
+    }
+
+    Debug &operator<<(std::ostream &(*os)(std::ostream &))
+    {
+        if (_debugEnabled) {
+            std::lock_guard<std::mutex> lock(_mtx);
+            os(std::cout);
+        }
+        return *this;
+    }
 
     private:
     bool _debugEnabled;

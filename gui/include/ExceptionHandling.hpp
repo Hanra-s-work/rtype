@@ -55,5 +55,17 @@ namespace MyException
         public:
         const char *what() const noexcept;
     };
+    class HelpFound : public std::exception {
+        public:
+        const char *what() const noexcept;
+    };
 
+    class UnknownArgument : public std::exception {
+        public:
+        UnknownArgument(std::string argument);
+        ~UnknownArgument();
+        const char *what() const noexcept;
+        private:
+        std::string _argument;
+    };
 }

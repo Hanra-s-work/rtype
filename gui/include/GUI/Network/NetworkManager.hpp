@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include <asio.hpp>
 #include <string>
 #include <vector>
+#include <asio.hpp>
 #include "ProtocolHandler.hpp"
+#include "Debug.hpp"
 
 class NetworkManager {
     public:

@@ -7,8 +7,10 @@
 
 #pragma once
 
-#include <SFML/Graphics/Vertex.hpp>
 #include <cstdint>
+#include <SFML/Graphics/Vertex.hpp>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

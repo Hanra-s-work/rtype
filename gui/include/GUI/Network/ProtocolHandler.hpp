@@ -12,6 +12,7 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
+#include "Debug.hpp"
 
 class Packet {
     public:

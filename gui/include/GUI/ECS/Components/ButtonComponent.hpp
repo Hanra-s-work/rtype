@@ -8,6 +8,8 @@
 #pragma once
 #include <functional>
 #include <SFML/Graphics/Color.hpp>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

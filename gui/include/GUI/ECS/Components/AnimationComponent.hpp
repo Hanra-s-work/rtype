@@ -9,6 +9,7 @@
 #include <vector>
 #include <cstdint>
 #include <SFML/Graphics/Texture.hpp>
+#include "Debug.hpp"
 
 namespace GUI
 {

@@ -7,6 +7,8 @@
 
 #pragma once
 #include <cstdint>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

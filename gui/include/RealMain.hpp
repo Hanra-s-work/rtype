@@ -7,10 +7,16 @@
 
 #pragma once
 #include <string>
+#include <cctype> 
+#include <algorithm>
+#include <iostream>
+#include "Debug.hpp"
+#include "Constants.hpp"
+#include "ExceptionHandling.hpp"
 
 class Main {
     public:
-    Main(std::string ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 800, bool windowCursor = true, bool windowFullscreen = false, std::string windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, std::string windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20);
+    Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, bool debug = false);
     ~Main();
     int run();
     void setIp(const std::string &ip);
@@ -28,6 +34,7 @@ class Main {
     void setWindowCursorSpriteHeight(unsigned int spriteHeight);
     void setWindowCursorSpriteReadFromLeft(bool spriteStartLeft);
     void setWindowSize(unsigned int width, unsigned int height);
+    void setDebug(bool debug);
     const std::string getIp();
     const unsigned int getPort();
     unsigned int  getWindowWidth();
@@ -41,12 +48,16 @@ class Main {
     bool getWindowCursorSpriteReadFromLeft();
     unsigned int getWindowCursorSpriteWidth();
     unsigned int getWindowCursorSpriteHeight();
+    bool getDebug() const;
     std::tuple<unsigned int, unsigned int> getWindowPosition();
     std::tuple<unsigned int, unsigned int> getWindowSize();
+
     private:
+    std::string _lowerText(const std::string &text);
     bool _isIpInRange(const std::string &ip);
     bool _isPortCorrect(const unsigned int port);
     bool _isFilePresent(const std::string &filepath);
+
     std::string _ip;
     unsigned int _port;
     unsigned int _windowWidth;
@@ -60,9 +71,10 @@ class Main {
     bool _imageIsSprite;
     bool _spriteStartTop;
     bool _spriteStartLeft;
+    bool _debug;
     unsigned int _spriteWidth;
     unsigned int _spriteHeight;
-
 };
 
 int RealMain(int argc, char **argv);
+void DisplayHelp(const std::string binName);

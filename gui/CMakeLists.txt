@@ -12,6 +12,7 @@ set(SOURCES
     src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
+    src/HelpFunctions.cpp
     src/ExceptionHandling.cpp
 
     src/GUI/Network/NetworkManager.cpp

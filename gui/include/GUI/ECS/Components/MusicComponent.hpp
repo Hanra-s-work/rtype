@@ -8,6 +8,8 @@
 #pragma once
 #include <string>
 #include <SFML/Audio.hpp>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

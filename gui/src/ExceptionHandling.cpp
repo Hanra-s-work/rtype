@@ -62,4 +62,26 @@ namespace MyException
 
         return data.c_str();
     }
+
+    const char *HelpFound::what() const noexcept
+    {
+        std::string data = "Info: The Help option was found, exiting.";
+        return data.c_str();
+    }
+
+    UnknownArgument::UnknownArgument(std::string argument)
+        : _argument(argument)
+    {
+    };
+
+    UnknownArgument::~UnknownArgument() {};
+
+    const char *UnknownArgument::what() const noexcept
+    {
+        std::string data = "Error: The argument you provided is unknown.\n";
+        data += " The argument was: '";
+        data += _argument;
+        data += "'.";
+        return data.c_str();
+    }
 }

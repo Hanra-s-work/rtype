@@ -7,6 +7,7 @@
 
 #pragma once
 #include <SFML/System/Clock.hpp>
+#include "Debug.hpp"
 
 namespace GUI
 {

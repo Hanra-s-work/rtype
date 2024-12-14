@@ -7,6 +7,8 @@
 
 #pragma once
 #include <SFML/Graphics/Texture.hpp>
+#include "Debug.hpp"
+
 namespace GUI
 {
     namespace ECS

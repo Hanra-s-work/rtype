@@ -9,8 +9,6 @@
 #include <sstream>
 #include <fstream>
 #include "RealMain.hpp"
-#include "Constants.hpp"
-#include "ExceptionHandling.hpp"
 
 /**
  *@brief Construct a new Main:: Main object
@@ -30,23 +28,25 @@
  * @param spriteStartLeft
  * @param spriteWidth
  * @param spriteHeight
+ * @param debug
  */
 Main::Main(
-    std::string ip,
+    const std::string &ip,
     unsigned int port,
     unsigned int windowWidth,
     unsigned int windowHeight,
     bool windowCursor,
     bool windowFullscreen,
-    std::string windowTitle,
+    const std::string &windowTitle,
     unsigned int windowX,
     unsigned int windowY,
-    std::string windowCursorIcon,
+    const std::string &windowCursorIcon,
     bool imageIsSprite,
     bool spriteStartTop,
     bool spriteStartLeft,
     unsigned int spriteWidth,
-    unsigned int spriteHeight
+    unsigned int spriteHeight,
+    bool debug
 ) :
     _windowWidth(windowWidth),
     _windowHeight(windowHeight),
@@ -61,23 +61,30 @@ Main::Main(
     _spriteWidth(spriteWidth),
     _spriteHeight(spriteHeight)
 {
+    _debug = debug;
+    Debug::getInstance().setDebugEnabled(debug);
+    Debug::getInstance() << "Processing ip" << std::endl;
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
         throw MyException::IpIncorrect(ip);
     }
+    Debug::getInstance() << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
         throw MyException::PortIncorrect(std::to_string(port));
     }
-    if (windowCursorIcon == "" || windowCursorIcon == "NULL") {
-        _windowCursorIcon = nullptr;
+    Debug::getInstance() << "Processing cursor icon" << std::endl;
+    std::string windowText = _lowerText(windowCursorIcon);
+    if (windowText.empty() || windowText == "null" || windowText == "none") {
+        _windowCursorIcon = "";
     } else if (_isFilePresent(windowCursorIcon) == true) {
         _windowCursorIcon = windowCursorIcon;
     } else {
         throw MyException::FileNotFound(windowCursorIcon);
     }
+    Debug::getInstance() << "End of processing" << std::endl;
 }
 
 /**
@@ -85,6 +92,30 @@ Main::Main(
  *
  */
 Main::~Main() {}
+
+/**
+ *@brief Function in charge of converting a string of characters
+ * to their lowercase version.
+ *
+ * @param text The string to process
+ * @return std::string A lowercased string.
+ */
+std::string Main::_lowerText(const std::string &text)
+{
+    std::string lowerText = text;
+    if (lowerText.empty()) {
+        return lowerText;
+    }
+    std::transform(
+        lowerText.begin(),
+        lowerText.end(),
+        lowerText.begin(),
+        [](unsigned char c) {
+            return std::tolower(c);
+        }
+    );
+    return lowerText;
+}
 
 /**
  * @brief Checks if the ip provided is correct.
@@ -332,6 +363,17 @@ void Main::setWindowSize(unsigned int width, unsigned int height)
 }
 
 /**
+ *@brief Toggle the debug mode for the program.
+ *
+ * @param debug
+ */
+void Main::setDebug(bool debug)
+{
+    _debug = debug;
+    Debug::getInstance().setDebugEnabled(debug);
+}
+
+/**
  *@brief Get the value of the ip that was set.
  *
  * @return const std::string
@@ -466,6 +508,17 @@ unsigned int Main::getWindowCursorSpriteWidth()
 unsigned int Main::getWindowCursorSpriteHeight()
 {
     return _spriteHeight;
+}
+
+/**
+ *@brief The function in charge of returning the status of the debug variable.
+ *
+ * @return true
+ * @return false
+ */
+bool Main::getDebug() const
+{
+    return _debug;
 }
 
 /**
