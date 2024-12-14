@@ -12,76 +12,100 @@
 
 namespace MyException
 {
-    const char *InvalidArgumentNumber::what() const noexcept
-    {
-        const char *error = "Error: The number of arguments must not exceed 2 or be below 1.";
-        return error;
-    }
-
     FileNotFound::FileNotFound(std::string error)
         : _error(error)
     {
+        _msg = "Error: The file provided was not found or readable.\n";
+        _msg += "The file path you provided is: ";
+        _msg += error;
     };
 
     FileNotFound::~FileNotFound() {};
 
     const char *FileNotFound::what() const noexcept
     {
-        std::string error = "Error: The file provided was not found or readable.";
-        return error.c_str();
+        return _msg.c_str();
     }
 
     IpIncorrect::IpIncorrect(std::string error)
         : _error(error)
     {
+        _msg = "Error: The ip you provided '";
+        _msg += error;
+        _msg += "' is incorrect.";
     };
 
     IpIncorrect::~IpIncorrect() {};
 
     const char *IpIncorrect::what() const noexcept
     {
-        std::string data = "Error: The ip you provided '";
-        data += _error;
-        data += "' is incorrect.";
-
-        return data.c_str();
+        return _msg.c_str();
     }
 
     PortIncorrect::PortIncorrect(std::string error)
         : _error(error)
     {
+        _msg = "Error: The port you provided '";
+        _msg += error;
+        _msg += "' is incorrect.";
     };
 
     PortIncorrect::~PortIncorrect() {};
 
     const char *PortIncorrect::what() const noexcept
     {
-        std::string data = "Error: The port you provided '";
-        data += _error;
-        data += "' is incorrect.";
-
-        return data.c_str();
+        return _msg.c_str();
     }
+
+    InvalidWindowWidth::InvalidWindowWidth()
+    {
+        _msg = "Error: The width you provided for the window is incorrect.";
+    }
+
+    InvalidWindowWidth::~InvalidWindowWidth() {};
+
+    const char *InvalidWindowWidth::what() const noexcept
+    {
+        return _msg.c_str();
+    }
+
+    InvalidWindowHeight::InvalidWindowHeight()
+    {
+        _msg = "Error: The height you provided for the window is incorrect.";
+    }
+
+    InvalidWindowHeight::~InvalidWindowHeight() {};
+
+    const char *InvalidWindowHeight::what() const noexcept
+    {
+        return _msg.c_str();
+    }
+
+    HelpFound::HelpFound()
+    {
+        _msg = "Info: The Help option was found, exiting.";
+    }
+
+    HelpFound::~HelpFound() {}
 
     const char *HelpFound::what() const noexcept
     {
-        std::string data = "Info: The Help option was found, exiting.";
-        return data.c_str();
+        return _msg.c_str();
     }
 
     UnknownArgument::UnknownArgument(std::string argument)
         : _argument(argument)
     {
+        _msg = "Error: The argument you provided is unknown.\n";
+        _msg += " The argument was: '";
+        _msg += argument;
+        _msg += "'.";
     };
 
     UnknownArgument::~UnknownArgument() {};
 
     const char *UnknownArgument::what() const noexcept
     {
-        std::string data = "Error: The argument you provided is unknown.\n";
-        data += " The argument was: '";
-        data += _argument;
-        data += "'.";
-        return data.c_str();
+        return _msg.c_str();
     }
 }
