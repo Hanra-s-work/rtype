@@ -31,7 +31,7 @@
  */
 std::vector<std::string> extract_argument(char *arg)
 {
-    std::cout << "Extracting arguments" << std::endl;
+    Debug::getInstance() << "Extracting arguments" << std::endl;
     std::string flag = "";
     std::string value = "";
     std::string arg_str(arg);
@@ -93,7 +93,7 @@ void process_arguments(const Main &main, int argc, char **argv)
     std::string binName(argv[0]);
     while (index < argc) {
         std::vector<std::string> arg = extract_argument(argv[index]);
-        std::cout << "Flag: " << arg[0] << ", Value: " << arg[1] << std::endl;
+        Debug::getInstance() << "Flag: '" << arg[0] << "', Value: '" << arg[1] << "'." << std::endl;
         process_given_argument(main, arg, binName);
         index++;
     }
@@ -129,7 +129,7 @@ int RealMain(int argc, char **argv)
         }
         catch (const std::exception &e) {
             status = ERROR;
-            Debug::getInstance() << "An error occurred: '" << e.what() << "'." << std::endl;
+            std::cerr << "An error occurred: '" << e.what() << "'." << std::endl;
         }
     }
 
