@@ -11,6 +11,7 @@
  */
 
 #include <tuple>
+#include <vector>
 #include <string>
 #include <iostream>
 #include <exception>
@@ -19,29 +20,32 @@
 #include "ExceptionHandling.hpp"
 
  /**
-   * @brief Extracts the flag and value from a command-line argument.
-   *
-   * This function parses a command-line argument to split it into a flag and value.
-   * For example, if the argument is `--key=value`, it will return a tuple `("key", "value")`.
-   * If there is no `=` sign, it returns the flag with an empty value.
-   *
-   * @param arg The command-line argument as a C-style string.
-   * @return A tuple containing the flag (as the first element) and the value (as the second element).
-   */
-std::tuple<std::string, std::string> extract_argument(char *arg)
+ * @brief Extracts the flag and value from a command-line argument.
+ *
+ * This function parses a command-line argument to split it into a flag and value.
+ * For example, if the argument is `--key=value`, it will return a tuple `("key", "value")`.
+ * If there is no `=` sign, it returns the flag with an empty value.
+ *
+ * @param arg The command-line argument as a C-style string.
+ * @return A tuple containing the flag (as the first element) and the value (as the second element).
+ */
+std::vector<std::string> extract_argument(char *arg)
 {
+    std::cout << "Extracting arguments" << std::endl;
     std::string flag = "";
     std::string value = "";
     std::string arg_str(arg);
     size_t pos = arg_str.find('=');
-    std::tuple<std::string, std::string> resp;
+    std::vector<std::string> resp;
     if (pos == std::string::npos) {
-        resp = std::make_tuple(arg_str, "");
+        resp.push_back(arg_str);
+        resp.push_back("");
         return resp;
     }
     flag = arg_str.substr(0, pos);
     value = arg_str.substr(pos + 1);
-    resp = std::make_tuple(flag, value);
+    resp.push_back(flag);
+    resp.push_back(value);
     return resp;
 }
 
@@ -58,9 +62,10 @@ std::tuple<std::string, std::string> extract_argument(char *arg)
 void process_arguments(const Main &main, int argc, char **argv)
 {
     unsigned int index = 0;
+    std::cout << "Dumping arguments" << std::endl;
     while (index < argc) {
-        std::tuple<std::string, std::string> arg = extract_argument(argv[index]);
-        std::cout << "Flag: " << std::get<0>(arg) << ", Value: " << std::get<1>(arg) << std::endl;
+        std::vector<std::string> arg = extract_argument(argv[index]);
+        std::cout << "Flag: " << arg[0] << ", Value: " << arg[1] << std::endl;
         index++;
     }
 }
