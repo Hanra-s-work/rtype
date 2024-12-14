@@ -142,9 +142,14 @@ bool Main::_isFilePresent(const std::string &filepath)
     return std::ifstream(filepath).good();
 }
 
-void Main::run()
+/**
+ *@brief This is the function used to start the program's main section.
+ *
+ * @return int The status of the execution of that section of the program.
+ */
+int Main::run()
 {
-
+    return SUCCESS;
 }
 
 /**

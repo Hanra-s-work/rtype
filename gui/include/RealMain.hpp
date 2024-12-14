@@ -12,7 +12,7 @@ class Main {
     public:
     Main(std::string ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 800, bool windowCursor = true, bool windowFullscreen = false, std::string windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, std::string windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20);
     ~Main();
-    void run();
+    int run();
     void setIp(const std::string &ip);
     void setPort(const unsigned int port);
     void setWindowWidth(unsigned int width);
