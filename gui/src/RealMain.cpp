@@ -15,6 +15,7 @@
 #include <string>
 #include <iostream>
 #include <exception>
+#include <stdexcept>
 #include "RealMain.hpp"
 #include "Constants.hpp"
 #include "ExceptionHandling.hpp"
@@ -32,30 +33,28 @@
 std::vector<std::string> extract_argument(char *arg)
 {
     Debug::getInstance() << "Extracting arguments" << std::endl;
-    std::string flag = "";
-    std::string value = "";
     std::string arg_str(arg);
     size_t pos = arg_str.find('=');
+    std::string flag = "";
+    std::string value = "";
     std::vector<std::string> resp;
 
-    if (arg_str.find("--") == 0) {
-        flag = arg_str.substr(2);
-    } else if (arg_str.find("-") == 0) {
-        flag = arg_str.find("-");
-    } else if (arg_str.find("/") == 0) {
-        flag = arg_str.substr(1);
+    if (pos != std::string::npos) {
+        flag = arg_str.substr(0, pos);
+        value = arg_str.substr(pos + 1);
     } else {
         flag = arg_str;
+        value = "";
     }
 
-    if (pos == std::string::npos) {
-        resp.push_back(flag);
-        resp.push_back("");
-        return resp;
+    if (flag.find("--") == 0) {
+        flag = flag.substr(2);
+    } else if (flag.find("-") == 0) {
+        flag = flag.substr(1);
+    } else if (flag.find("/") == 0) {
+        flag = flag.substr(1);
     }
 
-    flag = arg_str.substr(0, pos);
-    value = arg_str.substr(pos + 1);
     resp.push_back(flag);
     resp.push_back(value);
 
@@ -68,11 +67,77 @@ std::vector<std::string> extract_argument(char *arg)
  * @param main
  * @param args
  */
-void process_given_argument(const Main &main, const std::vector<std::string> &args, std::string const &binName)
+void process_given_argument(Main &main, const std::vector<std::string> &args, std::string const &binName)
 {
     if (args[0] == "help" || args[0] == "h" || args[0] == "?") {
         DisplayHelp(binName);
         throw MyException::HelpFound();
+    } else if (args[0] == "ip" || args[0] == "i") {
+        if (args[1].empty()) {
+            std::cerr << "Error: Port number is required" << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        main.setIp(args[1]);
+    } else if (args[0] == "port" || args[0] == "p") {
+        unsigned int port = 0;
+        if (args[1].empty()) {
+            std::cerr << "Error: Port number is required" << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        try {
+            port = static_cast<unsigned int>(std::stoul(args[1]));
+        }
+        catch (const std::invalid_argument &e) {
+            std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        catch (const std::out_of_range &e) {
+            std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        main.setPort(port);
+    } else if (args[0] == "debug" || args[0] == "d") {
+        main.setDebug(true);
+    } else if (args[0] == "full-screen" || args[0] == "fs" || args[0] == "fullscreen") {
+        main.setWindowFullscreen(true);
+    } else if (args[0] == "window-width" || args[0] == "ww" || args[0] == "windowwidth") {
+        unsigned int windowWidth = 0;
+        if (args[1].empty()) {
+            std::cerr << "Error: Window width is required." << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        try {
+            windowWidth = static_cast<unsigned int>(std::stoul(args[1]));
+        }
+        catch (const std::invalid_argument &e) {
+            std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        catch (const std::out_of_range &e) {
+            std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        main.setWindowWidth(windowWidth);
+    } else if (args[0] == "window-height" || args[0] == "wh" || args[0] == "windowheight") {
+        unsigned int windowHeight = 0;
+        if (args[1].empty()) {
+            std::cerr << "Error: Window Height is required." << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        try {
+            windowHeight = static_cast<unsigned int>(std::stoul(args[1]));
+        }
+        catch (const std::invalid_argument &e) {
+            std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        catch (const std::out_of_range &e) {
+            std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        main.setWindowHeight(windowHeight);
+    } else {
+        throw MyException::UnknownArgument(args[0]);
     }
 }
 
@@ -86,7 +151,7 @@ void process_given_argument(const Main &main, const std::vector<std::string> &ar
  * @param argc The number of command-line arguments.
  * @param argv The array of command-line arguments as C-style strings.
  */
-void process_arguments(const Main &main, int argc, char **argv)
+void process_arguments(Main &main, int argc, char **argv)
 {
     unsigned int index = 1;
     Debug::getInstance() << "Dumping arguments" << std::endl;
@@ -116,7 +181,7 @@ int RealMain(int argc, char **argv)
     int status = SUCCESS;
     bool help_found = false;
 
-    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, true);
+    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, false);
 
     if (argc > 1) {
         try {
@@ -144,6 +209,6 @@ int RealMain(int argc, char **argv)
         std::cerr << e.what() << std::endl;
         status = ERROR;
     }
-    std::cout << "Exit status : '" << status << "'." << std::endl;
+    Debug::getInstance() << "Exit status : '" << status << "'." << std::endl;
     return status;
 }
