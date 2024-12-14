@@ -5,6 +5,11 @@
 ** EventManager.hpp
 */
 
+/**
+ * @file EventManager.hpp
+ * @brief This is the file that contains the EvenManager class
+ */
+
 #pragma once
 #include <any>
 #include <vector>

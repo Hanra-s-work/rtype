@@ -5,6 +5,12 @@
 ** EntityNode.hpp
 */
 
+
+/**
+ * @file EntityNode.hpp
+ * @brief This is the file that links the EntityNode children
+ */
+
 #pragma once
 #include <cstdint>
 #include "Debug.hpp"

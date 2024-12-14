@@ -5,6 +5,11 @@
 ** Handle UDP sockets & Send/Receive messages between server and client
 */
 
+/**
+ * @file NetworkManager.cpp
+ * @brief This is the file in charge of managing the network with the UDP sockets.
+ */
+
 #include <iostream>
 #include "GUI/Network/NetworkManager.hpp"
 

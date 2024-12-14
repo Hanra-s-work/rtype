@@ -5,6 +5,11 @@
 ** RenderComponent.cpp
 */
 
+/**
+ * @file RenderComponent.cpp
+ * @brief This is the file in charge of managing the rendering
+ */
+
 #include "GUI/ECS/Components/RenderComponent.hpp"
 
 void GUI::ECS::Components::RenderComponent::setTexture(const sf::Texture &texture)

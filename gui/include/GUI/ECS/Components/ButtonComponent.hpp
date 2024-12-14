@@ -5,6 +5,11 @@
 ** ButtonComponent.hpp
 */
 
+/**
+ * @file ButtonComponent.hpp
+ * @brief This is the file that contains the class in charge of tracking buttons.
+ */
+
 #pragma once
 #include <functional>
 #include <SFML/Graphics/Color.hpp>

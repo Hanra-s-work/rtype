@@ -5,6 +5,11 @@
 ** AnimationSystem.hpp
 */
 
+/**
+ * @file AnimationSystem.hpp
+ * @brief This is the file that contains the Animation class
+ */
+
 #pragma once
 #include "Debug.hpp"
 

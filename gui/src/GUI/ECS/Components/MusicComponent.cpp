@@ -5,6 +5,11 @@
 ** MusicComponent.cpp
 */
 
+/**
+ * @file MusicComponent.cpp
+ * @brief This is the file in charge of managing the music
+ */
+
 #include "GUI/ECS/Components/MusicComponent.hpp"
 
 void GUI::ECS::Components::MusicComponents::setVolume(float volume)

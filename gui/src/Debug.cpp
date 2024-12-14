@@ -5,6 +5,11 @@
 ** Debug.cpp
 */
 
+/**
+ * @file Debug.cpp
+ * @brief This is the file in charge of managing the functions for the debug class
+ */
+
 #include "Debug.hpp"
 
 Debug &Debug::getInstance()

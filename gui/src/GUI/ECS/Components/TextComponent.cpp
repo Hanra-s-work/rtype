@@ -5,6 +5,11 @@
 ** TextComponent.cpp
 */
 
+/**
+ * @file TextComponent.cpp
+ * @brief This is the file in charge of managing the text
+ */
+
 #include "GUI/ECS/Components/TextComponent.hpp"
 
 GUI::ECS::Components::TextComponent::TextComponent(std::string fontPath, sf::Color color, std::string text, std::uint32_t size)

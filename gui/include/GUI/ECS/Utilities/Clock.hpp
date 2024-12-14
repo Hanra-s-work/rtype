@@ -5,6 +5,11 @@
 ** Clock.hpp
 */
 
+/**
+ * @file Clock.hpp
+ * @brief This is the file that contains the Clock class
+ */
+
 #pragma once
 #include <SFML/System/Clock.hpp>
 #include "Debug.hpp"

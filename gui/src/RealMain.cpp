@@ -64,8 +64,9 @@ std::vector<std::string> extract_argument(char *arg)
 /**
  *@brief Process the single argument that is provided.
  *
- * @param main
- * @param args
+ * @param main The main class, initialised.
+ * @param args The current argument
+ * @param binName The name of the program binary.
  */
 void process_given_argument(Main &main, const std::vector<std::string> &args, std::string const &binName)
 {

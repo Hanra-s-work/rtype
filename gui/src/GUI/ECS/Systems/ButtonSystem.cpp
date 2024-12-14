@@ -5,6 +5,11 @@
 ** ButtonSystem.cpp
 */
 
+/**
+ * @file ButtonSystem.cpp
+ * @brief This is the file in charge of managing the button status
+ */
+
 #include <iostream>
 #include "GUI/ECS/Systems/ButtonSystem.hpp"
 

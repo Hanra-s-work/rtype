@@ -5,6 +5,11 @@
 ** ButtonComponent.cpp
 */
 
+/**
+ * @file ButtonComponent.cpp
+ * @brief This is the file in charge of managing the button components
+ */
+
 #include "GUI/ECS/Components/ButtonComponent.hpp"
 
 void GUI::ECS::Components::ButtonComponent::setHoverColor(sf::Color hoverColor)

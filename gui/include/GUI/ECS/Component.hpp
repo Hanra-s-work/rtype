@@ -5,6 +5,11 @@
 ** Component.hpp
 */
 
+/**
+ * @file Component.hpp
+ * @brief This is the file that contains the Component class.
+ */
+
 #pragma once
 #include <cstdint>
 #include "Debug.hpp"

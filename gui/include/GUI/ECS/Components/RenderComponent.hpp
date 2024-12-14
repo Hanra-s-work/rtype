@@ -5,6 +5,11 @@
 ** RenderComponent.hpp
 */
 
+/**
+ * @file RenderComponent.hpp
+ * @brief This is the file that contains the class in charge of displaying or not an element.
+ */
+
 #pragma once
 #include <SFML/Graphics/Texture.hpp>
 #include "Debug.hpp"

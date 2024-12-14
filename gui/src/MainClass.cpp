@@ -5,31 +5,36 @@
 ** MainClass.cpp
 */
 
+/**
+ * @file MainClass.cpp
+ * @brief This is the file in charge of containing the class Main of the program.
+ */
+
 #include <cstdint>
 #include <sstream>
 #include <fstream>
 #include "RealMain.hpp"
 
-/**
- *@brief Construct a new Main:: Main object
- *
- * @param ip
- * @param port
- * @param windowWidth
- * @param windowHeight
- * @param windowCursor
- * @param windowFullscreen
- * @param windowTitle
- * @param windowX
- * @param windowY
- * @param windowCursorIcon
- * @param imageIsSprite
- * @param spriteStartTop
- * @param spriteStartLeft
- * @param spriteWidth
- * @param spriteHeight
- * @param debug
- */
+ /**
+  *@brief Construct a new Main:: Main object
+  *
+  * @param ip
+  * @param port
+  * @param windowWidth
+  * @param windowHeight
+  * @param windowCursor
+  * @param windowFullscreen
+  * @param windowTitle
+  * @param windowX
+  * @param windowY
+  * @param windowCursorIcon
+  * @param imageIsSprite
+  * @param spriteStartTop
+  * @param spriteStartLeft
+  * @param spriteWidth
+  * @param spriteHeight
+  * @param debug
+  */
 Main::Main(
     const std::string &ip,
     unsigned int port,

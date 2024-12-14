@@ -5,6 +5,11 @@
 ** CollisionComponent.cpp
 */
 
+/**
+ * @file CollisionComponent.cpp
+ * @brief This is the file in charge of managing the collisions
+ */
+
 #include <iostream>
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 

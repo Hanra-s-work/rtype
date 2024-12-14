@@ -5,6 +5,11 @@
 ** PositionComponent.cpp
 */
 
+/**
+ * @file PositionComponent.cpp
+ * @brief This is the file in charge of managing the collisions
+ */
+
 #include "GUI/ECS/Components/PositionComponent.hpp"
 
 GUI::ECS::Components::PositionComponent::PositionComponent(float x, float y)

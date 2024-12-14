@@ -5,6 +5,11 @@
 ** AnimationComponent.cpp
 */
 
+/**
+ * @file AnimationComponent.cpp
+ * @brief This is the file in charge of managing the animation components
+ */
+
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 
 void GUI::ECS::Components::AnimationComponent::setLoop(bool loop)

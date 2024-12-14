@@ -5,6 +5,11 @@
 ** ECS.hpp
 */
 
+/**
+ * @file ECS.hpp
+ * @brief This is the file in charge of linking the child components of the ECS.
+ */
+
 #pragma once
 #include "ECS/Component.hpp"
 #include "ECS/Components.hpp"

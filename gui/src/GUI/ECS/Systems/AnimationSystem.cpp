@@ -5,6 +5,11 @@
 ** AnimationSystem.cpp
 */
 
+/**
+ * @file AnimationSystem.cpp
+ * @brief This is the file in charge of managing the animation ticking
+ */
+
 #include <iostream>
 #include "GUI/ECS/Systems/AnimationSystem.hpp"
 

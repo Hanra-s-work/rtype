@@ -5,6 +5,11 @@
 ** TextComponent.hpp
 */
 
+/**
+ * @file TextComponent.hpp
+ * @brief This is the file that contains a class in charge of managing a test component.
+ */
+
 #pragma once
 #include <cstdint>
 #include <SFML/Graphics/Text.hpp>

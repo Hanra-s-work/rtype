@@ -5,6 +5,11 @@
 ** Debug.hpp
 */
 
+/**
+ * @file Debug.hpp
+ * @brief This is the file in charge of containing the Debug class (the one in charge of outputing info only when asked to)
+ */
+
 #pragma once
 #include <ctime>
 #include <mutex>
@@ -14,6 +19,13 @@
 #include <iomanip>
 #include <iostream>
 
+
+ /**
+  *@brief The Debug class in charge of displaying information
+  * only if the _debugEnabled is set to true.
+  * It is designed to be used globally throughout the program.
+  *
+  */
 class Debug {
     public:
     static Debug &getInstance();

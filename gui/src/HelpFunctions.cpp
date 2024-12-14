@@ -5,8 +5,18 @@
 ** HelpFunctions.cpp
 */
 
+/**
+ * @file HelpFunctions.cpp
+ * @brief This is the file in charge of displaying the help message.
+ */
+
 #include <iostream>
 
+ /**
+  *@brief Display the Usage section of the help prompt.
+  *
+  * @param binName
+  */
 static void displayUsageSummary(const std::string binName)
 {
     std::cout << "USAGE:" << std::endl;
@@ -18,6 +28,10 @@ static void displayUsageSummary(const std::string binName)
     std::cout << std::endl;
 }
 
+/**
+ *@brief Display the Options section of the help prompt.
+ *
+ */
 static void displayDetailedUsage()
 {
     std::cout << "OPTIONS:" << std::endl;
@@ -40,6 +54,10 @@ static void displayDetailedUsage()
     // std::cout << "\t--sprite-height=\"20\"      \tSet the height of the sprite in the animation. (Default value: 20)" << std::endl;
 }
 
+/**
+ *@brief Display the Author section of the help prompt.
+ *
+ */
 static void displayAuthors()
 {
     std::cout << "AUTHORS:" << std::endl;
@@ -48,6 +66,11 @@ static void displayAuthors()
     std::cout << std::endl;
 }
 
+/**
+ *@brief The main function of the help display.
+ *
+ * @param binName
+ */
 void DisplayHelp(const std::string binName)
 {
     displayUsageSummary(binName);

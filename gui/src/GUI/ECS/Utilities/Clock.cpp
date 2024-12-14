@@ -5,6 +5,11 @@
 ** Clock.cpp
 */
 
+/**
+ * @file Clock.cpp
+ * @brief This is the file in charge of managing the clock ticking.
+ */
+
 #include "GUI/ECS/Utilities/Clock.hpp"
 
 GUI::ECS::Utilities::Clock::Clock()

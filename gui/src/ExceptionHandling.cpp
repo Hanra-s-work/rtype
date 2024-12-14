@@ -5,6 +5,11 @@
 ** ExceptionHandling.cpp
 */
 
+/**
+ * @file ExceptionHandling.cpp
+ * @brief This is the file in charge of managing the content for the classes of the Exceptions
+ */
+
 #include <string>
 #include <cstring>
 

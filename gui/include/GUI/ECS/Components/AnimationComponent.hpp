@@ -5,6 +5,11 @@
 ** AnimationComponent.hpp
 */
 
+/**
+ * @file AnimationComponent.hpp
+ * @brief This is the file that contains the class in charge of tracking sprite animations.
+ */
+
 #pragma once
 #include <vector>
 #include <cstdint>

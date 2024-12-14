@@ -5,6 +5,11 @@
 ** RenderSystem.hpp
 */
 
+/**
+ * @file RenderSystem.hpp
+ * @brief This is the file that contains the Rendering class
+ */
+
 #pragma once
 #include "Debug.hpp"
 

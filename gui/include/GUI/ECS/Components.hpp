@@ -5,6 +5,11 @@
 ** Components.hpp
 */
 
+/**
+ * @file Components.hpp
+ * @brief This is the file that links the Components children
+ */
+
 #pragma once
 #include "Components/TextComponent.hpp"
 #include "Components/MusicComponent.hpp"

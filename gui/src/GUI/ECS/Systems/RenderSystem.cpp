@@ -5,6 +5,11 @@
 ** RenderSystem.cpp
 */
 
+/**
+ * @file RenderSystem.cpp
+ * @brief This is the file in charge of managing rendering the content in the window.
+ */
+
 #include <iostream>
 #include "GUI/ECS/Systems/RenderSystem.hpp"
 

@@ -5,6 +5,11 @@
 ** MusicComponent.hpp
 */
 
+/**
+ * @file MusicComponent.hpp
+ * @brief This is the file that contains the class in charge of managing music
+ */
+
 #pragma once
 #include <string>
 #include <SFML/Audio.hpp>

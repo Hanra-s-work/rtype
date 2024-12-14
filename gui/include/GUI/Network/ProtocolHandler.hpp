@@ -5,6 +5,11 @@
 ** Serialisation & Deserialisation of binary protocol UDP
 */
 
+/**
+ * @file ProtocolHandler.hpp
+ * @brief This is the file in charge of managing the Serialisation & Deserialisation of binary protocol UDP
+ */
+
 #pragma once
 
 #include <vector>

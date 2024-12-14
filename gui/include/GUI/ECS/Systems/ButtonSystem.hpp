@@ -5,6 +5,11 @@
 ** ButtonSystem.hpp
 */
 
+/**
+ * @file ButtonSystem.hpp
+ * @brief This is the file that contains the ButtonSystem class
+ */
+
 #pragma once
 #include "Debug.hpp"
 

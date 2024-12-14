@@ -5,6 +5,11 @@
 ** Handle message format Sent/received to/from the server
 */
 
+/**
+ * @file ProtocolHandler.cpp
+ * @brief This is the file in charge of managing the sending and receiving to and from the server.
+ */
+
 #include "GUI/Network/ProtocolHandler.hpp"
 
 Packet::Packet(MessageType type, const std::vector<uint8_t> &payload)

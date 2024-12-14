@@ -5,6 +5,11 @@
 ** CollisionComponent.hpp
 */
 
+/**
+ * @file CollisionComponent.hpp
+ * @brief This is the file that contains the class in charge of checking collisions.
+ */
+
 #pragma once
 
 #include <cstdint>

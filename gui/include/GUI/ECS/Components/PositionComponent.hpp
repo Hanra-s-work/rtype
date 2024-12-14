@@ -5,6 +5,11 @@
 ** PositionComponent.hpp
 */
 
+/**
+ * @file PositionComponent.hpp
+ * @brief This is the file that contains the class of tracking the location of elements.
+ */
+
 #pragma once
 #include "Debug.hpp"
 

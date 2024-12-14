@@ -5,6 +5,11 @@
 ** Main.hpp
 */
 
+/**
+ * @file RealMain.hpp
+ * @brief This is the file in charge of containing the main class and other ressources at the root of the program
+ */
+
 #pragma once
 #include <string>
 #include <cctype> 
@@ -14,6 +19,10 @@
 #include "Constants.hpp"
 #include "ExceptionHandling.hpp"
 
+ /**
+  *@brief The Main class is the main class of the program.
+  *
+  */
 class Main {
     public:
     Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, bool debug = false);
