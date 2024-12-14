@@ -40,6 +40,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_package(Threads REQUIRED)
 
-add_executable(rtype_gui ${SOURCES})
+add_executable(r-type_client ${SOURCES})
 
-target_link_libraries(rtype_gui Threads::Threads)
+target_link_libraries(r-type_client Threads::Threads)
