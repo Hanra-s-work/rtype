@@ -22,6 +22,20 @@ namespace MyException
         std::string _msg;
     };
 
+
+    class NoFlagParameter : public std::exception {
+        public:
+        NoFlagParameter(std::string error = "");
+        ~NoFlagParameter();
+        const char *what() const noexcept;
+
+        private:
+        std::string _error;
+        std::string _msg;
+    };
+
+
+
     class IpIncorrect : public std::exception {
         public:
         IpIncorrect(std::string error = "");

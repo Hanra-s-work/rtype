@@ -27,6 +27,21 @@ namespace MyException
         return _msg.c_str();
     }
 
+    NoFlagParameter::NoFlagParameter(std::string error)
+        : _error(error)
+    {
+        _msg = "Error: There is no parameter passed to the flag.\n";
+        _msg += "The concerned flag is: ";
+        _msg += error;
+    };
+
+    NoFlagParameter::~NoFlagParameter() {};
+
+    const char *NoFlagParameter::what() const noexcept
+    {
+        return _msg.c_str();
+    }
+
     IpIncorrect::IpIncorrect(std::string error)
         : _error(error)
     {
