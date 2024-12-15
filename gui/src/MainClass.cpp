@@ -184,7 +184,9 @@ bool Main::_isFilePresent(const std::string &filepath)
  */
 void Main::_initialiseRessources()
 {
+    auto window = std::make_shared<GUI::ECS::Utilities::Window>(_windowWidth, _windowHeight, _windowTitle);
 
+    _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
 }
 
 /**

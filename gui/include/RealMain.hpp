@@ -13,6 +13,7 @@
 #pragma once
 #include <any>
 #include <map>
+#include <memory>
 #include <string>
 #include <cctype> 
 #include <vector>
@@ -25,6 +26,7 @@
 #include "Constants.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Window.hpp"
 
  /**
   *@brief The Main class is the main class of the program.
@@ -76,7 +78,7 @@ class Main {
   void _initialiseRessources();
 
 
-  std::unordered_map<std::type_index, std::vector<std::optional<GUI::ECS::EntityNode>>> _ecsEntities;
+  std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
   std::string _ip;
   unsigned int _port;
   unsigned int _windowWidth;

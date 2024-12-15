@@ -14,7 +14,7 @@
 
 GUI::ECS::EntityNode::EntityNode(std::uint32_t entity_id) : _entityID(entity_id) {};
 
-std::uint32_t GUI::ECS::EntityNode::getEntityNodeId()
+std::uint32_t GUI::ECS::EntityNode::getEntityNodeId() const
 {
     return _entityID;
 }
