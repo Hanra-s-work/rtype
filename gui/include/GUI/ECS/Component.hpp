@@ -13,7 +13,7 @@
 #pragma once
 #include <cstdint>
 #include "Debug.hpp"
-#include "EntityNode.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
 {

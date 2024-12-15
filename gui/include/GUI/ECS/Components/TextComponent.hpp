@@ -16,7 +16,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include "Debug.hpp"
-#include "EntityNode.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
 {

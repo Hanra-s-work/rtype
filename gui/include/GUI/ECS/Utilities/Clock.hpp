@@ -13,7 +13,7 @@
 #pragma once
 #include <SFML/System/Clock.hpp>
 #include "Debug.hpp"
-#include "EntityNode.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
 {

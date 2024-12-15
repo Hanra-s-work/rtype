@@ -23,8 +23,8 @@
 #include <unordered_map>
 #include "Debug.hpp"
 #include "Constants.hpp"
-#include "EntityNode.hpp"
 #include "ExceptionHandling.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
  /**
   *@brief The Main class is the main class of the program.

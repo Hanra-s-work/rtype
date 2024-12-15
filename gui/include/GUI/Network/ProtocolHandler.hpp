@@ -18,7 +18,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "Debug.hpp"
-#include "EntityNode.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
 class Packet : GUI::ECS::EntityNode {
     public:

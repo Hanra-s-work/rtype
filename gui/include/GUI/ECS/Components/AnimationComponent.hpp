@@ -15,7 +15,7 @@
 #include <cstdint>
 #include <SFML/Graphics/Texture.hpp>
 #include "Debug.hpp"
-#include "EntityNode.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
 {

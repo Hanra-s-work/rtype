@@ -17,7 +17,7 @@
 #include <functional>
 #include <SFML/Window/Event.hpp>
 #include "Debug.hpp"
-#include "EntityNode.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
 {
