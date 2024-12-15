@@ -23,7 +23,7 @@ namespace GUI
             public:
             explicit EntityNode(std::uint32_t entity_id = 0);
             virtual ~EntityNode() = default;
-            virtual std::uint32_t getEntityNodeId() = 0;
+            virtual std::uint32_t getEntityNodeId();
 
             protected:
             std::uint32_t _entityID;
