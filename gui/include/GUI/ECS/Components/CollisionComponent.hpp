@@ -28,19 +28,19 @@ namespace GUI
                 CollisionComponent() = default;
                 ~CollisionComponent() = default;
 
-                virtual void setWidth(std::uint32_t width) = 0;
-                virtual void setHeight(std::uint32_t height) = 0;
-                virtual void setPositionX(std::uint32_t posX) = 0;
-                virtual void setPositionY(std::uint32_t posY) = 0;
+                virtual void setWidth(std::uint32_t width);
+                virtual void setHeight(std::uint32_t height);
+                virtual void setPositionX(std::uint32_t posX);
+                virtual void setPositionY(std::uint32_t posY);
 
-                virtual bool isClicked() const = 0;
-                virtual bool isHovered() const = 0;
-                virtual bool isColliding(const CollisionComponent &itemTwo) const = 0;
+                virtual bool isClicked() const;
+                virtual bool isHovered() const;
+                virtual bool isColliding(const CollisionComponent &itemTwo) const;
 
-                virtual std::uint32_t getWidth() const = 0;
-                virtual std::uint32_t getHeight() const = 0;
-                virtual std::uint32_t getPositionX() const = 0;
-                virtual std::uint32_t getPositionY() const = 0;
+                virtual std::uint32_t getWidth() const;
+                virtual std::uint32_t getHeight() const;
+                virtual std::uint32_t getPositionX() const;
+                virtual std::uint32_t getPositionY() const;
 
                 protected:
                 void updateCollisionData();
