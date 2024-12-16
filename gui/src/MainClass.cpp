@@ -33,6 +33,7 @@
   * @param spriteStartLeft
   * @param spriteWidth
   * @param spriteHeight
+  * @param frameLimit
   * @param debug
   */
 Main::Main(
@@ -51,6 +52,7 @@ Main::Main(
     bool spriteStartLeft,
     unsigned int spriteWidth,
     unsigned int spriteHeight,
+    unsigned int frameLimit,
     bool debug
 ) :
     _windowWidth(windowWidth),
@@ -88,6 +90,12 @@ Main::Main(
         _windowCursorIcon = windowCursorIcon;
     } else {
         throw MyException::FileNotFound(windowCursorIcon);
+    }
+    Debug::getInstance() << "Processing frame limit" << std::endl;
+    if (_isFrameLimitCorrect(frameLimit)) {
+        _windowFrameLimit = frameLimit;
+    } else {
+        throw MyException::InvalidFrameLimit(frameLimit);
     }
     Debug::getInstance() << "End of processing" << std::endl;
 }
@@ -179,6 +187,44 @@ bool Main::_isFilePresent(const std::string &filepath)
 }
 
 /**
+ *@brief The function in charge of checking if the provided frame limit is correct.
+ *
+ * @param frameLimit
+ * @return true
+ * @return false
+ */
+bool Main::_isFrameLimitCorrect(unsigned int frameLimit)
+{
+    if (frameLimit < 10 || frameLimit > 1000) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ *@brief The function in charge of initialising the connection to the server.
+ *
+ * @return int
+ */
+void Main::_initialiseConnection()
+{
+    std::string address = _ip + ":" + std::to_string(_port);
+
+    if (SUCCESS != SUCCESS) {
+        throw MyException::ConnectionFailed(address);
+    }
+}
+
+/**
+ *@brief Close the connection with the server.
+ *
+ */
+void Main::_closeConnection()
+{
+
+}
+
+/**
  *@brief This is the function in charge of initialise the default ressources for the class.
  *
  */
@@ -186,6 +232,10 @@ void Main::_initialiseRessources()
 {
     std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_windowWidth, _windowHeight, _windowTitle);
     std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>();
+
+    window->setFullScreen(_windowFullscreen);
+    window->setFramerateLimit(_windowFrameLimit);
+
 
     _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
@@ -219,12 +269,12 @@ int Main::_mainLoop()
  *
  * @return int The status of the execution of that section of the program.
  */
-int Main::run()
+void Main::run()
 {
-    int status = SUCCESS;
+    _initialiseConnection();
     _initialiseRessources();
-    status = _mainLoop();
-    return status;
+    _mainLoop();
+    _closeConnection();
 }
 
 /**
@@ -407,6 +457,19 @@ void Main::setWindowSize(unsigned int width, unsigned int height)
 }
 
 /**
+ *@brief The function in charge of setting the frame Limit
+ *
+ * @param frameLimit
+ */
+void Main::setFrameLimit(unsigned int frameLimit)
+{
+    if (_isFrameLimitCorrect(frameLimit) == false) {
+        throw MyException::InvalidFrameLimit(frameLimit);
+    }
+    _windowFrameLimit = frameLimit;
+}
+
+/**
  *@brief Toggle the debug mode for the program.
  *
  * @param debug
@@ -563,6 +626,17 @@ unsigned int Main::getWindowCursorSpriteHeight()
 bool Main::getDebug() const
 {
     return _debug;
+}
+
+
+/**
+ *@brief Function in charge of returning the current frame limit.
+ *
+ * @return unsigned int
+ */
+unsigned int Main::getFrameLimit() const
+{
+    return _windowFrameLimit;
 }
 
 /**

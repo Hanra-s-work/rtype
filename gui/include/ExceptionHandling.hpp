@@ -30,6 +30,7 @@ namespace MyException
         private:
         std::string _error;
         std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -46,6 +47,7 @@ namespace MyException
         private:
         std::string _error;
         std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -62,6 +64,7 @@ namespace MyException
         private:
         std::string _error;
         std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -78,6 +81,7 @@ namespace MyException
         private:
         std::string _error;
         std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -92,6 +96,7 @@ namespace MyException
         const char *what() const noexcept;
         private:
         std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -106,6 +111,22 @@ namespace MyException
         const char *what() const noexcept;
         private:
         std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the window frame limit is invalid.
+     *
+     */
+    class InvalidFrameLimit : public std::exception {
+        public:
+        InvalidFrameLimit(unsigned int frameLimit);
+        ~InvalidFrameLimit();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -121,6 +142,7 @@ namespace MyException
         const char *what() const noexcept;
         private:
         std::string _msg;
+        const char *_buffer;
     };
 
     /**
@@ -136,5 +158,17 @@ namespace MyException
         private:
         std::string _argument;
         std::string _msg;
+        const char *_buffer;
+    };
+
+    class ConnectionFailed : public std::exception {
+        public:
+        ConnectionFailed(std::string address = "");
+        ~ConnectionFailed();
+        const char *what() const noexcept;
+        private:
+        std::string _address;
+        std::string _msg;
+        const char *_buffer;
     };
 }

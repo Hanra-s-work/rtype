@@ -35,9 +35,9 @@
   */
 class Main {
   public:
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, bool debug = false);
   ~Main();
-  int run();
+  void run();
   void setIp(const std::string &ip);
   void setPort(const unsigned int port);
   void setWindowWidth(unsigned int width);
@@ -53,6 +53,7 @@ class Main {
   void setWindowCursorSpriteHeight(unsigned int spriteHeight);
   void setWindowCursorSpriteReadFromLeft(bool spriteStartLeft);
   void setWindowSize(unsigned int width, unsigned int height);
+  void setFrameLimit(unsigned int frameLimit);
   void setDebug(bool debug);
   const std::string getIp();
   const unsigned int getPort();
@@ -68,6 +69,7 @@ class Main {
   unsigned int getWindowCursorSpriteWidth();
   unsigned int getWindowCursorSpriteHeight();
   bool getDebug() const;
+  unsigned int getFrameLimit() const;
   std::tuple<unsigned int, unsigned int> getWindowPosition();
   std::tuple<unsigned int, unsigned int> getWindowSize();
 
@@ -77,7 +79,10 @@ class Main {
   bool _isIpInRange(const std::string &ip);
   bool _isPortCorrect(const unsigned int port);
   bool _isFilePresent(const std::string &filepath);
+  bool _isFrameLimitCorrect(unsigned int frameLimit);
   void _initialiseRessources();
+  void _initialiseConnection();
+  void _closeConnection();
 
 
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
@@ -97,6 +102,7 @@ class Main {
   bool _debug;
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
+  unsigned int _windowFrameLimit;
 };
 
 int RealMain(int argc, char **argv);

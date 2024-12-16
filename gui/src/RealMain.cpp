@@ -137,6 +137,24 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
             throw MyException::PortIncorrect(args[1]);
         }
         main.setWindowHeight(windowHeight);
+    } else if (args[0] == "frame-rate-limit" || args[0] == "frl" || args[0] == "frameratelimit") {
+        unsigned int windowHeight = 0;
+        if (args[1].empty()) {
+            std::cerr << "Error: Frame Rate is required." << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        try {
+            windowHeight = static_cast<unsigned int>(std::stoul(args[1]));
+        }
+        catch (const std::invalid_argument &e) {
+            std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        catch (const std::out_of_range &e) {
+            std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
+            throw MyException::PortIncorrect(args[1]);
+        }
+        main.setFrameLimit(windowHeight);
     } else {
         throw MyException::UnknownArgument(args[0]);
     }
@@ -182,7 +200,7 @@ int RealMain(int argc, char **argv)
     int status = SUCCESS;
     bool help_found = false;
 
-    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, false);
+    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, false);
 
     if (argc > 1) {
         try {
@@ -204,7 +222,7 @@ int RealMain(int argc, char **argv)
     }
 
     try {
-        status = MyMain.run();
+        MyMain.run();
     }
     catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;

@@ -21,7 +21,7 @@ static void displayUsageSummary(const std::string binName)
 {
     std::cout << "USAGE:" << std::endl;
     std::cout << "\t" << binName << " [--ip] [--port] [--debug] [--help] ";
-    std::cout << "[--full-screen] [--window-width] [--window-height] ";
+    std::cout << "[--full-screen] [--window-width] [--window-height] [--frame-rate-limit]";
     // std::cout << "[--position-x] [--position-y] [--window-title] [--cursor] ";
     // std::cout << "[--cursor-icon] [--image-is-sprite] [--sprite-start-top] ";
     // std::cout << "[--sprite-start-left] [--sprite-width] [--sprite-height]";
@@ -42,6 +42,7 @@ static void displayDetailedUsage()
     std::cout << "\t--full-screen               \tEnable full screen mode." << std::endl;
     std::cout << "\t--window-width=\"800\"      \tSet the width of the window. (Default value: 800)" << std::endl;
     std::cout << "\t--window-height=\"600\"     \tSet the height of the window. (Default value: 600)" << std::endl;
+    std::cout << "\t--frame-rate-limit=\"60\"   \tSet the frame rate limit of the window. (Default value: 60)" << std::endl;
     // std::cout << "\t--position-x=\"0\"          \tSet the x position of the window. (Default value: 0)" << std::endl;
     // std::cout << "\t--position-y=\"0\"          \tSet the y position of the window. (Default value: 0)" << std::endl;
     // std::cout << "\t--window-title=\"R-Type\"   \tSet the title of the window. (Default value: \"R-Type\")" << std::endl;
