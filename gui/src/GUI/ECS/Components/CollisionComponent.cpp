@@ -28,6 +28,21 @@ GUI::ECS::Components::CollisionComponent::CollisionComponent(const std::uint32_t
 }
 
 /**
+ *@brief Constructs a CollisionComponent with the specified dimensions and position.
+ *
+ * @param dimension an sf::Vector2i of the dimension of the object
+ * @param position an sf::vector2i of the position of the object
+ */
+GUI::ECS::Components::CollisionComponent::CollisionComponent(const sf::Vector2i &dimension, const sf::Vector2i &position)
+{
+    _width = dimension.x;
+    _height = dimension.y;
+    _posX = position.x;
+    _posY = position.y;
+    _updateMouseCollisionData();
+}
+
+/**
  * @brief Default destructor.
  */
 GUI::ECS::Components::CollisionComponent::~CollisionComponent() {}
@@ -73,6 +88,30 @@ void GUI::ECS::Components::CollisionComponent::setPositionX(const std::uint32_t 
 void GUI::ECS::Components::CollisionComponent::setPositionY(const std::uint32_t &posY)
 {
     _posY = posY;
+    _updateMouseCollisionData();
+}
+
+/**
+ *@brief Set the position of the object.
+ *
+ * @param position an sf::Vector2i of the object's position.
+ */
+void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2i &position)
+{
+    _posX = position.x;
+    _posY = position.y;
+    _updateMouseCollisionData();
+}
+
+/**
+ *@brief Set the dimension of the object.
+ *
+ * @param dimension an sf::Vector2i of the of the object's dimension.
+ */
+void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2i &dimension)
+{
+    _width = dimension.x;
+    _height = dimension.y;
     _updateMouseCollisionData();
 }
 
