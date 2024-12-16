@@ -5,15 +5,24 @@ void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2)
     auto &&[healths, teams] = r.get_component_array<Health, Team>();
     if (teams[entity2]->team == team_enum::MONSTER) {
         healths[entity1]->current -= 1;
+        if (healths[entity1]->current == 0) {
+            //also send game over msg to client
+            r.kill_entity(Entity(entity1));
+        }
         r.kill_entity(Entity(entity2));
     }
 }
 
 void collision_monster_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
-    auto &&[healths, teams] = r.get_component_array<Health, Team>();
+    auto &&[healths, teams, loot_drops, positions] = r.get_component_array<Health, Team, LootDrop, Position>();
     if (teams[entity2]->team == team_enum::ALLY) {
         healths[entity1]->current -= 1;
+        if (healths[entity1]->current == 0) {
+            auto loot = loot_drops[entity1];
+            spawn_powerup(r, positions[entity1]->X, positions[entity1]->Y, loot->loot);
+            r.kill_entity(Entity(entity1));
+        }
         r.kill_entity(Entity(entity2));
     }
 }
