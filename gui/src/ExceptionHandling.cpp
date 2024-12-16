@@ -17,8 +17,7 @@
 
 namespace MyException
 {
-    FileNotFound::FileNotFound(std::string error)
-        : _error(error)
+    FileNotFound::FileNotFound(const std::string &error)
     {
         _msg = "Error: The file provided was not found or readable.\n";
         _msg += "The file path you provided is: ";
@@ -33,8 +32,7 @@ namespace MyException
         return _buffer;
     }
 
-    NoFlagParameter::NoFlagParameter(std::string error)
-        : _error(error)
+    NoFlagParameter::NoFlagParameter(const std::string &error)
     {
         _msg = "Error: There is no parameter passed to the flag.\n";
         _msg += "The concerned flag is: ";
@@ -49,8 +47,7 @@ namespace MyException
         return _buffer;
     }
 
-    IpIncorrect::IpIncorrect(std::string error)
-        : _error(error)
+    IpIncorrect::IpIncorrect(const std::string &error)
     {
         _msg = "Error: The ip you provided '";
         _msg += error;
@@ -65,8 +62,7 @@ namespace MyException
         return _buffer;
     }
 
-    PortIncorrect::PortIncorrect(std::string error)
-        : _error(error)
+    PortIncorrect::PortIncorrect(const std::string &error)
     {
         _msg = "Error: The port you provided '";
         _msg += error;
@@ -135,8 +131,7 @@ namespace MyException
         return _buffer;
     }
 
-    UnknownArgument::UnknownArgument(std::string argument)
-        : _argument(argument)
+    UnknownArgument::UnknownArgument(const std::string &argument)
     {
         _msg = "Error: The argument you provided is unknown.\n";
         _msg += "The argument was: '";
@@ -152,8 +147,7 @@ namespace MyException
         return _buffer;
     }
 
-    ConnectionFailed::ConnectionFailed(std::string address)
-        : _address(address)
+    ConnectionFailed::ConnectionFailed(const std::string &address)
     {
         _msg = "Error: The provided address is unreachable.\n";
         _msg += "The address was: '";
@@ -165,6 +159,48 @@ namespace MyException
     ConnectionFailed::~ConnectionFailed() {};
 
     const char *ConnectionFailed::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWidth::InvalidWidth(const std::string &width = "", const std::string &min = "", const std::string &max = "")
+    {
+        _msg = "Error: The width you provided is invalid.\n";
+        _msg += "The width was: '";
+        _msg += width;
+        _msg += "'.\n";
+        _msg += "The width was expected to be between ";
+        _msg += min;
+        _msg += " and ";
+        _msg += max;
+        _msg += ".";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidWidth::~InvalidWidth() {};
+
+    const char *InvalidWidth::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidHeight::InvalidHeight(const std::string &height = "", const std::string &min = "", const std::string &max = "")
+    {
+        _msg = "Error: The height you provided is invalid.\n";
+        _msg += "The height was: '";
+        _msg += height;
+        _msg += "'.\n";
+        _msg += "The height was expected to be between ";
+        _msg += min;
+        _msg += " and ";
+        _msg += max;
+        _msg += ".";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidHeight::~InvalidHeight() {};
+
+    const char *InvalidHeight::what() const noexcept
     {
         return _buffer;
     }

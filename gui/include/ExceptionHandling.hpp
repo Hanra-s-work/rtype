@@ -23,12 +23,11 @@ namespace MyException
      */
     class FileNotFound : public std::exception {
         public:
-        FileNotFound(std::string error = "");
+        FileNotFound(const std::string &error = "");
         ~FileNotFound();
         const char *what() const noexcept;
 
         private:
-        std::string _error;
         std::string _msg;
         const char *_buffer;
     };
@@ -40,12 +39,11 @@ namespace MyException
      */
     class NoFlagParameter : public std::exception {
         public:
-        NoFlagParameter(std::string error = "");
+        NoFlagParameter(const std::string &error = "");
         ~NoFlagParameter();
         const char *what() const noexcept;
 
         private:
-        std::string _error;
         std::string _msg;
         const char *_buffer;
     };
@@ -57,12 +55,11 @@ namespace MyException
      */
     class IpIncorrect : public std::exception {
         public:
-        IpIncorrect(std::string error = "");
+        IpIncorrect(const std::string &error = "");
         ~IpIncorrect();
         const char *what() const noexcept;
 
         private:
-        std::string _error;
         std::string _msg;
         const char *_buffer;
     };
@@ -74,12 +71,11 @@ namespace MyException
      */
     class PortIncorrect : public std::exception {
         public:
-        PortIncorrect(std::string error = "");
+        PortIncorrect(const std::string &error = "");
         ~PortIncorrect();
         const char *what() const noexcept;
 
         private:
-        std::string _error;
         std::string _msg;
         const char *_buffer;
     };
@@ -152,22 +148,40 @@ namespace MyException
      */
     class UnknownArgument : public std::exception {
         public:
-        UnknownArgument(std::string argument = "");
+        UnknownArgument(const std::string &argument = "");
         ~UnknownArgument();
         const char *what() const noexcept;
         private:
-        std::string _argument;
         std::string _msg;
         const char *_buffer;
     };
 
     class ConnectionFailed : public std::exception {
         public:
-        ConnectionFailed(std::string address = "");
+        ConnectionFailed(const std::string &address = "");
         ~ConnectionFailed();
         const char *what() const noexcept;
         private:
-        std::string _address;
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    class InvalidWidth : public std::exception {
+        public:
+        InvalidWidth(const std::string &width = "", const std::string &min = "", const std::string &max = "");
+        ~InvalidWidth();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    class InvalidHeight : public std::exception {
+        public:
+        InvalidHeight(const std::string &height = "", const std::string &min = "", const std::string &max = "");
+        ~InvalidHeight();
+        const char *what() const noexcept;
+        private:
         std::string _msg;
         const char *_buffer;
     };
