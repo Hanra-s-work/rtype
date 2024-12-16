@@ -4,6 +4,9 @@ project(RTypeServer)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(src/includes)
+include_directories(../game_source/components)
+include_directories(../game_source/ECS)
+include_directories(../game_source/systems)
 
 include_directories(/usr/include/asio)
 
@@ -14,6 +17,21 @@ set(SOURCES
     src/ProtocolHandler.cpp
     src/Server.cpp
     src/ThreadPool.cpp
+    ../game_source/ECS/Registry.cpp
+    ../game_source/ECS/ComponentContainer.cpp
+    ../game_source/ECS/DenseArray.cpp
+    ../game_source/ECS/Entity.cpp
+    ../game_source/ECS/IndexedZipper.cpp
+    ../game_source/ECS/IndexedZipperIterator.cpp
+    ../game_source/ECS/SparseArray.cpp
+    ../game_source/ECS/Zipper.cpp
+    ../game_source/ECS/ZipperIterator.cpp
+    ../game_source/systems/AISystem.cpp
+    ../game_source/systems/CollisionSystem.cpp
+    ../game_source/systems/LifetimeSystem.cpp
+    ../game_source/systems/MovementSystem.cpp
+    ../game_source/systems/WeaponSystem.cpp
+    ../game_source/systems/Systems.cpp
 )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

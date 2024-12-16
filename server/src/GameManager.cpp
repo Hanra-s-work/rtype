@@ -10,9 +10,10 @@
 
 void GameManager::Initialize() {
     std::cout << "Initializing game manager in progress" << std::endl;
+    game = Registry();
 }
 
 void GameManager::Update(float deltaTime) {
-    // std::cout << "Updating game logic with deltaTime: " << deltaTime << "s." << std::endl;
-    // TO DO
+    std::cout << "Updating game logic with deltaTime: " << deltaTime << "s." << std::endl;
+    game.run_systems();
 }
