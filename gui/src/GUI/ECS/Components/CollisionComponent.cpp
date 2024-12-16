@@ -27,20 +27,6 @@ GUI::ECS::Components::CollisionComponent::CollisionComponent(const std::uint32_t
     _updateMouseCollisionData();
 }
 
-/**
- *@brief Constructs a CollisionComponent with the specified dimensions and position.
- *
- * @param dimension an sf::Vector2i of the dimension of the object
- * @param position an sf::vector2i of the position of the object
- */
-GUI::ECS::Components::CollisionComponent::CollisionComponent(const sf::Vector2i &dimension, const sf::Vector2i &position)
-{
-    _width = dimension.x;
-    _height = dimension.y;
-    _posX = position.x;
-    _posY = position.y;
-    _updateMouseCollisionData();
-}
 
 /**
  * @brief Default destructor.

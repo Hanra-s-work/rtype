@@ -33,7 +33,6 @@ namespace GUI
             class CollisionComponent : EntityNode {
                 public:
                 CollisionComponent(const std::uint32_t width = 0, const std::uint32_t height = 0, const std::uint32_t positionX = 0, const std::uint32_t positionY = 0);
-                CollisionComponent(const sf::Vector2i &dimension = { 0, 0 }, const sf::Vector2i &position = { 0,0 });
                 ~CollisionComponent();
 
                 virtual void setWidth(const std::uint32_t &width);
