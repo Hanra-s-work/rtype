@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Registry.hpp"
-#include "Zipper.hpp"
-#include "Position.hpp"
-#include "Velocity.hpp"
+class Registry;
 
 /**
  * @brief Handles the movement of entities based on their velocity.
