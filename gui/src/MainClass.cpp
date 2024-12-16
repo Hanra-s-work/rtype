@@ -236,7 +236,6 @@ void Main::_initialiseRessources()
     window->setFullScreen(_windowFullscreen);
     window->setFramerateLimit(_windowFrameLimit);
 
-
     _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
 }
@@ -246,9 +245,8 @@ void Main::_initialiseRessources()
  *
  * @return int The status of the overall execution of that section of the program.
  */
-int Main::_mainLoop()
+void Main::_mainLoop()
 {
-    int globalStatus = SUCCESS;
     std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
     std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
 
@@ -260,8 +258,6 @@ int Main::_mainLoop()
         window.clear();
         window.display();
     }
-
-    return globalStatus;
 }
 
 /**

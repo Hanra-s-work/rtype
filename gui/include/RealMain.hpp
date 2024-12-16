@@ -74,7 +74,7 @@ class Main {
   std::tuple<unsigned int, unsigned int> getWindowSize();
 
   private:
-  int _mainLoop();
+  void _mainLoop();
   std::string _lowerText(const std::string &text);
   bool _isIpInRange(const std::string &ip);
   bool _isPortCorrect(const unsigned int port);
@@ -83,7 +83,6 @@ class Main {
   void _initialiseRessources();
   void _initialiseConnection();
   void _closeConnection();
-
 
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
   std::string _ip;
