@@ -73,7 +73,10 @@ public:
      * @param idx The index to access.
      * @return A reference to the optional value at the specified index.
      */
-    reference_type operator[](size_t idx);
+    reference_type operator[](size_t idx) {
+        assert(idx < _data.size() && "Index out of bounds");
+        return _data[idx];
+    }
 
     /**
      * @brief Accesses the value at the given index (const version).
@@ -81,56 +84,73 @@ public:
      * @param idx The index to access.
      * @return A const reference to the optional value at the specified index.
      */
-    const_reference_type operator[](size_t idx) const;
+    const_reference_type operator[](size_t idx) const {
+        assert(idx < _data.size() && "Index out of bounds");
+        return _data[idx];
+    }
 
     /**
      * @brief Returns an iterator to the beginning of the array.
      * 
      * @return An iterator to the first element.
      */
-    iterator begin();
+    iterator begin() {
+        return _data.begin();
+    }
 
     /**
      * @brief Returns a const iterator to the beginning of the array.
      * 
      * @return A const iterator to the first element.
      */
-    const_iterator begin() const;
+    const_iterator begin() const {
+        return _data.begin();
+    }
 
     /**
      * @brief Returns a const iterator to the beginning of the array.
      * 
      * @return A const iterator to the first element.
      */
-    const_iterator cbegin() const;
+    const_iterator cbegin() const {
+        return _data.cbegin();
+    }
 
     /**
      * @brief Returns an iterator to the end of the array.
      * 
      * @return An iterator to one past the last element.
      */
-    iterator end();
+    iterator end() {
+        return _data.end();
+    }
 
     /**
      * @brief Returns a const iterator to the end of the array.
      * 
      * @return A const iterator to one past the last element.
      */
-    const_iterator end() const;
+    const_iterator end() const {
+        return _data.end();
+    }
 
     /**
      * @brief Returns a const iterator to the end of the array.
      * 
      * @return A const iterator to one past the last element.
      */
-    const_iterator cend() const;
+    const_iterator cend() const {
+        return _data.cend();
+    }
 
     /**
      * @brief Returns the size of the array.
      * 
      * @return The number of elements in the array.
      */
-    size_type size() const;
+    size_type size() const {
+        return _data.size();
+    }
 
     /**
      * @brief Inserts a component at a specific position.
@@ -139,7 +159,11 @@ public:
      * @param component The component to insert.
      * @return A reference to the inserted component.
      */
-    reference_type insert_at(size_type pos, const Component& component);
+    reference_type insert_at(size_type pos, const Component& component) {
+        ensure_size(pos);
+        _data[pos] = component;
+        return _data[pos];
+    }
 
     /**
      * @brief Inserts a component at a specific position (move version).
@@ -148,7 +172,11 @@ public:
      * @param component The component to insert (moved).
      * @return A reference to the inserted component.
      */
-    reference_type insert_at(size_type pos, Component&& component);
+    reference_type insert_at(size_type pos, Component&& component) {
+        ensure_size(pos);
+        _data[pos] = std::move(component);
+        return _data[pos];
+    }
 
     /**
      * @brief Constructs and inserts a component at a specific position.
@@ -159,14 +187,24 @@ public:
      * @return A reference to the inserted component.
      */
     template <class... Params>
-    reference_type emplace_at(size_type pos, Params&&... params);
+    reference_type emplace_at(size_type pos, Params&&... params) {
+        ensure_size(pos);
+        _data[pos].reset();
+        std::allocator_traits<Allocator>::construct(
+                _allocator, std::addressof(_data[pos]), std::forward<Params>(params)...);
+        return _data[pos];
+    }
 
     /**
      * @brief Removes the component at a specific position.
      * 
      * @param pos The position of the component to erase.
      */
-    void erase(size_type pos);
+    void erase(size_type pos) {
+        if (pos < _data.size()) {
+            _data[pos].reset();
+        }
+    }
 
 private:
     /**
@@ -174,7 +212,11 @@ private:
      * 
      * @param pos The position to accommodate.
      */
-    void ensure_size(size_type pos);
+    void ensure_size(size_type pos) {
+        if (pos >= _data.size()) {
+            _data.resize(pos + 1);
+        }
+    }
 
     container_t _data; /**< Internal storage for components. */
     Allocator _allocator; /**< Allocator for managing memory. */

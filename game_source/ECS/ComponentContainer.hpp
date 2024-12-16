@@ -38,7 +38,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    ComponentContainer();
+    ComponentContainer() : _storage(sparse_storage_t()) {}
 
     /**
      * @brief Accesses the component at a given index.
@@ -46,7 +46,9 @@ public:
      * @param idx The index of the component.
      * @return A reference to the component at the specified index.
      */
-    reference operator[](size_t idx);
+    reference operator[](size_t idx) {
+        return std::visit([&](auto& storage) -> reference { return storage[idx]; }, _storage);
+    }
 
     /**
      * @brief Accesses the component at a given index (const version).
@@ -54,7 +56,114 @@ public:
      * @param idx The index of the component.
      * @return A const reference to the component at the specified index.
      */
-    const_reference operator[](size_t idx) const;
+    const_reference operator[](size_t idx) const {
+        return std::visit([&](auto const& storage) -> const_reference { return storage[idx]; }, _storage);
+    }
+
+    /**
+     * @brief Returns an iterator to the beginning of the component container.
+     * 
+     * @return An iterator to the first component.
+     */
+    iterator begin() {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.begin();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.begin();
+        }
+    }
+
+    /**
+     * @brief Returns a const iterator to the beginning of the component container.
+     * 
+     * @return A const iterator to the first component.
+     */
+    const_iterator begin() const {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.begin();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.begin();
+        }
+    }
+
+    /**
+     * @brief Returns a const iterator to the beginning of the component container.
+     * 
+     * @return A const iterator to the first component.
+     */
+    const_iterator cbegin() const {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.cbegin();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.cbegin();
+        }
+    }
+
+    /**
+     * @brief Returns an iterator to the end of the component container.
+     * 
+     * @return An iterator to one past the last component.
+     */
+    iterator end() {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.end();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.end();
+        }
+    }
+
+    /**
+     * @brief Returns a const iterator to the end of the component container.
+     * 
+     * @return A const iterator to one past the last component.
+     */
+    const_iterator end() const {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.end();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.end();
+        }
+    }
+
+    /**
+     * @brief Returns a const iterator to the end of the component container.
+     * 
+     * @return A const iterator to one past the last component.
+     */
+    const_iterator cend() const {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.cend();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.cend();
+        }
+    }
+
+    /**
+     * @brief Returns the number of components stored in the array.
+     * 
+     * @return The number of components.
+     */
+    size_type size() const {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            return sparse.size();
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            return dense.size();
+        }
+    }
 
     /**
      * @brief Inserts a component at a specific ID.
@@ -62,7 +171,19 @@ public:
      * @param id The ID where the component should be inserted.
      * @param component The component to insert.
      */
-    void insert_at(size_type id, const Component& component);
+    void insert_at(size_type id, const Component& component) {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            if (id >= sparse.size()) {
+                sparse.resize(id + 1);
+            }
+            sparse[id] = component;
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            dense.first.push_back(id);
+            dense.second.push_back(component);
+        }
+    }
 
     /**
      * @brief Inserts a component at a specific ID (move version).
@@ -70,7 +191,19 @@ public:
      * @param id The ID where the component should be inserted.
      * @param component The component to insert (moved).
      */
-    void insert_at(size_type id, Component&& component);
+    void insert_at(size_type id, Component&& component) {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            if (id >= sparse.size()) {
+                sparse.resize(id + 1);
+            }
+            sparse[id] = std::forward<Component>(component);
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            dense.first.push_back(id);
+            dense.second.push_back(std::forward<Component>(component));
+        }
+    }
 
     /**
      * @brief Constructs and inserts a component at a specific ID.
@@ -80,29 +213,80 @@ public:
      * @param params The parameters for constructing the component.
      */
     template <typename... Params>
-    void emplace_at(size_type id, Params&&... params);
+    void emplace_at(size_type id, Params&&... params) {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            if (id >= sparse.size()) {
+                sparse.resize(id + 1);
+            }
+
+            sparse[id].emplace(std::forward<Params>(params)...);
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            
+            dense.first.push_back(id);
+            dense.second.emplace_back(std::forward<Params>(params)...);
+        }
+    }
 
     /**
-     * @brief Retrieves a component by its value.
+     * @brief Retrieves a component by its id.
      * 
-     * @param component The component value to search for.
+     * @param id The id value to search for.
      * @return An optional containing the component if found, or `std::nullopt` if not.
      */
-    std::optional<Component> get(const value_type& component) const;
+    std::optional<Component> get(const value_type& id) const {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            const auto& sparse = std::get<sparse_storage_t>(_storage);
+            if (id < sparse.size()) {
+                return sparse[id];
+            }
+        } else {
+            const auto& dense = std::get<dense_storage_t>(_storage);
+            auto it = std::find(dense.first.begin(), dense.first.end(), id);
+            if (it != dense.first.end()) {
+                size_type index = std::distance(dense.first.begin(), it);
+                return dense.second[index];
+            }
+        }
+        return std::nullopt;
+    }
 
     /**
      * @brief Removes a component at a specific ID.
      * 
      * @param id The ID of the component to erase.
      */
-    void erase(size_type id);
+    void erase(size_type id) {
+        std::visit([id](auto& storage) {
+            using T = std::decay_t<decltype(storage)>;
+            if constexpr (std::is_same_v<T, sparse_storage_t>) {
+                if (id < storage.size()) {
+                    storage[id].reset();
+                }
+            } else if constexpr (std::is_same_v<T, dense_storage_t>) {
+                auto& [ids, components] = storage;
+                auto it = std::find(ids.begin(), ids.end(), id);
+                if (it != ids.end()) {
+                    size_t index = std::distance(ids.begin(), it);
+                    ids.erase(it);
+                    components.erase(components.begin() + index);
+                }
+            }
+        }, _storage);
+    }
 
     /**
      * @brief Resizes the container to a new size.
      * 
      * @param new_size The new size of the container.
      */
-    void resize(size_type new_size);
+    void resize(size_type new_size) {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            sparse.resize(new_size);
+        }
+    }
 
     /**
      * @brief Optimizes the storage type based on thresholds for sparse and dense storage.
@@ -110,7 +294,24 @@ public:
      * @param sparse_threshold The threshold for switching to sparse storage.
      * @param dense_threshold The threshold for switching to dense storage.
      */
-    void optimize_storage(size_type sparse_threshold, size_type dense_threshold);
+    void optimize_storage(size_type sparse_threshold, size_type dense_threshold) {
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            size_type filled = std::count_if(sparse.begin(), sparse.end(), [](const auto& opt) { return opt.has_value(); });
+            if (filled >= dense_threshold) {
+                dense_storage_t dense;
+                migrate_storage(dense);
+                _storage = std::move(dense);
+            }
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            if (dense.first.size() <= sparse_threshold) {
+                sparse_storage_t sparse;
+                migrate_storage(sparse);
+                _storage = std::move(sparse);
+            }
+        }
+    }
 
 private:
     /**
@@ -126,5 +327,22 @@ private:
      * @param new_storage The new storage container.
      */
     template <typename NewContainer>
-    void migrate_storage(NewContainer& new_storage);
+    void migrate_storage(NewContainer& new_storage) {
+         if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            const auto& sparse = std::get<sparse_storage_t>(_storage);
+            for (size_type i = 0; i < sparse.size(); ++i) {
+                if (sparse[i]) {
+                    new_storage.first.push_back(i);
+                    new_storage.second.push_back(*sparse[i]);
+                }
+            }
+        } else {
+            const auto& dense = std::get<dense_storage_t>(_storage);
+            size_type max_id = *std::max_element(dense.first.begin(), dense.first.end());
+            new_storage.resize(max_id + 1);
+            for (size_type i = 0; i < dense.first.size(); ++i) {
+                new_storage[dense.first[i]] = dense.second[i];
+            }
+        }
+    }
 };

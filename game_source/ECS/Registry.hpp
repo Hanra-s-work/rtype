@@ -8,6 +8,7 @@
 
 #include "ComponentContainer.hpp"
 #include "Entity.hpp"
+#include "Systems.hpp"
 
 /**
  * @class Registry
@@ -36,7 +37,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    Registry() = default;
+    Registry();
 
     /**
      * @brief Adds a system to the registry.
@@ -48,7 +49,16 @@ public:
      * @param f The system function to add.
      */
     template <typename... Components, typename Function>
-    void add_system(Function&& f);
+    void add_system(Function&& f) {
+        auto system = [f = std::forward<Function>(f), this]() {
+        auto component_arrays = get_component_array<Components...>();
+        std::apply([&](auto&&... args) {
+            f(*this, std::forward<decltype(args)>(args)...);
+        }, component_arrays);
+        };
+
+        _systems.push_back(system);
+    }
 
     /**
      * @brief Executes all registered systems.
@@ -62,7 +72,23 @@ public:
      * @return A reference to the component container for the given type.
      */
     template <class Component>
-    ComponentContainer<Component>& register_component();
+    ComponentContainer<Component>& register_component() {
+        auto type_index = std::type_index(typeid(Component));
+
+        auto erase_function = [this](Registry& registry, Entity const& entity) {
+            auto &container = registry.get_components<Component>();
+            container.erase(entity);
+        };
+
+        _erase_functions[type_index] = erase_function;
+
+        auto &arr = _components[type_index];
+        if (arr.has_value()) {
+            arr = std::make_any<ComponentContainer<Component>>();
+        }
+
+        return std::any_cast<ComponentContainer<Component> &>(arr);
+    }
 
     /**
      * @brief Retrieves component containers for multiple component types.
@@ -71,7 +97,9 @@ public:
      * @return A tuple containing references to the component containers.
      */
     template <typename... Components>
-    std::tuple<ComponentContainer<Components>&...> get_component_array();
+    std::tuple<ComponentContainer<Components>&...> get_component_array() {
+        return std::tie(get_components<Components>()...);
+    }
 
     /**
      * @brief Retrieves the component container for a specific type.
@@ -80,7 +108,9 @@ public:
      * @return A reference to the component container.
      */
     template <class Component>
-    ComponentContainer<Component>& get_components();
+    ComponentContainer<Component>& get_components() {
+        return std::any_cast<ComponentContainer<Component>&>(_components[typeid(Component)]);
+    }
 
     /**
      * @brief Adds a component to an entity.
@@ -91,7 +121,11 @@ public:
      * @return A reference to the added component.
      */
     template <typename Component>
-    reference<Component> add_component(const Entity& entity, Component&& component);
+    reference<Component> add_component(const Entity& entity, Component&& component) {
+        auto& array = get_components<Component>();
+        array.insert_at(entity.getID(), std::forward<Component>(component));
+        return array[entity];
+    }
 
     /**
      * @brief Emplaces a component for an entity with constructor parameters.
@@ -103,7 +137,11 @@ public:
      * @return A reference to the added component.
      */
     template <typename Component, typename... Params>
-    reference<Component> emplace_component(const Entity& entity, Params&&... params);
+    reference<Component> emplace_component(const Entity& entity, Params&&... params) {
+        auto& array = get_components<Component>();
+        array.emplace_at(entity.getID(), std::forward<Params>(params)...);
+        return array[entity];
+    }
 
     /**
      * @brief Removes a component from an entity.
@@ -112,7 +150,10 @@ public:
      * @param entity The entity to remove the component from.
      */
     template <typename Component>
-    void remove_component(const Entity& entity);
+    void remove_component(const Entity& entity) {
+        auto& array = get_components<Component>();
+        array.erase(entity.getID());
+    }
 
     /**
      * @brief Creates a new entity.

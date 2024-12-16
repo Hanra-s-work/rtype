@@ -24,21 +24,27 @@ public:
      * 
      * @param cs References to the containers to zip together.
      */
-    IndexedZipper(Containers&... cs);
+    IndexedZipper(Containers&... cs)
+        : _begin(create_iterators(cs...)), _end(create_end_iterators(cs...)),
+         _size(_compute_size(cs...)) {}
 
     /**
      * @brief Returns an iterator to the beginning of the zipped containers.
      * 
      * @return An iterator pointing to the first tuple of elements from the zipped containers.
      */
-    iterator begin();
+    iterator begin() {
+        return iterator(_begin, _size);
+    }
 
     /**
      * @brief Returns an iterator to the end of the zipped containers.
      * 
      * @return An iterator pointing past the last tuple of elements from the zipped containers.
      */
-    iterator end();
+    iterator end() {
+        return iterator(_end, _size);
+    }
 
 private:
     /**
@@ -49,7 +55,9 @@ private:
      * @param containers The containers to compute the size from.
      * @return The size of the smallest container.
      */
-    static size_t _compute_size(Containers&... containers);
+    static size_t _compute_size(Containers&... containers) {
+        return std::min({containers.size()...});
+    }
 
     /**
      * @brief Creates a tuple of iterators pointing to the beginning of each container.
@@ -57,7 +65,9 @@ private:
      * @param containers The containers for which iterators are created.
      * @return A tuple of iterators to the beginning of each container.
      */
-    static iterator_tuple create_iterators(Containers&... containers);
+    static iterator_tuple create_iterators(Containers&... containers) {
+        return std::make_tuple(std::begin(containers)...);
+    }
 
     /**
      * @brief Creates a tuple of iterators pointing to the end of each container.
@@ -65,7 +75,9 @@ private:
      * @param containers The containers for which end iterators are created.
      * @return A tuple of iterators to the end of each container.
      */
-    static iterator_tuple create_end_iterators(Containers&... containers);
+    static iterator_tuple create_end_iterators(Containers&... containers) {
+        return std::make_tuple(std::end(containers)...);
+    }
 
 private:
     iterator_tuple _begin; /**< Tuple of iterators pointing to the beginning of the containers. */
