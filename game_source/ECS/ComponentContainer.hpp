@@ -30,10 +30,10 @@ public:
     using dense_storage_t = DenseArray<Component, Allocator>; /**< Dense storage type. */
     using size_type = typename sparse_storage_t::size_type; /**< Size type. */
 
-    using reference = std::optional<Component>&; /**< Reference to a component. */
-    using const_reference = const std::optional<Component>&; /**< Const reference to a component. */
-    using iterator = std::variant<typename sparse_storage_t::iterator, typename dense_storage_t::iterator>; /**< Iterator type. */
-    using const_iterator = std::variant<typename sparse_storage_t::const_iterator, typename dense_storage_t::const_iterator>; /**< Const iterator type. */
+    using reference = optional_t&; /**< Reference to a component. */
+    using const_reference = const optional_t&; /**< Const reference to a component. */
+    using iterator = typename std::vector<optional_t, Allocator>::iterator; /**< Iterator type. */
+    using const_iterator = typename std::vector<optional_t, Allocator>::const_iterator; /**< Const iterator type. */
 
     /**
      * @brief Default constructor.
@@ -180,8 +180,7 @@ public:
             sparse[id] = component;
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
-            dense.first.push_back(id);
-            dense.second.push_back(component);
+            dense.insert_at(id, component);
         }
     }
 
@@ -200,8 +199,7 @@ public:
             sparse[id] = std::forward<Component>(component);
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
-            dense.first.push_back(id);
-            dense.second.push_back(std::forward<Component>(component));
+            dense.insert_at(id, std::forward<Component>(component));
         }
     }
 
@@ -224,8 +222,7 @@ public:
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
             
-            dense.first.push_back(id);
-            dense.second.emplace_back(std::forward<Params>(params)...);
+            dense.emplace_at(id, std::forward<Params>(params)...);
         }
     }
 
@@ -243,10 +240,8 @@ public:
             }
         } else {
             const auto& dense = std::get<dense_storage_t>(_storage);
-            auto it = std::find(dense.first.begin(), dense.first.end(), id);
-            if (it != dense.first.end()) {
-                size_type index = std::distance(dense.first.begin(), it);
-                return dense.second[index];
+             if (id < dense.size()) {
+                return dense[id];
             }
         }
         return std::nullopt;
@@ -265,12 +260,8 @@ public:
                     storage[id].reset();
                 }
             } else if constexpr (std::is_same_v<T, dense_storage_t>) {
-                auto& [ids, components] = storage;
-                auto it = std::find(ids.begin(), ids.end(), id);
-                if (it != ids.end()) {
-                    size_t index = std::distance(ids.begin(), it);
-                    ids.erase(it);
-                    components.erase(components.begin() + index);
+                if (id < storage.size()) {
+                    storage.erase(id);
                 }
             }
         }, _storage);
@@ -305,7 +296,7 @@ public:
             }
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
-            if (dense.first.size() <= sparse_threshold) {
+            if (dense.size() <= sparse_threshold) {
                 sparse_storage_t sparse;
                 migrate_storage(sparse);
                 _storage = std::move(sparse);
@@ -332,16 +323,15 @@ private:
             const auto& sparse = std::get<sparse_storage_t>(_storage);
             for (size_type i = 0; i < sparse.size(); ++i) {
                 if (sparse[i]) {
-                    new_storage.first.push_back(i);
-                    new_storage.second.push_back(*sparse[i]);
+                    new_storage.insert_at(i, *sparse[i]);
                 }
             }
         } else {
             const auto& dense = std::get<dense_storage_t>(_storage);
-            size_type max_id = *std::max_element(dense.first.begin(), dense.first.end());
+            size_type max_id = *std::max_element(dense.begin(), dense.end());
             new_storage.resize(max_id + 1);
-            for (size_type i = 0; i < dense.first.size(); ++i) {
-                new_storage[dense.first[i]] = dense.second[i];
+            for (size_type i = 0; i < dense.size(); ++i) {
+                new_storage[i] = dense[i];
             }
         }
     }
