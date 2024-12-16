@@ -36,6 +36,7 @@ set(SOURCES
 
     src/GUI/ECS/Utilities/Clock.cpp
     src/GUI/ECS/Utilities/Window.cpp
+    src/GUI/ECS/Utilities/MouseInfo.cpp
     src/GUI/ECS/Utilities/EventManager.cpp
 )
 
