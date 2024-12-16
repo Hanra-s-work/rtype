@@ -27,6 +27,8 @@ namespace GUI
                 void display();
                 bool isOpen() const;
                 void close();
+                bool pollEvent(sf::Event &event);
+
                 sf::RenderWindow &getWindow();
 
                 private:

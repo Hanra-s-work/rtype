@@ -47,8 +47,32 @@ void GUI::ECS::Utilities::EventManager::clearEvents()
 }
 
 
-void GUI::ECS::Utilities::EventManager::processEvents()
+void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Window &windowItem)
 {
     clearEvents();
-    std::cout << "Implement the processEvent function" << std::endl;
+    Debug::getInstance() << "Implement the processEvent function" << std::endl;
+    while (windowItem.pollEvent(_event)) {
+        switch (_event.type) {
+            case sf::Event::Closed:
+                windowItem.close();
+                break;
+
+            case sf::Event::KeyPressed:
+                if (_event.key.code == sf::Keyboard::Escape) {
+                    windowItem.close();
+                }
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                if (_event.mouseButton.button == sf::Mouse::Left) {
+                    Debug::getInstance() << "Left mouse button clicked at ("
+                        << _event.mouseButton.x << ", "
+                        << _event.mouseButton.y << ")\n";
+                }
+                break;
+            default:
+                break;
+        }
+    }
 }
+

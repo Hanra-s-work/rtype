@@ -41,3 +41,8 @@ sf::RenderWindow &GUI::ECS::Utilities::Window::getWindow()
 {
     return _window;
 }
+
+bool GUI::ECS::Utilities::Window::pollEvent(sf::Event &event)
+{
+    return _window.pollEvent(event);
+}

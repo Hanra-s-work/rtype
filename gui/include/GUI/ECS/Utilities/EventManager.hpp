@@ -18,6 +18,7 @@
 #include <SFML/Window/Event.hpp>
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Window.hpp"
 
 namespace GUI
 {
@@ -30,12 +31,12 @@ namespace GUI
                 EventManager();
                 ~EventManager();
                 void clearEvents();
+                void processEvents(GUI::ECS::Utilities::Window &window);
                 bool isLeftButtonClicked() const;
                 bool isRightButtonClicked() const;
                 sf::Vector2f getMousePosition() const;
                 std::vector<std::any> getKeys() const;
                 private:
-                void processEvents();
                 sf::Event _event;
                 bool _leftButtonClicked = false;
                 bool _rightButtonClicked = false;

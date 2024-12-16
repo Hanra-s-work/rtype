@@ -184,9 +184,34 @@ bool Main::_isFilePresent(const std::string &filepath)
  */
 void Main::_initialiseRessources()
 {
-    auto window = std::make_shared<GUI::ECS::Utilities::Window>(_windowWidth, _windowHeight, _windowTitle);
+    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_windowWidth, _windowHeight, _windowTitle);
+    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>();
 
     _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
+    _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
+}
+
+/**
+ *@brief This is the function in charge of running the program's graphic logic.
+ *
+ * @return int The status of the overall execution of that section of the program.
+ */
+int Main::_mainLoop()
+{
+    int globalStatus = SUCCESS;
+    std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
+    std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
+
+    GUI::ECS::Utilities::Window &window = *window_ptr;
+    GUI::ECS::Utilities::EventManager &event = *event_ptr;
+
+    while (window.isOpen()) {
+        event.processEvents(window);
+        window.clear();
+        window.display();
+    }
+
+    return globalStatus;
 }
 
 /**
@@ -196,8 +221,10 @@ void Main::_initialiseRessources()
  */
 int Main::run()
 {
+    int status = SUCCESS;
     _initialiseRessources();
-    return SUCCESS;
+    status = _mainLoop();
+    return status;
 }
 
 /**

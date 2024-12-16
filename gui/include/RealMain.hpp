@@ -27,6 +27,7 @@
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
+#include "GUI/ECS/Utilities/EventManager.hpp"
 
  /**
   *@brief The Main class is the main class of the program.
@@ -71,6 +72,7 @@ class Main {
   std::tuple<unsigned int, unsigned int> getWindowSize();
 
   private:
+  int _mainLoop();
   std::string _lowerText(const std::string &text);
   bool _isIpInRange(const std::string &ip);
   bool _isPortCorrect(const unsigned int port);
