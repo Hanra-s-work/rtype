@@ -8,15 +8,15 @@
  * such as player, monsters, missiles, obstacles, powerups, and health packs.
  */
 enum image_enum {
-    PLAYER,      /**< The image representing the player. */
-    MONSTER1,    /**< The image representing the first type of monster. */
-    MONSTER2,    /**< The image representing the second type of monster. */
-    MISSILE1,    /**< The image representing the first type of missile. */
-    MISSILE2,    /**< The image representing the second type of missile. */
-    OBSTACLE1,   /**< The image representing the first type of obstacle. */
-    OBSTACLE2,   /**< The image representing the second type of obstacle. */
-    POWERUP,     /**< The image representing a power-up item. */
-    HEALTHPACK   /**< The image representing a health pack item. */
+    PLAYER_ASSET,      /**< The image representing the player. */
+    MONSTER1_ASSET,    /**< The image representing the first type of monster. */
+    MONSTER2_ASSET,    /**< The image representing the second type of monster. */
+    MISSILE1_ASSET,    /**< The image representing the first type of missile. */
+    MISSILE2_ASSET,    /**< The image representing the second type of missile. */
+    OBSTACLE1_ASSET,   /**< The image representing the first type of obstacle. */
+    OBSTACLE2_ASSET,   /**< The image representing the second type of obstacle. */
+    POWERUP_ASSET,     /**< The image representing a power-up item. */
+    HEALTHPACK_ASSET   /**< The image representing a health pack item. */
 };
 
 /**
