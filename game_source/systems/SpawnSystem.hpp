@@ -1,23 +1,10 @@
 #pragma once
 
-#include "Registry.hpp"
-#include "Position.hpp"
-#include "Velocity.hpp"
-#include "Image.hpp"
-#include "Collider.hpp"
-#include "Weapon.hpp"
-#include "Health.hpp"
-#include "PlayerInfo.hpp"
-#include "Type.hpp"
-#include "Lifetime.hpp"
-#include "PowerUp.hpp"
-#include "LootDrop.hpp"
-#include "Team.hpp"
+#include "Components.hpp"
+
+class Registry;
 
 #define DEFAULT_TIMER 5.0f
-
-float spawn_timer = DEFAULT_TIMER;
-float spawn_obstacle_timer = DEFAULT_TIMER * 3;
 
 /**
  * @brief Spawns a monster at the specified position.
@@ -89,9 +76,8 @@ void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const lo
  * the frequency at which monsters are spawned.
  * 
  * @param r The `Registry` that contains all game entities and their components.
- * @param delta_time The time elapsed since the last update, used to manage spawn intervals.
  */
-void spawn_monster_system(Registry &r, float delta_time);
+void spawn_monster_system(Registry &r);
 
 /**
  * @brief Spawns obstacles periodically based on the spawn timer.
@@ -100,6 +86,5 @@ void spawn_monster_system(Registry &r, float delta_time);
  * to determine the frequency at which obstacles are spawned.
  * 
  * @param r The `Registry` that contains all game entities and their components.
- * @param delta_time The time elapsed since the last update, used to manage spawn intervals.
  */
-void spawn_obstacle_system(Registry &r, float delta_time);
+void spawn_obstacle_system(Registry &r);
