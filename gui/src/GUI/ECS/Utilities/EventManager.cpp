@@ -60,6 +60,8 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
             case sf::Event::KeyPressed:
                 if (_event.key.code == sf::Keyboard::Escape) {
                     windowItem.close();
+                } else {
+                    _keys.push_back(_event.key.code);
                 }
                 break;
 
@@ -68,8 +70,20 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
                     Debug::getInstance() << "Left mouse button clicked at ("
                         << _event.mouseButton.x << ", "
                         << _event.mouseButton.y << ")\n";
+                    _leftButtonClicked = true;
+                } else if (_event.mouseButton.button == sf::Mouse::Right) {
+                    Debug::getInstance() << "Right mouse button clicked at ("
+                        << _event.mouseButton.x << ", "
+                        << _event.mouseButton.y << ")\n";
+                    _rightButtonClicked = true;
                 }
                 break;
+            case sf::Event::MouseMoved:
+                Debug::getInstance() << "The mouse was moved, it's position is ("
+                    << _event.mouseMove.x << ", "
+                    << _event.mouseMove.y << ")\n";
+                _mousePosition.x = _event.mouseMove.x;
+                _mousePosition.y = _event.mouseMove.y;
             default:
                 break;
         }

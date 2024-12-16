@@ -41,7 +41,7 @@ namespace GUI
                 bool _leftButtonClicked = false;
                 bool _rightButtonClicked = false;
                 sf::Vector2f _mousePosition;
-                std::vector<std::any> _keys;
+                std::vector<sf::Keyboard::Key> _keys;
             };
         }
     }
