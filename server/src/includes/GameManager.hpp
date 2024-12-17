@@ -8,7 +8,7 @@
 #ifndef GAME_MANAGER_H
     #define GAME_MANAGER_H
 
-    #include "Registry.hpp"
+    class Registry;
 
     class GameManager {
         public:
@@ -17,7 +17,7 @@
             // TO DO / IMPLEMENT
         
         private:
-            Registry game;
+            Registry *game;
     };
 
 #endif // GAME_MANAGER_H

@@ -83,7 +83,7 @@ public:
         _erase_functions[type_index] = erase_function;
 
         auto &arr = _components[type_index];
-        if (arr.has_value()) {
+        if (!arr.has_value()) {
             arr = std::make_any<ComponentContainer<Component>>();
         }
 
