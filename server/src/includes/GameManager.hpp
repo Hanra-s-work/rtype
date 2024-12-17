@@ -8,11 +8,16 @@
 #ifndef GAME_MANAGER_H
     #define GAME_MANAGER_H
 
+    class Registry;
+
     class GameManager {
         public:
             void Initialize();
             void Update(float deltaTime);
             // TO DO / IMPLEMENT
+        
+        private:
+            Registry *game;
     };
 
 #endif // GAME_MANAGER_H

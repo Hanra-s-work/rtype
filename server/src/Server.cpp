@@ -47,7 +47,7 @@ void Server::RunLoop() {
     while (running) {
         auto startTime = std::chrono::steady_clock::now();
 
-        HandleMessages();
+        //HandleMessages();
         gameManager.Update(0.016f);
 
         auto endTime = std::chrono::steady_clock::now();
