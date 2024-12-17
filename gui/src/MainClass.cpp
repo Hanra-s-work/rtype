@@ -232,6 +232,7 @@ void Main::_initialiseRessources()
 {
     std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_windowWidth, _windowHeight, _windowTitle);
     std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>();
+    // std::shared_ptr<GUI::ECS::
 
     window->setFullScreen(_windowFullscreen);
     window->setFramerateLimit(_windowFrameLimit);

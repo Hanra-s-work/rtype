@@ -39,10 +39,11 @@ namespace GUI
                 virtual void setHeight(const std::uint32_t &height);
                 virtual void setPositionX(const std::uint32_t &posX);
                 virtual void setPositionY(const std::uint32_t &posY);
-                virtual void setPosition(const sf::Vector2i &position);
-                virtual void setDimension(const sf::Vector2i &dimension);
+                virtual void setPosition(const sf::Vector2f &position);
+                virtual void setDimension(const sf::Vector2f &dimension);
                 virtual void setMousePosition(const sf::Vector2f &mousePosition);
 
+                virtual void update(const GUI::ECS::Components::CollisionComponent &copy);
                 virtual void updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse);
 
                 virtual bool isClicked() const;
@@ -53,6 +54,9 @@ namespace GUI
                 virtual std::uint32_t getHeight() const;
                 virtual std::uint32_t getPositionX() const;
                 virtual std::uint32_t getPositionY() const;
+                virtual sf::Vector2f getPosition() const;
+                virtual sf::Vector2f getDimension() const;
+                virtual GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
 
                 protected:
                 void _updateMouseCollisionData();

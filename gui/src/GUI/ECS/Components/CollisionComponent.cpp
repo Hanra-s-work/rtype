@@ -80,9 +80,9 @@ void GUI::ECS::Components::CollisionComponent::setPositionY(const std::uint32_t 
 /**
  *@brief Set the position of the object.
  *
- * @param position an sf::Vector2i of the object's position.
+ * @param position an sf::Vector2f of the object's position.
  */
-void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2i &position)
+void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2f &position)
 {
     _posX = position.x;
     _posY = position.y;
@@ -92,9 +92,9 @@ void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2i &p
 /**
  *@brief Set the dimension of the object.
  *
- * @param dimension an sf::Vector2i of the of the object's dimension.
+ * @param dimension an sf::Vector2f of the of the object's dimension.
  */
-void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2i &dimension)
+void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2f &dimension)
 {
     _width = dimension.x;
     _height = dimension.y;
@@ -110,6 +110,22 @@ void GUI::ECS::Components::CollisionComponent::setMousePosition(const sf::Vector
 {
     _mouse.update(mousePosition);
     _updateMouseCollisionData();
+}
+
+/**
+ *@brief Update the info object used in the CollisionComponent class.
+ *
+ * @param copy
+ */
+void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Components::CollisionComponent &copy)
+{
+    _isHovered = copy.isHovered();
+    _isClicked = copy.isClicked();
+    _posX = copy.getPositionX();
+    _posY = copy.getPositionY();
+    _width = copy.getWidth();
+    _height = copy.getHeight();
+    _mouse.update(copy.getMouseInfo());
 }
 
 /**
@@ -181,6 +197,37 @@ std::uint32_t GUI::ECS::Components::CollisionComponent::getPositionX() const
 std::uint32_t GUI::ECS::Components::CollisionComponent::getPositionY() const
 {
     return _posY;
+}
+
+/**
+ * @brief Get the position of the item in the form of an sf::Vector2i
+ *
+ * @return sf::Vector2f of the position of the element
+ */
+sf::Vector2f GUI::ECS::Components::CollisionComponent::getPosition() const
+{
+    sf::Vector2f position;
+    position.x = _posX;
+    position.y = _posY;
+    return position;
+}
+
+/**
+ *@brief Get the dimension of the item in the form of an sf::Vector2i
+ *
+ * @return sf::Vector2f of the dimension of the element.
+ */
+sf::Vector2f GUI::ECS::Components::CollisionComponent::getDimension() const
+{
+    sf::Vector2f dimension;
+    dimension.x = _width;
+    dimension.y = _height;
+    return dimension;
+}
+
+GUI::ECS::Utilities::MouseInfo GUI::ECS::Components::CollisionComponent::getMouseInfo() const
+{
+    return _mouse;
 }
 
 /**

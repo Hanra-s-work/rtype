@@ -64,7 +64,6 @@ static void displayAuthors()
     std::cout << "AUTHORS:" << std::endl;
     std::cout << "This program was created for Epitech ";
     std::cout << "project by students of the Epitech school." << std::endl;
-    std::cout << std::endl;
 }
 
 /**
@@ -79,5 +78,4 @@ void DisplayHelp(const std::string binName)
     displayDetailedUsage();
     std::cout << std::endl;
     displayAuthors();
-    std::cout << std::endl;
 }

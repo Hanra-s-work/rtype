@@ -28,6 +28,7 @@ set(SOURCES
     src/GUI/ECS/Components/PositionComponent.cpp
     src/GUI/ECS/Components/RenderComponent.cpp
     src/GUI/ECS/Components/TextComponent.cpp
+    src/GUI/ECS/Components/ShapeComponent.cpp
 
     src/GUI/ECS/Systems/AnimationSystem.cpp
     src/GUI/ECS/Systems/ButtonSystem.cpp

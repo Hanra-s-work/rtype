@@ -17,40 +17,51 @@ GUI::ECS::Utilities::EventManager::EventManager() {}
 
 GUI::ECS::Utilities::EventManager::~EventManager() {}
 
-sf::Vector2f GUI::ECS::Utilities::EventManager::getMousePosition() const
+float GUI::ECS::Utilities::EventManager::getPositionX() const
 {
-    return _mousePosition;
+    return _mouse.getPositionX();
 }
 
-std::vector<std::any> GUI::ECS::Utilities::EventManager::getKeys() const
+float GUI::ECS::Utilities::EventManager::getPositionY() const
+{
+    return _mouse.getPositionY();
+}
+
+sf::Vector2f GUI::ECS::Utilities::EventManager::getMousePosition() const
+{
+    return _mouse.getMousePosition();
+}
+
+std::vector<sf::Keyboard::Key> GUI::ECS::Utilities::EventManager::getKeys() const
 {
     return _keys;
 }
 
+bool GUI::ECS::Utilities::EventManager::isMouseInFocus() const
+{
+    return _mouse.isMouseInFocus();
+}
+
 bool GUI::ECS::Utilities::EventManager::isLeftButtonClicked() const
 {
-    return _leftButtonClicked;
+    return _mouse.isMouseLeftButtonClicked();
 }
 
 bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
 {
-    return _rightButtonClicked;
+    return _mouse.isMouseRightButtonClicked();
 }
 
 void GUI::ECS::Utilities::EventManager::clearEvents()
 {
     _keys.clear();
-    _mousePosition.x = 0;
-    _mousePosition.y = 0;
-    _leftButtonClicked = false;
-    _rightButtonClicked = false;
+    _mouse.clear();
 }
 
 
 void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Window &windowItem)
 {
     clearEvents();
-    Debug::getInstance() << "Implement the processEvent function" << std::endl;
     while (windowItem.pollEvent(_event)) {
         switch (_event.type) {
             case sf::Event::Closed:
@@ -58,6 +69,8 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
                 break;
 
             case sf::Event::KeyPressed:
+                Debug::getInstance() << "A key was pressed, it's code is: '"
+                    << _event.key.code << "'." << std::endl;
                 if (_event.key.code == sf::Keyboard::Escape) {
                     windowItem.close();
                 } else {
@@ -66,24 +79,25 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
                 break;
 
             case sf::Event::MouseButtonPressed:
-                if (_event.mouseButton.button == sf::Mouse::Left) {
-                    Debug::getInstance() << "Left mouse button clicked at ("
-                        << _event.mouseButton.x << ", "
-                        << _event.mouseButton.y << ")\n";
-                    _leftButtonClicked = true;
-                } else if (_event.mouseButton.button == sf::Mouse::Right) {
-                    Debug::getInstance() << "Right mouse button clicked at ("
-                        << _event.mouseButton.x << ", "
-                        << _event.mouseButton.y << ")\n";
-                    _rightButtonClicked = true;
-                }
+                _mouse.update(_event);
                 break;
             case sf::Event::MouseMoved:
-                Debug::getInstance() << "The mouse was moved, it's position is ("
-                    << _event.mouseMove.x << ", "
-                    << _event.mouseMove.y << ")\n";
-                _mousePosition.x = _event.mouseMove.x;
-                _mousePosition.y = _event.mouseMove.y;
+                _mouse.update(_event.mouseMove);
+                break;
+            case sf::Event::MouseWheelMoved:
+                _mouse.update(_event);
+                break;
+            case sf::Event::MouseWheelScrolled:
+                _mouse.update(_event);
+                break;
+            case sf::Event::TouchBegan:
+                _mouse.update(_event);
+                break;
+            case sf::Event::TouchEnded:
+                _mouse.update(_event);
+                break;
+            case sf::Event::TouchMoved:
+                _mouse.update(_event);
             default:
                 break;
         }

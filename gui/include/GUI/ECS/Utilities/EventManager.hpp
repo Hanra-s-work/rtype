@@ -19,6 +19,7 @@
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
+#include "GUI/ECS/Utilities/MouseInfo.hpp"
 
 namespace GUI
 {
@@ -32,15 +33,17 @@ namespace GUI
                 ~EventManager();
                 void clearEvents();
                 void processEvents(GUI::ECS::Utilities::Window &window);
+                bool isMouseInFocus() const;
                 bool isLeftButtonClicked() const;
                 bool isRightButtonClicked() const;
+                float getPositionX() const;
+                float getPositionY() const;
                 sf::Vector2f getMousePosition() const;
-                std::vector<std::any> getKeys() const;
+
+                std::vector<sf::Keyboard::Key> getKeys() const;
                 private:
                 sf::Event _event;
-                bool _leftButtonClicked = false;
-                bool _rightButtonClicked = false;
-                sf::Vector2f _mousePosition;
+                MouseInfo _mouse;
                 std::vector<sf::Keyboard::Key> _keys;
             };
         }

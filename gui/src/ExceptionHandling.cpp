@@ -169,11 +169,15 @@ namespace MyException
         _msg += "The width was: '";
         _msg += width;
         _msg += "'.\n";
-        _msg += "The width was expected to be between ";
-        _msg += min;
-        _msg += " and ";
-        _msg += max;
-        _msg += ".";
+        if (min.empty() == false) {
+            _msg += "The width was expected to be between ";
+            _msg += min;
+            if (max.empty() == false) {
+                _msg += " and ";
+                _msg += max;
+            }
+            _msg += ".";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -190,17 +194,53 @@ namespace MyException
         _msg += "The height was: '";
         _msg += height;
         _msg += "'.\n";
-        _msg += "The height was expected to be between ";
-        _msg += min;
-        _msg += " and ";
-        _msg += max;
-        _msg += ".";
+        if (min.empty() == false) {
+            _msg += "The height was expected to be between ";
+            _msg += min;
+            if (max.empty() == false) {
+                _msg += " and ";
+                _msg += max;
+            }
+            _msg += ".";
+        }
         _buffer = _msg.c_str();
     };
 
     InvalidHeight::~InvalidHeight() {};
 
     const char *InvalidHeight::what() const noexcept
+    {
+        return _buffer;
+    }
+
+
+    InvalidFontPath::InvalidFontPath(const std::string &path)
+    {
+        _msg = "Error: The path you provided for the font file is invalid.\n";
+        _msg += "The path was: '";
+        _msg += path;
+        _msg += "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidFontPath::~InvalidFontPath() {};
+
+    const char *InvalidFontPath::what() const noexcept
+    {
+        return _buffer;
+    }
+
+
+    InvalidShape::InvalidShape()
+    {
+        _msg = "Error: The shape you have provided is invalid or ";
+        _msg += "has not been defined.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidShape::~InvalidShape() {};
+
+    const char *InvalidShape::what() const noexcept
     {
         return _buffer;
     }

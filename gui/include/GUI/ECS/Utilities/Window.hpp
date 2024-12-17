@@ -10,7 +10,9 @@
 #include <string>
 #include <cstring>
 #include <SFML/Graphics/RenderWindow.hpp>
+
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Components.hpp"
 
 namespace GUI
 {
@@ -27,17 +29,23 @@ namespace GUI
                 void display();
                 bool isOpen() const;
                 void close();
+
                 bool pollEvent(sf::Event &event);
                 void setFramerateLimit(const unsigned int framerateLimit);
                 void setFullScreen(const bool fullScreen);
                 bool getFullScreen() const;
+
+                void draw(const GUI::ECS::Components::TextComponent &text);
+                void draw(const GUI::ECS::Components::ShapeComponent &shape);
+                void draw(const GUI::ECS::Components::ButtonComponent &button);
+                void draw(const GUI::ECS::Components::RenderComponent &texture);
 
                 sf::RenderWindow &getWindow();
 
                 private:
                 bool _fullScreen;
                 std::string _windowName;
-                sf::RenderWindow _window;
+                sf::RenderWindow _sfWindow;
                 std::uint32_t _windowWidth;
                 std::uint32_t _windowHeight;
                 sf::VideoMode _desktopMode = sf::VideoMode::getDesktopMode();

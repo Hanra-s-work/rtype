@@ -156,6 +156,10 @@ namespace MyException
         const char *_buffer;
     };
 
+    /**
+     * @brief This is the class in charge of raising the ConnectionFailed error.
+     *
+     */
     class ConnectionFailed : public std::exception {
         public:
         ConnectionFailed(const std::string &address = "");
@@ -166,6 +170,11 @@ namespace MyException
         const char *_buffer;
     };
 
+    /**
+     *@brief This is the class in charge of raising the invalid width error
+     * informing the user that the width they provided is invalid.
+     *
+     */
     class InvalidWidth : public std::exception {
         public:
         InvalidWidth(const std::string &width = "", const std::string &min = "", const std::string &max = "");
@@ -176,10 +185,44 @@ namespace MyException
         const char *_buffer;
     };
 
+    /**
+     *@brief This is the class in charge of informing the user that the height they provided is invalid.
+     *
+     */
     class InvalidHeight : public std::exception {
         public:
         InvalidHeight(const std::string &height = "", const std::string &min = "", const std::string &max = "");
         ~InvalidHeight();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the height they entered is invalid.
+     *
+     */
+    class InvalidFontPath : public std::exception {
+        public:
+        InvalidFontPath(const std::string &path = "");
+        ~InvalidFontPath();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to display a non-existent or invalid shape.
+     *
+     */
+    class InvalidShape : public std::exception {
+        public:
+        InvalidShape();
+        ~InvalidShape();
         const char *what() const noexcept;
         private:
         std::string _msg;

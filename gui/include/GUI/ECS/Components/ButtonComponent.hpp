@@ -13,8 +13,11 @@
 #pragma once
 #include <functional>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Components/TextComponent.hpp"
+#include "GUI/ECS/Components/ShapeComponent.hpp"
 
 namespace GUI
 {
@@ -37,11 +40,13 @@ namespace GUI
                 const sf::Color getNormalColor();
                 const sf::Color getHoverColor();
 
+                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void renderButton(sf::RenderWindow &window) const;
+
                 private:
-                sf::Color _hoverColor;
-                sf::Color _normalColor;
-                sf::Color _clickedColor;
                 std::function<void()> _callback;
+                GUI::ECS::Components::TextComponent _componentText;
+                GUI::ECS::Components::ShapeComponent _componentShape;
             };
         }
     }

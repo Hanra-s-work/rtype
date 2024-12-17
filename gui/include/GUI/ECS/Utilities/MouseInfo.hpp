@@ -28,6 +28,7 @@ namespace GUI
                 ~MouseInfo();
 
                 void update(const sf::Event &event);
+                void update(const MouseInfo &entity);
                 void update(const sf::Vector2i &position);
                 void update(const sf::Vector2f &position);
                 void update(const sf::Event::MouseMoveEvent &position);
@@ -35,8 +36,9 @@ namespace GUI
                 sf::Vector2f getMousePosition() const;
                 sf::Event::MouseWheelEvent getMouseWheelEvent() const;
 
-                bool isMouseLeftButtonPressed() const;
-                bool isMouseRightButtonPressed() const;
+                bool isMouseInFocus() const;
+                bool isMouseLeftButtonClicked() const;
+                bool isMouseRightButtonClicked() const;
                 float getPositionX() const;
                 float getPositionY() const;
 

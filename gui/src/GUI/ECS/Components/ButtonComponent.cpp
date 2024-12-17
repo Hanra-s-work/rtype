@@ -14,17 +14,18 @@
 
 void GUI::ECS::Components::ButtonComponent::setHoverColor(sf::Color hoverColor)
 {
-    _hoverColor = hoverColor;
+    _componentShape.setHoverColor(hoverColor);
+    _componentText.setHoverColor(hoverColor);
 }
 
 void GUI::ECS::Components::ButtonComponent::setNormalColor(sf::Color normalColor)
 {
-    _normalColor = normalColor;
+    _componentShape.setNormalColor(normalColor);
 }
 
 void GUI::ECS::Components::ButtonComponent::setClickedColor(sf::Color clickedColor)
 {
-    _clickedColor = clickedColor;
+    _componentShape.setClickedColor(clickedColor);
 }
 
 void GUI::ECS::Components::ButtonComponent::setCallback(std::function<void()> callback)
@@ -39,15 +40,27 @@ std::function<void()> GUI::ECS::Components::ButtonComponent::callback()
 
 const sf::Color GUI::ECS::Components::ButtonComponent::getClickedColor()
 {
-    return _clickedColor;
+    return _componentShape.getClickedColor();
 }
 
 const sf::Color GUI::ECS::Components::ButtonComponent::getNormalColor()
 {
-    return _normalColor;
+    return _componentShape.getNormalColor();
 }
 
 const sf::Color GUI::ECS::Components::ButtonComponent::getHoverColor()
 {
-    return _hoverColor;
+    return _componentShape.getHoverColor();
+}
+
+void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+{
+
+    _componentText.update(mouse);
+}
+
+void GUI::ECS::Components::ButtonComponent::renderButton(sf::RenderWindow &window) const
+{
+    _componentShape.renderShape(window);
+    _componentText.renderText(window);
 }

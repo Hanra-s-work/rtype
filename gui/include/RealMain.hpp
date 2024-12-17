@@ -25,7 +25,9 @@
 #include "Debug.hpp"
 #include "Constants.hpp"
 #include "ExceptionHandling.hpp"
+#include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Components.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
 #include "GUI/ECS/Utilities/EventManager.hpp"
 

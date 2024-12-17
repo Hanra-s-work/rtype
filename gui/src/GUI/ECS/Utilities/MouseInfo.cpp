@@ -31,41 +31,6 @@ GUI::ECS::Utilities::MouseInfo::~MouseInfo()
 }
 
 /**
- * @brief Updates the mouse position using an integer-based vector.
- *
- * @param mousePosition The new mouse position as an sf::Vector2i.
- */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2i &mousePosition)
-{
-    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
-    _mousePosition.x = mousePosition.x;
-    _mousePosition.y = mousePosition.y;
-}
-
-/**
- * @brief Updates the mouse position using a floating-point vector.
- *
- * @param mousePosition The new mouse position as an sf::Vector2f.
- */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2f &mousePosition)
-{
-    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
-    _mousePosition = mousePosition;
-}
-
-/**
- * @brief Updates the mouse position using an sf::Event::MouseMoveEvent.
- *
- * @param position The mouse move event containing the updated position.
- */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Event::MouseMoveEvent &position)
-{
-    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
-    _mousePosition.x = position.x;
-    _mousePosition.y = position.y;
-}
-
-/**
  * @brief Processes and updates the internal state based on a given sf::Event.
  *
  * @param event The SFML event to process.
@@ -155,6 +120,55 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Event &event)
 }
 
 /**
+ *@brief Update the values of the class with the content of another class.
+ *
+ * @param entity
+ */
+void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
+{
+    _mouseInFocus = entity.isMouseInFocus();
+    _mouseWheel = entity.getMouseWheelEvent();
+    _mousePosition = entity.getMousePosition();
+    _leftButtonClicked = entity.isMouseLeftButtonClicked();
+    _rightButtonClicked = entity.isMouseRightButtonClicked();
+}
+
+/**
+ * @brief Updates the mouse position using an integer-based vector.
+ *
+ * @param mousePosition The new mouse position as an sf::Vector2i.
+ */
+void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2i &mousePosition)
+{
+    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
+    _mousePosition.x = mousePosition.x;
+    _mousePosition.y = mousePosition.y;
+}
+
+/**
+ * @brief Updates the mouse position using a floating-point vector.
+ *
+ * @param mousePosition The new mouse position as an sf::Vector2f.
+ */
+void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2f &mousePosition)
+{
+    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
+    _mousePosition = mousePosition;
+}
+
+/**
+ * @brief Updates the mouse position using an sf::Event::MouseMoveEvent.
+ *
+ * @param position The mouse move event containing the updated position.
+ */
+void GUI::ECS::Utilities::MouseInfo::update(const sf::Event::MouseMoveEvent &position)
+{
+    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
+    _mousePosition.x = position.x;
+    _mousePosition.y = position.y;
+}
+
+/**
  * @brief Retrieves the current mouse position.
  *
  * @return sf::Vector2f The current mouse position.
@@ -175,11 +189,21 @@ sf::Event::MouseWheelEvent GUI::ECS::Utilities::MouseInfo::getMouseWheelEvent() 
 }
 
 /**
+ * @brief Checks if the mouse is in the window.
+ *
+ * @return true if the mouse is in focus, false otherwise.
+ */
+bool GUI::ECS::Utilities::MouseInfo::isMouseInFocus() const
+{
+    return _mouseInFocus;
+}
+
+/**
  * @brief Checks if the left mouse button is pressed.
  *
  * @return true if the left button is pressed, false otherwise.
  */
-bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonPressed() const
+bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
 {
     return _leftButtonClicked;
 }
@@ -189,7 +213,7 @@ bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonPressed() const
  *
  * @return true if the right button is pressed, false otherwise.
  */
-bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonPressed() const
+bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonClicked() const
 {
     return _rightButtonClicked;
 }

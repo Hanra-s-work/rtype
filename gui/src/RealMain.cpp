@@ -74,12 +74,14 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         DisplayHelp(binName);
         throw MyException::HelpFound();
     } else if (args[0] == "ip" || args[0] == "i") {
+        Debug::getInstance() << "Ip is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Port number is required" << std::endl;
             throw MyException::NoFlagParameter(args[0]);
         }
         main.setIp(args[1]);
     } else if (args[0] == "port" || args[0] == "p") {
+        Debug::getInstance() << "Port is provided: '" << args[1] << "'" << std::endl;
         unsigned int port = 0;
         if (args[1].empty()) {
             std::cerr << "Error: Port number is required" << std::endl;
@@ -99,10 +101,13 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         main.setPort(port);
     } else if (args[0] == "debug" || args[0] == "d") {
         main.setDebug(true);
+        Debug::getInstance() << "Debug is True" << std::endl;
     } else if (args[0] == "full-screen" || args[0] == "fs" || args[0] == "fullscreen") {
+        Debug::getInstance() << "Full screen is activated" << std::endl;
         main.setWindowFullscreen(true);
     } else if (args[0] == "window-width" || args[0] == "ww" || args[0] == "windowwidth") {
         unsigned int windowWidth = 0;
+        Debug::getInstance() << "Window width is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Window width is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
@@ -121,6 +126,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         main.setWindowWidth(windowWidth);
     } else if (args[0] == "window-height" || args[0] == "wh" || args[0] == "windowheight") {
         unsigned int windowHeight = 0;
+        Debug::getInstance() << "Window Height is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Window Height is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
@@ -138,13 +144,14 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         main.setWindowHeight(windowHeight);
     } else if (args[0] == "frame-rate-limit" || args[0] == "frl" || args[0] == "frameratelimit") {
-        unsigned int windowHeight = 0;
+        unsigned int frameLimit = 0;
+        Debug::getInstance() << "Frame limit is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Frame Rate is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
         }
         try {
-            windowHeight = static_cast<unsigned int>(std::stoul(args[1]));
+            frameLimit = static_cast<unsigned int>(std::stoul(args[1]));
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
@@ -154,7 +161,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             throw MyException::PortIncorrect(args[1]);
         }
-        main.setFrameLimit(windowHeight);
+        main.setFrameLimit(frameLimit);
     } else {
         throw MyException::UnknownArgument(args[0]);
     }
