@@ -174,9 +174,6 @@ public:
     void insert_at(size_type id, const Component& component) {
         if (std::holds_alternative<sparse_storage_t>(_storage)) {
             auto& sparse = std::get<sparse_storage_t>(_storage);
-            if (id >= sparse.size()) {
-                sparse.resize(id + 1);
-            }
             sparse[id] = component;
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
@@ -193,9 +190,6 @@ public:
     void insert_at(size_type id, Component&& component) {
         if (std::holds_alternative<sparse_storage_t>(_storage)) {
             auto& sparse = std::get<sparse_storage_t>(_storage);
-            if (id >= sparse.size()) {
-                sparse.resize(id + 1);
-            }
             sparse[id] = std::forward<Component>(component);
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
@@ -253,18 +247,17 @@ public:
      * @param id The ID of the component to erase.
      */
     void erase(size_type id) {
-        std::visit([id](auto& storage) {
-            using T = std::decay_t<decltype(storage)>;
-            if constexpr (std::is_same_v<T, sparse_storage_t>) {
-                if (id < storage.size()) {
-                    storage[id].reset();
-                }
-            } else if constexpr (std::is_same_v<T, dense_storage_t>) {
-                if (id < storage.size()) {
-                    storage.erase(id);
-                }
+        if (std::holds_alternative<sparse_storage_t>(_storage)) {
+            auto& sparse = std::get<sparse_storage_t>(_storage);
+            if (id < sparse.size()) {
+                sparse[id].reset();
             }
-        }, _storage);
+        } else {
+            auto& dense = std::get<dense_storage_t>(_storage);
+            if (id < dense.size()) {
+                dense.erase(id);
+            }
+        }
     }
 
     /**

@@ -30,6 +30,6 @@ void Registry::kill_entity(const Entity &entity)
     auto end = std::remove(_entities.begin(), _entities.end(), entity);
 
     for (auto& [type, container] : _components) {
-        _erase_functions[type](*this, entity);
+        _erase_functions[type](entity);
     }
 }

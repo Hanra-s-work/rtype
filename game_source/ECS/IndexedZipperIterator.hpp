@@ -27,6 +27,7 @@ class IndexedZipperIterator {
 
 public:
     /// Type alias for the value type returned by the iterator.
+    using value = std::tuple<it_reference_t<Containers>...>;
     using value_type = std::tuple<size_t, it_reference_t<Containers>...>;
     using reference = value_type&; /**< Reference type for the value. */
     using pointer = void; /**< Pointer type (not applicable for this iterator). */
@@ -34,7 +35,7 @@ public:
     using iterator_category = std::forward_iterator_tag; /**< Iterator category. */
 
     /// Type alias for the tuple of iterators for the containers being iterated.
-    using iterator_tuple = std::tuple<size_t, it_reference_t<Containers>...>;
+    using iterator_tuple = std::tuple<iterator_t<Containers>...>;
 
     /**
      * @brief Constructs an `IndexedZipperIterator` with the current iterator positions and index.
@@ -154,8 +155,8 @@ private:
      * @return A tuple of the current index and references to the container elements.
      */
     template <size_t... Is>
-    value_type to_value(std::index_sequence<Is...>) {
-        return std::make_tuple(*std::get<Is>(_current)...);
+    value to_value(std::index_sequence<Is...>) {
+        return std::tuple<it_reference_t<Containers>...>(*(std::get<Is>(_current))...);
     }
 
 private:

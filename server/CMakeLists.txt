@@ -25,6 +25,7 @@ set(SOURCES
     ../game_source/systems/MovementSystem.cpp
     ../game_source/systems/WeaponSystem.cpp
     ../game_source/systems/Systems.cpp
+    ../game_source/systems/SpawnSystem.cpp
 )
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

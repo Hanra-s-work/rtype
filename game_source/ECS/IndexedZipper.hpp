@@ -17,7 +17,7 @@ public:
     /// Type alias for the iterator type.
     using iterator = IndexedZipperIterator<Containers...>; /**< Iterator for traversing the zipped containers. */
     /// Type alias for the tuple of iterators for the zipped containers.
-    using iterator_tuple = typename iterator::iterator_tuple;
+    using iterator_t = typename iterator::iterator_tuple;
 
     /**
      * @brief Constructs an `IndexedZipper` with the given containers.
@@ -65,8 +65,8 @@ private:
      * @param containers The containers for which iterators are created.
      * @return A tuple of iterators to the beginning of each container.
      */
-    static iterator_tuple create_iterators(Containers&... containers) {
-        return std::make_tuple(std::begin(containers)...);
+    static iterator_t create_iterators(Containers&... containers) {
+        return iterator_t(containers.begin()...);
     }
 
     /**
@@ -75,12 +75,12 @@ private:
      * @param containers The containers for which end iterators are created.
      * @return A tuple of iterators to the end of each container.
      */
-    static iterator_tuple create_end_iterators(Containers&... containers) {
-        return std::make_tuple(std::end(containers)...);
+    static iterator_t create_end_iterators(Containers&... containers) {
+        return iterator_t(containers.end()...);
     }
 
 private:
-    iterator_tuple _begin; /**< Tuple of iterators pointing to the beginning of the containers. */
-    iterator_tuple _end; /**< Tuple of iterators pointing to the end of the containers. */
+    iterator_t _begin; /**< Tuple of iterators pointing to the beginning of the containers. */
+    iterator_t _end; /**< Tuple of iterators pointing to the end of the containers. */
     size_t _size; /**< The minimum size of the containers being zipped. */
 };

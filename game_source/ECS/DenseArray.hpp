@@ -21,11 +21,12 @@ class DenseArray {
 public:
     /// Type aliases for convenience
     using value_type = Component; /**< The type of component stored. */
-    using reference_type = value_type&; /**< Reference to a component. */
-    using const_reference_type = const value_type&; /**< Const reference to a component. */
+    using optional_t = std::optional<Component>; /**< Optional type for components. */
+    using reference_type = optional_t&; /**< Reference to a component. */
+    using const_reference_type = const optional_t&; /**< Const reference to a component. */
     using id_type = size_t; /**< Type used for entity IDs. */
     using id_container_t = std::vector<id_type>; /**< Container type for storing entity IDs. */
-    using component_container_t = std::vector<value_type, Allocator>; /**< Container type for storing components. */
+    using component_container_t = std::vector<optional_t, Allocator>; /**< Container type for storing components. */
     using size_type = typename component_container_t::size_type; /**< Size type for the container. */
     using iterator = typename component_container_t::iterator; /**< Iterator type. */
     using const_iterator = typename component_container_t::const_iterator; /**< Const iterator type. */

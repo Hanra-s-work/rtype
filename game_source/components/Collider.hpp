@@ -8,5 +8,5 @@
  * collisions are checked based on the entity's position and its radius.
  */
 struct Collider {
-    const float radius; /**< The radius of the circular collider. */
+    float radius; /**< The radius of the circular collider. */
 };

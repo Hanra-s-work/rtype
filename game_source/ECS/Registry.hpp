@@ -32,7 +32,7 @@ public:
      * @typedef eraseFunc
      * @brief A function type for erasing components associated with an entity.
      */
-    using eraseFunc = std::function<void(Registry&, Entity const&)>;
+    using eraseFunc = std::function<void(Entity const&)>;
 
     /**
      * @brief Default constructor.
@@ -75,8 +75,8 @@ public:
     ComponentContainer<Component>& register_component() {
         auto type_index = std::type_index(typeid(Component));
 
-        auto erase_function = [this](Registry& registry, Entity const& entity) {
-            auto &container = registry.get_components<Component>();
+        auto erase_function = [&](Entity const& entity) {
+            auto &container = this->get_components<Component>();
             container.erase(entity);
         };
 

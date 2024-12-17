@@ -20,5 +20,5 @@ enum team_enum {
  * the entity belongs to the ally team or the enemy team.
  */
 struct Team {
-    const team_enum team; /**< The team of the entity, from `team_enum`. */
+    team_enum team; /**< The team of the entity, from `team_enum`. */
 };
