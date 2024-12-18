@@ -228,4 +228,20 @@ namespace MyException
         std::string _msg;
         const char *_buffer;
     };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to play music from a class that has not music
+     * initialised.
+     *
+     */
+    class MusicNotInitialised : public std::exception {
+        public:
+        MusicNotInitialised();
+        ~MusicNotInitialised();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
 }

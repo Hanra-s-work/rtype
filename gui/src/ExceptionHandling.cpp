@@ -244,4 +244,18 @@ namespace MyException
     {
         return _buffer;
     }
+
+    MusicNotInitialised::MusicNotInitialised()
+    {
+        _msg = "Error: There is no music to play, please set one by calling ";
+        _msg += "the setMusicPath function from the class.";
+        _buffer = _msg.c_str();
+    };
+
+    MusicNotInitialised::~MusicNotInitialised() {};
+
+    const char *MusicNotInitialised::what() const noexcept
+    {
+        return _buffer;
+    }
 }
