@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(RTypeServer)
+project(RTypeServer VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -20,6 +20,6 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 
 find_package(Threads REQUIRED)
 
-add_executable(rtype_server ${SOURCES})
+add_executable(r-type_server ${SOURCES})
 
-target_link_libraries(rtype_server Threads::Threads)
+target_link_libraries(r-type_server Threads::Threads)
