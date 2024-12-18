@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
-project(r-type_client)
+cmake_minimum_required(VERSION 3.28)
+project(RTypeClient VERSION 1.0.0)
 
+# Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 
+# Set the include directories
 include_directories(include)
 include_directories(/usr/include/asio)
 
@@ -26,9 +28,9 @@ set(SOURCES
     src/GUI/ECS/Components/CollisionComponent.cpp
     src/GUI/ECS/Components/MusicComponent.cpp
     src/GUI/ECS/Components/PositionComponent.cpp
-    src/GUI/ECS/Components/RenderComponent.cpp
-    src/GUI/ECS/Components/TextComponent.cpp
     src/GUI/ECS/Components/ShapeComponent.cpp
+    src/GUI/ECS/Components/TextComponent.cpp
+    src/GUI/ECS/Components/TextureComponent.cpp
 
     src/GUI/ECS/Systems/AnimationSystem.cpp
     src/GUI/ECS/Systems/ButtonSystem.cpp
@@ -53,7 +55,6 @@ add_executable(r-type_client ${SOURCES})
 
 # Link SFML and Threads to the executable
 target_link_libraries(r-type_client
-    Threads::Threads
     sfml-system
     sfml-window
     sfml-graphics
