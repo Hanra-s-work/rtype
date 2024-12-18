@@ -21,6 +21,7 @@ rtype_server
 # No build files
 bootstrap
 build/*
+bin/*
 
 # No editor config files
 .vscode
