@@ -1,14 +1,15 @@
 #include "SpawnSystem.hpp"
+
+#include <iostream>
 #include "Registry.hpp"
-#include "iostream"
+#include "Time.hpp"
 
 float spawn_timer = DEFAULT_TIMER;
 float spawn_obstacle_timer = DEFAULT_TIMER * 3;
 
 void spawn_monster_system(Registry &r)
 {
-    float delta_time = 1;
-    spawn_timer -= delta_time;
+    spawn_timer -= Time::deltaTime;
     if (spawn_timer <= 0.0f) {
         float x = 1000.f; //change to random when we know window size
         float y = 400.f;
@@ -20,8 +21,7 @@ void spawn_monster_system(Registry &r)
 
 void spawn_obstacle_system(Registry &r)
 {
-    float delta_time = 1;
-    spawn_obstacle_timer -= delta_time;
+    spawn_obstacle_timer -= Time::deltaTime;
     if (spawn_obstacle_timer <= 0.0f) {
         float x = 1000.f; //change to random when we know window size
         float y = 400.f;

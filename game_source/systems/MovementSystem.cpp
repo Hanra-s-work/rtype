@@ -5,6 +5,8 @@
 #include "Position.hpp"
 #include "Velocity.hpp"
 
+#include "Time.hpp"
+
 void movement_system(Registry &r)
 {
     auto &positions = r.get_components<Position>();
@@ -13,8 +15,8 @@ void movement_system(Registry &r)
     for (auto &&[pos, vel] : Zipper(positions, velocities)) {
         if (pos && vel) {
             std::cout << "My position is: (" << pos->X << ", " << pos->Y << ")" << std::endl;
-            pos->X += vel->vX;
-            pos->Y += vel->vY;
+            pos->X += vel->vX * Time::deltaTime;
+            pos->Y += vel->vY * Time::deltaTime;
         }
     }
 }
