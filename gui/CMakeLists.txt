@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Set the include directories
 include_directories(include)
-include_directories(/usr/include/asio)
+
+# Include the CMakeLists.txt from the Lib folder to inherit the desired libraries
+include(${CMAKE_CURRENT_LIST_DIR}/lib/CMakeLists.txt)
 
 # Set the source files
 set(SOURCES
@@ -42,9 +44,6 @@ set(SOURCES
     src/GUI/ECS/Utilities/MouseInfo.cpp
     src/GUI/ECS/Utilities/EventManager.cpp
 )
-
-# Find SFML
-find_package(SFML 2.6 REQUIRED COMPONENTS system window graphics audio network)
 
 # Check for threads
 set(THREADS_PREFER_PTHREAD_FLAG ON)
