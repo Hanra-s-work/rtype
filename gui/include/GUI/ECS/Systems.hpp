@@ -15,3 +15,17 @@
 #include "GUI/ECS/Systems/ButtonSystem.hpp"
 #include "GUI/ECS/Systems/InputSystem.hpp"
 #include "GUI/ECS/Systems/RenderSystem.hpp"
+
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Systems
+        {
+            class AnimationSystem;
+            class ButtonSystem;
+            class InputSystem;
+            class RenderSystem;
+        }
+    }
+}

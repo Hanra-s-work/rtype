@@ -20,3 +20,21 @@
 #include "GUI/ECS/Components/SpriteComponent.hpp"
 #include "GUI/ECS/Components/TextComponent.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
+
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Components
+        {
+            class AnimationComponent;
+            class ButtonComponent;
+            class CollisionComponent;
+            class MusicComponents;
+            class ShapeComponent;
+            class SpriteComponent;
+            class TextComponent;
+            class TextureComponent;
+        }
+    }
+}
