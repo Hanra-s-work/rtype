@@ -31,10 +31,10 @@ namespace GUI
                 public:
                 SpriteComponent();
                 SpriteComponent(const std::string &name);
-                SpriteComponent(const std::string &spritesheetPath);
                 SpriteComponent(const GUI::ECS::Components::CollisionComponent &collision);
                 SpriteComponent(const GUI::ECS::Components::AnimationComponent &animation);
                 SpriteComponent(const GUI::ECS::Components::TextureComponent &spritesheetTexture);
+                SpriteComponent(const std::string &name, const std::string &spritesheetPath);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture);

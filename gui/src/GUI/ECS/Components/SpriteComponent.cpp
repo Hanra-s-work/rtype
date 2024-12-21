@@ -14,11 +14,6 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name)
     setName(name);
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &spritesheetPath)
-{
-    setSpritesheet(spritesheetPath);
-};
-
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Components::CollisionComponent &collision)
 {
     setCollision(collision);
@@ -32,6 +27,12 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Component
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Components::TextureComponent &spritesheetTexture)
 {
     setSpritesheet(spritesheetTexture);
+};
+
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const std::string &spritesheetPath)
+{
+    setName(name);
+    setSpritesheet(spritesheetPath);
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision)
