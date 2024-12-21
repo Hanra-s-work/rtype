@@ -244,4 +244,80 @@ namespace MyException
         std::string _msg;
         const char *_buffer;
     };
+
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the index they provided is invalid.
+     *
+     */
+    class InvalidIndex : public std::exception {
+        public:
+        InvalidIndex(const std::string &index = "", const std::string &min = "", const std::string &max = "");
+        ~InvalidIndex();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the duration they provided is invalid.
+     *
+     */
+    class InvalidDuration : public std::exception {
+        public:
+        InvalidDuration(const std::string &duration = "", const std::string &min = "", const std::string &max = "");
+        ~InvalidDuration();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant spritesheet.
+     *
+     */
+    class NoSpriteSheet : public std::exception {
+        public:
+        NoSpriteSheet();
+        ~NoSpriteSheet();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant collision class.
+     *
+     */
+    class NoCollision : public std::exception {
+        public:
+        NoCollision();
+        ~NoCollision();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant animation class.
+     *
+     */
+    class NoAnimation : public std::exception {
+        public:
+        NoAnimation();
+        ~NoAnimation();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
 }

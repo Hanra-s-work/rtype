@@ -258,4 +258,96 @@ namespace MyException
     {
         return _buffer;
     }
+
+    InvalidIndex::InvalidIndex(const std::string &index, const std::string &min, const std::string &max)
+    {
+        _msg = "Error: The index you provided is invalid.\n";
+        if (!min.empty() && !max.empty()) {
+            _msg += "The index must in the range '" + min + "' to '" + max + "'.\n";
+        } else if (!min.empty() && max.empty()) {
+            _msg += "The index must be greater than or equal to '" + min + "'.\n";
+        } else if (min.empty() && !max.empty()) {
+            _msg += "The index must be less than or equal to '" + max + "'.\n";
+        } else {
+            _msg += "The index must be a valid number.\n";
+        }
+        _msg += "The index was: '";
+        _msg += index;
+        _msg += "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidIndex::~InvalidIndex() {};
+
+    const char *InvalidIndex::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidDuration::InvalidDuration(const std::string &duration, const std::string &min, const std::string &max)
+    {
+        _msg = "Error: The duration you provided is invalid.\n";
+        if (!min.empty() && !max.empty()) {
+            _msg += "The duration must in the range '" + min + "' to '" + max + "'.\n";
+        } else if (!min.empty() && max.empty()) {
+            _msg += "The duration must be greater than or equal to '" + min + "'.\n";
+        } else if (min.empty() && !max.empty()) {
+            _msg += "The duration must be less than or equal to '" + max + "'.\n";
+        } else {
+            _msg += "The duration must be a valid number.\n";
+        }
+        _msg += "The duration was: '";
+        _msg += duration;
+        _msg += "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidDuration::~InvalidDuration() {};
+
+    const char *InvalidDuration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoSpriteSheet::NoSpriteSheet()
+    {
+        _msg = "Error: There is no spritesheet set.\n";
+        _msg += "The spritesheet class cannot be called if there is ";
+        _msg += "no spritesheet to display.";
+        _buffer = _msg.c_str();
+    };
+
+    NoSpriteSheet::~NoSpriteSheet() {};
+
+    const char *NoSpriteSheet::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoCollision::NoCollision()
+    {
+        _msg = "Error: There is no collision set to be called.\n";
+        _buffer = _msg.c_str();
+    };
+
+    NoCollision::~NoCollision() {};
+
+    const char *NoCollision::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoAnimation::NoAnimation()
+    {
+        _msg = "Error: There is no animation set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoAnimation::~NoAnimation() {};
+
+    const char *NoAnimation::what() const noexcept
+    {
+        return _buffer;
+    }
+
 }
