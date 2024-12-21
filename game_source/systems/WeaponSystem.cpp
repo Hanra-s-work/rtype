@@ -12,7 +12,7 @@ void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentCo
         if (type->type != type_enum::MONSTER) continue;
         
         if (weapon->cooldown <= 0) {
-            //spawn_bullet(r, position->X, position->Y);
+            spawn_missile(r, position->X, position->Y, type->type);
             weapon->cooldown = 1.0f / weapon->fire_rate;
         }
     }

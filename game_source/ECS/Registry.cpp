@@ -1,7 +1,8 @@
 #include "Registry.hpp"
 
-Registry::Registry()
+Registry::Registry(EventDispatcher *_dispatcher)
 {
+    dispatcher = _dispatcher;
     setup_systems(*this);
     setup_components(*this);
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 
+#include "EventDispatcher.hpp"
 #include "ComponentContainer.hpp"
 #include "Entity.hpp"
 #include "Systems.hpp"
@@ -37,7 +38,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    Registry();
+    Registry(EventDispatcher *_dispatcher);
 
     /**
      * @brief Adds a system to the registry.
@@ -176,6 +177,9 @@ public:
      * @param entity The entity to delete.
      */
     void kill_entity(const Entity& entity);
+
+public:
+    EventDispatcher *dispatcher;
 
 private:
     std::unordered_map<std::type_index, std::any> _components; /**< Stores component containers indexed by type. */

@@ -5,11 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(components)
 include_directories(ECS/include)
+include_directories(manager/include)
 include_directories(systems/include)
 
 set(SOURCES
     ECS/Entity.cpp
     ECS/Registry.cpp
+    manager/Game.cpp
     systems/AISystem.cpp
     systems/CollisionSystem.cpp
     systems/LifetimeSystem.cpp
