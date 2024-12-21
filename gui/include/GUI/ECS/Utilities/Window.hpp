@@ -38,7 +38,7 @@ namespace GUI
                 void draw(const GUI::ECS::Components::TextComponent &text);
                 void draw(const GUI::ECS::Components::ShapeComponent &shape);
                 void draw(const GUI::ECS::Components::ButtonComponent &button);
-                void draw(const GUI::ECS::Components::RenderComponent &texture);
+                void draw(const GUI::ECS::Components::SpriteComponent &texture);
 
                 sf::RenderWindow &getWindow();
 
