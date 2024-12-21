@@ -76,20 +76,20 @@ bool GUI::ECS::Utilities::Window::getFullScreen() const
 
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::TextComponent &text)
 {
-    text.renderText(_sfWindow);
+    text.render(_sfWindow);
 }
 
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
 {
-    shape.renderShape(_sfWindow);
+    shape.render(_sfWindow);
 }
 
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
 {
-    button.renderButton(_sfWindow);
+    button.render(_sfWindow);
 }
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::RenderComponent &texture)
+void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
 {
-    texture.renderTexture(_sfWindow);
+    sprite.render(_sfWindow);
 }
