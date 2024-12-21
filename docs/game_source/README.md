@@ -29,3 +29,15 @@ The `ECS Architecture` diagram outlines the Entity-Component-System (ECS) struct
 - **Zipper & IndexedZipper**: Data iterators to help iterate over several `Component Containers`
 
 ![ECS Architecture Placeholder](./ECS/r-type-ECS.png)
+
+---
+
+## Game Manager
+
+The `Game Manager` diagram contains:
+
+- **Game**: Runs the game systems according to the deltaTime and receives events from the systems.
+- **EventDispatcher**: Dispatches the events to the `Game`.
+- **GameMessage**: Data structure that holds the event's information.
+
+![Game Manager Placeholder](./manager/r-type-Manager.png)

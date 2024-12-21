@@ -24,7 +24,7 @@ void Game::update(float _deltaTime)
     _game->run_systems();
 }
 
-std::forward_list<GameMessage> &Game::getGameStates(void)
+std::forward_list<GameMessage> &Game::getGameEvents(void)
 {
     return _events;
 }
