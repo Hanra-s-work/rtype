@@ -19,7 +19,7 @@ namespace GUI
 {
     namespace ECS
     {
-        class Component : EntityNode {
+        class Component : public EntityNode {
             public:
             explicit Component(std::uint32_t entity_id) : _entity_id(entity_id) {};
             virtual ~Component() = default;

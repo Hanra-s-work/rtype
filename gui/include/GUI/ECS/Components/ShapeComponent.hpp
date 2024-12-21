@@ -30,7 +30,7 @@ namespace GUI
     {
         namespace Components
         {
-            class ShapeComponent : EntityNode {
+            class ShapeComponent : public EntityNode {
                 public:
                 ShapeComponent();
                 ~ShapeComponent();

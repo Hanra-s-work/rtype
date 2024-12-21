@@ -20,7 +20,7 @@ namespace GUI
     {
         namespace Systems
         {
-            class RenderSystem : EntityNode {
+            class RenderSystem : public EntityNode {
                 public:
                 RenderSystem() = default;
                 ~RenderSystem() = default;

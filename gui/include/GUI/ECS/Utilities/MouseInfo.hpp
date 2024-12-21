@@ -22,7 +22,7 @@ namespace GUI
     {
         namespace Utilities
         {
-            class MouseInfo : EntityNode {
+            class MouseInfo : public EntityNode {
                 public:
                 MouseInfo();
                 ~MouseInfo();

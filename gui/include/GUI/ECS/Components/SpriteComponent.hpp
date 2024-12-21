@@ -27,7 +27,7 @@ namespace GUI
     {
         namespace Components
         {
-            class SpriteComponent : EntityNode {
+            class SpriteComponent : public EntityNode {
                 public:
                 SpriteComponent();
                 SpriteComponent(const std::string &name);

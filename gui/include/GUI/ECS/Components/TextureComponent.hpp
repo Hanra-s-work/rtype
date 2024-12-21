@@ -27,7 +27,7 @@ namespace GUI
     {
         namespace Components
         {
-            class TextureComponent : EntityNode {
+            class TextureComponent : public EntityNode {
                 public:
                 TextureComponent();
                 TextureComponent(const TextureComponent &other);

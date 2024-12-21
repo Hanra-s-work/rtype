@@ -19,7 +19,7 @@
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
-class NetworkManager : GUI::ECS::EntityNode {
+class NetworkManager : public GUI::ECS::EntityNode {
     public:
     NetworkManager();
     void Initialize();

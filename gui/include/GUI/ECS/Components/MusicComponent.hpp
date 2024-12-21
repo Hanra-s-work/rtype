@@ -26,7 +26,7 @@ namespace GUI
     {
         namespace Components
         {
-            class MusicComponents : EntityNode {
+            class MusicComponents : public EntityNode {
                 public:
                 MusicComponents();
                 MusicComponents(const MusicComponents &music);

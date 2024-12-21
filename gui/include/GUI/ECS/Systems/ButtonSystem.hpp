@@ -20,7 +20,7 @@ namespace GUI
     {
         namespace Systems
         {
-            class ButtonSystem : EntityNode {
+            class ButtonSystem : public EntityNode {
                 public:
                 ButtonSystem() = default;
                 ~ButtonSystem() = default;

@@ -20,7 +20,7 @@ namespace GUI
     {
         namespace Systems
         {
-            class AnimationSystem : EntityNode {
+            class AnimationSystem : public EntityNode {
                 public:
                 AnimationSystem() = default;
                 ~AnimationSystem() = default;

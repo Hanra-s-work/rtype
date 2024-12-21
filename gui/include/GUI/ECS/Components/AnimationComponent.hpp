@@ -29,7 +29,7 @@ namespace GUI
     {
         namespace Components
         {
-            class AnimationComponent : EntityNode {
+            class AnimationComponent : public EntityNode {
                 public:
                 AnimationComponent();
                 ~AnimationComponent();

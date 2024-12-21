@@ -21,7 +21,7 @@ namespace GUI
     {
         namespace Utilities
         {
-            class Clock : EntityNode {
+            class Clock : public EntityNode {
                 public:
                 Clock();
                 ~Clock();

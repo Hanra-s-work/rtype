@@ -28,7 +28,7 @@ namespace GUI
     {
         namespace Components
         {
-            class ButtonComponent : EntityNode {
+            class ButtonComponent : public EntityNode {
                 public:
                 ButtonComponent();
                 ~ButtonComponent();

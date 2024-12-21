@@ -33,7 +33,7 @@ namespace GUI
              * @brief Represents a rectangular component that can detect collisions and
              *        mouse interactions, such as hovering and clicking.
              */
-            class CollisionComponent : EntityNode {
+            class CollisionComponent : public EntityNode {
                 public:
                 CollisionComponent(const float width = 0, const float height = 0, const float positionX = 0, const float positionY = 0);
                 ~CollisionComponent();
