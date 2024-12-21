@@ -11,5 +11,5 @@
  */
 
 #pragma once
-#include "Network/NetworkManager.hpp"
-#include "Network/ProtocolHandler.hpp"
+#include "GUI/Network/NetworkManager.hpp"
+#include "GUI/Network/ProtocolHandler.hpp"

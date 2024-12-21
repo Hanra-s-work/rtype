@@ -11,5 +11,5 @@
  */
 
 #pragma once
-#include "Utilities/Clock.hpp"
-#include "Utilities/EventManager.hpp"
+#include "GUI/ECS/Utilities/Clock.hpp"
+#include "GUI/ECS/Utilities/EventManager.hpp"
