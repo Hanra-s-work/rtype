@@ -40,6 +40,8 @@ namespace GUI
 
                 virtual void checkTick();
 
+                virtual bool hasTicked();
+
                 virtual void update(const GUI::ECS::Components::AnimationComponent &copy);
 
                 virtual bool getLoop() const;
@@ -59,6 +61,7 @@ namespace GUI
                 protected:
                 void _tick();
                 bool _loop;
+                bool _hasTicked = false;
                 bool _readReverse;
                 std::uint32_t _frameDelay;
                 std::uint32_t _frameInitial;

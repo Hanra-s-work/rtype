@@ -105,6 +105,15 @@ void GUI::ECS::Components::AnimationComponent::checkTick()
     }
 }
 
+bool GUI::ECS::Components::AnimationComponent::hasTicked()
+{
+    if (_hasTicked) {
+        _hasTicked = false;
+        return true;
+    }
+    return false;
+}
+
 GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getCurrentTexture() const
 {
     return _currentTexture;
