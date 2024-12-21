@@ -12,10 +12,15 @@
 
 #pragma once
 #include <vector>
+#include <chrono>
 #include <cstdint>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Debug.hpp"
+#include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Components/TextureComponent.hpp"
 
 namespace GUI
 {
@@ -25,27 +30,43 @@ namespace GUI
         {
             class AnimationComponent : EntityNode {
                 public:
-                AnimationComponent() = default;
-                ~AnimationComponent() = default;
-                virtual void setLoop(bool loop) = 0;
-                virtual void setReadReverse(bool reverse) = 0;
-                virtual void setDelay(std::uint32_t frameDuration) = 0;
-                virtual void setInitialFrame(std::uint32_t frameIndex) = 0;
+                AnimationComponent();
+                ~AnimationComponent();
+                virtual void setLoop(bool loop);
+                virtual void setReadReverse(bool reverse);
+                virtual void setDelay(float frameDuration);
+                virtual void setInitialFrame(std::uint32_t frameIndex);
+                virtual void setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
 
-                virtual const bool getLoop() = 0;
-                virtual const bool getReadReverse() = 0;
-                virtual const std::uint32_t getDelay() = 0;
-                virtual const std::uint32_t getInitialFrame() = 0;
-                virtual const std::uint32_t getCurrentFrame() = 0;
-                virtual const std::vector<sf::Texture> getFrames() = 0;
+                virtual void checkTick();
+
+                virtual void update(const GUI::ECS::Components::AnimationComponent &copy);
+
+                virtual bool getLoop() const;
+                virtual bool getReadReverse() const;
+                virtual float getDelay() const;
+                virtual std::uint32_t getFrameCount() const;
+                virtual std::uint32_t getInitialFrame() const;
+                virtual std::uint32_t getCurrentFrame() const;
+                virtual GUI::ECS::Components::TextureComponent getCurrentTexture() const;
+                virtual std::vector<GUI::ECS::Components::TextureComponent> getFrames() const;
+
+                AnimationComponent &operator =(const GUI::ECS::Components::AnimationComponent &copy)
+                {
+                    update(copy);
+                };
 
                 protected:
+                void _tick();
                 bool _loop;
                 bool _readReverse;
-                std::uint32_t _frameInitial;
                 std::uint32_t _frameDelay;
+                std::uint32_t _frameInitial;
                 std::uint32_t _currentFrame;
-                std::vector<sf::Texture> _frames;
+                std::uint32_t _totalFrames;
+                std::vector<GUI::ECS::Components::TextureComponent> _frames;
+                GUI::ECS::Components::TextureComponent _currentTexture;
+                std::chrono::_V2::steady_clock::time_point _lastTick = std::chrono::steady_clock::now();
             };
         }
     }
