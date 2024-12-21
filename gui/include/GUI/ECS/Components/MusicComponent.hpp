@@ -13,7 +13,10 @@
 #pragma once
 #include <string>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Debug.hpp"
+#include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
@@ -24,33 +27,53 @@ namespace GUI
         {
             class MusicComponents : EntityNode {
                 public:
-                MusicComponents() = default;
-                ~MusicComponents() = default;
+                MusicComponents();
+                MusicComponents(const MusicComponents &music);
+                MusicComponents(const std::string &filePath, const std::string &name);
+                MusicComponents(const std::string &filePath, const std::string &name, float volume);
+                ~MusicComponents();
 
-                virtual void setVolume(float volume) = 0;
-                virtual void setLoopMusic(bool loop) = 0;
-                virtual void setMusicName(const std::string &name) = 0;
-                virtual void setFilePath(const std::string &filePath) = 0;
+                virtual void setVolume(float volume);
+                virtual void setLoopMusic(bool loop);
+                virtual void setMusicName(const std::string &name);
 
-                virtual void play() = 0;
-                virtual void stop() = 0;
-                virtual void pause() = 0;
+                virtual void setMusic(const std::string &filePath);
+                virtual void setMusic(const std::string &filePath, const std::string &name);
+                virtual void setMusic(const std::string &filePath, const std::string &name, float volume);
 
-                virtual bool isPaused() const = 0;
-                virtual bool isPlaying() const = 0;
-                virtual bool isLooping() const = 0;
+                virtual void play();
+                virtual void stop();
+                virtual void pause();
 
-                virtual float getVolume() const = 0;
-                virtual std::string getMusicName() const = 0;
-                virtual std::string getFilePath() const = 0;
+                virtual bool isPaused() const;
+                virtual bool isPlaying() const;
+                virtual bool isStopped() const;
+                virtual bool isLooping() const;
+                virtual bool isInitialised() const;
+
+                virtual void update(const MusicComponents &copy);
+
+                virtual void render(sf::RenderWindow &window) const;
+
+                virtual float getVolume() const;
+                virtual std::string getMusicName() const;
+                virtual std::string getFilePath() const;
+
+                MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy)
+                {
+                    update(copy);
+                };
 
                 private:
                 float _volume;
                 bool _isLooping = false;
                 bool _isPlaying = false;
                 bool _isPaused = false;
+                bool _isStoped = true;
+                bool _isInitialised = false;
                 std::string _name = "";
                 std::string _filePath = "";
+                sf::Music _music;
             };
         }
     }
