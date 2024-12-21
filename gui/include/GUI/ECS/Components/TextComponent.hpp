@@ -43,13 +43,21 @@ namespace GUI
                 sf::Font getFont() const;
                 std::string getFontPath() const;
                 sf::Color getColor() const;
+                sf::Color getHoverColor() const;
                 std::string getText() const;
                 std::uint32_t getSize() const;
+                sf::Vector2f getPosition() const;
                 bool getVisible() const;
 
+                void render(sf::RenderWindow &window) const;
 
-                void renderText(sf::RenderWindow &window) const;
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Components::TextComponent &copy);
+
+                TextComponent &operator =(const GUI::ECS::Components::TextComponent &copy)
+                {
+                    update(copy);
+                };
 
                 private:
                 void _processTextComponent();

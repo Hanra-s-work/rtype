@@ -28,13 +28,13 @@ GUI::ECS::Components::TextComponent::~TextComponent() {};
 void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
 {
     _font = font;
-    _processTextComponent();
+    _sfTextComponent.setFont(_font);
 }
 
 void GUI::ECS::Components::TextComponent::setColor(const sf::Color &color)
 {
     _color = color;
-    _sfTextComponent.setColor(_color);
+    _processTextComponent();
 }
 
 void GUI::ECS::Components::TextComponent::setText(const std::string &text)
@@ -55,6 +55,7 @@ void GUI::ECS::Components::TextComponent::setSize(const std::uint32_t &size)
 void GUI::ECS::Components::TextComponent::setHoverColor(const sf::Color &color)
 {
     _hoverColor = color;
+    _processTextComponent();
 }
 
 void GUI::ECS::Components::TextComponent::setFontPath(const std::string &fontPath)
@@ -67,6 +68,12 @@ void GUI::ECS::Components::TextComponent::setPosition(const sf::Vector2f &positi
 {
     _textPos.setPosition(position);
     _sfTextComponent.setPosition(position);
+    _processTextComponent();
+}
+
+void GUI::ECS::Components::TextComponent::setVisible(const bool visible)
+{
+    _visible = visible;
 }
 
 sf::Font GUI::ECS::Components::TextComponent::getFont() const
@@ -94,14 +101,35 @@ std::uint32_t GUI::ECS::Components::TextComponent::getSize() const
     return _size;
 }
 
-// void GUI::ECS::Components::TextComponent::renderText(GUI::ECS::Utilities::Window &window) const
-// {
-//     window.draw(this);
-// }
-
-void GUI::ECS::Components::TextComponent::renderText(sf::RenderWindow &window) const
+bool GUI::ECS::Components::TextComponent::getVisible() const
 {
-    window.draw(_sfTextComponent);
+    return _visible;
+}
+
+void GUI::ECS::Components::TextComponent::render(sf::RenderWindow &window) const
+{
+    if (_visible) {
+        window.draw(_sfTextComponent);
+    }
+}
+
+void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+{
+    _textPos.update(mouse);
+    _processTextComponent();
+}
+
+void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::TextComponent &copy)
+{
+    _fontPath = copy.getFontPath();
+    setFont(copy.getFont());
+    setColor(copy.getColor());
+    setText(copy.getText());
+    setSize(copy.getSize());
+    setHoverColor(copy.getHoverColor());
+    setPosition(copy.getPosition());
+    setVisible(copy.getVisible());
+    _processTextComponent();
 }
 
 void GUI::ECS::Components::TextComponent::_loadFont()
@@ -115,5 +143,9 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
 {
-
+    if (_textPos.isHovered()) {
+        _sfTextComponent.setColor(_hoverColor);
+    } else {
+        _sfTextComponent.setColor(_color);
+    }
 }
