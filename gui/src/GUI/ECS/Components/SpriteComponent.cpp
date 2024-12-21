@@ -76,24 +76,32 @@ void GUI::ECS::Components::SpriteComponent::setName(const std::string &name)
 void GUI::ECS::Components::SpriteComponent::setCollision(const GUI::ECS::Components::CollisionComponent &copy)
 {
     _collision.update(copy);
+    _sfSprite.setPosition(_collision.getPosition());
+    _sfSprite.setScale(_collision.getDimension());
     _collisionSet = true;
 };
 
 void GUI::ECS::Components::SpriteComponent::setSpritesheet(const std::string &spritesheetPath)
 {
     _spritesheet.setFilePath(spritesheetPath);
+    _sfSprite.setTexture(_spritesheet.getTexture());
+    _spriteSet = true;
     _spritesheetSet = true;
 }
 
 void GUI::ECS::Components::SpriteComponent::setSpritesheet(const GUI::ECS::Components::TextureComponent &spritesheetTexture)
 {
     _spritesheet.update(spritesheetTexture);
+    _sfSprite.setTexture(_spritesheet.getTexture());
+    _spriteSet = true;
     _spritesheetSet = true;
 }
 
 void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Components::AnimationComponent &animation)
 {
     _animation.update(animation);
+    _sfSprite.setTexture(_animation.getCurrentTexture().getTexture());
+    _spriteSet = true;
     _animationSet = true;
 }
 
@@ -103,6 +111,16 @@ void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Components::S
     setSpritesheet(copy.getSpritesheet());
     setCollision(copy.getCollision());
     setAnimation(copy.getAnimation());
+}
+
+void GUI::ECS::Components::SpriteComponent::render(sf::RenderWindow &window) const
+{
+    if (!_spriteSet) {
+        throw MyException::NoSprite();
+    }
+    if (_visible) {
+        window.draw(_sfSprite);
+    }
 }
 
 bool GUI::ECS::Components::SpriteComponent::isCollisionSet() const
@@ -118,6 +136,23 @@ bool GUI::ECS::Components::SpriteComponent::isAnimationSet() const
 bool GUI::ECS::Components::SpriteComponent::isSpritesheetSet() const
 {
     return _spritesheetSet;
+}
+
+bool GUI::ECS::Components::SpriteComponent::isSpriteSet() const
+{
+    return _spriteSet;
+}
+
+void GUI::ECS::Components::SpriteComponent::checkTick()
+{
+    if (_animationSet) {
+        _animation.checkTick();
+        if (_animation.hasTicked()) {
+            GUI::ECS::Components::TextureComponent node = _animation.getCurrentTexture();
+            _sfSprite.setTexture(node.getTexture());
+            _spriteSet = true;
+        }
+    }
 }
 
 std::string GUI::ECS::Components::SpriteComponent::getName() const

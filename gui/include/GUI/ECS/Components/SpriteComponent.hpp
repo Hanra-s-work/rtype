@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include <SFML/Graphics/Sprite.hpp>
+
 #include "Debug.hpp"
+#include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 #include "GUI/ECS/Components/AnimationComponent.hpp"
@@ -44,9 +47,14 @@ namespace GUI
 
                 void update(const GUI::ECS::Components::SpriteComponent &copy);
 
+                void render(sf::RenderWindow &window) const;
+
                 bool isCollisionSet() const;
                 bool isAnimationSet() const;
                 bool isSpritesheetSet() const;
+                bool isSpriteSet() const;
+
+                void checkTick();
 
                 std::string getName() const;
                 GUI::ECS::Components::TextureComponent getSpritesheet() const;
@@ -59,6 +67,7 @@ namespace GUI
                 };
 
                 private:
+                bool _visible = true;
                 std::string _spriteName = "";
                 bool _spritesheetSet = false;
                 GUI::ECS::Components::TextureComponent _spritesheet;
@@ -66,7 +75,8 @@ namespace GUI
                 GUI::ECS::Components::CollisionComponent _collision;
                 bool _animationSet = false;
                 GUI::ECS::Components::AnimationComponent _animation;
-
+                bool _spriteSet = false;
+                sf::Sprite _sfSprite;
             };
         }
     }
