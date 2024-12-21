@@ -252,3 +252,14 @@ void GUI::ECS::Utilities::MouseInfo::clear()
     _mouseWheel.x = 0;
     _mouseWheel.y = 0;
 }
+
+/**
+ *@brief Update the content of the class using the '=' sign overloader.
+ *
+ * @param copy
+ * @return GUI::ECS::Utilities::MouseInfo&
+ */
+GUI::ECS::Utilities::MouseInfo &GUI::ECS::Utilities::MouseInfo::operator=(const GUI::ECS::Utilities::MouseInfo &copy)
+{
+    update(copy);
+};

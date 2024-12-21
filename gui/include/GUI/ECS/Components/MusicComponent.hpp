@@ -59,10 +59,7 @@ namespace GUI
                 virtual std::string getMusicName() const;
                 virtual std::string getFilePath() const;
 
-                MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy)
-                {
-                    update(copy);
-                };
+                MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy);
 
                 private:
                 float _volume;

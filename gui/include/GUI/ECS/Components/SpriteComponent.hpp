@@ -61,10 +61,7 @@ namespace GUI
                 GUI::ECS::Components::CollisionComponent getCollision() const;
                 GUI::ECS::Components::AnimationComponent getAnimation() const;
 
-                SpriteComponent &operator =(const GUI::ECS::Components::SpriteComponent &copy)
-                {
-                    update(copy);
-                };
+                SpriteComponent &operator =(const GUI::ECS::Components::SpriteComponent &copy);
 
                 private:
                 bool _visible = true;

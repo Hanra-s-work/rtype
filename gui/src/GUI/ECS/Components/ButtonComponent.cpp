@@ -12,24 +12,40 @@
 
 #include "GUI/ECS/Components/ButtonComponent.hpp"
 
-GUI::ECS::Components::ButtonComponent::ButtonComponent() {};
+GUI::ECS::Components::ButtonComponent::ButtonComponent()
+    : _callback(nullptr), _componentText(), _componentShape()
+{
+};
 
 GUI::ECS::Components::ButtonComponent::~ButtonComponent() {};
 
-void GUI::ECS::Components::ButtonComponent::setHoverColor(sf::Color hoverColor)
+void GUI::ECS::Components::ButtonComponent::setHoverColor(const sf::Color &hoverColor)
 {
     _componentShape.setHoverColor(hoverColor);
-    _componentText.setHoverColor(hoverColor);
 }
 
-void GUI::ECS::Components::ButtonComponent::setNormalColor(sf::Color normalColor)
+void GUI::ECS::Components::ButtonComponent::setNormalColor(const sf::Color &normalColor)
 {
     _componentShape.setNormalColor(normalColor);
 }
 
-void GUI::ECS::Components::ButtonComponent::setClickedColor(sf::Color clickedColor)
+void GUI::ECS::Components::ButtonComponent::setClickedColor(const sf::Color &clickedColor)
 {
     _componentShape.setClickedColor(clickedColor);
+}
+void GUI::ECS::Components::ButtonComponent::setTextHoverColor(const sf::Color &hoverColor)
+{
+    _componentText.setHoverColor(hoverColor);
+}
+
+void GUI::ECS::Components::ButtonComponent::setTextNormalColor(const sf::Color &normalColor)
+{
+    _componentText.setNormalColor(normalColor);
+}
+
+void GUI::ECS::Components::ButtonComponent::setTextClickedColor(const sf::Color &clickedColor)
+{
+    _componentText.setClickedColor(clickedColor);
 }
 
 void GUI::ECS::Components::ButtonComponent::setCallback(std::function<void()> callback)
@@ -40,7 +56,7 @@ void GUI::ECS::Components::ButtonComponent::setCallback(std::function<void()> ca
 
 std::function<void()> GUI::ECS::Components::ButtonComponent::callback()
 {
-    _callback();
+    return _callback;
 }
 
 sf::Color GUI::ECS::Components::ButtonComponent::getClickedColor() const
@@ -57,6 +73,20 @@ sf::Color GUI::ECS::Components::ButtonComponent::getHoverColor() const
 {
     return _componentShape.getHoverColor();
 }
+sf::Color GUI::ECS::Components::ButtonComponent::getTextClickedColor() const
+{
+    return _componentText.getClickedColor();
+}
+
+sf::Color GUI::ECS::Components::ButtonComponent::getTextNormalColor() const
+{
+    return _componentText.getNormalColor();
+}
+
+sf::Color GUI::ECS::Components::ButtonComponent::getTextHoverColor() const
+{
+    return _componentText.getHoverColor();
+}
 
 std::function<void()> GUI::ECS::Components::ButtonComponent::getCallback() const
 {
@@ -68,7 +98,7 @@ GUI::ECS::Components::TextComponent GUI::ECS::Components::ButtonComponent::getTe
     return _componentText;
 }
 
-GUI::ECS::Components::ShapeComponent GUI::ECS::Components::ButtonComponent::getShapeComponent() const
+const GUI::ECS::Components::ShapeComponent &GUI::ECS::Components::ButtonComponent::getShapeComponent() const
 {
     return _componentShape;
 }
@@ -77,13 +107,18 @@ void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Utilities::Mo
 {
 
     _componentText.update(mouse);
+    _componentShape.update(mouse);
 }
 
 void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Components::ButtonComponent &copy)
 {
-    setCallback(copy.getCallback());
-    _componentText.update(copy.getTextComponent());
-    _componentShape.update(copy.getShapeComponent());
+    if (this != &copy) {
+        setCallback(copy.getCallback());
+        _componentText.update(copy.getTextComponent());
+        _componentShape.update(copy.getShapeComponent());
+    } else {
+        throw MyException::NoButton();
+    }
 }
 
 void GUI::ECS::Components::ButtonComponent::render(sf::RenderWindow &window) const
@@ -91,3 +126,8 @@ void GUI::ECS::Components::ButtonComponent::render(sf::RenderWindow &window) con
     _componentShape.render(window);
     _componentText.render(window);
 }
+
+GUI::ECS::Components::ButtonComponent &GUI::ECS::Components::ButtonComponent::operator =(const GUI::ECS::Components::ButtonComponent &copy)
+{
+    update(copy);
+};

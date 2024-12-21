@@ -306,6 +306,17 @@ bool GUI::ECS::Components::CollisionComponent::isColliding(const CollisionCompon
 }
 
 /**
+ *@brief This is the overload in charge of allowing the user to update their variables using the = sign.
+ *
+ * @param copy
+ * @return GUI::ECS::Components::CollisionComponent&
+ */
+GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::CollisionComponent::operator =(const GUI::ECS::Components::CollisionComponent &copy)
+{
+    update(copy);
+}
+
+/**
  * @brief Updates the mouse collision data, setting hover and click states.
  */
 void GUI::ECS::Components::CollisionComponent::_updateMouseCollisionData()

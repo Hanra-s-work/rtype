@@ -44,6 +44,8 @@ namespace GUI
 
                 void clear();
 
+                MouseInfo &operator=(const GUI::ECS::Utilities::MouseInfo &copy);
+
                 private:
                 sf::Vector2f _mousePosition;
                 bool _leftButtonClicked;

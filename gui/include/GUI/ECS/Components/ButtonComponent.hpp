@@ -19,6 +19,7 @@
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components/TextComponent.hpp"
 #include "GUI/ECS/Components/ShapeComponent.hpp"
+#include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
 {
@@ -31,9 +32,12 @@ namespace GUI
                 ButtonComponent();
                 ~ButtonComponent();
 
-                void setHoverColor(sf::Color hoverColor);
-                void setNormalColor(sf::Color normalColor);
-                void setClickedColor(sf::Color clickedColor);
+                void setHoverColor(const sf::Color &hoverColor);
+                void setNormalColor(const sf::Color &normalColor);
+                void setClickedColor(const sf::Color &clickedColor);
+                void setTextHoverColor(const sf::Color &hoverColor);
+                void setTextNormalColor(const sf::Color &normalColor);
+                void setTextClickedColor(const sf::Color &clickedColor);
                 void setCallback(std::function<void()> callback);
 
                 std::function<void()> callback();
@@ -42,20 +46,21 @@ namespace GUI
                 sf::Color getNormalColor() const;
                 sf::Color getHoverColor() const;
 
+                sf::Color getTextClickedColor() const;
+                sf::Color getTextNormalColor() const;
+                sf::Color getTextHoverColor() const;
+
                 std::function<void()> getCallback() const;
 
                 GUI::ECS::Components::TextComponent getTextComponent() const;
-                GUI::ECS::Components::ShapeComponent getShapeComponent() const;
+                const GUI::ECS::Components::ShapeComponent &getShapeComponent() const;
 
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::ButtonComponent &copy);
 
                 void render(sf::RenderWindow &window) const;
 
-                ButtonComponent &operator =(const GUI::ECS::Components::ButtonComponent &copy)
-                {
-                    update(copy);
-                };
+                ButtonComponent &operator =(const GUI::ECS::Components::ButtonComponent &copy);
 
                 private:
                 std::function<void()> _callback;

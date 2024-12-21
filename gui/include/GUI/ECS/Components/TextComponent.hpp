@@ -28,11 +28,13 @@ namespace GUI
         {
             class TextComponent : EntityNode {
                 public:
-                TextComponent(const std::string &fontPath = "", const sf::Color &color = sf::Color::Black, const sf::Color &hoverColor = sf::Color::Black, const std::string &text = "Sample Text", const std::uint32_t &size = 12, const sf::Vector2f &position = { 0,0 });
+                TextComponent(const std::string &fontPath = "", const sf::Color &normalColor = sf::Color::Black, const sf::Color &hoverColor = sf::Color::Black, const sf::Color &clickedColor = sf::Color::Black, const std::string &text = "Sample Text", const std::uint32_t &size = 12, const sf::Vector2f &position = { 0,0 });
                 ~TextComponent();
 
                 void setFont(const sf::Font &font);
-                void setColor(const sf::Color &color);
+                void setNormalColor(const sf::Color &color);
+                void setHoverColor(const sf::Color &color);
+                void setClickedColor(const sf::Color &color);
                 void setText(const std::string &text);
                 void setSize(const std::uint32_t &size);
                 void setHoverColor(const sf::Color &color);
@@ -42,8 +44,9 @@ namespace GUI
 
                 sf::Font getFont() const;
                 std::string getFontPath() const;
-                sf::Color getColor() const;
+                sf::Color getNormalColor() const;
                 sf::Color getHoverColor() const;
+                sf::Color getClickedColor() const;
                 std::string getText() const;
                 std::uint32_t getSize() const;
                 sf::Vector2f getPosition() const;
@@ -54,10 +57,7 @@ namespace GUI
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::TextComponent &copy);
 
-                TextComponent &operator =(const GUI::ECS::Components::TextComponent &copy)
-                {
-                    update(copy);
-                };
+                TextComponent &operator =(const GUI::ECS::Components::TextComponent &copy);
 
                 private:
                 void _processTextComponent();
@@ -68,6 +68,7 @@ namespace GUI
                 std::string _text;
                 std::uint32_t _size;
                 sf::Color _hoverColor;
+                sf::Color _clickedColor;
                 std::string _fontPath;
                 sf::Text _sfTextComponent;
                 CollisionComponent _textPos;

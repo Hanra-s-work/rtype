@@ -46,10 +46,7 @@ namespace GUI
                 sf::Texture getTexture() const;
                 GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
 
-                TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy)
-                {
-                    update(copy);
-                };
+                TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy);
 
                 private:
                 bool _visible;

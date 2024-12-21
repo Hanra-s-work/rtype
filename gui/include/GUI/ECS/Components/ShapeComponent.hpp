@@ -33,8 +33,10 @@ namespace GUI
                 void setNormalColor(const sf::Color &normalColor);
                 void setClickedColor(const sf::Color &clickedColor);
 
+                void setShape(sf::Shape &&shape);
+                void setShape(const sf::Shape &shape);
                 void setShape(std::unique_ptr<sf::Shape> shape);
-                void setShape(sf::Shape &shape);
+
                 void setPosition(const sf::Vector2f position);
                 void setDimension(const sf::Vector2f dimension);
                 void setCollision(const GUI::ECS::Components::CollisionComponent &collision);
@@ -45,6 +47,7 @@ namespace GUI
 
                 sf::Vector2f getPosition() const;
                 sf::Vector2f getDimension() const;
+                const sf::Shape &getShape() const;
                 GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
 
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
@@ -52,12 +55,13 @@ namespace GUI
 
                 void render(sf::RenderWindow &window) const;
 
-                ShapeComponent &operator =(const GUI::ECS::Components::ShapeComponent &copy)
-                {
-                    update(copy);
-                };
+                ShapeComponent &operator=(const ShapeComponent &copy);
+                ShapeComponent &operator=(ShapeComponent &&move) noexcept;
 
                 private:
+                static std::unique_ptr<sf::Shape> cloneShape(const sf::Shape &shape);
+                void _processColor();
+
                 std::unique_ptr<sf::Shape> _sfShape;
                 sf::Color _hoverColor;
                 sf::Color _normalColor;

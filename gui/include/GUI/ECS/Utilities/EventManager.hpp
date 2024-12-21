@@ -16,6 +16,7 @@
 #include <string>
 #include <functional>
 #include <SFML/Window/Event.hpp>
+
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
@@ -42,10 +43,13 @@ namespace GUI
                 GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
 
                 void update(GUI::ECS::Utilities::Window &window);
-                void update(GUI::ECS::Utilities::MouseInfo &mouse);
-                void update(GUI::ECS::Utilities::EventManager &copy);
+                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Utilities::EventManager &copy);
 
                 std::vector<sf::Keyboard::Key> getKeys() const;
+
+                EventManager &operator=(const GUI::ECS::Utilities::EventManager &copy);
+
                 private:
                 sf::Event _event;
                 MouseInfo _mouse;

@@ -12,9 +12,10 @@
 
 #include "GUI/ECS/Components/TextComponent.hpp"
 
-GUI::ECS::Components::TextComponent::TextComponent(const std::string &fontPath, const sf::Color &color, const sf::Color &hoverColor, const std::string &text, const std::uint32_t &size, const sf::Vector2f &position)
+GUI::ECS::Components::TextComponent::TextComponent(const std::string &fontPath, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const std::string &text, const std::uint32_t &size, const sf::Vector2f &position)
 {
-    setColor(color);
+    setNormalColor(normalColor);
+    setClickedColor(clickedColor);
     setText(text);
     setSize(size);
     setHoverColor(hoverColor);
@@ -31,7 +32,7 @@ void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
     _sfTextComponent.setFont(_font);
 }
 
-void GUI::ECS::Components::TextComponent::setColor(const sf::Color &color)
+void GUI::ECS::Components::TextComponent::setNormalColor(const sf::Color &color)
 {
     _color = color;
     _processTextComponent();
@@ -55,6 +56,12 @@ void GUI::ECS::Components::TextComponent::setSize(const std::uint32_t &size)
 void GUI::ECS::Components::TextComponent::setHoverColor(const sf::Color &color)
 {
     _hoverColor = color;
+    _processTextComponent();
+}
+
+void GUI::ECS::Components::TextComponent::setClickedColor(const sf::Color &color)
+{
+    _clickedColor = color;
     _processTextComponent();
 }
 
@@ -86,7 +93,7 @@ std::string GUI::ECS::Components::TextComponent::getFontPath() const
     return _fontPath;
 }
 
-sf::Color GUI::ECS::Components::TextComponent::getColor() const
+sf::Color GUI::ECS::Components::TextComponent::getNormalColor() const
 {
     return _color;
 }
@@ -94,6 +101,11 @@ sf::Color GUI::ECS::Components::TextComponent::getColor() const
 sf::Color GUI::ECS::Components::TextComponent::getHoverColor() const
 {
     return _hoverColor;
+}
+
+sf::Color GUI::ECS::Components::TextComponent::getClickedColor() const
+{
+    return _clickedColor;
 }
 
 std::string GUI::ECS::Components::TextComponent::getText() const
@@ -133,7 +145,8 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::Tex
 {
     _fontPath = copy.getFontPath();
     setFont(copy.getFont());
-    setColor(copy.getColor());
+    setNormalColor(copy.getNormalColor());
+    setClickedColor(copy.getClickedColor());
     setText(copy.getText());
     setSize(copy.getSize());
     setHoverColor(copy.getHoverColor());
@@ -153,9 +166,16 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
 {
-    if (_textPos.isHovered()) {
+    if (_textPos.isClicked()) {
+        _sfTextComponent.setColor(_clickedColor);
+    } else if (_textPos.isHovered()) {
         _sfTextComponent.setColor(_hoverColor);
     } else {
         _sfTextComponent.setColor(_color);
     }
 }
+
+GUI::ECS::Components::TextComponent &GUI::ECS::Components::TextComponent::operator =(const GUI::ECS::Components::TextComponent &copy)
+{
+    update(copy);
+};

@@ -183,3 +183,8 @@ GUI::ECS::Components::AnimationComponent GUI::ECS::Components::SpriteComponent::
     }
     return _animation;
 }
+
+GUI::ECS::Components::SpriteComponent &GUI::ECS::Components::SpriteComponent::operator =(const GUI::ECS::Components::SpriteComponent &copy)
+{
+    update(copy);
+};
