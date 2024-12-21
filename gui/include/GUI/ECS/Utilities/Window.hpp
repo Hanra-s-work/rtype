@@ -18,6 +18,13 @@ namespace GUI
 {
     namespace ECS
     {
+        namespace Components
+        {
+            class TextComponent;
+            class ShapeComponent;
+            class ButtonComponent;
+            class SpriteComponent;
+        }
         namespace Utilities
         {
             class Window : EntityNode {
