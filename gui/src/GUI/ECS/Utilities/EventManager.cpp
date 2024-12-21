@@ -32,6 +32,27 @@ sf::Vector2f GUI::ECS::Utilities::EventManager::getMousePosition() const
     return _mouse.getMousePosition();
 }
 
+GUI::ECS::Utilities::MouseInfo GUI::ECS::Utilities::EventManager::getMouseInfo() const
+{
+    return _mouse;
+}
+
+void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::Window &window)
+{
+    processEvents(window);
+}
+
+void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::MouseInfo &mouse)
+{
+    _mouse.update(mouse);
+}
+
+void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::EventManager &copy)
+{
+    _mouse.update(copy.getMouseInfo());
+    _keys = copy.getKeys();
+}
+
 std::vector<sf::Keyboard::Key> GUI::ECS::Utilities::EventManager::getKeys() const
 {
     return _keys;

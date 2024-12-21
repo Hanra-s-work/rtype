@@ -39,6 +39,11 @@ namespace GUI
                 float getPositionX() const;
                 float getPositionY() const;
                 sf::Vector2f getMousePosition() const;
+                GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+
+                void update(GUI::ECS::Utilities::Window &window);
+                void update(GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(GUI::ECS::Utilities::EventManager &copy);
 
                 std::vector<sf::Keyboard::Key> getKeys() const;
                 private:
