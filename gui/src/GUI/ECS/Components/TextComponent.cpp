@@ -91,6 +91,11 @@ sf::Color GUI::ECS::Components::TextComponent::getColor() const
     return _color;
 }
 
+sf::Color GUI::ECS::Components::TextComponent::getHoverColor() const
+{
+    return _hoverColor;
+}
+
 std::string GUI::ECS::Components::TextComponent::getText() const
 {
     return _text;
@@ -99,6 +104,11 @@ std::string GUI::ECS::Components::TextComponent::getText() const
 std::uint32_t GUI::ECS::Components::TextComponent::getSize() const
 {
     return _size;
+}
+
+sf::Vector2f GUI::ECS::Components::TextComponent::getPosition() const
+{
+    return _textPos.getPosition();
 }
 
 bool GUI::ECS::Components::TextComponent::getVisible() const
