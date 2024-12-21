@@ -163,7 +163,7 @@ namespace MyException
         return _buffer;
     }
 
-    InvalidWidth::InvalidWidth(const std::string &width = "", const std::string &min = "", const std::string &max = "")
+    InvalidWidth::InvalidWidth(const std::string &width, const std::string &min, const std::string &max)
     {
         _msg = "Error: The width you provided is invalid.\n";
         _msg += "The width was: '";
@@ -188,7 +188,7 @@ namespace MyException
         return _buffer;
     }
 
-    InvalidHeight::InvalidHeight(const std::string &height = "", const std::string &min = "", const std::string &max = "")
+    InvalidHeight::InvalidHeight(const std::string &height, const std::string &min, const std::string &max)
     {
         _msg = "Error: The height you provided is invalid.\n";
         _msg += "The height was: '";
