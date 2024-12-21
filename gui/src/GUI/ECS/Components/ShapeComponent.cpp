@@ -46,6 +46,11 @@ void GUI::ECS::Components::ShapeComponent::setDimension(const sf::Vector2f dimen
     _collision.setDimension(dimension);
 }
 
+void GUI::ECS::Components::ShapeComponent::setCollision(const GUI::ECS::Components::CollisionComponent &collision)
+{
+    _collision.update(collision);
+}
+
 sf::Color GUI::ECS::Components::ShapeComponent::getHoverColor() const
 {
     return _hoverColor;
@@ -71,12 +76,24 @@ sf::Vector2f GUI::ECS::Components::ShapeComponent::getDimension() const
     return _collision.getDimension();
 }
 
-void GUI::ECS::Components::ShapeComponent::update(GUI::ECS::Utilities::MouseInfo &mouse)
+GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ShapeComponent::getCollisionComponent() const
 {
-
+    return _collision;
 }
 
-void GUI::ECS::Components::ShapeComponent::renderShape(sf::RenderWindow &window) const
+void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+{
+    _collision.update(mouse);
+}
+
+void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Components::ShapeComponent &copy)
+{
+    setHoverColor(getHoverColor());
+    setNormalColor(getNormalColor());
+    setClickedColor(getClickedColor());
+}
+
+void GUI::ECS::Components::ShapeComponent::render(sf::RenderWindow &window) const
 {
     if (!_sfShape) {
         throw MyException::InvalidShape();

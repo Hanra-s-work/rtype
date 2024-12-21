@@ -37,6 +37,7 @@ namespace GUI
                 void setShape(sf::Shape &shape);
                 void setPosition(const sf::Vector2f position);
                 void setDimension(const sf::Vector2f dimension);
+                void setCollision(const GUI::ECS::Components::CollisionComponent &collision);
 
                 sf::Color getHoverColor() const;
                 sf::Color getNormalColor() const;
@@ -44,9 +45,17 @@ namespace GUI
 
                 sf::Vector2f getPosition() const;
                 sf::Vector2f getDimension() const;
+                GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
 
-                void update(GUI::ECS::Utilities::MouseInfo &mouse);
-                void renderShape(sf::RenderWindow &window) const;
+                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Components::ShapeComponent &copy);
+
+                void render(sf::RenderWindow &window) const;
+
+                ShapeComponent &operator =(const GUI::ECS::Components::ShapeComponent &copy)
+                {
+                    update(copy);
+                };
 
                 private:
                 std::unique_ptr<sf::Shape> _sfShape;
