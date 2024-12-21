@@ -313,7 +313,10 @@ bool GUI::ECS::Components::CollisionComponent::isColliding(const CollisionCompon
  */
 GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::CollisionComponent::operator =(const GUI::ECS::Components::CollisionComponent &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 }
 
 /**

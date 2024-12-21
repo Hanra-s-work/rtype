@@ -129,5 +129,8 @@ void GUI::ECS::Components::ButtonComponent::render(sf::RenderWindow &window) con
 
 GUI::ECS::Components::ButtonComponent &GUI::ECS::Components::ButtonComponent::operator =(const GUI::ECS::Components::ButtonComponent &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 };

@@ -91,5 +91,8 @@ GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextureComponent:
 
 GUI::ECS::Components::TextureComponent &GUI::ECS::Components::TextureComponent::operator =(const GUI::ECS::Components::TextureComponent &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 };

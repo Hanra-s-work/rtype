@@ -187,5 +187,8 @@ GUI::ECS::Components::AnimationComponent GUI::ECS::Components::SpriteComponent::
 
 GUI::ECS::Components::SpriteComponent &GUI::ECS::Components::SpriteComponent::operator =(const GUI::ECS::Components::SpriteComponent &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 };

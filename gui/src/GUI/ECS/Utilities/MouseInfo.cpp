@@ -261,5 +261,8 @@ void GUI::ECS::Utilities::MouseInfo::clear()
  */
 GUI::ECS::Utilities::MouseInfo &GUI::ECS::Utilities::MouseInfo::operator=(const GUI::ECS::Utilities::MouseInfo &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 };

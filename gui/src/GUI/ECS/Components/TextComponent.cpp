@@ -177,5 +177,8 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
 
 GUI::ECS::Components::TextComponent &GUI::ECS::Components::TextComponent::operator =(const GUI::ECS::Components::TextComponent &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 };

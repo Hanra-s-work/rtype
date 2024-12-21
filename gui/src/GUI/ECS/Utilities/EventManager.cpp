@@ -128,5 +128,8 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
 
 GUI::ECS::Utilities::EventManager &GUI::ECS::Utilities::EventManager::operator=(const GUI::ECS::Utilities::EventManager &copy)
 {
-    update(copy);
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
 };
