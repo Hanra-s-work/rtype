@@ -5,6 +5,11 @@
 ** SpriteComponent.hpp
 */
 
+/**
+ * @file SpriteComponent.hpp
+ * @brief This is the file that contains the class in charge of managing a sprite.
+ */
+
 #pragma once
 
 #include <SFML/Graphics/Sprite.hpp>

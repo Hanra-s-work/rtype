@@ -11,6 +11,7 @@
  */
 
 #pragma once
+
 #include <string>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

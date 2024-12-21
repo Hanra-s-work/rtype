@@ -5,7 +5,13 @@
 ** ShapeComponent.hpp
 */
 
+/**
+ * @file ShapeComponent.hpp
+ * @brief This is the file that contains the class in charge of managing shapes
+ */
+
 #pragma once
+
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Texture.hpp>

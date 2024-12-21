@@ -11,6 +11,7 @@
  */
 
 #pragma once
+
 #include <cstdint>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Font.hpp>

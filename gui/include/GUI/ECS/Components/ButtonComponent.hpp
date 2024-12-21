@@ -11,6 +11,7 @@
  */
 
 #pragma once
+
 #include <functional>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

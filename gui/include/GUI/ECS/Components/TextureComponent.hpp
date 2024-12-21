@@ -11,8 +11,10 @@
  */
 
 #pragma once
+
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Debug.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
