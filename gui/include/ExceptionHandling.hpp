@@ -320,4 +320,19 @@ namespace MyException
         std::string _msg;
         const char *_buffer;
     };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant animation class.
+     *
+     */
+    class NoSprite : public std::exception {
+        public:
+        NoSprite();
+        ~NoSprite();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
 }

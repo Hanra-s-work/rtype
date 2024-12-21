@@ -350,4 +350,17 @@ namespace MyException
         return _buffer;
     }
 
+    NoSprite::NoSprite()
+    {
+        _msg = "Error: There is no sprite set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoSprite::~NoSprite() {};
+
+    const char *NoSprite::what() const noexcept
+    {
+        return _buffer;
+    }
+
 }
