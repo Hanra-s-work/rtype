@@ -40,10 +40,10 @@ public:
     /**
      * @brief Constructs an `IndexedZipperIterator` with the current iterator positions and index.
      * 
-     * @param current Tuple of iterators for the containers.
-     * @param idx Current index in the iteration.
+     * @param it_tuple A tuple of iterators pointing to the current positions in the containers.
+     * @param max The maximum number of elements to iterate over (determined by the smallest container size).
      */
-    IndexedZipperIterator(iterator_tuple current, size_t idx) : _current(current), _idx(idx) {}
+    IndexedZipperIterator(iterator_tuple it_tuple, size_t max) : _current(it_tuple), _max(max), _idx(0) {}
 
     /**
      * @brief Copy constructor.
@@ -109,7 +109,7 @@ public:
      * @param rhs Right-hand side iterator.
      * @return `true` if the iterators are not equal; otherwise `false`.
      */
-    friend bool operator!=(const IndexedZipperIterator<Containers...> &lhs, const IndexedZipperIterator<Containers...> &rhs) {
+    friend bool operator==(const IndexedZipperIterator<Containers...> &lhs, const IndexedZipperIterator<Containers...> &rhs) {
         return lhs._idx == rhs._idx;
     }
 
@@ -122,7 +122,7 @@ public:
      * @param rhs Right-hand side iterator.
      * @return `true` if the iterators are equal; otherwise `false`.
      */
-    friend bool operator==(const IndexedZipperIterator<Containers...> &lhs, const IndexedZipperIterator<Containers...> &rhs) {
+    friend bool operator!=(const IndexedZipperIterator<Containers...> &lhs, const IndexedZipperIterator<Containers...> &rhs) {
         return lhs._idx != rhs._idx;
     }
 

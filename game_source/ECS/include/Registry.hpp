@@ -50,11 +50,11 @@ public:
      */
     template <typename... Components, typename Function>
     void add_system(Function&& f) {
-        auto system = [f = std::forward<Function>(f), this]() {
-        auto component_arrays = get_component_array<Components...>();
-        std::apply([&](auto&&... args) {
-            f(*this, std::forward<decltype(args)>(args)...);
-        }, component_arrays);
+        auto system = [f = std::forward<Function>(f), r = this]() {
+            auto component_arrays = r->get_component_array<Components...>();
+            std::apply([&](auto&&... args) {
+                f(*r, std::forward<decltype(args)>(args)...);
+            }, component_arrays);
         };
 
         _systems.push_back(system);
