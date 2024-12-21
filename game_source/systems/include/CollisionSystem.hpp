@@ -3,7 +3,10 @@
 #include <unordered_map>
 #include <functional>
 
-class Registry;
+#include "Registry.hpp"
+#include "Position.hpp"
+#include "Collider.hpp"
+#include "Type.hpp"
 
 /**
  * @brief Collision detection and resolution system.
@@ -15,4 +18,4 @@ class Registry;
  * @param r The `Registry` that contains all game entities and their components, used to check and 
  *        resolve collisions between entities.
  */
-void collision_system(Registry &r);
+void collision_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Collider> &colliders, ComponentContainer<Type> &types);

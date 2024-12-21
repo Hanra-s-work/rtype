@@ -1,6 +1,5 @@
 #include "CollisionSystem.hpp"
 
-#include "Registry.hpp"
 #include "IndexedZipper.hpp"
 #include "Components.hpp"
 #include "SpawnSystem.hpp"
@@ -77,12 +76,8 @@ const std::unordered_map<std::pair<type_enum, type_enum>, std::function<void(Reg
     {std::make_pair(type_enum::OBSTACLE, type_enum::MISSILE), collision_obstacle_missile}
 };
 
-void collision_system(Registry &r)
+void collision_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Collider> &colliders, ComponentContainer<Type> &types)
 {
-    auto &positions = r.get_components<Position>();
-    auto &colliders = r.get_components<Collider>();
-    auto &types = r.get_components<Type>();
-
     for (auto &&[idx1, pos1, col1, type1] : IndexedZipper(positions, colliders, types)) {
         if (!pos1 || !col1 || !type1) continue;
 

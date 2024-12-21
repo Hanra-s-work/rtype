@@ -1,16 +1,10 @@
 #include "AISystem.hpp"
 
 #include "Time.hpp"
-#include "Registry.hpp"
-#include "Behaviour.hpp"
-#include "Velocity.hpp"
 #include "Zipper.hpp"
 
-void ai_system(Registry &r)
+void ai_system(Registry &r, ComponentContainer<Behaviour> &behaviours, ComponentContainer<Velocity> &velocities)
 {
-    auto &behaviours = r.get_components<Behaviour>();
-    auto &velocities = r.get_components<Velocity>();
-
     for (auto &&[beh, vel] : Zipper(behaviours, velocities)) {
         if (!beh || !vel) continue;
 

@@ -1,6 +1,8 @@
 #pragma once
 
-class Registry;
+#include "Registry.hpp"
+#include "Position.hpp"
+#include "Velocity.hpp"
 
 /**
  * @brief Handles the movement of entities based on their velocity.
@@ -12,4 +14,4 @@ class Registry;
  * @param r The `Registry` that contains all game entities and their components, used to access and update 
  *        the `Velocity` and `Position` components of entities.
  */
-void movement_system(Registry &r);
+void movement_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Velocity> &velocities);

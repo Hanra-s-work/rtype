@@ -1,6 +1,7 @@
 #pragma once
 
-class Registry;
+#include "Registry.hpp"
+#include "Lifetime.hpp"
 
 /**
  * @brief Manages the lifetime of entities by decreasing their time left.
@@ -13,4 +14,4 @@ class Registry;
  * @param r The `Registry` that contains all game entities and their components, used to manage and update 
  *        the `Lifetime` component of each entity.
  */
-void lifetime_system(Registry &r);
+void lifetime_system(Registry &r, ComponentContainer<Lifetime> &lifetimes);

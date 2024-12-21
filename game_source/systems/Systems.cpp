@@ -10,13 +10,13 @@
 
 void setup_systems(Registry &r)
 {
-    r.add_system(ai_system);
-    r.add_system(collision_system);
-    r.add_system(lifetime_system);
-    r.add_system(movement_system);
+    r.add_system<Behaviour, Velocity>(ai_system);
+    r.add_system<Position, Collider, Type>(collision_system);
+    r.add_system<Lifetime>(lifetime_system);
+    r.add_system<Position, Velocity>(movement_system);
     r.add_system(spawn_monster_system);
     //r.add_system(spawn_obstacle_system);
-    r.add_system(weapon_system);
+    r.add_system<Weapon, Position, Type>(weapon_system);
 }
 
 void setup_components(Registry &r)

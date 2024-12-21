@@ -1,6 +1,9 @@
 #pragma once
 
-class Registry;
+#include "Registry.hpp"
+#include "Weapon.hpp"
+#include "Position.hpp"
+#include "Type.hpp"
 
 /**
  * @brief Handles the firing of weapons and updates their states.
@@ -12,4 +15,4 @@ class Registry;
  * @param r The `Registry` that contains all game entities and their components, used to access and update 
  *        the `Weapon` and other related components of entities.
  */
-void weapon_system(Registry &r);
+void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentContainer<Position> &positions, ComponentContainer<Type> &types);

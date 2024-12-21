@@ -1,16 +1,10 @@
 #include "WeaponSystem.hpp"
-#include "Registry.hpp"
-#include "Components.hpp"
 #include "Zipper.hpp"
 #include "SpawnSystem.hpp"
 #include "Time.hpp"
 
-void weapon_system(Registry &r)
+void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentContainer<Position> &positions, ComponentContainer<Type> &types)
 {
-     auto &weapons = r.get_components<Weapon>();
-     auto &positions = r.get_components<Position>();
-     auto &types = r.get_components<Type>();
-
     for (auto &&[weapon, position, type] : Zipper(weapons, positions, types)) {
         if (!weapon) continue;
 

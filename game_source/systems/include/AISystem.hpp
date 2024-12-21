@@ -1,6 +1,8 @@
 #pragma once
 
-class Registry;
+#include "Registry.hpp"
+#include "Behaviour.hpp"
+#include "Velocity.hpp"
 
 #define AI_TIMER 2.0f
 
@@ -13,4 +15,4 @@ class Registry;
  * 
  * @param r The `Registry` that holds all the game entities and their components.
  */
-void ai_system(Registry &r);
+void ai_system(Registry &r, ComponentContainer<Behaviour> &behaviours, ComponentContainer<Velocity> &velocities);
