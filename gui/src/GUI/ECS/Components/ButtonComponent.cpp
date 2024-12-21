@@ -12,6 +12,10 @@
 
 #include "GUI/ECS/Components/ButtonComponent.hpp"
 
+GUI::ECS::Components::ButtonComponent::ButtonComponent() {};
+
+GUI::ECS::Components::ButtonComponent::~ButtonComponent() {};
+
 void GUI::ECS::Components::ButtonComponent::setHoverColor(sf::Color hoverColor)
 {
     _componentShape.setHoverColor(hoverColor);
@@ -33,24 +37,40 @@ void GUI::ECS::Components::ButtonComponent::setCallback(std::function<void()> ca
     _callback = callback;
 }
 
+
 std::function<void()> GUI::ECS::Components::ButtonComponent::callback()
 {
-    return _callback;
+    _callback();
 }
 
-const sf::Color GUI::ECS::Components::ButtonComponent::getClickedColor()
+sf::Color GUI::ECS::Components::ButtonComponent::getClickedColor() const
 {
     return _componentShape.getClickedColor();
 }
 
-const sf::Color GUI::ECS::Components::ButtonComponent::getNormalColor()
+sf::Color GUI::ECS::Components::ButtonComponent::getNormalColor() const
 {
     return _componentShape.getNormalColor();
 }
 
-const sf::Color GUI::ECS::Components::ButtonComponent::getHoverColor()
+sf::Color GUI::ECS::Components::ButtonComponent::getHoverColor() const
 {
     return _componentShape.getHoverColor();
+}
+
+std::function<void()> GUI::ECS::Components::ButtonComponent::getCallback() const
+{
+    return _callback;
+}
+
+GUI::ECS::Components::TextComponent GUI::ECS::Components::ButtonComponent::getTextComponent() const
+{
+    return _componentText;
+}
+
+GUI::ECS::Components::ShapeComponent GUI::ECS::Components::ButtonComponent::getShapeComponent() const
+{
+    return _componentShape;
 }
 
 void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
@@ -59,8 +79,15 @@ void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Utilities::Mo
     _componentText.update(mouse);
 }
 
-void GUI::ECS::Components::ButtonComponent::renderButton(sf::RenderWindow &window) const
+void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Components::ButtonComponent &copy)
 {
-    _componentShape.renderShape(window);
-    _componentText.renderText(window);
+    setCallback(copy.getCallback());
+    _componentText.update(copy.getTextComponent());
+    _componentShape.update(copy.getShapeComponent());
+}
+
+void GUI::ECS::Components::ButtonComponent::render(sf::RenderWindow &window) const
+{
+    _componentShape.render(window);
+    _componentText.render(window);
 }
