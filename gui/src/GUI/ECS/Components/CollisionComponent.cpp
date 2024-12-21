@@ -10,7 +10,6 @@
  * @brief This is the file in charge of managing the collision checking
  */
 
-#include <iostream>
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
  /**
@@ -21,7 +20,7 @@
   * @param positionX X-coordinate of the component's position.
   * @param positionY Y-coordinate of the component's position.
   */
-GUI::ECS::Components::CollisionComponent::CollisionComponent(const std::uint32_t width, const std::uint32_t height, const std::uint32_t positionX, const std::uint32_t positionY)
+GUI::ECS::Components::CollisionComponent::CollisionComponent(const float width, const float height, const float positionX, const float positionY)
     : _width(width), _height(height), _posX(positionX), _posY(positionY)
 {
     _updateMouseCollisionData();
@@ -38,7 +37,7 @@ GUI::ECS::Components::CollisionComponent::~CollisionComponent() {}
  *
  * @param width New width of the component.
  */
-void GUI::ECS::Components::CollisionComponent::setWidth(const std::uint32_t &width)
+void GUI::ECS::Components::CollisionComponent::setWidth(const float &width)
 {
     _width = width;
     _updateMouseCollisionData();
@@ -49,7 +48,7 @@ void GUI::ECS::Components::CollisionComponent::setWidth(const std::uint32_t &wid
  *
  * @param height New height of the component.
  */
-void GUI::ECS::Components::CollisionComponent::setHeight(const std::uint32_t &height)
+void GUI::ECS::Components::CollisionComponent::setHeight(const float &height)
 {
     _height = height;
     _updateMouseCollisionData();
@@ -60,7 +59,7 @@ void GUI::ECS::Components::CollisionComponent::setHeight(const std::uint32_t &he
  *
  * @param posX New X-coordinate of the component's position.
  */
-void GUI::ECS::Components::CollisionComponent::setPositionX(const std::uint32_t &posX)
+void GUI::ECS::Components::CollisionComponent::setPositionX(const float &posX)
 {
     _posX = posX;
     _updateMouseCollisionData();
@@ -71,7 +70,7 @@ void GUI::ECS::Components::CollisionComponent::setPositionX(const std::uint32_t 
  *
  * @param posY New Y-coordinate of the component's position.
  */
-void GUI::ECS::Components::CollisionComponent::setPositionY(const std::uint32_t &posY)
+void GUI::ECS::Components::CollisionComponent::setPositionY(const float &posY)
 {
     _posY = posY;
     _updateMouseCollisionData();
@@ -90,11 +89,35 @@ void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2f &p
 }
 
 /**
+ *@brief Set the position of the object.
+ *
+ * @param position an sf::Vector2u of the object's position.
+ */
+void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2u &position)
+{
+    _posX = position.x;
+    _posY = position.y;
+    _updateMouseCollisionData();
+}
+
+/**
  *@brief Set the dimension of the object.
  *
  * @param dimension an sf::Vector2f of the of the object's dimension.
  */
 void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2f &dimension)
+{
+    _width = dimension.x;
+    _height = dimension.y;
+    _updateMouseCollisionData();
+}
+
+/**
+ *@brief Set the dimension of the object.
+ *
+ * @param dimension an sf::Vector2u of the of the object's dimension.
+ */
+void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2u &dimension)
 {
     _width = dimension.x;
     _height = dimension.y;
@@ -126,6 +149,17 @@ void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Components
     _width = copy.getWidth();
     _height = copy.getHeight();
     _mouse.update(copy.getMouseInfo());
+}
+
+/**
+ *@brief Update the mouse info object used for mouse tracking.
+ *
+ * @param copy
+ */
+void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+{
+    _mouse.update(mouse);
+    _updateMouseCollisionData();
 }
 
 /**
@@ -164,7 +198,7 @@ bool GUI::ECS::Components::CollisionComponent::isHovered() const
  *
  * @return Width of the component.
  */
-std::uint32_t GUI::ECS::Components::CollisionComponent::getWidth() const
+float GUI::ECS::Components::CollisionComponent::getWidth() const
 {
     return _width;
 }
@@ -174,7 +208,7 @@ std::uint32_t GUI::ECS::Components::CollisionComponent::getWidth() const
  *
  * @return Height of the component.
  */
-std::uint32_t GUI::ECS::Components::CollisionComponent::getHeight() const
+float GUI::ECS::Components::CollisionComponent::getHeight() const
 {
     return _height;
 }
@@ -184,7 +218,7 @@ std::uint32_t GUI::ECS::Components::CollisionComponent::getHeight() const
  *
  * @return X-coordinate of the component's position.
  */
-std::uint32_t GUI::ECS::Components::CollisionComponent::getPositionX() const
+float GUI::ECS::Components::CollisionComponent::getPositionX() const
 {
     return _posX;
 }
@@ -194,9 +228,25 @@ std::uint32_t GUI::ECS::Components::CollisionComponent::getPositionX() const
  *
  * @return Y-coordinate of the component's position.
  */
-std::uint32_t GUI::ECS::Components::CollisionComponent::getPositionY() const
+float GUI::ECS::Components::CollisionComponent::getPositionY() const
 {
     return _posY;
+}
+
+/**
+ * @brief This is the function in charge of returning the coordinates in the form of an sf::FloatRect
+ *
+ * @return sf::FloatRect instance of the coordinates.
+ */
+sf::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
+{
+    sf::FloatRect rect;
+
+    rect.width = _width;
+    rect.height = _height;
+    rect.top = _posY;
+    rect.left = _posX;
+    return rect;
 }
 
 /**
@@ -225,6 +275,11 @@ sf::Vector2f GUI::ECS::Components::CollisionComponent::getDimension() const
     return dimension;
 }
 
+/**
+ *@brief This is the function in charge of returning the MouseInfo class instance.
+ *
+ * @return GUI::ECS::Utilities::MouseInfo The MouseInfo class.
+ */
 GUI::ECS::Utilities::MouseInfo GUI::ECS::Components::CollisionComponent::getMouseInfo() const
 {
     return _mouse;

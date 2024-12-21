@@ -13,7 +13,10 @@
 #pragma once
 
 #include <cstdint>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Debug.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -32,42 +35,62 @@ namespace GUI
              */
             class CollisionComponent : EntityNode {
                 public:
-                CollisionComponent(const std::uint32_t width = 0, const std::uint32_t height = 0, const std::uint32_t positionX = 0, const std::uint32_t positionY = 0);
+                CollisionComponent(const float width = 0, const float height = 0, const float positionX = 0, const float positionY = 0);
                 ~CollisionComponent();
 
-                virtual void setWidth(const std::uint32_t &width);
-                virtual void setHeight(const std::uint32_t &height);
-                virtual void setPositionX(const std::uint32_t &posX);
-                virtual void setPositionY(const std::uint32_t &posY);
+                virtual void setWidth(const float &width);
+                virtual void setHeight(const float &height);
+
+                virtual void setPositionX(const float &posX);
+                virtual void setPositionY(const float &posY);
+
                 virtual void setPosition(const sf::Vector2f &position);
+                virtual void setPosition(const sf::Vector2u &position);
+
                 virtual void setDimension(const sf::Vector2f &dimension);
+                virtual void setDimension(const sf::Vector2u &dimension);
                 virtual void setMousePosition(const sf::Vector2f &mousePosition);
 
+                virtual void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 virtual void update(const GUI::ECS::Components::CollisionComponent &copy);
+
                 virtual void updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse);
 
                 virtual bool isClicked() const;
                 virtual bool isHovered() const;
                 virtual bool isColliding(const CollisionComponent &itemTwo) const;
 
-                virtual std::uint32_t getWidth() const;
-                virtual std::uint32_t getHeight() const;
-                virtual std::uint32_t getPositionX() const;
-                virtual std::uint32_t getPositionY() const;
+                virtual float getWidth() const;
+                virtual float getHeight() const;
+
+                virtual float getPositionX() const;
+                virtual float getPositionY() const;
+
+                virtual sf::FloatRect getGeometry() const;
+
                 virtual sf::Vector2f getPosition() const;
+
                 virtual sf::Vector2f getDimension() const;
+
                 virtual GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+
+                CollisionComponent &operator =(const GUI::ECS::Components::CollisionComponent &copy)
+                {
+                    update(copy);
+                };
 
                 protected:
                 void _updateMouseCollisionData();
                 bool _isHovered;
                 bool _isClicked;
-                std::uint32_t _posX;
-                std::uint32_t _posY;
-                std::uint32_t _width;
-                std::uint32_t _height;
+                float _posX;
+                float _posY;
+                float _width;
+                float _height;
                 GUI::ECS::Utilities::MouseInfo _mouse;
             };
+
+
         }
     }
 }
