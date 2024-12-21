@@ -16,22 +16,62 @@ GUI::ECS::Components::TextureComponent::TextureComponent() {};
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const TextureComponent &other)
 {
-    _texture = other;
+    update(other);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
 {
-    _collisionInfo.getDimension()
+    setFilePath(filePath);
+    setCollisionInfo(collisionInfo);
+};
+
+GUI::ECS::Components::TextureComponent::TextureComponent(const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+{
+    setTexture(texture);
+    setCollisionInfo(collisionInfo);
 }
 
-void GUI::ECS::Components::TextureComponent::setTexture(const sf::Texture &texture)
-{
-    _texture = texture;
-}
+GUI::ECS::Components::TextureComponent::~TextureComponent() {};
 
 void GUI::ECS::Components::TextureComponent::setVisible(const bool visible)
 {
     _visible = visible;
+}
+
+void GUI::ECS::Components::TextureComponent::setFilePath(const std::string &filePath)
+{
+    bool loadStatus = _texture.loadFromFile(filePath);
+    if (!loadStatus) {
+        throw MyException::FileNotFound(filePath);
+    }
+}
+
+void GUI::ECS::Components::TextureComponent::setTexture(const sf::Texture &texture)
+{
+    _texture.update(texture);
+    _collisionInfo.setDimension(_texture.getSize());
+}
+
+void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo)
+{
+    _collisionInfo.update(collisionInfo);
+}
+
+void GUI::ECS::Components::TextureComponent::setPosition(const sf::Vector2f &position)
+{
+    _collisionInfo.setPosition(position);
+}
+
+void GUI::ECS::Components::TextureComponent::setSize(const sf::Vector2f &size)
+{
+    _collisionInfo.setDimension(size);
+}
+
+void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy)
+{
+    setVisible(getVisible());
+    setTexture(getTexture());
+    setCollisionInfo(getCollisionInfo());
 }
 
 sf::Texture GUI::ECS::Components::TextureComponent::getTexture() const
@@ -42,4 +82,9 @@ sf::Texture GUI::ECS::Components::TextureComponent::getTexture() const
 bool GUI::ECS::Components::TextureComponent::getVisible() const
 {
     return _visible;
+}
+
+GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextureComponent::getCollisionInfo() const
+{
+    return _collisionInfo;
 }

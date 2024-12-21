@@ -12,6 +12,7 @@
 
 #pragma once
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include "Debug.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -38,10 +39,17 @@ namespace GUI
                 void setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo);
                 void setPosition(const sf::Vector2f &position);
                 void setSize(const sf::Vector2f &size);
-                void setSfFloatRect(const sf::FloatRect &floatRext);
+
+                void update(const TextureComponent &copy);
 
                 bool getVisible() const;
                 sf::Texture getTexture() const;
+                GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
+
+                TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy)
+                {
+                    update(copy);
+                };
 
                 private:
                 bool _visible;
