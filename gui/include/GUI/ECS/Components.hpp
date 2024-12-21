@@ -11,6 +11,7 @@
  */
 
 #pragma once
+
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 #include "GUI/ECS/Components/ButtonComponent.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"

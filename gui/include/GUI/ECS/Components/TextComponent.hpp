@@ -38,7 +38,6 @@ namespace GUI
                 void setClickedColor(const sf::Color &color);
                 void setText(const std::string &text);
                 void setSize(const std::uint32_t &size);
-                void setHoverColor(const sf::Color &color);
                 void setFontPath(const std::string &fontPath);
                 void setPosition(const sf::Vector2f &position);
                 void setVisible(const bool visible);
