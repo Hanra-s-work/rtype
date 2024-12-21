@@ -16,6 +16,7 @@
 #include <string>
 #include <functional>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -28,17 +29,20 @@ namespace GUI
     {
         namespace Utilities
         {
-            class EventManager : EntityNode {
+            class EventManager : public EntityNode {
                 public:
                 EventManager();
                 ~EventManager();
                 void clearEvents();
                 void processEvents(GUI::ECS::Utilities::Window &window);
+
                 bool isMouseInFocus() const;
                 bool isLeftButtonClicked() const;
                 bool isRightButtonClicked() const;
+
                 float getPositionX() const;
                 float getPositionY() const;
+
                 sf::Vector2f getMousePosition() const;
                 GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
 
