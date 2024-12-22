@@ -32,7 +32,7 @@ namespace GUI
             class Window;
             class EventManager : public EntityNode {
                 public:
-                EventManager();
+                EventManager(const std::uint32_t entityId = 0);
                 ~EventManager();
                 void clearEvents();
                 void processEvents(GUI::ECS::Utilities::Window &window);

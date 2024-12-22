@@ -230,9 +230,10 @@ void Main::_closeConnection()
  */
 void Main::_initialiseRessources()
 {
-    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_windowWidth, _windowHeight, _windowTitle);
-    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>();
-    // std::shared_ptr<GUI::ECS::
+    std::uint32_t baseId = 0;
+    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(baseId, _windowWidth, _windowHeight, _windowTitle);
+    baseId++;
+    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>(baseId);
 
     window->setFullScreen(_windowFullscreen);
     window->setFramerateLimit(_windowFrameLimit);

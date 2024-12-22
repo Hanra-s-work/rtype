@@ -12,7 +12,9 @@
 
 #include "GUI/ECS/Components/MusicComponent.hpp"
 
-GUI::ECS::Components::MusicComponents::MusicComponents() {};
+GUI::ECS::Components::MusicComponents::MusicComponents() : EntityNode(0) {};
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entityId) : EntityNode(entityId) {};
 
 GUI::ECS::Components::MusicComponents::MusicComponents(const MusicComponents &music)
 {
@@ -26,6 +28,21 @@ GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePa
 };
 
 GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePath, const std::string &name, float volume)
+{
+    setVolume(volume);
+    setMusicName(name);
+    setMusic(filePath);
+};
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name)
+    : EntityNode(entityId)
+{
+    setMusicName(name);
+    setMusic(filePath);
+};
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume)
+    : EntityNode(entityId)
 {
     setVolume(volume);
     setMusicName(name);

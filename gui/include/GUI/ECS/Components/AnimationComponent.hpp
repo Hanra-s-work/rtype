@@ -31,7 +31,7 @@ namespace GUI
         {
             class AnimationComponent : public EntityNode {
                 public:
-                AnimationComponent();
+                AnimationComponent(const std::uint32_t entitynode = 0);
                 ~AnimationComponent();
                 virtual void setLoop(bool loop);
                 virtual void setReadReverse(bool reverse);

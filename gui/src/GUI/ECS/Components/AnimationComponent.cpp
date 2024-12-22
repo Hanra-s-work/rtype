@@ -12,7 +12,7 @@
 
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 
-GUI::ECS::Components::AnimationComponent::AnimationComponent() {};
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
 
 GUI::ECS::Components::AnimationComponent::~AnimationComponent() {};
 

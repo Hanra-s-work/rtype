@@ -13,7 +13,7 @@
 #include <iostream>
 #include "GUI/ECS/Utilities/EventManager.hpp"
 
-GUI::ECS::Utilities::EventManager::EventManager() {}
+GUI::ECS::Utilities::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId) {};
 
 GUI::ECS::Utilities::EventManager::~EventManager() {}
 

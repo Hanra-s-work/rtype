@@ -12,7 +12,8 @@
 
 #include "GUI/ECS/Components/TextComponent.hpp"
 
-GUI::ECS::Components::TextComponent::TextComponent(const std::string &fontPath, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const std::string &text, const std::uint32_t &size, const sf::Vector2f &position)
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const std::string &text, const std::uint32_t &size, const sf::Vector2f &position)
+    : EntityNode(entityId)
 {
     setNormalColor(normalColor);
     setClickedColor(clickedColor);

@@ -32,7 +32,7 @@ namespace GUI
         {
             class ShapeComponent : public EntityNode {
                 public:
-                ShapeComponent();
+                ShapeComponent(const std::uint32_t entityId = 0);
                 ~ShapeComponent();
 
                 void setHoverColor(const sf::Color &hoverColor);

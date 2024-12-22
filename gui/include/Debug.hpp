@@ -67,7 +67,7 @@ class Debug {
             _buffer << message; // Write to buffer instead of cout
         }
         return *this;
-    }
+    };
 
     /**
      *@brief This is the overload to allow the debug function
@@ -89,7 +89,8 @@ class Debug {
             }
         }
         return *this;
-    }
+    };
+
 
     private:
     bool _debugEnabled;

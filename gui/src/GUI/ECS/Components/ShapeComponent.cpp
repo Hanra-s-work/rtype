@@ -7,8 +7,8 @@
 
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 
-GUI::ECS::Components::ShapeComponent::ShapeComponent()
-    : _sfShape(nullptr), _hoverColor(sf::Color::White), _normalColor(sf::Color::White), _clickedColor(sf::Color::White), _collision()
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityID)
+    : EntityNode(entityID), _sfShape(nullptr), _hoverColor(sf::Color::White), _normalColor(sf::Color::White), _clickedColor(sf::Color::White), _collision()
 {
 };
 

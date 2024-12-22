@@ -23,7 +23,7 @@ namespace GUI
         {
             class Clock : public EntityNode {
                 public:
-                Clock();
+                Clock(const std::uint32_t entityId = 0);
                 ~Clock();
                 void reset();
                 sf::Time getElapsedTime() const;

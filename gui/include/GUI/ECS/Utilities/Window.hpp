@@ -29,7 +29,7 @@ namespace GUI
         {
             class Window : public EntityNode {
                 public:
-                Window(const std::uint32_t windowWidth = 800, const std::uint32_t windowHeight = 600, const std::string &windowName = "R-Type", unsigned int frameRateLimit = 60);
+                Window(const std::uint32_t entityId = 0, const std::uint32_t windowWidth = 800, const std::uint32_t windowHeight = 600, const std::string &windowName = "R-Type", unsigned int frameRateLimit = 60);
                 ~Window();
 
                 void clear(const sf::Color &color = sf::Color::Black);

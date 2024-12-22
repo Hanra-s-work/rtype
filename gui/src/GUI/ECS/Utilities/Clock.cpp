@@ -12,7 +12,8 @@
 
 #include "GUI/ECS/Utilities/Clock.hpp"
 
-GUI::ECS::Utilities::Clock::Clock()
+GUI::ECS::Utilities::Clock::Clock(const std::uint32_t entityId)
+    : EntityNode(entityId)
 {
     sf::Clock clock;
     _clock = clock;

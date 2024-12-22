@@ -29,7 +29,7 @@ namespace GUI
         {
             class TextComponent : public EntityNode {
                 public:
-                TextComponent(const std::string &fontPath = "", const sf::Color &normalColor = sf::Color::Black, const sf::Color &hoverColor = sf::Color::Black, const sf::Color &clickedColor = sf::Color::Black, const std::string &text = "Sample Text", const std::uint32_t &size = 12, const sf::Vector2f &position = { 0,0 });
+                TextComponent(const std::uint32_t entityId = 0, const std::string &fontPath = "", const sf::Color &normalColor = sf::Color::Black, const sf::Color &hoverColor = sf::Color::Black, const sf::Color &clickedColor = sf::Color::Black, const std::string &text = "Sample Text", const std::uint32_t &size = 12, const sf::Vector2f &position = { 0,0 });
                 ~TextComponent();
 
                 void setFont(const sf::Font &font);

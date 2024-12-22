@@ -7,8 +7,9 @@
 
 #include "GUI/ECS/Utilities/Window.hpp"
 
-GUI::ECS::Utilities::Window::Window(const std::uint32_t windowWidth, const std::uint32_t windowHeight, const std::string &windowName, unsigned int frameRateLimit)
-    : _sfWindow(sf::VideoMode(windowWidth, windowHeight), windowName),
+GUI::ECS::Utilities::Window::Window(const std::uint32_t entityId, const std::uint32_t windowWidth, const std::uint32_t windowHeight, const std::string &windowName, unsigned int frameRateLimit)
+    : EntityNode(entityId),
+    _sfWindow(sf::VideoMode(windowWidth, windowHeight), windowName),
     _windowWidth(windowWidth),
     _windowHeight(windowHeight),
     _windowName(windowName)

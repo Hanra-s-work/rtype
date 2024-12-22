@@ -15,7 +15,8 @@
  /**
   * @brief Constructs a new MouseInfo object with default values.
   */
-GUI::ECS::Utilities::MouseInfo::MouseInfo()
+GUI::ECS::Utilities::MouseInfo::MouseInfo(const std::uint32_t entityId)
+    :EntityNode(entityId)
 {
     _mousePosition.x = 0;
     _mousePosition.y = 0;
