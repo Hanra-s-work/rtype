@@ -167,11 +167,11 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 void GUI::ECS::Components::TextComponent::_processTextComponent()
 {
     if (_textPos.isClicked()) {
-        _sfTextComponent.setColor(_clickedColor);
+        _sfTextComponent.setFillColor(_clickedColor);
     } else if (_textPos.isHovered()) {
-        _sfTextComponent.setColor(_hoverColor);
+        _sfTextComponent.setFillColor(_hoverColor);
     } else {
-        _sfTextComponent.setColor(_color);
+        _sfTextComponent.setFillColor(_color);
     }
 }
 
