@@ -19,6 +19,7 @@
 
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Font.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
@@ -33,6 +34,7 @@ namespace GUI
                 ~TextComponent();
 
                 void setFont(const sf::Font &font);
+                void setFont(const GUI::ECS::Utilities::Font &font);
 
                 void setNormalColor(const sf::Color &color);
                 void setHoverColor(const sf::Color &color);
@@ -48,7 +50,7 @@ namespace GUI
 
                 void setVisible(const bool visible);
 
-                sf::Font getFont() const;
+                GUI::ECS::Utilities::Font getFont() const;
 
                 std::string getFontPath() const;
 
@@ -76,15 +78,14 @@ namespace GUI
                 void _loadFont();
 
                 bool _visible;
-                sf::Font _font;
-                sf::Color _color = sf::Color::Black;
                 std::string _text;
                 std::uint32_t _size;
-                sf::Color _hoverColor = sf::Color::Black;
-                sf::Color _clickedColor = sf::Color::Black;
-                std::string _fontPath;
                 sf::Text _sfTextComponent;
                 CollisionComponent _textPos;
+                GUI::ECS::Utilities::Font _font;
+                sf::Color _color = sf::Color::Black;
+                sf::Color _hoverColor = sf::Color::Black;
+                sf::Color _clickedColor = sf::Color::Black;
             };
         }
     }

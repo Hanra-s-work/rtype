@@ -29,8 +29,14 @@ GUI::ECS::Components::TextComponent::~TextComponent() {};
 
 void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
 {
-    _font = font;
-    _sfTextComponent.setFont(_font);
+    _font.update(font);
+    _sfTextComponent.setFont(_font.getFontInstance());
+}
+
+void GUI::ECS::Components::TextComponent::setFont(const GUI::ECS::Utilities::Font &font)
+{
+    _font.update(font);
+    _sfTextComponent.setFont(_font.getFontInstance());
 }
 
 void GUI::ECS::Components::TextComponent::setNormalColor(const sf::Color &color)
@@ -68,7 +74,8 @@ void GUI::ECS::Components::TextComponent::setClickedColor(const sf::Color &color
 
 void GUI::ECS::Components::TextComponent::setFontPath(const std::string &fontPath)
 {
-    _fontPath = fontPath;
+    GUI::ECS::Utilities::Font font(_font.getFontName(), fontPath);
+    _font = font;
     _loadFont();
 }
 
@@ -84,14 +91,14 @@ void GUI::ECS::Components::TextComponent::setVisible(const bool visible)
     _visible = visible;
 }
 
-sf::Font GUI::ECS::Components::TextComponent::getFont() const
+GUI::ECS::Utilities::Font GUI::ECS::Components::TextComponent::getFont() const
 {
     return _font;
 }
 
 std::string GUI::ECS::Components::TextComponent::getFontPath() const
 {
-    return _fontPath;
+    return _font.getFontPath();
 }
 
 sf::Color GUI::ECS::Components::TextComponent::getNormalColor() const
@@ -144,7 +151,6 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Utilities::Mous
 
 void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::TextComponent &copy)
 {
-    _fontPath = copy.getFontPath();
     setFont(copy.getFont());
     setNormalColor(copy.getNormalColor());
     setClickedColor(copy.getClickedColor());
@@ -158,11 +164,10 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::Tex
 
 void GUI::ECS::Components::TextComponent::_loadFont()
 {
-    if (!_font.loadFromFile(_fontPath)) {
-        Debug::getInstance() << "Error: Failed to load font from: " << _fontPath << std::endl;
-        throw MyException::InvalidFontPath(_fontPath);
+    if (!_font.isLoaded()) {
+        return;
     }
-    _sfTextComponent.setFont(_font);
+    _sfTextComponent.setFont(_font.getFontInstance());
 }
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
