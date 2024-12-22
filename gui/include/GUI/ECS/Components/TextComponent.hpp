@@ -19,7 +19,6 @@
 
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Window.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
