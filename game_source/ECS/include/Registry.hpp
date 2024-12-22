@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "EventDispatcher.hpp"
+#include "Queue.hpp"
 #include "ComponentContainer.hpp"
 #include "Entity.hpp"
 #include "Systems.hpp"
@@ -38,7 +39,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    Registry(EventDispatcher *_dispatcher);
+    Registry(EventDispatcher *_dispatcher, Queue *_queue);
 
     /**
      * @brief Adds a system to the registry.
@@ -180,6 +181,7 @@ public:
 
 public:
     EventDispatcher *dispatcher;
+    Queue *queue;
 
 private:
     std::unordered_map<std::type_index, std::any> _components; /**< Stores component containers indexed by type. */

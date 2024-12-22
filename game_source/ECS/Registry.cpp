@@ -1,8 +1,9 @@
 #include "Registry.hpp"
 
-Registry::Registry(EventDispatcher *_dispatcher)
+Registry::Registry(EventDispatcher *_dispatcher, Queue *_queue)
 {
     dispatcher = _dispatcher;
+    queue = _queue;
     setup_systems(*this);
     setup_components(*this);
 }

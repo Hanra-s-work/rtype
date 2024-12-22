@@ -1,10 +1,14 @@
 #pragma once
 
 #include <forward_list>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include "GameMessage.hpp"
 
 class Registry;
 class EventDispatcher;
+class Queue;
 
 /**
  * @brief Represents the main game logic and state management.
@@ -43,22 +47,53 @@ public:
     /**
      * @brief Retrieves game messages.
      * 
-     * This function returns a reference to a list of `GameMessage` objects.
+     * This function returns a list of `std::string` objects.
      * These messages can be used to track game events or game state transitions.
      * 
-     * @return A reference to a forward list of `GameMessage` objects.
+     * @return A forward list of `std::string` objects.
      */
-    std::forward_list<GameMessage> &getGameEvents(void);
+    std::forward_list<std::string> getGameEvents(void);
+
+    /**
+     * @brief Handles an event received from server.
+     * 
+     * This function processes incoming events from server.
+     * 
+     * @param event The game event to be processed, represented as a `std::string`.
+     */
+    void onServerEventReceived(std::string &event);
 
     /**
      * @brief Handles an event received during gameplay.
-     * 
-     * This function processes incoming game events, allowing the game to respond to various triggers 
+     *
+     * This function processes incoming game events, allowing the game to respond to various triggers
      * such as player actions or system events.
-     * 
+     *
      * @param event The game event to be processed, represented as a `GameMessage`.
      */
-    void onEventReceived(const GameMessage& event);
+    void onGameEventReceived(const GameMessage& event);
+
+    /**
+     * @brief Serializes a GameMessage object into a binary stream.
+     *
+     * This function writes the `GameMessage` object's data to the provided output stream in binary format.
+     * The serialized data can later be read using the `deserialize` function.
+     *
+     * @param message The `GameMessage` object to serialize.
+     * @param os The output stream to which the binary data will be written.
+     */
+    void serialize(const GameMessage& message, std::ostringstream& os);
+
+    /**
+     * @brief Deserializes a GameMessage object from a binary stream.
+     *
+     * This function reads binary data from the provided input stream and reconstructs a `GameMessage` object.
+     * The binary data should have been written using the `serialize` function.
+     *
+     * @param is The input stream from which the binary data will be read.
+     * @return GameMessage The reconstructed `GameMessage` object.
+     */
+    GameMessage deserialize(std::istringstream& is);
 
 private:
     /**
@@ -72,8 +107,18 @@ private:
     EventDispatcher *_dispatcher;
 
     /**
+     * @brief The queue used to manage interaction with EventSystem.
+     */
+    Queue *_queue;
+
+    /**
      * @brief A list of game events that have been received.
      */
-    std::forward_list<GameMessage> _events;
+    std::forward_list<GameMessage> _eventsFromGame;
+
+    /**
+     * @brief A list of events that have been received from server.
+     */
+    std::forward_list<GameMessage> _eventsFromServer;
 };
 
