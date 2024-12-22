@@ -12,8 +12,10 @@ set(SOURCES
     ECS/Entity.cpp
     ECS/Registry.cpp
     manager/Game.cpp
+    manager/Queue.cpp
     systems/AISystem.cpp
     systems/CollisionSystem.cpp
+    systems/EventSystem.cpp
     systems/LifetimeSystem.cpp
     systems/MovementSystem.cpp
     systems/SpawnSystem.cpp

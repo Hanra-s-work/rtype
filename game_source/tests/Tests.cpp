@@ -3,6 +3,7 @@
 EventDispatcher *ev = nullptr;
 Registry *r = nullptr;
 Game *g = nullptr;
+Queue *q = nullptr;
 
 void cleanup(void)
 {
@@ -12,13 +13,16 @@ void cleanup(void)
         delete r;
     if (g)
         delete g;
+    if (q)
+        delete q;
 }
 
 int test_create_registry(void)
 {
     try {
         ev = new EventDispatcher();
-        r = new Registry(ev);
+        q = new Queue();
+        r = new Registry(ev, q);
     } catch (std::exception &e) {
         std::cout << "Test Failed" << std::endl;
         std::cerr << "Exception caught: " << e.what() << std::endl;

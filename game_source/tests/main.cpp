@@ -8,6 +8,6 @@ int main(void) {
     }
 
     cleanup();
-    std::cout << "Successiful tests: " << ok_test << "\tFailed tests: " << tests.size() - ok_test << std::endl;
+    std::cout << "Successful tests: " << ok_test << "\tFailed tests: " << tests.size() - ok_test << std::endl;
     return 0;
 }
