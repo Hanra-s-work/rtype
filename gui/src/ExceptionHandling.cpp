@@ -379,4 +379,21 @@ namespace MyException
         return _buffer;
     }
 
+    NoFont::NoFont(const std::string &fontName)
+    {
+        _msg = "Error: There is no font ";
+        if (!fontName.empty()) {
+            _msg += "called " + fontName + " ";
+        }
+        _msg += "set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoFont::~NoFont() {};
+
+    const char *NoFont::what() const noexcept
+    {
+        return _buffer;
+    }
+
 }

@@ -350,4 +350,19 @@ namespace MyException
         std::string _msg;
         const char *_buffer;
     };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant font instance.
+     *
+     */
+    class NoFont : public std::exception {
+        public:
+        NoFont(const std::string &fontName = "");
+        ~NoFont();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
 }
