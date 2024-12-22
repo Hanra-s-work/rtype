@@ -21,14 +21,12 @@ GUI::ECS::Utilities::MouseInfo::MouseInfo()
     _mousePosition.y = 0;
     _leftButtonClicked = false;
     _rightButtonClicked = false;
-}
+};
 
 /**
  * @brief Destroys the MouseInfo object.
  */
-GUI::ECS::Utilities::MouseInfo::~MouseInfo()
-{
-}
+GUI::ECS::Utilities::MouseInfo::~MouseInfo() {};
 
 /**
  * @brief Processes and updates the internal state based on a given sf::Event.
@@ -117,7 +115,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Event &event)
         default:
             break;
     }
-}
+};
 
 /**
  *@brief Update the values of the class with the content of another class.
@@ -131,7 +129,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
     _mousePosition = entity.getMousePosition();
     _leftButtonClicked = entity.isMouseLeftButtonClicked();
     _rightButtonClicked = entity.isMouseRightButtonClicked();
-}
+};
 
 /**
  * @brief Updates the mouse position using an integer-based vector.
@@ -143,7 +141,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2i &mousePosition)
     Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
     _mousePosition.x = mousePosition.x;
     _mousePosition.y = mousePosition.y;
-}
+};
 
 /**
  * @brief Updates the mouse position using a floating-point vector.
@@ -154,7 +152,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2f &mousePosition)
 {
     Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
     _mousePosition = mousePosition;
-}
+};
 
 /**
  * @brief Updates the mouse position using an sf::Event::MouseMoveEvent.
@@ -166,7 +164,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Event::MouseMoveEvent &pos
     Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
     _mousePosition.x = position.x;
     _mousePosition.y = position.y;
-}
+};
 
 /**
  * @brief Retrieves the current mouse position.
@@ -176,7 +174,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Event::MouseMoveEvent &pos
 sf::Vector2f GUI::ECS::Utilities::MouseInfo::getMousePosition() const
 {
     return _mousePosition;
-}
+};
 
 /**
  * @brief Retrieves the most recent mouse wheel event.
@@ -186,7 +184,7 @@ sf::Vector2f GUI::ECS::Utilities::MouseInfo::getMousePosition() const
 sf::Event::MouseWheelEvent GUI::ECS::Utilities::MouseInfo::getMouseWheelEvent() const
 {
     return _mouseWheel;
-}
+};
 
 /**
  * @brief Checks if the mouse is in the window.
@@ -196,7 +194,7 @@ sf::Event::MouseWheelEvent GUI::ECS::Utilities::MouseInfo::getMouseWheelEvent() 
 bool GUI::ECS::Utilities::MouseInfo::isMouseInFocus() const
 {
     return _mouseInFocus;
-}
+};
 
 /**
  * @brief Checks if the left mouse button is pressed.
@@ -206,7 +204,7 @@ bool GUI::ECS::Utilities::MouseInfo::isMouseInFocus() const
 bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
 {
     return _leftButtonClicked;
-}
+};
 
 /**
  * @brief Checks if the right mouse button is pressed.
@@ -216,7 +214,7 @@ bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
 bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonClicked() const
 {
     return _rightButtonClicked;
-}
+};
 
 /**
  * @brief Retrieves the x-coordinate of the mouse position.
@@ -226,7 +224,7 @@ bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonClicked() const
 float GUI::ECS::Utilities::MouseInfo::getPositionX() const
 {
     return _mousePosition.x;
-}
+};
 
 /**
  * @brief Retrieves the y-coordinate of the mouse position.
@@ -236,7 +234,7 @@ float GUI::ECS::Utilities::MouseInfo::getPositionX() const
 float GUI::ECS::Utilities::MouseInfo::getPositionY() const
 {
     return _mousePosition.y;
-}
+};
 
 /**
  * @brief Resets the internal state of the MouseInfo object.
@@ -251,7 +249,7 @@ void GUI::ECS::Utilities::MouseInfo::clear()
     _mouseWheel.delta = 0;
     _mouseWheel.x = 0;
     _mouseWheel.y = 0;
-}
+};
 
 /**
  *@brief Update the content of the class using the '=' sign overloader.
