@@ -46,6 +46,7 @@ set(SOURCES
     src/GUI/ECS/Systems/RenderSystem.cpp
 
     # The files in charge of containing the utility classes
+    src/GUI/ECS/Utilities/Font.cpp
     src/GUI/ECS/Utilities/Clock.cpp
     src/GUI/ECS/Utilities/Window.cpp
     src/GUI/ECS/Utilities/MouseInfo.cpp
