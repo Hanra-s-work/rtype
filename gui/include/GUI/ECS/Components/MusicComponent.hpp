@@ -54,8 +54,6 @@ namespace GUI
 
                 virtual void update(const MusicComponents &copy);
 
-                virtual void render(sf::RenderWindow &window) const;
-
                 virtual float getVolume() const;
                 virtual std::string getMusicName() const;
                 virtual std::string getFilePath() const;
