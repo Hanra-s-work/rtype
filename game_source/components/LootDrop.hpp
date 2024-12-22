@@ -9,8 +9,8 @@
  */
 enum loot_enum {
     NONE,       /**< No loot is dropped. */
-    POWER_UP,   /**< A power-up item is dropped. */
-    HEALTH      /**< A health item is dropped. */
+    POWERUP_DROP,   /**< A power-up item is dropped. */
+    HEALTH_DROP      /**< A health item is dropped. */
 };
 
 /**

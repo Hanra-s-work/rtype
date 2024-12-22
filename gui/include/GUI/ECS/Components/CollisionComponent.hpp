@@ -33,51 +33,48 @@ namespace GUI
              * @brief Represents a rectangular component that can detect collisions and
              *        mouse interactions, such as hovering and clicking.
              */
-            class CollisionComponent : EntityNode {
+            class CollisionComponent : public EntityNode {
                 public:
                 CollisionComponent(const float width = 0, const float height = 0, const float positionX = 0, const float positionY = 0);
                 ~CollisionComponent();
 
-                virtual void setWidth(const float &width);
-                virtual void setHeight(const float &height);
+                void setWidth(const float &width);
+                void setHeight(const float &height);
 
-                virtual void setPositionX(const float &posX);
-                virtual void setPositionY(const float &posY);
+                void setPositionX(const float &posX);
+                void setPositionY(const float &posY);
 
-                virtual void setPosition(const sf::Vector2f &position);
-                virtual void setPosition(const sf::Vector2u &position);
+                void setPosition(const sf::Vector2f &position);
+                void setPosition(const sf::Vector2u &position);
 
-                virtual void setDimension(const sf::Vector2f &dimension);
-                virtual void setDimension(const sf::Vector2u &dimension);
-                virtual void setMousePosition(const sf::Vector2f &mousePosition);
+                void setDimension(const sf::Vector2f &dimension);
+                void setDimension(const sf::Vector2u &dimension);
+                void setMousePosition(const sf::Vector2f &mousePosition);
 
-                virtual void update(const GUI::ECS::Utilities::MouseInfo &mouse);
-                virtual void update(const GUI::ECS::Components::CollisionComponent &copy);
+                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Components::CollisionComponent &copy);
 
-                virtual void updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse);
 
-                virtual bool isClicked() const;
-                virtual bool isHovered() const;
-                virtual bool isColliding(const CollisionComponent &itemTwo) const;
+                bool isClicked() const;
+                bool isHovered() const;
+                bool isColliding(const CollisionComponent &itemTwo) const;
 
-                virtual float getWidth() const;
-                virtual float getHeight() const;
+                float getWidth() const;
+                float getHeight() const;
 
-                virtual float getPositionX() const;
-                virtual float getPositionY() const;
+                float getPositionX() const;
+                float getPositionY() const;
 
-                virtual sf::FloatRect getGeometry() const;
+                sf::FloatRect getGeometry() const;
 
-                virtual sf::Vector2f getPosition() const;
+                sf::Vector2f getPosition() const;
 
-                virtual sf::Vector2f getDimension() const;
+                sf::Vector2f getDimension() const;
 
-                virtual GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+                GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
 
-                CollisionComponent &operator =(const GUI::ECS::Components::CollisionComponent &copy)
-                {
-                    update(copy);
-                };
+                CollisionComponent &operator =(const GUI::ECS::Components::CollisionComponent &copy);
 
                 protected:
                 void _updateMouseCollisionData();

@@ -11,8 +11,8 @@
  */
 
 #pragma once
-#include "ECS/Component.hpp"
-#include "ECS/Components.hpp"
-#include "ECS/EntityNode.hpp"
-#include "ECS/Systems.hpp"
-#include "ECS/Utilities.hpp"
+#include "GUI/ECS/Component.hpp"
+#include "GUI/ECS/Components.hpp"
+#include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Systems.hpp"
+#include "GUI/ECS/Utilities.hpp"

@@ -163,7 +163,7 @@ namespace MyException
         return _buffer;
     }
 
-    InvalidWidth::InvalidWidth(const std::string &width = "", const std::string &min = "", const std::string &max = "")
+    InvalidWidth::InvalidWidth(const std::string &width, const std::string &min, const std::string &max)
     {
         _msg = "Error: The width you provided is invalid.\n";
         _msg += "The width was: '";
@@ -188,7 +188,7 @@ namespace MyException
         return _buffer;
     }
 
-    InvalidHeight::InvalidHeight(const std::string &height = "", const std::string &min = "", const std::string &max = "")
+    InvalidHeight::InvalidHeight(const std::string &height, const std::string &min, const std::string &max)
     {
         _msg = "Error: The height you provided is invalid.\n";
         _msg += "The height was: '";
@@ -231,10 +231,13 @@ namespace MyException
     }
 
 
-    InvalidShape::InvalidShape()
+    InvalidShape::InvalidShape(const std::string &extraDetails)
     {
         _msg = "Error: The shape you have provided is invalid or ";
         _msg += "has not been defined.";
+        if (extraDetails.empty() == false) {
+            _msg += "\n(" + extraDetails + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -359,6 +362,19 @@ namespace MyException
     NoSprite::~NoSprite() {};
 
     const char *NoSprite::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoButton::NoButton()
+    {
+        _msg = "Error: There is no ButtonComponent set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoButton::~NoButton() {};
+
+    const char *NoButton::what() const noexcept
     {
         return _buffer;
     }

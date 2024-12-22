@@ -11,5 +11,21 @@
  */
 
 #pragma once
-#include "Utilities/Clock.hpp"
-#include "Utilities/EventManager.hpp"
+#include "GUI/ECS/Utilities/Clock.hpp"
+#include "GUI/ECS/Utilities/EventManager.hpp"
+#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Utilities/Window.hpp"
+
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Utilities
+        {
+            class Clock;
+            class EventManager;
+            class MouseInfo;
+            class Window;
+        }
+    }
+}

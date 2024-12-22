@@ -1,11 +1,8 @@
 #pragma once
 
-#include "Registry.hpp"
-#include "Behaviour.hpp"
-#include "Velocity.hpp"
-#include "Zipper.hpp"
+class Registry;
 
-#define AI_TIMER 2f
+#define AI_TIMER 2.0f
 
 /**
  * @brief AI system that updates the behaviour and velocity of entities.
@@ -15,6 +12,5 @@
  * move it depending on its behaviour.
  * 
  * @param r The `Registry` that holds all the game entities and their components.
- * @param delta_time The time elapsed since the last update, used to scale updates based on frame rate.
  */
-void ai_system(Registry &r, float delta_time);
+void ai_system(Registry &r);

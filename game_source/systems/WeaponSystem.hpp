@@ -1,10 +1,6 @@
 #pragma once
 
-#include "Registry.hpp"
-#include "Weapon.hpp"
-#include "Type.hpp"
-#include "Position.hpp"
-#include "Zipper.hpp"
+class Registry;
 
 /**
  * @brief Handles the firing of weapons and updates their states.
@@ -15,7 +11,5 @@
  * 
  * @param r The `Registry` that contains all game entities and their components, used to access and update 
  *        the `Weapon` and other related components of entities.
- * @param delta_time The time elapsed since the last frame, used to update the cooldown timers of weapons 
- *                   and ensure that the firing rate is respected.
  */
-void weapon_system(Registry &r, float delta_time);
+void weapon_system(Registry &r);

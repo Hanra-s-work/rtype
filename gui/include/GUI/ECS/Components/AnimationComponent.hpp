@@ -11,6 +11,7 @@
  */
 
 #pragma once
+
 #include <vector>
 #include <chrono>
 #include <cstdint>
@@ -28,7 +29,7 @@ namespace GUI
     {
         namespace Components
         {
-            class AnimationComponent : EntityNode {
+            class AnimationComponent : public EntityNode {
                 public:
                 AnimationComponent();
                 ~AnimationComponent();
@@ -53,10 +54,7 @@ namespace GUI
                 virtual GUI::ECS::Components::TextureComponent getCurrentTexture() const;
                 virtual std::vector<GUI::ECS::Components::TextureComponent> getFrames() const;
 
-                AnimationComponent &operator =(const GUI::ECS::Components::AnimationComponent &copy)
-                {
-                    update(copy);
-                };
+                AnimationComponent &operator =(const GUI::ECS::Components::AnimationComponent &copy);
 
                 protected:
                 void _tick();

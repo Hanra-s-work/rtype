@@ -221,7 +221,7 @@ namespace MyException
      */
     class InvalidShape : public std::exception {
         public:
-        InvalidShape();
+        InvalidShape(const std::string &extraDetails = "");
         ~InvalidShape();
         const char *what() const noexcept;
         private:
@@ -330,6 +330,21 @@ namespace MyException
         public:
         NoSprite();
         ~NoSprite();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant Button class.
+     *
+     */
+    class NoButton : public std::exception {
+        public:
+        NoButton();
+        ~NoButton();
         const char *what() const noexcept;
         private:
         std::string _msg;

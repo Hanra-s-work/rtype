@@ -11,7 +11,21 @@
  */
 
 #pragma once
-#include "Systems/AnimationSystem.hpp"
-#include "Systems/ButtonSystem.hpp"
-#include "Systems/InputSystem.hpp"
-#include "Systems/RenderSystem.hpp"
+#include "GUI/ECS/Systems/AnimationSystem.hpp"
+#include "GUI/ECS/Systems/ButtonSystem.hpp"
+#include "GUI/ECS/Systems/InputSystem.hpp"
+#include "GUI/ECS/Systems/RenderSystem.hpp"
+
+namespace GUI
+{
+    namespace ECS
+    {
+        namespace Systems
+        {
+            class AnimationSystem;
+            class ButtonSystem;
+            class InputSystem;
+            class RenderSystem;
+        }
+    }
+}

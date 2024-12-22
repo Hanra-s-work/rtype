@@ -11,6 +11,7 @@
  */
 
 #pragma once
+
 #include <string>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -25,7 +26,7 @@ namespace GUI
     {
         namespace Components
         {
-            class MusicComponents : EntityNode {
+            class MusicComponents : public EntityNode {
                 public:
                 MusicComponents();
                 MusicComponents(const MusicComponents &music);
@@ -53,16 +54,11 @@ namespace GUI
 
                 virtual void update(const MusicComponents &copy);
 
-                virtual void render(sf::RenderWindow &window) const;
-
                 virtual float getVolume() const;
                 virtual std::string getMusicName() const;
                 virtual std::string getFilePath() const;
 
-                MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy)
-                {
-                    update(copy);
-                };
+                MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy);
 
                 private:
                 float _volume;

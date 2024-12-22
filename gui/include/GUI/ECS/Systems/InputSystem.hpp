@@ -20,7 +20,7 @@ namespace GUI
     {
         namespace Systems
         {
-            class InputSystem : EntityNode {
+            class InputSystem : public EntityNode {
                 public:
                 InputSystem() = default;
                 ~InputSystem() = default;

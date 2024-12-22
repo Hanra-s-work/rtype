@@ -119,6 +119,14 @@ GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent:
     return _currentTexture;
 }
 
+GUI::ECS::Components::AnimationComponent &GUI::ECS::Components::AnimationComponent::operator=(const GUI::ECS::Components::AnimationComponent &copy)
+{
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
+};
+
 void GUI::ECS::Components::AnimationComponent::_tick()
 {
     std::uint32_t nextFrame = _currentFrame + 1;

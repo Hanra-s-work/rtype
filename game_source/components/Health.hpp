@@ -9,5 +9,5 @@
  */
 struct Health {
     int current; /**< The current health value of the entity. */
-    const int max; /**< The maximum health value of the entity. */
+    int max; /**< The maximum health value of the entity. */
 };

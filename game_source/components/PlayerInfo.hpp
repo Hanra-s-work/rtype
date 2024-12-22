@@ -10,5 +10,5 @@
  * It can be expanded in the future to include additional player-related data if needed.
  */
 struct PlayerInfo {
-    const std::string username; /**< The username of the player. */
+    std::string username; /**< The username of the player. */
 };

@@ -42,14 +42,14 @@ public:
      * @param it_tuple A tuple of iterators pointing to the current positions in the containers.
      * @param max The maximum number of elements to iterate over (determined by the smallest container size).
      */
-    ZipperIterator(iterator_tuple const& it_tuple, size_t max);
+    ZipperIterator(iterator_tuple const& it_tuple, size_t max) : _current(it_tuple), _max(max), _idx(0) {}
 
     /**
      * @brief Copy constructor.
      * 
      * @param z The `ZipperIterator` to copy.
      */
-    ZipperIterator(const ZipperIterator& z);
+    ZipperIterator(const ZipperIterator& z) : _current(z._current), _max(z._max), _idx(z._idx) {}
 
     /**
      * @brief Pre-increment operator.
@@ -58,7 +58,10 @@ public:
      * 
      * @return A reference to the incremented iterator.
      */
-    ZipperIterator& operator++();
+    ZipperIterator& operator++() {
+        incr_all(std::index_sequence_for<Containers...>{});
+        return *this;
+    }
 
     /**
      * @brief Post-increment operator.
@@ -67,7 +70,11 @@ public:
      * 
      * @return A copy of the iterator before incrementing.
      */
-    ZipperIterator operator++(int);
+    ZipperIterator operator++(int) {
+        ZipperIterator tmp(*this);
+        ++(*this);
+        return tmp;
+    }
 
     /**
      * @brief Dereference operator.
@@ -76,7 +83,9 @@ public:
      * 
      * @return A tuple of references to the container elements at the current position.
      */
-    value_type operator*();
+    value_type operator*() {
+        return to_value(std::index_sequence_for<Containers...>{});
+    }
 
     /**
      * @brief Member access operator.
@@ -85,7 +94,9 @@ public:
      * 
      * @return A pointer to the value tuple.
      */
-    value_type* operator->();
+    value_type* operator->() {
+        return &(*this);
+    }
 
     /**
      * @brief Equality operator.
@@ -96,7 +107,9 @@ public:
      * @param rhs Right-hand side iterator.
      * @return `true` if the iterators are equal; otherwise `false`.
      */
-    friend bool operator==(const ZipperIterator& lhs, const ZipperIterator& rhs);
+    friend bool operator==(const ZipperIterator<Containers...>& lhs, const ZipperIterator<Containers...>& rhs) {
+        return lhs._idx == rhs._idx;
+    }
 
     /**
      * @brief Inequality operator.
@@ -107,7 +120,9 @@ public:
      * @param rhs Right-hand side iterator.
      * @return `true` if the iterators are not equal; otherwise `false`.
      */
-    friend bool operator!=(const ZipperIterator& lhs, const ZipperIterator& rhs);
+    friend bool operator!=(const ZipperIterator<Containers...>& lhs, const ZipperIterator<Containers...>& rhs) {
+        return lhs._idx != rhs._idx;
+    }
 
 private:
     /**
@@ -116,7 +131,15 @@ private:
      * @tparam Is Index sequence for accessing the iterators in the tuple.
      */
     template <size_t... Is>
-    void incr_all(std::index_sequence<Is...>);
+    void incr_all(std::index_sequence<Is...>) {
+        (++std::get<Is>(_current), ...);
+
+        while (!all_set(std::index_sequence<Is...>{})) {
+            (++std::get<Is>(_current), ...);
+        }
+
+        ++_idx;
+    }
 
     /**
      * @brief Helper function to check if all iterators are valid.
@@ -125,7 +148,9 @@ private:
      * @return `true` if all iterators are valid; otherwise `false`.
      */
     template <size_t... Is>
-    bool all_set(std::index_sequence<Is...>);
+    bool all_set(std::index_sequence<Is...>) {
+        return (... && (std::get<Is>(_current) != std::get<Is>(_current)));
+    }
 
     /**
      * @brief Helper function to construct the value tuple for the current iteration.
@@ -134,7 +159,9 @@ private:
      * @return A tuple containing references to the container elements at the current position.
      */
     template <size_t... Is>
-    value_type to_value(std::index_sequence<Is...>);
+    value_type to_value(std::index_sequence<Is...>) {
+        return std::tuple<it_reference_t<Containers>...>(*(std::get<Is>(_current))...);
+    }
 
 private:
     iterator_tuple _current; /**< Tuple of iterators pointing to the current positions in the containers. */

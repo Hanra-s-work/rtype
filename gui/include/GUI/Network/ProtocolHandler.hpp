@@ -20,7 +20,7 @@
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
-class Packet : GUI::ECS::EntityNode {
+class Packet : public GUI::ECS::EntityNode {
     public:
     enum class MessageType : uint8_t {
         CONNECT = 1,

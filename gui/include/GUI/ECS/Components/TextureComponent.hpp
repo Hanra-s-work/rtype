@@ -11,8 +11,10 @@
  */
 
 #pragma once
+
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+
 #include "Debug.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -25,7 +27,7 @@ namespace GUI
     {
         namespace Components
         {
-            class TextureComponent : EntityNode {
+            class TextureComponent : public EntityNode {
                 public:
                 TextureComponent();
                 TextureComponent(const TextureComponent &other);
@@ -46,10 +48,7 @@ namespace GUI
                 sf::Texture getTexture() const;
                 GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
 
-                TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy)
-                {
-                    update(copy);
-                };
+                TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy);
 
                 private:
                 bool _visible;

@@ -22,7 +22,7 @@ namespace GUI
     {
         namespace Utilities
         {
-            class MouseInfo : EntityNode {
+            class MouseInfo : public EntityNode {
                 public:
                 MouseInfo();
                 ~MouseInfo();
@@ -43,6 +43,8 @@ namespace GUI
                 float getPositionY() const;
 
                 void clear();
+
+                MouseInfo &operator=(const GUI::ECS::Utilities::MouseInfo &copy);
 
                 private:
                 sf::Vector2f _mousePosition;

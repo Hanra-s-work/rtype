@@ -9,7 +9,7 @@
  */
 enum team_enum {
     ALLY,   /**< The entity belongs to the ally team. */
-    MONSTER /**< The entity belongs to the monster team. */
+    ENEMY   /**< The entity belongs to the enemy team. */
 };
 
 /**
@@ -17,8 +17,8 @@ enum team_enum {
  * @brief Represents the team affiliation of an entity.
  * 
  * This structure is used to store the team information of an entity, indicating whether
- * the entity belongs to the ally team or the monster team.
+ * the entity belongs to the ally team or the enemy team.
  */
 struct Team {
-    const team_enum team; /**< The team of the entity, from `team_enum`. */
+    team_enum team; /**< The team of the entity, from `team_enum`. */
 };

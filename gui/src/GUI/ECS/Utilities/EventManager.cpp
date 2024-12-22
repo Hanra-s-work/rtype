@@ -42,12 +42,12 @@ void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::Window &wind
     processEvents(window);
 }
 
-void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Utilities::EventManager::update(const GUI::ECS::Utilities::MouseInfo &mouse)
 {
     _mouse.update(mouse);
 }
 
-void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::EventManager &copy)
+void GUI::ECS::Utilities::EventManager::update(const GUI::ECS::Utilities::EventManager &copy)
 {
     _mouse.update(copy.getMouseInfo());
     _keys = copy.getKeys();
@@ -125,3 +125,11 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
     }
 }
 
+
+GUI::ECS::Utilities::EventManager &GUI::ECS::Utilities::EventManager::operator=(const GUI::ECS::Utilities::EventManager &copy)
+{
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
+};

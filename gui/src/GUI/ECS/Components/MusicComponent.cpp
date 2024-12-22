@@ -176,3 +176,11 @@ std::string GUI::ECS::Components::MusicComponents::getFilePath() const
 {
     return _filePath;
 }
+
+GUI::ECS::Components::MusicComponents &GUI::ECS::Components::MusicComponents::operator =(const GUI::ECS::Components::MusicComponents &copy)
+{
+    if (this != &copy) {
+        update(copy);
+    }
+    return *this;
+};
