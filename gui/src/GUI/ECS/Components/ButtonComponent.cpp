@@ -98,7 +98,7 @@ GUI::ECS::Components::TextComponent GUI::ECS::Components::ButtonComponent::getTe
     return _componentText;
 }
 
-const GUI::ECS::Components::ShapeComponent &GUI::ECS::Components::ButtonComponent::getShapeComponent() const
+const GUI::ECS::Components::SpriteComponent &GUI::ECS::Components::ButtonComponent::getShapeComponent() const
 {
     return _componentShape;
 }

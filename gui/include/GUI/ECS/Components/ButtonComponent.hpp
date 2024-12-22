@@ -19,8 +19,8 @@
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components/TextComponent.hpp"
-#include "GUI/ECS/Components/ShapeComponent.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
+ // #include "GUI/ECS/Components/ShapeComponent.hpp"
+#include "GUI/ECS/Components/SpriteComponent.hpp"
 
 namespace GUI
 {
@@ -54,7 +54,7 @@ namespace GUI
                 std::function<void()> getCallback() const;
 
                 GUI::ECS::Components::TextComponent getTextComponent() const;
-                const GUI::ECS::Components::ShapeComponent &getShapeComponent() const;
+                const GUI::ECS::Components::SpriteComponent &getShapeComponent() const;
 
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::ButtonComponent &copy);
@@ -66,7 +66,9 @@ namespace GUI
                 private:
                 std::function<void()> _callback;
                 GUI::ECS::Components::TextComponent _componentText;
-                GUI::ECS::Components::ShapeComponent _componentShape;
+                // GUI::ECS::Components::ShapeComponent _componentShape;
+                GUI::ECS::Components::SpriteComponent _componentShape;
+
             };
         }
     }
