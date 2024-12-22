@@ -1,7 +1,13 @@
 #include "AISystem.hpp"
 
-void ai_system(Registry &r, float delta_time)
+#include "Registry.hpp"
+#include "Behaviour.hpp"
+#include "Velocity.hpp"
+#include "Zipper.hpp"
+
+void ai_system(Registry &r)
 {
+    float delta_time = 1;
     auto &behaviours = r.get_components<Behaviour>();
     auto &velocities = r.get_components<Velocity>();
 

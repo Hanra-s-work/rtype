@@ -1,0 +1,15 @@
+#pragma once
+
+#include "Behaviour.hpp"
+#include "Collider.hpp"
+#include "Health.hpp"
+#include "Image.hpp"
+#include "Lifetime.hpp"
+#include "LootDrop.hpp"
+#include "PlayerInfo.hpp"
+#include "Position.hpp"
+#include "PowerUp.hpp"
+#include "Team.hpp"
+#include "Type.hpp"
+#include "Velocity.hpp"
+#include "Weapon.hpp"

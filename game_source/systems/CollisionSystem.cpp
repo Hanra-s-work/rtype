@@ -1,9 +1,14 @@
 #include "CollisionSystem.hpp"
 
+#include "Registry.hpp"
+#include "IndexedZipper.hpp"
+#include "Components.hpp"
+#include "SpawnSystem.hpp"
+
 void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
     auto &&[healths, teams] = r.get_component_array<Health, Team>();
-    if (teams[entity2]->team == team_enum::MONSTER) {
+    if (teams[entity2]->team == team_enum::ENEMY) {
         healths[entity1]->current -= 1;
         if (healths[entity1]->current == 0) {
             //also send game over msg to client
@@ -52,6 +57,15 @@ void collision_player_powerup(Registry &r, size_t &entity1, size_t &entity2)
 void collision_obstacle_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
     r.kill_entity(Entity(entity2));
+}
+
+namespace std {
+    template <>
+    struct hash<std::pair<type_enum, type_enum>> {
+        size_t operator()(const std::pair<type_enum, type_enum>& p) const {
+            return (hash<type_enum>()(p.first) ^ (hash<type_enum>()(p.second) << 1));
+        }
+    };
 }
 
 const std::unordered_map<std::pair<type_enum, type_enum>, std::function<void(Registry &, size_t &, size_t &)>> collisions = {

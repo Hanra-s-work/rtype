@@ -24,5 +24,5 @@ enum type_enum {
  * monster, missile, obstacle, or power-up.
  */
 struct Type {
-    const type_enum type; /**< The type of the entity, from `type_enum`. */
+    type_enum type; /**< The type of the entity, from `type_enum`. */
 };
