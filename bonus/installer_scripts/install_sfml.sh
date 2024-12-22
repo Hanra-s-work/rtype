@@ -173,9 +173,9 @@ function download_sfml {
     display_title "Downloading the SFML library..."
     mkdir -p $FILE_LOCATION
     if [ $SILENT -eq $TRUE ]; then
-        wget -q --show-progress=off --no-verbose $SOURCE_CODE -O $FINAL_DOWNLOAD_PATH >/dev/null
+        curl -sS $SOURCE_CODE -o $FINAL_DOWNLOAD_PATH
     else
-        wget --progress=bar:force $SOURCE_CODE -O $FINAL_DOWNLOAD_PATH
+        curl -# $SOURCE_CODE -o $FINAL_DOWNLOAD_PATH
     fi
     STATUS=$?
     display_status $STATUS "Downloading the SFML library"

@@ -1,0 +1,8 @@
+# No Cmake cache:
+Makefile
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+
+# No gui binary
+rtype_gui

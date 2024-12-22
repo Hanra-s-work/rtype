@@ -5,14 +5,21 @@
 ** Handle UDP sockets & Send/Receive messages between server and client
 */
 
+/**
+ * @file NetworkManager.hpp
+ * @brief This is the file in charge of Handling UDP sockets & Send/Receive messages between server and client
+ */
+
 #pragma once
 
-#include <asio.hpp>
 #include <string>
 #include <vector>
+#include <asio.hpp>
 #include "ProtocolHandler.hpp"
+#include "Debug.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 
-class NetworkManager {
+class NetworkManager : public GUI::ECS::EntityNode {
     public:
     NetworkManager();
     void Initialize();
@@ -23,6 +30,4 @@ class NetworkManager {
     asio::io_context ioContext;
     asio::ip::udp::socket socket{ ioContext };
 };
-
-
 

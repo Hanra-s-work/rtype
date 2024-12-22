@@ -1,10 +1,27 @@
+# No build/cache files
 *.o
 *.vscode
 *.DS_Store
+*.code-workspace
+Makefile
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+
+# No temporary files
 *tmp*
+
+# No executables
 r-type_server
 r-type_client
+rtype
+rtype_gui
+rtype_server
+
+# No build files
 bootstrap
 build/*
-rtype
+bin/*
+
+# No editor config files
 .vscode
