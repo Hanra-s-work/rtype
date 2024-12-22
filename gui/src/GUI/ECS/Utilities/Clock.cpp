@@ -23,9 +23,6 @@ GUI::ECS::Utilities::Clock::~Clock() {}
 
 void GUI::ECS::Utilities::Clock::reset()
 {
-    // if (not _clock) {
-    //     _clock = sf::Clock();
-    // }
     _clock.restart();
 }
 
