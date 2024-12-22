@@ -82,8 +82,13 @@ class Main {
   bool _isPortCorrect(const unsigned int port);
   bool _isFilePresent(const std::string &filepath);
   bool _isFrameLimitCorrect(unsigned int frameLimit);
-  void _initialiseRessources();
+
+  void _initialiseAudio();
+  void _initialiseFonts();
+  void _initialiseSprites();
   void _initialiseConnection();
+  void _initialiseRessources();
+
   void _closeConnection();
 
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
@@ -104,6 +109,7 @@ class Main {
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
+  std::uint32_t _baseId = 0;
 };
 
 int RealMain(int argc, char **argv);

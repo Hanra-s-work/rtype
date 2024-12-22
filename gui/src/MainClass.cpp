@@ -224,22 +224,100 @@ void Main::_closeConnection()
 
 }
 
+
+/**
+ *@brief This is the function in charge of loading the Sprites and Spritesheets into the program.
+ *
+ */
+void Main::_initialiseSprites()
+{
+
+}
+
+/**
+ *@brief This is the function in charge of loading the audios into the program.
+ *
+ */
+void Main::_initialiseAudio()
+{
+    std::string mainMenuPath = "assets/audio/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.ogg";
+    std::string bossFightPath = "assets/audio/2021-08-30_-_Boss_Time_-_www.FesliyanStudios.com.ogg";
+    std::string gameLoopPath = "assets/audio/FASTER-2020-03-22_-_A_Bit_Of_Hope_-_David_Fesliyan.ogg";
+    std::string shootingPath = "assets/audio/Laser-A1-www.fesliyanstudios.com.ogg";
+    std::string damagePath = "assets/audio/Undertale_Damage_Sound_Effect.ogg";
+    std::string deadPath = "assets/audio/Bomb-Explosion-Big-www.fesliyanstudios.com.ogg";
+    std::string buttonPath = "assets/audio/Game-Menu-Selection-Z-www.fesliyanstudios.com.ogg";
+    std::string gameOverPath = "assets/audio/game-over-arcade.ogg";
+    std::string successPath = "assets/audio/success-fanfare-trumpets-6185.ogg";
+
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> mainMenu = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, mainMenuPath, "Main Menu");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> bossFight = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, bossFightPath, "Boss Fight");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> gameLoop = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, gameLoopPath, "Game Loop");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> shooting = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, shootingPath, "Shooting");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> damage = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, damagePath, "Damage");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> dead = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, deadPath, "Dead");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> button = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, buttonPath, "Button");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> gameOver = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, gameOverPath, "Game Over");
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Components::MusicComponents> success = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, successPath, "Success");
+    _baseId++;
+
+
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(mainMenu);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(bossFight);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(gameLoop);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(shooting);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(damage);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(dead);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(button);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(gameOver);
+    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(success);
+}
+
+/**
+ *@brief This is the function in charge of loading the fonts into the program.
+ *
+ */
+void Main::_initialiseFonts()
+{
+    std::string titleFontPath = "assets/font/Color Basic/TTF Fonts/color_basic.ttf";
+    std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
+    _baseId++;
+
+    _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(titleFont);
+}
+
 /**
  *@brief This is the function in charge of initialise the default ressources for the class.
  *
  */
 void Main::_initialiseRessources()
 {
-    std::uint32_t baseId = 0;
-    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(baseId, _windowWidth, _windowHeight, _windowTitle);
-    baseId++;
-    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>(baseId);
+    std::uint32_t _baseId = 0;
+    _ecsEntities.clear();
+
+
+    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
+    _baseId++;
+    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>(_baseId);
+    _baseId++;
 
     window->setFullScreen(_windowFullscreen);
     window->setFramerateLimit(_windowFrameLimit);
 
     _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
+
+    _initialiseSprites();
+    _initialiseAudio();
+    _initialiseFonts();
 }
 
 /**
