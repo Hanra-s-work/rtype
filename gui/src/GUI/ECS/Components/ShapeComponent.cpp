@@ -41,7 +41,7 @@ void GUI::ECS::Components::ShapeComponent::setShape(const sf::Shape &shape)
 
 void GUI::ECS::Components::ShapeComponent::setShape(sf::Shape &&shape)
 {
-    _sfShape = std::make_unique<sf::Shape>(std::move(shape));
+    _sfShape = cloneShape(std::move(shape));
 }
 
 void GUI::ECS::Components::ShapeComponent::setPosition(const sf::Vector2f position)
@@ -158,7 +158,7 @@ std::unique_ptr<sf::Shape> GUI::ECS::Components::ShapeComponent::cloneShape(cons
     if (auto rect = dynamic_cast<const sf::RectangleShape *>(&shape)) {
         return std::make_unique<sf::RectangleShape>(*rect);
     }
-    throw MyException::InvalidShape();
+    throw MyException::InvalidShape("Unsupported shape type");
 }
 
 void GUI::ECS::Components::ShapeComponent::_processColor()
