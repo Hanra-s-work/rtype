@@ -29,6 +29,7 @@ namespace GUI
     {
         namespace Utilities
         {
+            class Window;
             class EventManager : public EntityNode {
                 public:
                 EventManager();
