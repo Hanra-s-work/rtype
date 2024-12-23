@@ -64,7 +64,23 @@ class Debug {
     {
         if (_debugEnabled) {
             std::lock_guard<std::mutex> lock(_mtx);
-            _buffer << message; // Write to buffer instead of cout
+            _buffer << message;
+        }
+        return *this;
+    };
+
+    /**
+     *@brief This is the function used to log a message with a
+     * timestamp if the debug mode is activated.
+     *
+     * @param message
+     * @return Debug&
+     */
+    Debug &operator<<(const std::string &message)
+    {
+        if (_debugEnabled) {
+            std::lock_guard<std::mutex> lock(_mtx);
+            _buffer << message;
         }
         return *this;
     };
