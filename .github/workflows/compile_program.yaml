@@ -61,6 +61,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
 
+      - name: Install EGL dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1-mesa-dev
+
       - name: Install UDev dependencies
         run: |
           sudo apt-get update
@@ -71,6 +76,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libopenal-dev
 
+      - name: Install Vorbis and Ogg dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvorbis-dev libogg-dev
+
+      - name: Install Freetype library
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfreetype-dev
+
+
+      - name: Install FLAC and Vorbis audio dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libflac-dev libvorbis-dev
 
       - name: Compile the program
         run: |
