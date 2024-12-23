@@ -323,6 +323,9 @@ void Main::_initialiseRessources()
     std::uint32_t _baseId = 0;
     _ecsEntities.clear();
 
+    Debug::getInstance() << "========================== Displaying loaded toml data. ==========================" << std::endl;
+    _tomlContent.printTOML();
+    Debug::getInstance() << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
     std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
     _baseId++;
