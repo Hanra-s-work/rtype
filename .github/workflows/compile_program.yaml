@@ -50,6 +50,11 @@ jobs:
           sudo apt install -y g++-${{env.GPP_VERSION}}
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{env.GPP_VERSION}} 100
           sudo update-alternatives --config g++
+
+      - name: Install X11 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
       
       - name: Compile the program
         run: |
