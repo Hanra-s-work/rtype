@@ -61,6 +61,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
 
+      - name: Install UDev dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev
+
+
       - name: Compile the program
         run: |
           mkdir -p ${{env.BUILD_DIR_LINUX}}
