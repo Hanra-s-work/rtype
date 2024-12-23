@@ -38,7 +38,7 @@ jobs:
       - name: Access the repository
         uses: actions/checkout@v4
 
-      - name: Install Latest CMake
+      - name: Install a specific version of cmake
         uses: ssrobins/install-cmake@v1
         with:
           version: ${{env.CMAKE_VERSION}}
@@ -56,6 +56,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
       
+      - name: Install OpenGL dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+
       - name: Compile the program
         run: |
           mkdir -p ${{env.BUILD_DIR_LINUX}}
