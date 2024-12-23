@@ -22,6 +22,13 @@ permissions:
 env:
   CMAKE_VERSION: 3.28.3
   GPP_VERSION: 13
+  BUILD_DIR_LINUX: build_linux
+  BUILD_DIR_WINDOWS: build_windows
+  RELEASE_DIR_LINUX: release_linux
+  RELEASE_DIR_WINDOWS: release_windows
+  ASSETS_DIR: assets
+  OUTPUT_DIRECTORY: result
+  FINAL_OUTPUT: final_result
 
 jobs:
   build_for_linux:
@@ -36,7 +43,7 @@ jobs:
         with:
           version: ${{env.CMAKE_VERSION}}
 
-      - name: Install g++ 13.3.0
+      - name: Install g++ 13
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt update
@@ -46,21 +53,29 @@ jobs:
       
       - name: Compile the program
         run: |
-          mkdir build
-          cmake . build
-          make
+          mkdir -p ${{env.BUILD_DIR_LINUX}}
+          mkdir -p ${{env.RELEASE_DIR_LINUX}}
+          cmake . ${{env.BUILD_DIR_LINUX}}
+          make -C ${{env.BUILD_DIR_LINUX}} -j$(nproc)
+
+      - name: Display the content of the build and release directories
+        run: |
+          echo "Displaying content of ${{env.BUILD_DIR_LINUX}}"
+          ls -la ${{env.BUILD_DIR_LINUX}}
+          echo "Displaying content of ${{env.RELEASE_DIR_LINUX}}"
+          ls -la ${{env.RELEASE_DIR_LINUX}}
 
       - name: Store the program in the artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux_program
-          path: build
+          path: ${{env.BUILD_DIR_LINUX}}
 
       - name: Store the assets in the artifacts
         uses: actions/upload-artifact@v4
         with:
           name: assets
-          path: assets
+          path: ${{env.ASSETS_DIR}}
 
   build_for_windows:
     name: Compile and deploy for windows
@@ -84,15 +99,22 @@ jobs:
 
       - name: Compile the program
         run: |
-          mkdir build
-          cmake . build
-          cmake --build build --config Release
+          mkdir -p ${{env.BUILD_DIR_WINDOWS}}
+          cmake . ${{env.BUILD_DIR_WINDOWS}}
+          cmake --build ${{env.BUILD_DIR_WINDOWS}} --config ${{env.RELEASE_DIR_WINDOWS}}
+
+      - name: Display the content of the build and release directorties
+        run: |
+          echo "Displaying content of ${{env.BUILD_DIR_WINDOWS}}"
+          ls -la ${{env.BUILD_DIR_WINDOWS}}
+          echo "Displaying content of ${{env.RELEASE_DIR_WINDOWS}}"
+          ls -la ${{env.RELEASE_DIR_WINDOWS}} 
 
       - name: Store the program in the artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows_program
-          path: build
+          path: ${{env.RELEASE_DIR_LINUX}}
 
   upload_to_github:
     name: Upload the program to the release
@@ -101,27 +123,28 @@ jobs:
     steps:
       - name: Create the folders
         run: |
-          mkdir -p result
-          mkdir -p result/linux
-          mkdir -p result/windows
-          mkdir -p result/assets
+          mkdir -p "${{env.OUTPUT_DIRECTORY}}"
+          mkdir -p "${{env.OUTPUT_DIRECTORY}}/linux"
+          mkdir -p "${{env.OUTPUT_DIRECTORY}}/windows"
+          mkdir -p "${{env.OUTPUT_DIRECTORY}}/assets"
+
       - name: Download the linux program
         uses: actions/download-artifact@v4
         with:
           name: linux_program
-          path: result/linux
+          path: "${{env.OUTPUT_DIRECTORY}}/linux"
 
       - name: Download the windows program
         uses: actions/download-artifact@v4
         with:
           name: windows_program
-          path: result/windows
+          path: "${{env.OUTPUT_DIRECTORY}}/windows"
 
       - name: Download the assets
         uses: actions/download-artifact@v4
         with:
           name: assets
-          path: result/assets
+          path: "${{env.OUTPUT_DIRECTORY}}/assets"
 
       - name: Get body message
         id: body-message
@@ -150,23 +173,24 @@ jobs:
       - name: compress the content
         id: update-generated
         run: |
-          tar -czvf result.tar.gz result
-          tar -tzvf result_linux.tar.gz result/linux result/assets
-          tar -tzvf result_windows.tar.gz result/windows result/assets
-          tar -tzvf result_assets.tar.gz result/assets
-          mkdir -p final_result
+          tar -tzvf "${{env.OUTPUT_DIRECTORY}}.tar.gz" "${{env.OUTPUT_DIRECTORY}}"
+          tar -tzvf "${{env.OUTPUT_DIRECTORY}}_linux.tar.gz" "${{env.OUTPUT_DIRECTORY}}/linux" "${{env.OUTPUT_DIRECTORY}}/assets"
+          tar -tzvf "${{env.OUTPUT_DIRECTORY}}_windows.tar.gz" "${{env.OUTPUT_DIRECTORY}}/windows" "${{env.OUTPUT_DIRECTORY}}/assets"
+          tar -tzvf "${{env.OUTPUT_DIRECTORY}}_assets.tar.gz" "${{env.OUTPUT_DIRECTORY}}/assets"
+          
+          mkdir -p "${{env.FINAL_OUTPUT}}"
 
-          mv result.tar.gz final_result
-          mv result_linux.tar.gz final_result
-          mv result_windows.tar.gz final_result
-          mv result_assets.tar.gz final_result
-          mv result final_result
+          mv "${{env.OUTPUT_DIRECTORY}}.tar.gz" "${{env.FINAL_OUTPUT}}"
+          mv "${{env.OUTPUT_DIRECTORY}}_linux.tar.gz" "${{env.FINAL_OUTPUT}}"
+          mv "${{env.OUTPUT_DIRECTORY}}_windows.tar.gz" "${{env.FINAL_OUTPUT}}"
+          mv "${{env.OUTPUT_DIRECTORY}}_assets.tar.gz" "${{env.FINAL_OUTPUT}}"
+          mv "${{env.OUTPUT_DIRECTORY}}" "${{env.FINAL_OUTPUT}}"
       
       - name: Publish binary as GitHub release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: final_result/*
+          files: ${{env.FINAL_OUTPUT}}/*
           name: ${{ github.ref }}
           body: ${{ steps.body-message.outputs.COMMIT_MESSAGE }}
           draft: false
@@ -180,10 +204,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [upload_to_github ]
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Delete Created cache
         env:
           GH_TOKEN: ${{ secrets.CACHE_TOKEN }}
