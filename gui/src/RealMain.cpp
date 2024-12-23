@@ -214,7 +214,7 @@ int RealMain(int argc, char **argv)
     int status = SUCCESS;
     bool help_found = false;
 
-    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, false);
+    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, "config.toml", false);
 
     if (argc > 1) {
         try {
@@ -233,6 +233,15 @@ int RealMain(int argc, char **argv)
 
     if (help_found || status == ERROR) {
         return status;
+    }
+
+    try {
+        MyMain.setConfigFile(MyMain.getConfigFile());
+    }
+    catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        Debug::getInstance() << "Failed to load the config file, aboring program." << std::endl;
+        return ERROR;
     }
 
     try {

@@ -34,6 +34,7 @@
   * @param spriteWidth
   * @param spriteHeight
   * @param frameLimit
+  * @param configFilePath
   * @param debug
   */
 Main::Main(
@@ -53,6 +54,7 @@ Main::Main(
     unsigned int spriteWidth,
     unsigned int spriteHeight,
     unsigned int frameLimit,
+    const std::string configFilePath,
     bool debug
 ) :
     _windowWidth(windowWidth),
@@ -66,6 +68,7 @@ Main::Main(
     _spriteStartTop(spriteStartTop),
     _spriteStartLeft(spriteStartLeft),
     _spriteWidth(spriteWidth),
+    _configFilePath(configFilePath),
     _spriteHeight(spriteHeight)
 {
     _debug = debug;
@@ -232,6 +235,23 @@ void Main::_closeConnection()
 void Main::_initialiseSprites()
 {
 
+    std::unordered_map<std::string, std::string> spritesheets;
+
+    unsigned int frameWidth = 20;
+    unsigned int frameHeight = 20;
+    bool startLeft = true;
+    bool startTop = true;
+
+    spritesheets["r-typesheet1"] = "assets/img/r-typesheet1.gif";
+
+    for (const auto &[name, info] : spritesheets) {
+        std::string path = info;
+        GUI::ECS::Components::CollisionComponent collision(0);
+        GUI::ECS::Components::AnimationComponent animation(_baseId);
+        animation.setAnimation(path, frameWidth, frameHeight, startLeft, startTop);
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> nodeSprite = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, collision, animation);
+        _baseId++;
+    }
 }
 
 /**
@@ -320,6 +340,17 @@ void Main::_initialiseRessources()
     _initialiseFonts();
 }
 
+void Main::_testContent()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)];
+
+    for (unsigned int index = 0; index < musics.size(); index++) {
+        std::shared_ptr<GUI::ECS::Components::MusicComponents> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponents>>(musics[index]);
+        Debug::getInstance() << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
+        music_ptr->play();
+    }
+}
+
 /**
  *@brief This is the function in charge of running the program's graphic logic.
  *
@@ -327,6 +358,7 @@ void Main::_initialiseRessources()
  */
 void Main::_mainLoop()
 {
+    std::vector<sf::Keyboard::Key> keys;
     std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
     std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
 
@@ -335,6 +367,9 @@ void Main::_mainLoop()
 
     while (window.isOpen()) {
         event.processEvents(window);
+        if (event.isKeyPressed(sf::Keyboard::T)) {
+            _testContent();
+        }
         window.clear();
         window.display();
     }
@@ -546,6 +581,17 @@ void Main::setFrameLimit(unsigned int frameLimit)
 }
 
 /**
+ *@brief This is the function in charge of seting the config filepath.
+ *
+ * @param configFile
+ */
+void Main::setConfigFile(const std::string &configFile)
+{
+    _configFilePath = configFile;
+    _loadToml();
+}
+
+/**
  *@brief Toggle the debug mode for the program.
  *
  * @param debug
@@ -715,6 +761,17 @@ unsigned int Main::getFrameLimit() const
     return _windowFrameLimit;
 }
 
+
+/**
+ *@brief Function in charge of returning the path to the config file.
+ *
+ * @return std::string
+ */
+std::string Main::getConfigFile() const
+{
+    return _configFilePath;
+}
+
 /**
  * @brief Get the window's position.
  *
@@ -741,4 +798,13 @@ std::tuple<unsigned int, unsigned int> Main::getWindowSize()
     std::tuple<unsigned int, unsigned int> dimension;
     dimension = std::make_tuple(_windowWidth, _windowHeight);
     return dimension;
+}
+
+/**
+ *@brief Load a toml file into the program if it is present.
+ *
+ */
+void Main::_loadToml()
+{
+    _tomlContent.setTOMLPath(_configFilePath);
 }
