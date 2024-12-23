@@ -12,7 +12,7 @@
 
 #include "GUI/ECS/Components/TextureComponent.hpp"
 
-GUI::ECS::Components::TextureComponent::TextureComponent() {};
+GUI::ECS::Components::TextureComponent::TextureComponent() :EntityNode(0) {};
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const TextureComponent &other)
 {
@@ -26,6 +26,31 @@ GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &file
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+{
+    setTexture(texture);
+    setCollisionInfo(collisionInfo);
+}
+
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId)
+    : EntityNode(entityId)
+{
+};
+
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const TextureComponent &other)
+    : EntityNode(entityId)
+{
+    update(other);
+};
+
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+    : EntityNode(entityId)
+{
+    setFilePath(filePath);
+    setCollisionInfo(collisionInfo);
+};
+
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+    : EntityNode(entityId)
 {
     setTexture(texture);
     setCollisionInfo(collisionInfo);

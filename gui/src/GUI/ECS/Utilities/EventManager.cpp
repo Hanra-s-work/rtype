@@ -13,7 +13,7 @@
 #include <iostream>
 #include "GUI/ECS/Utilities/EventManager.hpp"
 
-GUI::ECS::Utilities::EventManager::EventManager() {}
+GUI::ECS::Utilities::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId) {};
 
 GUI::ECS::Utilities::EventManager::~EventManager() {}
 
@@ -71,6 +71,16 @@ bool GUI::ECS::Utilities::EventManager::isLeftButtonClicked() const
 bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
 {
     return _mouse.isMouseRightButtonClicked();
+}
+
+bool GUI::ECS::Utilities::EventManager::isKeyPressed(const sf::Keyboard::Key &key) const
+{
+    for (const auto &keyNodes : _keys) {
+        if (keyNodes == key) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void GUI::ECS::Utilities::EventManager::clearEvents()

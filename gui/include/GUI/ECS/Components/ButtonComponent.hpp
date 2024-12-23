@@ -30,7 +30,7 @@ namespace GUI
         {
             class ButtonComponent : public EntityNode {
                 public:
-                ButtonComponent();
+                ButtonComponent(const std::uint32_t entityId = 0);
                 ~ButtonComponent();
 
                 void setHoverColor(const sf::Color &hoverColor);

@@ -14,6 +14,7 @@
 #include <any>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <functional>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -32,7 +33,7 @@ namespace GUI
             class Window;
             class EventManager : public EntityNode {
                 public:
-                EventManager();
+                EventManager(const std::uint32_t entityId = 0);
                 ~EventManager();
                 void clearEvents();
                 void processEvents(GUI::ECS::Utilities::Window &window);
@@ -40,6 +41,8 @@ namespace GUI
                 bool isMouseInFocus() const;
                 bool isLeftButtonClicked() const;
                 bool isRightButtonClicked() const;
+
+                bool isKeyPressed(const sf::Keyboard::Key &key) const;
 
                 float getPositionX() const;
                 float getPositionY() const;

@@ -31,13 +31,15 @@ namespace GUI
         {
             class AnimationComponent : public EntityNode {
                 public:
-                AnimationComponent();
+                AnimationComponent(const std::uint32_t entitynode = 0);
                 ~AnimationComponent();
                 virtual void setLoop(bool loop);
                 virtual void setReadReverse(bool reverse);
                 virtual void setDelay(float frameDuration);
                 virtual void setInitialFrame(std::uint32_t frameIndex);
+
                 virtual void setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                virtual void setAnimation(const std::string &path, unsigned int frameWidth, unsigned int frameHeight, const bool startLeft, const bool startTop);
 
                 virtual void checkTick();
 
@@ -65,6 +67,7 @@ namespace GUI
                 std::uint32_t _frameInitial;
                 std::uint32_t _currentFrame;
                 std::uint32_t _totalFrames;
+                GUI::ECS::Components::TextureComponent _baseTexture;
                 std::vector<GUI::ECS::Components::TextureComponent> _frames;
                 GUI::ECS::Components::TextureComponent _currentTexture;
                 std::chrono::_V2::steady_clock::time_point _lastTick = std::chrono::steady_clock::now();

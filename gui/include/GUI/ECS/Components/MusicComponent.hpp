@@ -29,9 +29,12 @@ namespace GUI
             class MusicComponents : public EntityNode {
                 public:
                 MusicComponents();
+                MusicComponents(const std::uint32_t entityId);
                 MusicComponents(const MusicComponents &music);
                 MusicComponents(const std::string &filePath, const std::string &name);
                 MusicComponents(const std::string &filePath, const std::string &name, float volume);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume);
                 ~MusicComponents();
 
                 virtual void setVolume(float volume);

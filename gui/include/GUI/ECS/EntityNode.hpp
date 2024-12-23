@@ -21,7 +21,7 @@ namespace GUI
     {
         class EntityNode {
             public:
-            explicit EntityNode(std::uint32_t entity_id = 0);
+            explicit EntityNode(const std::uint32_t entityId = 0);
             virtual ~EntityNode() = default;
             virtual std::uint32_t getEntityNodeId() const;
 

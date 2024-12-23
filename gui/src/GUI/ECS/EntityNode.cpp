@@ -12,7 +12,7 @@
 
 #include "GUI/ECS/EntityNode.hpp"
 
-GUI::ECS::EntityNode::EntityNode(std::uint32_t entity_id) : _entityID(entity_id) {};
+GUI::ECS::EntityNode::EntityNode(const std::uint32_t entityId) : _entityID(entityId) {};
 
 std::uint32_t GUI::ECS::EntityNode::getEntityNodeId() const
 {

@@ -24,7 +24,7 @@ namespace GUI
         {
             class MouseInfo : public EntityNode {
                 public:
-                MouseInfo();
+                MouseInfo(const std::uint32_t entityId = 0);
                 ~MouseInfo();
 
                 void update(const sf::Event &event);

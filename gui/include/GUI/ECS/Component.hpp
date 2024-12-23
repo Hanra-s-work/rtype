@@ -21,9 +21,9 @@ namespace GUI
     {
         class Component : public EntityNode {
             public:
-            explicit Component(std::uint32_t entity_id) : _entity_id(entity_id) {};
+            explicit Component(const std::uint32_t entity_id = 0) : _entity_id(entity_id) {};
             virtual ~Component() = default;
-            virtual std::uint32_t GetComponentId();
+            virtual std::uint32_t getComponentId() const;
 
             protected:
             std::uint32_t _entity_id;

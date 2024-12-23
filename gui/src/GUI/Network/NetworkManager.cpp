@@ -13,7 +13,7 @@
 #include <iostream>
 #include "GUI/Network/NetworkManager.hpp"
 
-NetworkManager::NetworkManager() {}
+NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entityId) {}
 
 void NetworkManager::Initialize()
 {

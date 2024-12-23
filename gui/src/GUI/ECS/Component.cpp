@@ -12,7 +12,7 @@
 
 #include "GUI/ECS/Component.hpp"
 
-std::uint32_t GUI::ECS::Component::GetComponentId()
+std::uint32_t GUI::ECS::Component::getComponentId() const
 {
     return _entity_id;
 }

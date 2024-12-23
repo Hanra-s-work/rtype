@@ -18,6 +18,7 @@ set(SOURCES
     src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
+    src/TOMLLoader.cpp
     src/HelpFunctions.cpp
     src/ExceptionHandling.cpp
 
@@ -46,6 +47,7 @@ set(SOURCES
     src/GUI/ECS/Systems/RenderSystem.cpp
 
     # The files in charge of containing the utility classes
+    src/GUI/ECS/Utilities/Font.cpp
     src/GUI/ECS/Utilities/Clock.cpp
     src/GUI/ECS/Utilities/Window.cpp
     src/GUI/ECS/Utilities/MouseInfo.cpp
