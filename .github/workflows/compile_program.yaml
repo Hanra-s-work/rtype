@@ -51,13 +51,13 @@ jobs:
           make
 
       - name: Store the program in the artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: linux_program
           path: build
 
       - name: Store the assets in the artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           path: assets
@@ -82,7 +82,7 @@ jobs:
           cmake --build build --config Release
 
       - name: Store the program in the artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: windows_program
           path: build
@@ -99,19 +99,19 @@ jobs:
           mkdir -p result/windows
           mkdir -p result/assets
       - name: Download the linux program
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: linux_program
           path: result/linux
 
       - name: Download the windows program
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: windows_program
           path: result/windows
 
       - name: Download the assets
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: assets
           path: result/assets
