@@ -6,6 +6,8 @@
 Makefile
 CMakeFiles
 CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
 cmake_install.cmake
 
 # No temporary files
@@ -24,6 +26,8 @@ bin/*
 build/*
 _deps/*
 dist/*
+gui/_deps/*
+server/_deps/*
 
 # No editor config files
 .vscode
