@@ -49,10 +49,10 @@ class TOMLLoader {
 
     void printTOML() const;
 
-    template <typename T>
-    TOMLLoader &operator<<(const T &message);
-    TOMLLoader &operator<<(const std::string &message);
-    TOMLLoader &operator<<(std::ostream &(*os)(std::ostream &));
+    // template <typename T>
+    // TOMLLoader &operator<<(const T &message);
+    // TOMLLoader &operator<<(const std::string &message);
+    // TOMLLoader &operator<<(std::ostream &(*os)(std::ostream &));
 
     private:
     void _loadTOML();

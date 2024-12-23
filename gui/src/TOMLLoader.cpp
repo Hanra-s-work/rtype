@@ -86,29 +86,29 @@ void TOMLLoader::printTOML() const
     Debug::getInstance() << "TOML Contents:\n" + _tomlString << std::endl;
 };
 
-template <typename T>
-TOMLLoader &TOMLLoader::operator<<(const T &message)
-{
-    _ensureLoaded();
-    std::lock_guard<std::mutex> lock(_mtx);
-    _buffer << message;
-    return *this;
-};
+// template <typename T>
+// TOMLLoader &TOMLLoader::operator<<(const T &message)
+// {
+//     _ensureLoaded();
+//     std::lock_guard<std::mutex> lock(_mtx);
+//     _buffer << message;
+//     return *this;
+// };
 
-TOMLLoader &TOMLLoader::operator<<(const std::string &message)
-{
-    _ensureLoaded();
-    std::lock_guard<std::mutex> lock(_mtx);
-    _buffer << message;
-    return *this;
-};
+// TOMLLoader &TOMLLoader::operator<<(const std::string &message)
+// {
+//     _ensureLoaded();
+//     std::lock_guard<std::mutex> lock(_mtx);
+//     _buffer << message;
+//     return *this;
+// };
 
-TOMLLoader &TOMLLoader::operator<<(std::ostream &(*os)(std::ostream &))
-{
-    _ensureLoaded();
-    std::cout << _tomlString << os;
-    return *this;
-};
+// TOMLLoader &TOMLLoader::operator<<(std::ostream &(*os)(std::ostream &))
+// {
+//     _ensureLoaded();
+//     std::cout << _tomlString << os;
+//     return *this;
+// };
 
 void TOMLLoader::_loadTOML()
 {
