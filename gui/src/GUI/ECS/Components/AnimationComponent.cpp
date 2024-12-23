@@ -48,6 +48,11 @@ void GUI::ECS::Components::AnimationComponent::setAnimation(const std::vector<GU
     _totalFrames = textures.size();
 }
 
+void GUI::ECS::Components::AnimationComponent::setAnimation(const std::string &path, unsigned int frameWidth, unsigned int frameHeight, const bool startLeft, const bool startTop)
+{
+    // _baseTexture
+}
+
 bool GUI::ECS::Components::AnimationComponent::getLoop() const
 {
     return _loop;
