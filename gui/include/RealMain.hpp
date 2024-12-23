@@ -56,6 +56,7 @@ class Main {
   void setWindowCursorSpriteReadFromLeft(bool spriteStartLeft);
   void setWindowSize(unsigned int width, unsigned int height);
   void setFrameLimit(unsigned int frameLimit);
+  void setConfigFile(const std::string &configFile);
   void setDebug(bool debug);
   const std::string getIp();
   const unsigned int getPort();
@@ -72,6 +73,7 @@ class Main {
   unsigned int getWindowCursorSpriteHeight();
   bool getDebug() const;
   unsigned int getFrameLimit() const;
+  std::string getConfigFile() const;
   std::tuple<unsigned int, unsigned int> getWindowPosition();
   std::tuple<unsigned int, unsigned int> getWindowSize();
 
@@ -88,6 +90,8 @@ class Main {
   void _initialiseSprites();
   void _initialiseConnection();
   void _initialiseRessources();
+
+  void _testContent();
 
   void _closeConnection();
 
@@ -110,6 +114,8 @@ class Main {
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
   std::uint32_t _baseId = 0;
+  std::string _configFilePath = "config.toml";
+  std::string _configFileContent;
 };
 
 int RealMain(int argc, char **argv);

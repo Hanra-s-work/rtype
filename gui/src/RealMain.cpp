@@ -155,13 +155,20 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidFrameLimit(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidFrameLimit(args[1]);
         }
         main.setFrameLimit(frameLimit);
+    } else if (args[0] == "config-file" || args[0] == "cf" || args[0] == "configfile") {
+        Debug::getInstance() << "Frame limit is provided: '" << args[1] << "'" << std::endl;
+        if (args[1].empty()) {
+            std::cerr << "Error: TOML config file is required." << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        main.setConfigFile(args[1]);
     } else {
         throw MyException::UnknownArgument(args[0]);
     }
