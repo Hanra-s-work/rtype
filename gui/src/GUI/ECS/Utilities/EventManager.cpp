@@ -73,6 +73,16 @@ bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
     return _mouse.isMouseRightButtonClicked();
 }
 
+bool GUI::ECS::Utilities::EventManager::isKeyPressed(const sf::Keyboard::Key &key) const
+{
+    for (const auto &keyNodes : _keys) {
+        if (keyNodes == key) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void GUI::ECS::Utilities::EventManager::clearEvents()
 {
     _keys.clear();

@@ -14,6 +14,7 @@
 #include <any>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <functional>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -40,6 +41,8 @@ namespace GUI
                 bool isMouseInFocus() const;
                 bool isLeftButtonClicked() const;
                 bool isRightButtonClicked() const;
+
+                bool isKeyPressed(const sf::Keyboard::Key &key) const;
 
                 float getPositionX() const;
                 float getPositionY() const;
