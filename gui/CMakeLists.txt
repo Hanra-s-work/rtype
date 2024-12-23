@@ -18,6 +18,7 @@ set(SOURCES
     src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
+    src/TOMLLoader.cpp
     src/HelpFunctions.cpp
     src/ExceptionHandling.cpp
 
