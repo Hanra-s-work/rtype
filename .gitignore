@@ -23,6 +23,7 @@ bootstrap
 bin/*
 build/*
 _deps/*
+dist/*
 
 # No editor config files
 .vscode
