@@ -26,8 +26,7 @@ bin/*
 build/*
 _deps/*
 dist/*
-gui/_deps/*
-server/_deps/*
+**/_deps/*
 
 # No editor config files
 .vscode
