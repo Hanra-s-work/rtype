@@ -19,29 +19,29 @@ permissions:
   contents: write
   id-token: write
 
+env:
+  CMAKE_VERSION: 3.28.3
+  GPP_VERSION: 13
+
 jobs:
   build_for_linux:
     name: Compile and deploy for linux
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install CMake 3.28.3
-        run: |
-          apt update
-          apt install -y wget
-          wget https://github.com/Kitware/CMake/releases/download/v3.28.3/cmake-3.28.3.tar.gz
-          tar -xzvf cmake-3.28.3.tar.gz
-          cd cmake-3.28.3
-          ./bootstrap
-          make
-          make install
+      - name: Access the repository
+        uses: actions/checkout@v4
+
+      - name: Install Latest CMake
+        uses: ssrobins/install-cmake@v1
+        with:
+          version: ${{env.CMAKE_VERSION}}
 
       - name: Install g++ 13.3.0
         run: |
-          add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          apt update
-          apt install -y g++-13
-          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+          sudo apt update
+          sudo apt install -y g++-${{env.GPP_VERSION}}
+          update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{env.GPP_VERSION}} 100
           update-alternatives --config g++
       
       - name: Compile the program
@@ -66,10 +66,17 @@ jobs:
     name: Compile and deploy for windows
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install CMake 3.28.3
-        run: |
-          choco install cmake --version=3.28.3
+      - name: Access the repository
+        uses: actions/checkout@v4
+
+      - name: Install Latest CMake
+        uses: ssrobins/install-cmake@v1
+        with:
+          version: ${{env.CMAKE_VERSION}}
+
+      # - name: Install CMake 3.28.3
+      #   run: |
+      #     choco install cmake --version=${{env.CMAKE_VERSION}} --allow-downgrade
 
       - name: Install Visual Studio 2019
         run: |
