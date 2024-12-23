@@ -12,8 +12,10 @@
 
 #pragma once
 
+#include <mutex>
 #include <string>
 #include <vector>
+#include <iostream>
 #include <toml++/toml.hpp>
 
 #include "Debug.hpp"
@@ -60,4 +62,7 @@ class TOMLLoader {
     bool _tomlLoaded = false;
     toml::table _toml;
     std::string _tomlString = "";
+
+    std::mutex _mtx;
+    std::ostringstream _buffer;
 };

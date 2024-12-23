@@ -83,37 +83,30 @@ toml::array TOMLLoader::getArray(const std::string &key) const
 void TOMLLoader::printTOML() const
 {
     _ensureLoaded();
-    Debug::getInstance() << "TOML Contents:\n" + _tomlString;
+    Debug::getInstance() << "TOML Contents:\n" + _tomlString << std::endl;
 };
 
 template <typename T>
 TOMLLoader &TOMLLoader::operator<<(const T &message)
 {
     _ensureLoaded();
-    std::ostringstream oss;
-    oss << _tomlString;
-    oss << message;
-    std::cout << oss.str();
+    std::lock_guard<std::mutex> lock(_mtx);
+    _buffer << message;
     return *this;
 };
 
 TOMLLoader &TOMLLoader::operator<<(const std::string &message)
 {
     _ensureLoaded();
-    std::ostringstream oss;
-    oss << _tomlString;
-    oss << message;
-    std::cout << oss.str();
+    std::lock_guard<std::mutex> lock(_mtx);
+    _buffer << message;
     return *this;
 };
 
 TOMLLoader &TOMLLoader::operator<<(std::ostream &(*os)(std::ostream &))
 {
     _ensureLoaded();
-    std::ostringstream oss;
-    oss << _tomlString;
-    oss << os;
-    std::cout << oss.str();
+    std::cout << _tomlString << os;
     return *this;
 };
 
