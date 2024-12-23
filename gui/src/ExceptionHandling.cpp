@@ -111,6 +111,14 @@ namespace MyException
         _buffer = _msg.c_str();
     }
 
+    InvalidFrameLimit::InvalidFrameLimit(const std::string &frameLimit)
+    {
+        _msg = "Error: The frame limit you provided for the refresh rate is incorrect.\n";
+        _msg += "It must be between 10 and 1000.\n";
+        _msg += "Your framelimit was " + frameLimit;
+        _buffer = _msg.c_str();
+    }
+
     InvalidFrameLimit::~InvalidFrameLimit() {};
 
     const char *InvalidFrameLimit::what() const noexcept

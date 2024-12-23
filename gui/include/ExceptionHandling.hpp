@@ -118,6 +118,7 @@ namespace MyException
     class InvalidFrameLimit : public std::exception {
         public:
         InvalidFrameLimit(unsigned int frameLimit);
+        InvalidFrameLimit(const std::string &frameLimit);
         ~InvalidFrameLimit();
         const char *what() const noexcept;
         private:
