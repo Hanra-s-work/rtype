@@ -83,9 +83,38 @@ toml::array TOMLLoader::getArray(const std::string &key) const
 void TOMLLoader::printTOML() const
 {
     _ensureLoaded();
+    Debug::getInstance() << "TOML Contents:\n" + _tomlString;
+};
+
+template <typename T>
+TOMLLoader &TOMLLoader::operator<<(const T &message)
+{
+    _ensureLoaded();
     std::ostringstream oss;
-    oss << _toml;
-    Debug::getInstance() << "TOML Contents:\n" + oss.str();
+    oss << _tomlString;
+    oss << message;
+    std::cout << oss.str();
+    return *this;
+};
+
+TOMLLoader &TOMLLoader::operator<<(const std::string &message)
+{
+    _ensureLoaded();
+    std::ostringstream oss;
+    oss << _tomlString;
+    oss << message;
+    std::cout << oss.str();
+    return *this;
+};
+
+TOMLLoader &TOMLLoader::operator<<(std::ostream &(*os)(std::ostream &))
+{
+    _ensureLoaded();
+    std::ostringstream oss;
+    oss << _tomlString;
+    oss << os;
+    std::cout << oss.str();
+    return *this;
 };
 
 void TOMLLoader::_loadTOML()
@@ -97,6 +126,9 @@ void TOMLLoader::_loadTOML()
     catch (const toml::parse_error &e) {
         throw MyException::InvalidTOML(_tomlPath, e.what());
     }
+    std::ostringstream oss;
+    oss << _toml;
+    _tomlString = oss.str();
     _tomlLoaded = true;
 };
 
@@ -106,3 +138,6 @@ void TOMLLoader::_ensureLoaded() const
         throw MyException::NoTOML(_tomlPath);
     }
 };
+
+
+
