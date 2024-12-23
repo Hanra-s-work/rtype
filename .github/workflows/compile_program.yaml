@@ -142,7 +142,7 @@ jobs:
         run: |
           mkdir -p ${{env.BUILD_DIR_WINDOWS}}
           cmake -S . -B ${{env.BUILD_DIR_WINDOWS}}
-          cmake --build ${{env.BUILD_DIR_WINDOWS}} --config ${{env.RELEASE_DIR_WINDOWS}}
+          cmake --build ${{env.BUILD_DIR_WINDOWS}}
 
       - name: Display the content of the build and release directorties
         run: |
