@@ -278,6 +278,21 @@ namespace MyException
     };
 
     /**
+     * @brief This is the class in charge of informing the user
+     * that the toml file they provided is invalid.
+     *
+     */
+    class InvalidTOML : public std::exception {
+        public:
+        InvalidTOML(const std::string &path = "", const std::string &error = "");
+        ~InvalidTOML();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
      *@brief This is the class in charge of informing the user
      * that they tried to access a non-existant spritesheet.
      *
@@ -361,6 +376,36 @@ namespace MyException
         public:
         NoFont(const std::string &fontName = "");
         ~NoFont();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant toml instance.
+     *
+     */
+    class NoTOML : public std::exception {
+        public:
+        NoTOML(const std::string &tomlPath = "");
+        ~NoTOML();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant toml key instance.
+     *
+     */
+    class NoTOMLKey : public std::exception {
+        public:
+        NoTOMLKey(const std::string &tomlPath = "", const std::string &tomlKey = "");
+        ~NoTOMLKey();
         const char *what() const noexcept;
         private:
         std::string _msg;

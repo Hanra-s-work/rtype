@@ -320,6 +320,21 @@ namespace MyException
         return _buffer;
     }
 
+    InvalidTOML::InvalidTOML(const std::string &path, const std::string &error)
+    {
+        _msg = "Error: The TOML file you provided is invalid\n";
+        _msg += "The filepath you provided is '" + path + "'.\n";
+        _msg += "The detailed error is '" + error + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidTOML::~InvalidTOML() {};
+
+    const char *InvalidTOML::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoSpriteSheet::NoSpriteSheet()
     {
         _msg = "Error: There is no spritesheet set.\n";
@@ -400,6 +415,43 @@ namespace MyException
     NoFont::~NoFont() {};
 
     const char *NoFont::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoTOML::NoTOML(const std::string &tomlPath)
+    {
+        _msg = "Error: There is no toml ";
+        if (!tomlPath.empty()) {
+            _msg += "path " + tomlPath + " ";
+        }
+        _msg += "set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoTOML::~NoTOML() {};
+
+    const char *NoTOML::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoTOMLKey::NoTOMLKey(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There is no toml ";
+        if (!tomlKey.empty()) {
+            _msg += "key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " in the toml path " + tomlPath + " ";
+            }
+        }
+        _msg += "set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoTOMLKey::~NoTOMLKey() {};
+
+    const char *NoTOMLKey::what() const noexcept
     {
         return _buffer;
     }
