@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2024
+** rtype (Workspace)
+** File description:
+** main.cpp
+*/
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
