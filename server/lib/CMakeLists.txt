@@ -14,4 +14,4 @@ add_library(rtype_server_libraries INTERFACE)
 target_link_libraries(rtype_server_libraries INTERFACE asio)
 
 # Add the toml library
-target_link_libraries(rtype_server_libraries INTERFACE tomlplusplus)
+target_link_libraries(rtype_server_libraries INTERFACE server_tomlplusplus)
