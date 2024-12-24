@@ -7,12 +7,12 @@ include(FetchContent)
 FetchContent_Declare(
     tomlplusplus
     GIT_REPOSITORY https://github.com/marzer/tomlplusplus.git
-    GIT_TAG v3.3.0 # Latest stable version
+    GIT_TAG v3.3.0
 )
 
 # Make toml++ available
 FetchContent_MakeAvailable(tomlplusplus)
 
 # Add interface target for toml++
-add_library(tomlplusplus INTERFACE)
-target_include_directories(tomlplusplus INTERFACE ${tomlplusplus_SOURCE_DIR})
+add_library(gui_tomlplusplus INTERFACE)
+target_include_directories(gui_tomlplusplus INTERFACE ${tomlplusplus_SOURCE_DIR})

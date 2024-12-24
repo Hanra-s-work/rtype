@@ -3,7 +3,7 @@ project(RType VERSION 1.0.0)
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Create the Build and Bin directories if they do not exist
 file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build)

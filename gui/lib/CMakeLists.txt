@@ -1,25 +1,15 @@
 cmake_minimum_required(VERSION 3.28)
-project(RTypeLibs LANGUAGES CXX)
+project(RTypeClientLibs LANGUAGES CXX)
 
-# Include SFML, ASIO, and TOML
+# Add SFML and TOML libraries
+add_subdirectory(SFML)
+add_subdirectory(toml)
 
-# Include the sfml library
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/SFML)
+# Create an interface library for reusable libraries
+add_library(rtype_client_libraries INTERFACE)
 
-# Include the asio library
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/asio)
+# Link SFML libraries
+target_link_libraries(rtype_client_libraries INTERFACE sfml-libs)
 
-# Include the toml library
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/toml)
-
-# Create a library target for reusable libraries
-add_library(rtype_libraries INTERFACE)
-
-# Add the sfml libraries to the rtype_libraries target
-target_link_libraries(rtype_libraries INTERFACE sfml-libs)
-
-# Add the asio libraries to the rtype_libraries target
-target_link_libraries(rtype_libraries INTERFACE asio)
-
-# Add the toml libraries to the rtype_libraries target
-target_link_libraries(rtype_libraries INTERFACE tomlplusplus)
+# Link TOML libraries
+target_link_libraries(rtype_client_libraries INTERFACE gui_tomlplusplus)
