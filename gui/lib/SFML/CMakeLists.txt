@@ -8,7 +8,7 @@ include(FetchContent)
 FetchContent_Declare(
     SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 3.0.0 # Use the latest stable branch
+    GIT_TAG 3.0.0
 )
 
 # Make SFML available

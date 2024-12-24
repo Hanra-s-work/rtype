@@ -94,9 +94,14 @@ jobs:
 
       - name: Compile the program
         run: |
+          echo "Creating directories for the build and release"
+          echo "Creating directory ${{env.BUILD_DIR_LINUX}}"
           mkdir -p ${{env.BUILD_DIR_LINUX}}
+          echo "Creating directory ${{env.RELEASE_DIR_LINUX}}"
           mkdir -p ${{env.RELEASE_DIR_LINUX}}
+          echo "Running cmake with the following command: cmake -S . -B ${{env.BUILD_DIR_LINUX}}"
           cmake -S . -B ${{env.BUILD_DIR_LINUX}}
+          echo "Running make with the following command: make -C ${{env.BUILD_DIR_LINUX}} -j$(nproc)"
           make -C ${{env.BUILD_DIR_LINUX}} -j$(nproc)
 
       - name: Display the content of the build and release directories
@@ -140,8 +145,14 @@ jobs:
 
       - name: Compile the program
         run: |
+          echo "Creating directories for the build and release"
+          echo "Creating folder ${{env.BUILD_DIR_WINDOWS}}"
           mkdir -p ${{env.BUILD_DIR_WINDOWS}}
+          echo "Creating folder ${{env.RELEASE_DIR_WINDOWS}}"
+          mkdir -p ${{env.RELEASE_DIR_WINDOWS}}
+          echo "Running cmake with the following command: cmake -S . -B ${{env.BUILD_DIR_WINDOWS}}"
           cmake -S . -B ${{env.BUILD_DIR_WINDOWS}}
+          echo "Running cmake --build ${{env.BUILD_DIR_WINDOWS}}"
           cmake --build ${{env.BUILD_DIR_WINDOWS}}
 
       - name: Display the content of the build and release directorties
