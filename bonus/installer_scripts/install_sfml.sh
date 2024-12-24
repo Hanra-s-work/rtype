@@ -6,17 +6,20 @@
 ## install_sfml.sh
 ##
 
+# Set the script in fail on error mode
+set -e
+
 # The link to run sudo on the user
 SUDO=/usr/bin/sudo
 
 # The link to the source file
-SOURCE_CODE=https://www.sfml-dev.org/files/SFML-2.6.2-sources.zip
+SOURCE_CODE=https://www.sfml-dev.org/files/SFML-3.0.0-sources.zip
 
 # The file name
-FILE_NAME=SFML-2.6.2-sources.zip
+FILE_NAME=SFML-3.0.0-sources.zip
 
 # The extracted folder name
-FOLDER_NAME=SFML-2.6.2
+FOLDER_NAME=SFML-3.0.0
 
 # The destination folder for the file to extract
 FILE_LOCATION=/tmp/SFML
@@ -194,7 +197,7 @@ function extract_sfml {
 
 function compile_sfml {
     display_title "Compiling the SFML library..."
-    cd $FILE_LOCATION/SFML-2.6.2
+    cd $FILE_LOCATION/$FOLDER_NAME
     if [ $SILENT -eq $TRUE ]; then
         cmake . . >/dev/null
     else
