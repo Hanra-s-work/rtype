@@ -101,8 +101,10 @@ jobs:
           mkdir -p ${{env.RELEASE_DIR_LINUX}}
           echo "Running cmake with the following command: cmake -S . -B ${{env.BUILD_DIR_LINUX}}"
           cmake -S . -B ${{env.BUILD_DIR_LINUX}}
-          echo "Running make with the following command: make -C ${{env.BUILD_DIR_LINUX}} -j$(nproc)"
-          make -C ${{env.BUILD_DIR_LINUX}} -j$(nproc)
+          echo "Entering the Build directory: cd ${{env.BUILD_DIR_LINUX}}"
+          cd ${{env.BUILD_DIR_LINUX}}
+          echo "Running make with the following command: make -j$(nproc)"
+          make -j$(nproc)
 
       - name: Display the content of the build and release directories
         run: |
