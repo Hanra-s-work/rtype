@@ -34,87 +34,81 @@ GUI::ECS::Utilities::MouseInfo::~MouseInfo() {};
  *
  * @param event The SFML event to process.
  */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Event &event)
+void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &event)
 {
-    switch (event.type) {
-        case sf::Event::MouseButtonPressed:
-            if (event.mouseButton.button == sf::Mouse::Left) {
-                Debug::getInstance() << "MouseInfo: Left mouse button clicked at ("
-                    << event.mouseButton.x << ", "
-                    << event.mouseButton.y << ")" << std::endl;
-                _leftButtonClicked = true;
-            }
-            if (event.mouseButton.button == sf::Mouse::Right) {
-                Debug::getInstance() << "MouseInfo: Right mouse button clicked at ("
-                    << event.mouseButton.x << ", "
-                    << event.mouseButton.y << ")" << std::endl;
-                _rightButtonClicked = true;
-            }
-            break;
-        case sf::Event::MouseButtonReleased:
-            if (event.mouseButton.button == sf::Mouse::Left) {
-                Debug::getInstance() << "MouseInfo: Left mouse button clicked at ("
-                    << event.mouseButton.x << ", "
-                    << event.mouseButton.y << ")" << std::endl;
-                _leftButtonClicked = false;
-            }
-            if (event.mouseButton.button == sf::Mouse::Right) {
-                Debug::getInstance() << "MouseInfo: Right mouse button clicked at ("
-                    << event.mouseButton.x << ", "
-                    << event.mouseButton.y << ")" << std::endl;
-                _rightButtonClicked = false;
-            }
-            break;
-        case sf::Event::MouseEntered:
-            Debug::getInstance() << "MouseInfo: the mouse is in focus" << std::endl;
-            _mouseInFocus = true;
-            break;
-        case sf::Event::MouseLeft:
-            Debug::getInstance() << "MouseInfo: the mouse is not in focus" << std::endl;
-            _mouseInFocus = false;
-            break;
-        case sf::Event::MouseMoved:
-            Debug::getInstance() << "MouseInfo: The mouse was moved, it's position is ("
-                << event.mouseMove.x << ", "
-                << event.mouseMove.y << ")" << std::endl;
-            _mousePosition.x = event.mouseMove.x;
-            _mousePosition.y = event.mouseMove.y;
-            break;
-        case sf::Event::MouseWheelMoved:
-            Debug::getInstance() << "MouseInfo: Update the position of the wheel." << std::endl;
-            _mouseWheel = event.mouseWheel;
-            break;
-        case sf::Event::MouseWheelScrolled:
-            Debug::getInstance() << "MouseInfo: Update the postion of the Wheel." << std::endl;
-            _mouseWheel.delta = event.mouseWheelScroll.delta;
-            _mouseWheel.x = event.mouseWheelScroll.x;
-            _mouseWheel.y = event.mouseWheelScroll.y;
-            break;
-        case sf::Event::TouchMoved:
-            Debug::getInstance() << "MouseInfo: Touch position ("
-                << event.touch.x << ", "
-                << event.touch.y << ")" << std::endl;
-            _mousePosition.x = event.touch.x;
-            _mousePosition.y = event.touch.y;
-            break;
-        case sf::Event::TouchBegan:
-            Debug::getInstance() << "MouseInfo: Touch (translated as a left click) began at ("
-                << event.touch.x << ", "
-                << event.touch.y << ")" << std::endl;
+    if (event->is<sf::Event::MouseButtonPressed>()) {
+        const sf::Event::MouseMoved *data = event->getIf<sf::Event::MouseMoved>();
+        int posx = data->position.x;
+        int posy = data->position.y;
+        if (event->is<sf::Event::MouseLeft>()) {
+            Debug::getInstance() << "MouseInfo: Left mouse button clicked at ("
+                << posx << ", " << posy << ")" << std::endl;
             _leftButtonClicked = true;
-            _mousePosition.x = event.touch.x;
-            _mousePosition.y = event.touch.y;
-            break;
-        case sf::Event::TouchEnded:
-            Debug::getInstance() << "MouseInfo: Touch (translated as a left click) began at ("
-                << event.touch.x << ", "
-                << event.touch.y << ")" << std::endl;
+        } else {
+            Debug::getInstance() << "MouseInfo: Right mouse button clicked at ("
+                << posx << ", " << posy << ")" << std::endl;
+            _rightButtonClicked = true;
+        }
+    } else if (event->is<sf::Event::MouseButtonReleased>()) {
+        const sf::Event::MouseMoved *data = event->getIf<sf::Event::MouseMoved>();
+        int posx = data->position.x;
+        int posy = data->position.y;
+        if (event->is<sf::Event::MouseLeft>()) {
+            Debug::getInstance() << "MouseInfo: Left mouse button clicked at ("
+                << posx << ", " << posy << ")" << std::endl;
             _leftButtonClicked = false;
-            _mousePosition.x = event.touch.x;
-            _mousePosition.y = event.touch.y;
-            break;
-        default:
-            break;
+        } else {
+            Debug::getInstance() << "MouseInfo: Right mouse button clicked at ("
+                << posx << ", " << posy << ")" << std::endl;
+            _rightButtonClicked = false;
+        }
+    } else if (event->is<sf::Event::MouseEntered>()) {
+        Debug::getInstance() << "MouseInfo: the mouse is in focus" << std::endl;
+        _mouseInFocus = true;
+    } else if (event->is<sf::Event::MouseLeft>()) {
+        Debug::getInstance() << "MouseInfo: the mouse is not in focus" << std::endl;
+        _mouseInFocus = false;
+    } else if (event->is<sf::Event::MouseMoved>()) {
+        const sf::Event::MouseMoved *data = event->getIf<sf::Event::MouseMoved>();
+        int posx = data->position.x;
+        int posy = data->position.y;
+        Debug::getInstance() << "MouseInfo: The mouse was moved, it's position is ("
+            << posx << ", " << posy << ")" << std::endl;
+        _mousePosition.x = posx;
+        _mousePosition.y = posy;
+    } else if (event->is<sf::Event::MouseWheelScrolled>()) {
+        const sf::Event::MouseWheelScrolled *data = event->getIf<sf::Event::MouseWheelScrolled>();
+        Debug::getInstance() << "MouseInfo: Update the position of the wheel." << std::endl;
+        _mouseWheel.delta = data->delta;
+        _mouseWheel.wheel = data->wheel;
+        _mouseWheel.position = data->position;
+    } else if (event->is<sf::Event::TouchMoved>()) {
+        const sf::Event::TouchMoved *data = event->getIf<sf::Event::TouchMoved>();
+        int posx = data->position.x;
+        int posy = data->position.y;
+        Debug::getInstance() << "MouseInfo: Touch position (" << posx << ", " << posy << ")" << std::endl;
+        _mousePosition.x = posx;
+        _mousePosition.y = posy;
+    } else if (event->is<sf::Event::TouchBegan>()) {
+        const sf::Event::TouchMoved *data = event->getIf<sf::Event::TouchMoved>();
+        int posx = data->position.x;
+        int posy = data->position.y;
+        Debug::getInstance() << "MouseInfo: Touch (translated as a left click) began at ("
+            << posx << ", " << posy << ")" << std::endl;
+        _leftButtonClicked = true;
+        _mousePosition.x = posx;
+        _mousePosition.y = posy;
+    } else if (event->is<sf::Event::TouchEnded>()) {
+        const sf::Event::TouchMoved *data = event->getIf<sf::Event::TouchMoved>();
+        int posx = data->position.x;
+        int posy = data->position.y;
+        Debug::getInstance() << "MouseInfo: Touch (translated as a left click) began at ("
+            << posx << ", " << posy << ")" << std::endl;
+        _leftButtonClicked = false;
+        _mousePosition.x = posx;
+        _mousePosition.y = posy;
+    } else {
+        Debug::getInstance() << "MouseInfo: Unknown event type" << std::endl;
     }
 };
 
@@ -125,8 +119,8 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Event &event)
  */
 void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
 {
-    _mouseInFocus = entity.isMouseInFocus();
     _mouseWheel = entity.getMouseWheelEvent();
+    _mouseInFocus = entity.isMouseInFocus();
     _mousePosition = entity.getMousePosition();
     _leftButtonClicked = entity.isMouseLeftButtonClicked();
     _rightButtonClicked = entity.isMouseRightButtonClicked();
@@ -156,18 +150,6 @@ void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2f &mousePosition)
 };
 
 /**
- * @brief Updates the mouse position using an sf::Event::MouseMoveEvent.
- *
- * @param position The mouse move event containing the updated position.
- */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Event::MouseMoveEvent &position)
-{
-    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
-    _mousePosition.x = position.x;
-    _mousePosition.y = position.y;
-};
-
-/**
  * @brief Retrieves the current mouse position.
  *
  * @return sf::Vector2f The current mouse position.
@@ -180,9 +162,9 @@ sf::Vector2f GUI::ECS::Utilities::MouseInfo::getMousePosition() const
 /**
  * @brief Retrieves the most recent mouse wheel event.
  *
- * @return sf::Event::MouseWheelEvent The last mouse wheel event data.
+ * @return sf::Event::MouseWheelScrolled The last mouse wheel event data.
  */
-sf::Event::MouseWheelEvent GUI::ECS::Utilities::MouseInfo::getMouseWheelEvent() const
+sf::Event::MouseWheelScrolled GUI::ECS::Utilities::MouseInfo::getMouseWheelEvent() const
 {
     return _mouseWheel;
 };
@@ -248,8 +230,9 @@ void GUI::ECS::Utilities::MouseInfo::clear()
     _rightButtonClicked = false;
     _mouseInFocus = false;
     _mouseWheel.delta = 0;
-    _mouseWheel.x = 0;
-    _mouseWheel.y = 0;
+    _mouseWheel.position.x = 0;
+    _mouseWheel.position.y = 0;
+    _mouseWheel.wheel = {};
 };
 
 /**

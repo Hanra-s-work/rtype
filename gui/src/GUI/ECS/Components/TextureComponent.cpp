@@ -99,7 +99,7 @@ void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy
     setCollisionInfo(getCollisionInfo());
 }
 
-sf::Texture GUI::ECS::Components::TextureComponent::getTexture() const
+const sf::Texture &GUI::ECS::Components::TextureComponent::getTexture() const
 {
     return _texture;
 }

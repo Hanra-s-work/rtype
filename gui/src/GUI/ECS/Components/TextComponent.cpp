@@ -12,31 +12,123 @@
 
 #include "GUI/ECS/Components/TextComponent.hpp"
 
-GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const std::string &text, const std::uint32_t &size, const sf::Vector2f &position)
+GUI::ECS::Components::TextComponent::TextComponent() : EntityNode(0) {};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath)
     : EntityNode(entityId)
 {
-    setNormalColor(normalColor);
-    setClickedColor(clickedColor);
+    setFontPath(fontPath);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text)
+    : EntityNode(entityId)
+{
+    setFontPath(fontPath);
+    setText(text);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size)
+    : EntityNode(entityId)
+{
+    setFontPath(fontPath);
+    setText(text);
+    setSize(size);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(entityId)
+{
+    setFontPath(fontPath);
     setText(text);
     setSize(size);
     setHoverColor(hoverColor);
-    setFontPath(fontPath);
-    setPosition(position);
+    setNormalColor(normalColor);
+    setClickedColor(clickedColor);
     _processTextComponent();
-}
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const sf::Vector2f &position)
+    : EntityNode(entityId)
+{
+    setFontPath(fontPath);
+    setText(text);
+    setSize(size);
+    setPosition(position);
+    setHoverColor(hoverColor);
+    setNormalColor(normalColor);
+    setClickedColor(clickedColor);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance)
+    : EntityNode(entityId)
+{
+    setFont(fontInstance);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text)
+    : EntityNode(entityId)
+{
+    setFont(fontInstance);
+    setText(text);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size)
+    : EntityNode(entityId)
+{
+    setFont(fontInstance);
+    setText(text);
+    setSize(size);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(entityId)
+{
+    setFont(fontInstance);
+    setText(text);
+    setSize(size);
+    setHoverColor(hoverColor);
+    setNormalColor(normalColor);
+    setClickedColor(clickedColor);
+    _processTextComponent();
+};
+
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const sf::Vector2f &position)
+    : EntityNode(entityId)
+{
+    setFont(fontInstance);
+    setText(text);
+    setSize(size);
+    setPosition(position);
+    setHoverColor(hoverColor);
+    setNormalColor(normalColor);
+    setClickedColor(clickedColor);
+    _processTextComponent();
+};
+
 
 GUI::ECS::Components::TextComponent::~TextComponent() {};
 
 void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
 {
     _font.update(font);
-    _sfTextComponent.setFont(_font.getFontInstance());
+    _processTextComponent();
+    _sfTextComponent->setFont(_font.getFontInstance());
 }
 
 void GUI::ECS::Components::TextComponent::setFont(const GUI::ECS::Utilities::Font &font)
 {
     _font.update(font);
-    _sfTextComponent.setFont(_font.getFontInstance());
+    _processTextComponent();
+    _sfTextComponent->setFont(_font.getFontInstance());
 }
 
 void GUI::ECS::Components::TextComponent::setNormalColor(const sf::Color &color)
@@ -50,14 +142,16 @@ void GUI::ECS::Components::TextComponent::setText(const std::string &text)
     sf::String sfmlText(text);
     _text = text;
     _textPos.setWidth(text.size());
-    _sfTextComponent.setString(sfmlText);
+    _processTextComponent();
+    _sfTextComponent->setString(sfmlText);
 }
 
 void GUI::ECS::Components::TextComponent::setSize(const std::uint32_t &size)
 {
     _size = size;
     _textPos.setHeight(size);
-    _sfTextComponent.setCharacterSize(size);
+    _processTextComponent();
+    _sfTextComponent->setCharacterSize(size);
 }
 
 void GUI::ECS::Components::TextComponent::setHoverColor(const sf::Color &color)
@@ -77,13 +171,14 @@ void GUI::ECS::Components::TextComponent::setFontPath(const std::string &fontPat
     GUI::ECS::Utilities::Font font(_font.getFontName(), fontPath);
     _font = font;
     _loadFont();
+    _processTextComponent();
 }
 
 void GUI::ECS::Components::TextComponent::setPosition(const sf::Vector2f &position)
 {
     _textPos.setPosition(position);
-    _sfTextComponent.setPosition(position);
     _processTextComponent();
+    _sfTextComponent->setPosition(position);
 }
 
 void GUI::ECS::Components::TextComponent::setVisible(const bool visible)
@@ -139,7 +234,8 @@ bool GUI::ECS::Components::TextComponent::getVisible() const
 void GUI::ECS::Components::TextComponent::render(sf::RenderWindow &window) const
 {
     if (_visible) {
-        window.draw(_sfTextComponent);
+        sf::Text data = _sfTextComponent.value();
+        window.draw(data);
     }
 }
 
@@ -167,17 +263,26 @@ void GUI::ECS::Components::TextComponent::_loadFont()
     if (!_font.isLoaded()) {
         return;
     }
-    _sfTextComponent.setFont(_font.getFontInstance());
+    _processTextComponent();
+    _sfTextComponent->setFont(_font.getFontInstance());
 }
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
 {
+    if (!_sfTextComponent.has_value()) {
+        if (_font.getFontPath().empty()) {
+            return;
+        }
+        sf::String nodeText(_text);
+        sf::Text node(_font.getFontInstance(), nodeText, _size);
+        _sfTextComponent.emplace(node);
+    }
     if (_textPos.isClicked()) {
-        _sfTextComponent.setFillColor(_clickedColor);
+        _sfTextComponent->setFillColor(_clickedColor);
     } else if (_textPos.isHovered()) {
-        _sfTextComponent.setFillColor(_hoverColor);
+        _sfTextComponent->setFillColor(_hoverColor);
     } else {
-        _sfTextComponent.setFillColor(_color);
+        _sfTextComponent->setFillColor(_color);
     }
 }
 

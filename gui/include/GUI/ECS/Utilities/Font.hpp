@@ -31,7 +31,7 @@ namespace GUI
 
                 std::string getFontName() const;
                 std::string getFontPath() const;
-                sf::Font getFontInstance() const;
+                const sf::Font &getFontInstance() const;
 
                 void update(const sf::Font &font);
                 void update(const GUI::ECS::Utilities::Font &copy);

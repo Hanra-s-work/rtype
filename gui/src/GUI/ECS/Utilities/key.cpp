@@ -405,7 +405,7 @@ GUI::ECS::Utilities::KeyMapper::KeyMapper(const std::uint32_t EntityId)
     _keyCodeEquivalence[GUI::ECS::Utilities::Key::MediaPreviousTrack] = "MediaPreviousTrack";
 };
 
-const GUI::ECS::Utilities::Key &GUI::ECS::Utilities::KeyMapper::mapKey(const sf::Keyboard::Key &sfmlKey) const
+const GUI::ECS::Utilities::Key GUI::ECS::Utilities::KeyMapper::mapKey(const sf::Keyboard::Key &sfmlKey) const
 {
     auto it = _sfmlKeyToCustom.find(sfmlKey);
     if (it != _sfmlKeyToCustom.end()) {
@@ -414,7 +414,7 @@ const GUI::ECS::Utilities::Key &GUI::ECS::Utilities::KeyMapper::mapKey(const sf:
     return Key::Unknown;
 }
 
-const GUI::ECS::Utilities::Key &GUI::ECS::Utilities::KeyMapper::mapKey(const sf::Keyboard::Scancode &sfmlKey) const
+const GUI::ECS::Utilities::Key GUI::ECS::Utilities::KeyMapper::mapKey(const sf::Keyboard::Scancode &sfmlKey) const
 {
     auto it = _sfmlScanCodeToCustom.find(sfmlKey);
     if (it != _sfmlScanCodeToCustom.end()) {
@@ -424,17 +424,17 @@ const GUI::ECS::Utilities::Key &GUI::ECS::Utilities::KeyMapper::mapKey(const sf:
 }
 
 
-const std::string &GUI::ECS::Utilities::KeyMapper::stringKey(const sf::Keyboard::Key &keyCode) const
+const std::string GUI::ECS::Utilities::KeyMapper::stringKey(const sf::Keyboard::Key &keyCode) const
 {
     return stringKey(mapKey(keyCode));
 }
 
-const std::string &GUI::ECS::Utilities::KeyMapper::stringKey(const sf::Keyboard::Scancode &keyCode) const
+const std::string GUI::ECS::Utilities::KeyMapper::stringKey(const sf::Keyboard::Scancode &keyCode) const
 {
     return stringKey(mapKey(keyCode));
 }
 
-const std::string &GUI::ECS::Utilities::KeyMapper::stringKey(const GUI::ECS::Utilities::Key &key) const
+const std::string GUI::ECS::Utilities::KeyMapper::stringKey(const GUI::ECS::Utilities::Key &key) const
 {
     auto it = _keyCodeEquivalence.find(key);
     if (it != _keyCodeEquivalence.end()) {

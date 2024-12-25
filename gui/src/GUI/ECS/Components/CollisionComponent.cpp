@@ -242,10 +242,10 @@ sf::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
 {
     sf::FloatRect rect;
 
-    rect.width = _width;
-    rect.height = _height;
-    rect.top = _posY;
-    rect.left = _posX;
+    rect.size.x = _width;
+    rect.size.y = _height;
+    rect.position.y = _posY;
+    rect.position.x = _posX;
     return rect;
 }
 

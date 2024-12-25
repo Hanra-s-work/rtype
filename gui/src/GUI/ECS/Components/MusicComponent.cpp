@@ -73,7 +73,7 @@ void GUI::ECS::Components::MusicComponents::setLoopMusic(bool loop)
 {
     _isLooping = loop;
     if (_isInitialised == true) {
-        _music.setLoop(_isLooping);
+        _music.setLooping(_isLooping);
     }
 }
 
@@ -93,7 +93,7 @@ void GUI::ECS::Components::MusicComponents::setMusic(const std::string &filePath
         throw MyException::FileNotFound(_filePath);
     }
     _music.setVolume(_volume);
-    _music.setLoop(_isLooping);
+    _music.setLooping(_isLooping);
     _isInitialised = true;
 }
 

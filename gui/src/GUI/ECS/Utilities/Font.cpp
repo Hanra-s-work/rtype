@@ -35,7 +35,7 @@ void GUI::ECS::Utilities::Font::setFontName(const std::string &name)
 void GUI::ECS::Utilities::Font::setFontPath(const std::string &path)
 {
     _fontInstanceSet = false;
-    if (!_fontInstance.loadFromFile(path)) {
+    if (!_fontInstance.openFromFile(path)) {
         Debug::getInstance() << "Error: Failed to load font from " << _fontPath << std::endl;
         throw MyException::InvalidFontPath(path);
     };
@@ -53,7 +53,7 @@ std::string GUI::ECS::Utilities::Font::getFontPath() const
     return _fontPath;
 }
 
-sf::Font GUI::ECS::Utilities::Font::getFontInstance() const
+const sf::Font &GUI::ECS::Utilities::Font::getFontInstance() const
 {
     if (!_fontInstanceSet) {
         Debug::getInstance() << "Error: Font instance not set." << std::endl;

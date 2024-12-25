@@ -39,7 +39,8 @@ namespace GUI
                 virtual void setInitialFrame(std::uint32_t frameIndex);
 
                 virtual void setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
-                virtual void setAnimation(const std::string &path, unsigned int frameWidth, unsigned int frameHeight, const bool startLeft, const bool startTop);
+                virtual void setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                virtual void setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
 
                 virtual void checkTick();
 

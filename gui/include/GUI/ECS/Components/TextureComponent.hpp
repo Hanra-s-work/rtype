@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <optional>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -51,7 +52,7 @@ namespace GUI
                 void update(const TextureComponent &copy);
 
                 bool getVisible() const;
-                sf::Texture getTexture() const;
+                const sf::Texture &getTexture() const;
                 GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
 
                 TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy);

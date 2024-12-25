@@ -9,7 +9,7 @@
 
 GUI::ECS::Utilities::Window::Window(const std::uint32_t entityId, const std::uint32_t windowWidth, const std::uint32_t windowHeight, const std::string &windowName, unsigned int frameRateLimit)
     : EntityNode(entityId),
-    _sfWindow(sf::VideoMode(windowWidth, windowHeight), windowName),
+    _sfWindow(sf::VideoMode({ windowWidth, windowHeight }), windowName),
     _windowWidth(windowWidth),
     _windowHeight(windowHeight),
     _windowName(windowName)
@@ -44,9 +44,9 @@ sf::RenderWindow &GUI::ECS::Utilities::Window::getWindow()
     return _sfWindow;
 }
 
-bool GUI::ECS::Utilities::Window::pollEvent(sf::Event &event)
+std::optional<sf::Event> GUI::ECS::Utilities::Window::pollEvent()
 {
-    return _sfWindow.pollEvent(event);
+    return _sfWindow.pollEvent();
 }
 
 void GUI::ECS::Utilities::Window::setFramerateLimit(const unsigned int framerateLimit)
@@ -63,9 +63,9 @@ void GUI::ECS::Utilities::Window::setFullScreen(const bool fullScreen)
     }
 
     if (_fullScreen) {
-        _sfWindow.create(_desktopMode, _windowName, sf::Style::Fullscreen);
+        _sfWindow.create(_desktopMode, _windowName, sf::Style::None);
     } else {
-        _sfWindow.create(sf::VideoMode(_windowWidth, _windowHeight), _windowName, sf::Style::Close);
+        _sfWindow.create(sf::VideoMode({ _windowWidth, _windowHeight }), _windowName, sf::Style::Close);
     }
 }
 

@@ -37,7 +37,7 @@ namespace GUI
                 bool isOpen() const;
                 void close();
 
-                bool pollEvent(sf::Event &event);
+                std::optional<sf::Event> pollEvent();
                 void setFramerateLimit(const unsigned int framerateLimit);
                 void setFullScreen(const bool fullScreen);
                 bool getFullScreen() const;

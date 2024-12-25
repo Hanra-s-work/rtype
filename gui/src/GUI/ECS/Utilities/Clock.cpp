@@ -15,31 +15,37 @@
 GUI::ECS::Utilities::Clock::Clock(const std::uint32_t entityId)
     : EntityNode(entityId)
 {
-    sf::Clock clock;
-    _clock = clock;
+    _clock.restart();
     _isRunning = true;
 }
 
 GUI::ECS::Utilities::Clock::~Clock() {}
 
-void GUI::ECS::Utilities::Clock::reset()
+std::int64_t GUI::ECS::Utilities::Clock::reset()
 {
-    _clock.restart();
+    std::int64_t node = 0;
+    if (_isRunning) {
+        node = _clock.restart().asMicroseconds();
+    } else {
+        node = _clock.reset().asMicroseconds();
+    }
+    return node;
 }
 
-sf::Time GUI::ECS::Utilities::Clock::getElapsedTime() const
+std::int64_t GUI::ECS::Utilities::Clock::getElapsedTime() const
 {
-    return _clock.getElapsedTime();
+    return _clock.getElapsedTime().asMicroseconds();
 }
 
 void GUI::ECS::Utilities::Clock::start()
 {
+    _clock.start();
     _isRunning = true;
-    _clock.restart();
 }
 
 void GUI::ECS::Utilities::Clock::stop()
 {
+    _clock.stop();
     _isRunning = false;
 }
 

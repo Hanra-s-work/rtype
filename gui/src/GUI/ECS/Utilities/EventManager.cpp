@@ -13,7 +13,7 @@
 #include <iostream>
 #include "GUI/ECS/Utilities/EventManager.hpp"
 
-GUI::ECS::Utilities::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId) {};
+GUI::ECS::Utilities::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId), _mapper(entityId) {};
 
 GUI::ECS::Utilities::EventManager::~EventManager() {}
 
@@ -53,7 +53,7 @@ void GUI::ECS::Utilities::EventManager::update(const GUI::ECS::Utilities::EventM
     _keys = copy.getKeys();
 }
 
-std::vector<sf::Keyboard::Key> GUI::ECS::Utilities::EventManager::getKeys() const
+std::vector<GUI::ECS::Utilities::Key> GUI::ECS::Utilities::EventManager::getKeys() const
 {
     return _keys;
 }
@@ -73,7 +73,7 @@ bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
     return _mouse.isMouseRightButtonClicked();
 }
 
-bool GUI::ECS::Utilities::EventManager::isKeyPressed(const sf::Keyboard::Key &key) const
+bool GUI::ECS::Utilities::EventManager::isKeyPressed(const GUI::ECS::Utilities::Key &key) const
 {
     for (const auto &keyNodes : _keys) {
         if (keyNodes == key) {
@@ -93,45 +93,28 @@ void GUI::ECS::Utilities::EventManager::clearEvents()
 void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Window &windowItem)
 {
     clearEvents();
-    while (windowItem.pollEvent(_event)) {
-        switch (_event.type) {
-            case sf::Event::Closed:
+    while (const std::optional<sf::Event> event = windowItem.pollEvent()) {
+        if (event->is<sf::Event::Closed>()) {
+            Debug::getInstance() << "The window's cross has been clicked." << std::endl;
+            windowItem.close();
+        } else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            sf::Keyboard::Scancode code = keyPressed->scancode;
+            Debug::getInstance() << "A key was pressed, it's code is: '" << _mapper.stringKey(code) << "'." << std::endl;
+            if (code == sf::Keyboard::Scancode::Escape) {
+                Debug::getInstance() << "The escape key was pressed." << std::endl;
                 windowItem.close();
-                break;
-
-            case sf::Event::KeyPressed:
-                Debug::getInstance() << "A key was pressed, it's code is: '"
-                    << _event.key.code << "'." << std::endl;
-                if (_event.key.code == sf::Keyboard::Escape) {
-                    windowItem.close();
-                } else {
-                    _keys.push_back(_event.key.code);
-                }
-                break;
-
-            case sf::Event::MouseButtonPressed:
-                _mouse.update(_event);
-                break;
-            case sf::Event::MouseMoved:
-                _mouse.update(_event.mouseMove);
-                break;
-            case sf::Event::MouseWheelMoved:
-                _mouse.update(_event);
-                break;
-            case sf::Event::MouseWheelScrolled:
-                _mouse.update(_event);
-                break;
-            case sf::Event::TouchBegan:
-                _mouse.update(_event);
-                break;
-            case sf::Event::TouchEnded:
-                _mouse.update(_event);
-                break;
-            case sf::Event::TouchMoved:
-                _mouse.update(_event);
-            default:
-                break;
-        }
+            } else {
+                _keys.push_back(_mapper.mapKey(code));
+            }
+        } else if (
+            event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseMoved>() ||
+            event->is<sf::Event::MouseWheelScrolled>() || event->is<sf::Event::TouchBegan>() ||
+            event->is<sf::Event::TouchEnded>() || event->is<sf::Event::TouchMoved>()
+            ) {
+            _mouse.update(event);
+        } //else {
+        //     // Debug::getInstance() << "Event type not supported by this program." << std::endl;
+        // }
     }
 }
 

@@ -11,11 +11,12 @@
  */
 
 #pragma once
-#include "GUI/ECS/Utilities/Clock.hpp"
-#include "GUI/ECS/Utilities/EventManager.hpp"
+#include "GUI/ECS/Utilities/Key.hpp"
 #include "GUI/ECS/Utilities/Font.hpp"
-#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Utilities/Clock.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
+#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Utilities/EventManager.hpp"
 
 namespace GUI
 {

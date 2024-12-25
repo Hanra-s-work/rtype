@@ -48,9 +48,16 @@ void GUI::ECS::Components::AnimationComponent::setAnimation(const std::vector<GU
     _totalFrames = textures.size();
 }
 
-void GUI::ECS::Components::AnimationComponent::setAnimation(const std::string &path, unsigned int frameWidth, unsigned int frameHeight, const bool startLeft, const bool startTop)
+void GUI::ECS::Components::AnimationComponent::setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
 {
-    // _baseTexture
+    _baseTexture.setFilePath(path);
+    Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
+}
+
+void GUI::ECS::Components::AnimationComponent::setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
+{
+    _baseTexture.update(spritesheet);
+    Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
 }
 
 bool GUI::ECS::Components::AnimationComponent::getLoop() const

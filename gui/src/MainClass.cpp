@@ -370,7 +370,7 @@ void Main::_mainLoop()
 
     while (window.isOpen()) {
         event.processEvents(window);
-        if (event.isKeyPressed(sf::Keyboard::T)) {
+        if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
             _testContent();
         }
         window.clear();
