@@ -81,10 +81,10 @@ int main()
             if (event->is<sf::Event::Closed>())
                 window.close();
             // Check if the escape key was the one pressed
-            // if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-            //     if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
-            //         window.close();
-            // }
+            if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+                    window.close();
+            }
         }
 
         // Clear the screen
