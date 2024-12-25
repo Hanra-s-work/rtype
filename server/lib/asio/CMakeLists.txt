@@ -14,5 +14,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(asio)
 
 # Create a library target for Asio
-add_library(asio INTERFACE)
-target_include_directories(asio INTERFACE ${asio_SOURCE_DIR}/asio/include)
+add_library(server_asio INTERFACE)
+target_include_directories(server_asio INTERFACE ${asio_SOURCE_DIR}/asio/include)
