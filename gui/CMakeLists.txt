@@ -66,7 +66,6 @@ add_executable(r-type_client ${SOURCES})
 # Link required libraries (SFML + toml++)
 target_link_libraries(r-type_client
     PRIVATE
-    sfml-libs
     rtype_client_libraries
     Threads::Threads
 )
