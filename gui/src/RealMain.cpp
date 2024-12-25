@@ -163,7 +163,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         main.setFrameLimit(frameLimit);
     } else if (args[0] == "config-file" || args[0] == "cf" || args[0] == "configfile") {
-        Debug::getInstance() << "Frame limit is provided: '" << args[1] << "'" << std::endl;
+        Debug::getInstance() << "Config file is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: TOML config file is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
