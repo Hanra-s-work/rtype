@@ -173,12 +173,19 @@ namespace GUI
             class KeyMapper : public GUI::ECS::EntityNode {
                 public:
                 KeyMapper(const std::uint32_t EntityId = 0);
-                Key mapKey(sf::Keyboard::Key sfmlKey) const;
-                Key mapKey(sf::Keyboard::Scancode sfmlKeyCode) const;
+                const Key &mapKey(const sf::Keyboard::Key &sfmlKey) const;
+                const Key &mapKey(const sf::Keyboard::Scancode &sfmlKeyCode) const;
+
+                const std::string &stringKey(const sf::Keyboard::Key &keyCode) const;
+                const std::string &stringKey(const sf::Keyboard::Scancode &keyCode) const;
+                const std::string &stringKey(const GUI::ECS::Utilities::Key &keyCode) const;
+
+
 
                 private:
                 std::unordered_map<sf::Keyboard::Key, Key> _sfmlKeyToCustom;
                 std::unordered_map<sf::Keyboard::Scancode, Key> _sfmlScanCodeToCustom;
+                std::unordered_map<Key, std::string> _keyCodeEquivalence;
             };
 
         }

@@ -258,9 +258,154 @@ GUI::ECS::Utilities::KeyMapper::KeyMapper(const std::uint32_t EntityId)
     _sfmlScanCodeToCustom[sf::Keyboard::Scancode::LaunchApplication1] = Key::LaunchApplication1;
     _sfmlScanCodeToCustom[sf::Keyboard::Scancode::LaunchApplication2] = Key::LaunchApplication2;
     _sfmlScanCodeToCustom[sf::Keyboard::Scancode::MediaPreviousTrack] = Key::MediaPreviousTrack;
+
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Unknown] = "Unknown";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::A] = "A";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::B] = "B";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::C] = "C";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::D] = "D";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::E] = "E";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F] = "F";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::G] = "G";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::H] = "H";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::I] = "I";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::J] = "J";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::K] = "K";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::L] = "L";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::M] = "M";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::N] = "N";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::O] = "O";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::P] = "P";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Q] = "Q";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::R] = "R";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::S] = "S";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::T] = "T";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::U] = "U";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::V] = "V";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::W] = "W";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::X] = "X";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Y] = "Y";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Z] = "Z";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Up] = "Up";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F1] = "F1";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F2] = "F2";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F3] = "F3";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F4] = "F4";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F5] = "F5";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F6] = "F6";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F7] = "F7";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F8] = "F8";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F9] = "F9";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F10] = "F10";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F11] = "F11";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F12] = "F12";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F13] = "F13";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F14] = "F14";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F15] = "F15";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F16] = "F16";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F17] = "F17";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F18] = "F18";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F19] = "F19";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F20] = "F20";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F21] = "F21";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F22] = "F22";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F23] = "F23";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::F24] = "F24";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Tab] = "Tab";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::End] = "End";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Add] = "Add";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Cut] = "Cut";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num0] = "Num0";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num1] = "Num1";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num2] = "Num2";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num3] = "Num3";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num4] = "Num4";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num5] = "Num5";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num6] = "Num6";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num7] = "Num7";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num8] = "Num8";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Num9] = "Num9";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LAlt] = "LAlt";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::RAlt] = "RAlt";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Menu] = "Menu";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Home] = "Home";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Down] = "Down";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Left] = "Left";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Copy] = "Copy";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Redo] = "Redo";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Undo] = "Undo";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Help] = "Help";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Back] = "Back";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Stop] = "Stop";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Comma] = "Comma";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Enter] = "Enter";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Slash] = "Slash";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Grave] = "Grave";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Equal] = "Equal";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Space] = "Space";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Right] = "Right";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Pause] = "Pause";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Paste] = "Paste";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LShift] = "LShift";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::RShift] = "RShift";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Escape] = "Escape";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Period] = "Period";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Hyphen] = "Hyphen";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::PageUp] = "PageUp";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Insert] = "Insert";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Delete] = "Delete";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Divide] = "Divide";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Search] = "Search";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Select] = "Select";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Forward] = "Forward";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Refresh] = "Refresh";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Execute] = "Execute";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LSystem] = "LSystem";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::RSystem] = "RSystem";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad0] = "Numpad0";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad1] = "Numpad1";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad2] = "Numpad2";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad3] = "Numpad3";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad4] = "Numpad4";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad5] = "Numpad5";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad6] = "Numpad6";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad7] = "Numpad7";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad8] = "Numpad8";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Numpad9] = "Numpad9";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::PageDown] = "PageDown";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LControl] = "LControl";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::RControl] = "RControl";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LBracket] = "LBracket";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::RBracket] = "RBracket";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Subtract] = "Subtract";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Multiply] = "Multiply";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::CapsLock] = "CapsLock";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::HomePage] = "HomePage";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::VolumeUp] = "VolumeUp";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Semicolon] = "Semicolon";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Backslash] = "Backslash";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Backspace] = "Backspace";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Favorites] = "Favorites";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::MediaStop] = "MediaStop";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Apostrophe] = "Apostrophe";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LaunchMail] = "LaunchMail";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::VolumeDown] = "VolumeDown";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::ModeChange] = "ModeChange";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::VolumeMute] = "VolumeMute";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::Application] = "Application";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::NumpadEqual] = "NumpadEqual";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::NumpadEnter] = "NumpadEnter";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::NumpadDecimal] = "NumpadDecimal";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::NonUsBackslash] = "NonUsBackslash";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::MediaPlayPause] = "MediaPlayPause";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::MediaNextTrack] = "MediaNextTrack";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LaunchMediaSelect] = "LaunchMediaSelect";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LaunchApplication1] = "LaunchApplication1";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::LaunchApplication2] = "LaunchApplication2";
+    _keyCodeEquivalence[GUI::ECS::Utilities::Key::MediaPreviousTrack] = "MediaPreviousTrack";
 };
 
-GUI::ECS::Utilities::Key GUI::ECS::Utilities::KeyMapper::mapKey(sf::Keyboard::Key sfmlKey) const
+const GUI::ECS::Utilities::Key &GUI::ECS::Utilities::KeyMapper::mapKey(const sf::Keyboard::Key &sfmlKey) const
 {
     auto it = _sfmlKeyToCustom.find(sfmlKey);
     if (it != _sfmlKeyToCustom.end()) {
@@ -269,11 +414,31 @@ GUI::ECS::Utilities::Key GUI::ECS::Utilities::KeyMapper::mapKey(sf::Keyboard::Ke
     return Key::Unknown;
 }
 
-GUI::ECS::Utilities::Key GUI::ECS::Utilities::KeyMapper::mapKey(sf::Keyboard::Scancode sfmlKey) const
+const GUI::ECS::Utilities::Key &GUI::ECS::Utilities::KeyMapper::mapKey(const sf::Keyboard::Scancode &sfmlKey) const
 {
     auto it = _sfmlScanCodeToCustom.find(sfmlKey);
     if (it != _sfmlScanCodeToCustom.end()) {
         return it->second;
     }
     return Key::Unknown;
+}
+
+
+const std::string &GUI::ECS::Utilities::KeyMapper::stringKey(const sf::Keyboard::Key &keyCode) const
+{
+    return stringKey(mapKey(keyCode));
+}
+
+const std::string &GUI::ECS::Utilities::KeyMapper::stringKey(const sf::Keyboard::Scancode &keyCode) const
+{
+    return stringKey(mapKey(keyCode));
+}
+
+const std::string &GUI::ECS::Utilities::KeyMapper::stringKey(const GUI::ECS::Utilities::Key &key) const
+{
+    auto it = _keyCodeEquivalence.find(key);
+    if (it != _keyCodeEquivalence.end()) {
+        return it->second;
+    }
+    return "Unknown";
 }
