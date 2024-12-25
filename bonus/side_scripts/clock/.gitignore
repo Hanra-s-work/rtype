@@ -1,0 +1,4 @@
+# no binary files
+my_window*
+build
+!Makefile

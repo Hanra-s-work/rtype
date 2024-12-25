@@ -3,25 +3,27 @@ project(RTypeClient VERSION 1.0.0)
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Set the include directories
-include_directories(include)
+# Include directories for headers
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
-# Include the CMakeLists.txt from the Lib folder to inherit the desired libraries
-include(${CMAKE_CURRENT_LIST_DIR}/lib/CMakeLists.txt)
+# Include the CMakeLists.txt from the Lib folder
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib)
 
 # Set the source files
 set(SOURCES
 
-    # The files at the source of the program
+    # Files at the source of the program
     src/Main.cpp
     src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
+    src/TOMLLoader.cpp
     src/HelpFunctions.cpp
     src/ExceptionHandling.cpp
 
-    # The files in charge of managing the networking side
+    # Network files
     src/GUI/Network/NetworkManager.cpp
     src/GUI/Network/ProtocolHandler.cpp
 
@@ -29,23 +31,25 @@ set(SOURCES
     src/GUI/ECS/Component.cpp
     src/GUI/ECS/EntityNode.cpp
 
-    # The files in charge of containing the components of the program
-    src/GUI/ECS/Components/AnimationComponent.cpp
-    src/GUI/ECS/Components/CollisionComponent.cpp
+    # ECS Components
+    src/GUI/ECS/Components/TextComponent.cpp
     src/GUI/ECS/Components/MusicComponent.cpp
     src/GUI/ECS/Components/ShapeComponent.cpp
-    src/GUI/ECS/Components/TextComponent.cpp
-    src/GUI/ECS/Components/TextureComponent.cpp
     src/GUI/ECS/Components/SpriteComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
+    src/GUI/ECS/Components/TextureComponent.cpp
+    src/GUI/ECS/Components/CollisionComponent.cpp
+    src/GUI/ECS/Components/AnimationComponent.cpp
 
-    # The files in charge of containing the system files
-    src/GUI/ECS/Systems/AnimationSystem.cpp
-    src/GUI/ECS/Systems/ButtonSystem.cpp
+    # ECS system components
     src/GUI/ECS/Systems/InputSystem.cpp
+    src/GUI/ECS/Systems/ButtonSystem.cpp
     src/GUI/ECS/Systems/RenderSystem.cpp
+    src/GUI/ECS/Systems/AnimationSystem.cpp
 
-    # The files in charge of containing the utility classes
+    # ECS Utilities
+    src/GUI/ECS/Utilities/key.cpp
+    src/GUI/ECS/Utilities/Font.cpp
     src/GUI/ECS/Utilities/Clock.cpp
     src/GUI/ECS/Utilities/Window.cpp
     src/GUI/ECS/Utilities/MouseInfo.cpp
@@ -56,19 +60,17 @@ set(SOURCES
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-# Add the executable
+# Add executable for the GUI client
 add_executable(r-type_client ${SOURCES})
 
-# Link SFML and Threads to the executable
+# Link required libraries (SFML + toml++)
 target_link_libraries(r-type_client
-    sfml-system
-    sfml-window
-    sfml-graphics
-    sfml-audio
-    sfml-network
+    PRIVATE
+    rtype_client_libraries
+    Threads::Threads
 )
 
-# Custom target for cleaning build artifacts
+# Custom target to clean build artifacts
 add_custom_target(fclean
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}
     COMMENT "Removing all build artifacts and directories"

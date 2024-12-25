@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <optional>
 #include <SFML/Window/Event.hpp>
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -24,17 +25,16 @@ namespace GUI
         {
             class MouseInfo : public EntityNode {
                 public:
-                MouseInfo();
+                MouseInfo(const std::uint32_t entityId = 0);
                 ~MouseInfo();
 
-                void update(const sf::Event &event);
+                void update(const std::optional<sf::Event> &event);
                 void update(const MouseInfo &entity);
                 void update(const sf::Vector2i &position);
                 void update(const sf::Vector2f &position);
-                void update(const sf::Event::MouseMoveEvent &position);
 
                 sf::Vector2f getMousePosition() const;
-                sf::Event::MouseWheelEvent getMouseWheelEvent() const;
+                sf::Event::MouseWheelScrolled getMouseWheelEvent() const;
 
                 bool isMouseInFocus() const;
                 bool isMouseLeftButtonClicked() const;
@@ -47,11 +47,11 @@ namespace GUI
                 MouseInfo &operator=(const GUI::ECS::Utilities::MouseInfo &copy);
 
                 private:
-                sf::Vector2f _mousePosition;
+                bool _mouseInFocus;
                 bool _leftButtonClicked;
                 bool _rightButtonClicked;
-                bool _mouseInFocus;
-                sf::Event::MouseWheelEvent _mouseWheel;
+                sf::Vector2f _mousePosition;
+                sf::Event::MouseWheelScrolled _mouseWheel;
             };
         }
     }

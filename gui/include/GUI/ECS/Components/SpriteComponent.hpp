@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <optional>
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "Debug.hpp"
@@ -46,6 +47,25 @@ namespace GUI
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+
+                SpriteComponent(const std::uint32_t entityId);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name);
+                SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Components::CollisionComponent &collision);
+                SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Components::AnimationComponent &animation);
+                SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const std::string &spritesheetPath);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+
                 ~SpriteComponent();
 
                 void setName(const std::string &name);
@@ -84,8 +104,10 @@ namespace GUI
                 SpriteComponent &operator =(const GUI::ECS::Components::SpriteComponent &copy);
 
                 private:
-                void _processSpriteColor();
+                void _processSprite();
                 void _processCollision();
+                void _processSpriteColor();
+
                 bool _visible = true;
                 std::string _spriteName = "";
                 bool _spritesheetSet = false;
@@ -95,7 +117,7 @@ namespace GUI
                 bool _animationSet = false;
                 GUI::ECS::Components::AnimationComponent _animation;
                 bool _spriteSet = false;
-                sf::Sprite _sfSprite;
+                std::optional<sf::Sprite> _sfSprite;
                 sf::Color _hoverColor = sf::Color::White;
                 sf::Color _normalColor = sf::Color::Transparent;
                 sf::Color _clickedColor = sf::Color::Yellow;

@@ -12,8 +12,8 @@
 
 #include "GUI/ECS/Components/ButtonComponent.hpp"
 
-GUI::ECS::Components::ButtonComponent::ButtonComponent()
-    : _callback(nullptr), _componentText(), _componentShape()
+GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entityId)
+    : EntityNode(entityId), _callback(nullptr), _componentText(), _componentShape()
 {
 };
 

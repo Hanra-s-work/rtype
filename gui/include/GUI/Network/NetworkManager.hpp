@@ -21,7 +21,7 @@
 
 class NetworkManager : public GUI::ECS::EntityNode {
     public:
-    NetworkManager();
+    NetworkManager(const std::uint32_t entityId = 0);
     void Initialize();
     void HandleMessages();
     void SendMessage(const std::string &message, const std::string &address, uint16_t port);

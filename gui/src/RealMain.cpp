@@ -155,13 +155,20 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidFrameLimit(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidFrameLimit(args[1]);
         }
         main.setFrameLimit(frameLimit);
+    } else if (args[0] == "config-file" || args[0] == "cf" || args[0] == "configfile") {
+        Debug::getInstance() << "Config file is provided: '" << args[1] << "'" << std::endl;
+        if (args[1].empty()) {
+            std::cerr << "Error: TOML config file is required." << std::endl;
+            throw MyException::NoFlagParameter(args[0]);
+        }
+        main.setConfigFile(args[1]);
     } else {
         throw MyException::UnknownArgument(args[0]);
     }
@@ -207,7 +214,7 @@ int RealMain(int argc, char **argv)
     int status = SUCCESS;
     bool help_found = false;
 
-    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, false);
+    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, "config.toml", false);
 
     if (argc > 1) {
         try {
@@ -226,6 +233,15 @@ int RealMain(int argc, char **argv)
 
     if (help_found || status == ERROR) {
         return status;
+    }
+
+    try {
+        MyMain.setConfigFile(MyMain.getConfigFile());
+    }
+    catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        Debug::getInstance() << "Failed to load the config file, aboring program." << std::endl;
+        return ERROR;
     }
 
     try {

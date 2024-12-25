@@ -24,6 +24,7 @@
 #include <unordered_map>
 #include "Debug.hpp"
 #include "Constants.hpp"
+#include "TOMLLoader.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -37,7 +38,7 @@
   */
 class Main {
   public:
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string configFilePath = "config.toml", bool debug = false);
   ~Main();
   void run();
   void setIp(const std::string &ip);
@@ -56,6 +57,7 @@ class Main {
   void setWindowCursorSpriteReadFromLeft(bool spriteStartLeft);
   void setWindowSize(unsigned int width, unsigned int height);
   void setFrameLimit(unsigned int frameLimit);
+  void setConfigFile(const std::string &configFile);
   void setDebug(bool debug);
   const std::string getIp();
   const unsigned int getPort();
@@ -72,18 +74,27 @@ class Main {
   unsigned int getWindowCursorSpriteHeight();
   bool getDebug() const;
   unsigned int getFrameLimit() const;
+  std::string getConfigFile() const;
   std::tuple<unsigned int, unsigned int> getWindowPosition();
   std::tuple<unsigned int, unsigned int> getWindowSize();
 
   private:
+  void _loadToml();
   void _mainLoop();
   std::string _lowerText(const std::string &text);
   bool _isIpInRange(const std::string &ip);
   bool _isPortCorrect(const unsigned int port);
   bool _isFilePresent(const std::string &filepath);
   bool _isFrameLimitCorrect(unsigned int frameLimit);
-  void _initialiseRessources();
+
+  void _initialiseAudio();
+  void _initialiseFonts();
+  void _initialiseSprites();
   void _initialiseConnection();
+  void _initialiseRessources();
+
+  void _testContent();
+
   void _closeConnection();
 
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
@@ -104,6 +115,9 @@ class Main {
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
+  std::uint32_t _baseId = 0;
+  std::string _configFilePath = "config.toml";
+  TOMLLoader _tomlContent;
 };
 
 int RealMain(int argc, char **argv);

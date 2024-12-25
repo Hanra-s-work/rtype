@@ -12,6 +12,8 @@
 
 #pragma once
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Time.hpp>
+
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
@@ -23,10 +25,10 @@ namespace GUI
         {
             class Clock : public EntityNode {
                 public:
-                Clock();
+                Clock(const std::uint32_t entityId = 0);
                 ~Clock();
-                void reset();
-                sf::Time getElapsedTime() const;
+                std::int64_t reset();
+                std::int64_t getElapsedTime() const;
                 void stop();
                 void start();
                 bool isRunning() const;

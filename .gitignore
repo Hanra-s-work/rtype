@@ -6,6 +6,8 @@
 Makefile
 CMakeFiles
 CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
 cmake_install.cmake
 
 # No temporary files
@@ -20,8 +22,11 @@ rtype_server
 
 # No build files
 bootstrap
-build/*
 bin/*
+build/*
+_deps/*
+dist/*
+**/_deps/*
 
 # No editor config files
 .vscode

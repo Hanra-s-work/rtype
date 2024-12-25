@@ -20,8 +20,8 @@
   * @param positionX X-coordinate of the component's position.
   * @param positionY Y-coordinate of the component's position.
   */
-GUI::ECS::Components::CollisionComponent::CollisionComponent(const float width, const float height, const float positionX, const float positionY)
-    : _width(width), _height(height), _posX(positionX), _posY(positionY)
+GUI::ECS::Components::CollisionComponent::CollisionComponent(const std::uint32_t entityId, const float width, const float height, const float positionX, const float positionY)
+    : EntityNode(entityId), _width(width), _height(height), _posX(positionX), _posY(positionY)
 {
     _updateMouseCollisionData();
 }
@@ -242,10 +242,10 @@ sf::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
 {
     sf::FloatRect rect;
 
-    rect.width = _width;
-    rect.height = _height;
-    rect.top = _posY;
-    rect.left = _posX;
+    rect.size.x = _width;
+    rect.size.y = _height;
+    rect.position.y = _posY;
+    rect.position.x = _posX;
     return rect;
 }
 

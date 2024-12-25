@@ -14,12 +14,14 @@
 #include <any>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <functional>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Key.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
 #include "GUI/ECS/Utilities/MouseInfo.hpp"
 
@@ -32,7 +34,7 @@ namespace GUI
             class Window;
             class EventManager : public EntityNode {
                 public:
-                EventManager();
+                EventManager(const std::uint32_t entityId = 0);
                 ~EventManager();
                 void clearEvents();
                 void processEvents(GUI::ECS::Utilities::Window &window);
@@ -40,6 +42,8 @@ namespace GUI
                 bool isMouseInFocus() const;
                 bool isLeftButtonClicked() const;
                 bool isRightButtonClicked() const;
+
+                bool isKeyPressed(const GUI::ECS::Utilities::Key &key) const;
 
                 float getPositionX() const;
                 float getPositionY() const;
@@ -51,14 +55,14 @@ namespace GUI
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Utilities::EventManager &copy);
 
-                std::vector<sf::Keyboard::Key> getKeys() const;
+                std::vector<GUI::ECS::Utilities::Key> getKeys() const;
 
                 EventManager &operator=(const GUI::ECS::Utilities::EventManager &copy);
 
                 private:
-                sf::Event _event;
                 MouseInfo _mouse;
-                std::vector<sf::Keyboard::Key> _keys;
+                GUI::ECS::Utilities::KeyMapper _mapper;
+                std::vector<GUI::ECS::Utilities::Key> _keys;
             };
         }
     }
