@@ -1,6 +1,7 @@
 name: doxygen_generator
 
 # version: 1.0.0.commando
+#          1.0.1 - Commented out the sections in charge of releasing and cleaning the generated cache so that it can be collected by the 3rd workflow
 
 on:
   push:
@@ -42,6 +43,9 @@ env:
   # Variable containing the reference key for the cache of each main section
   CACHE_KEY: doxygen-cache-key
   CACHE_KEY_CLEANED: doxygen-cache-key-cleaned
+  # The final output folder (if you do not wish to immediately publish the content)
+  FINAL_OUTPUT: final_output
+  CACHE_NAME: final_documentation_output
 
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
@@ -561,32 +565,58 @@ jobs:
             echo EOF
           } >> "$GITHUB_OUTPUT" # anchor point
 
-
-      - name: Publish binary as GitHub release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: ${{ steps.anchor-point.outputs.AP}}
-          name: ${{ env.COMMIT_TITLE }}
-          body: ${{ env.COMMIT_MESSAGE }}
-          draft: false
-          prerelease: false
-          make_latest: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  clean_created_cache:
-    name: Clear the cache generated during the build time
-    permissions: write-all
-    runs-on: ubuntu-latest
-    needs: [export_other_formats_when_present, publish_html ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Delete Created cache
-        env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
+      - name: Save the final generation of the content
         run: |
-          gh cache list
-          gh cache delete --all
+          content_folder=content
+          echo "Saving the final generation of the content"
+          echo "Creating the final output folder: ${{env.FINAL_OUTPUT}}"
+          mkdir -p ${{env.FINAL_OUTPUT}}
+          echo "Creating the content folder (that will contain the generated data)"
+          mkdir -p ${{env.FINAL_OUTPUT}}/${content_folder}
+          echo "Copying the content of ${{steps.anchor-point.outputs.AP}} to ${{env.FINAL_OUTPUT}}"
+          cp -rvf ${{steps.anchor-point.outputs.AP}}/* ${{env.FINAL_OUTPUT}}/${content_folder}
+
+      - name: Save the commit message
+        run: |
+          echo "Saving the commit message"
+          echo "${{env.COMMIT_MESSAGE}}" > ${{env.FINAL_OUTPUT}}/commit_message.txt
+        
+      - name: Save the commit title
+        run: |
+          echo "Saving the commit title"
+          echo "${{env.COMMIT_TITLE}}" > ${{env.FINAL_OUTPUT}}/commit_title.txt"
+
+      - name: Uploading the cache so that the 3rd workflow can access it
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.CACHE_NAME}}
+          path: "${{env.FINAL_OUTPUT}}"
+
+      # - name: Publish binary as GitHub release
+      #   uses: softprops/action-gh-release@v2
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     files: ${{ steps.anchor-point.outputs.AP}}
+      #     name: ${{ env.COMMIT_TITLE }}
+      #     body: ${{ env.COMMIT_MESSAGE }}
+      #     draft: false
+      #     prerelease: false
+      #     make_latest: true
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+
+  # clean_created_cache:
+  #   name: Clear the cache generated during the build time
+  #   permissions: write-all
+  #   runs-on: ubuntu-latest
+  #   needs: [export_other_formats_when_present, publish_html ]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Delete Created cache
+  #       env:
+  #         GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         gh cache list
+  #         gh cache delete --all

@@ -1,6 +1,7 @@
-name: compile the program for the different systems
+name: Compile the program for the different systems
 
 # version: 1.0.0
+#          1.0.1 - Commented out the sections in charge of creating a release and cleaning the cache because it will be collected by a 3rd workflow
 
 on:
   push:
@@ -29,6 +30,7 @@ env:
   ASSETS_DIR: assets
   OUTPUT_DIRECTORY: result
   FINAL_OUTPUT: final_result
+  FINAL_CACHE: final_compilation_result
 
 jobs:
   build_for_linux:
@@ -240,33 +242,59 @@ jobs:
           mv "${{env.OUTPUT_DIRECTORY}}_assets.tar.gz" "${{env.FINAL_OUTPUT}}"
           mv "${{env.OUTPUT_DIRECTORY}}" "${{env.FINAL_OUTPUT}}"
       
-      - name: Publish binary as GitHub release
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: ${{env.FINAL_OUTPUT}}/*
-          name: ${{ github.ref }}
-          body: ${{ steps.body-message.outputs.COMMIT_MESSAGE }}
-          draft: false
-          prerelease: false
-          make_latest: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  clean_created_cache:
-    name: Clear the cache generated during the build time
-    permissions: write-all
-    runs-on: ubuntu-latest
-    needs: [upload_to_github ]
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Delete Created cache
-        env:
-          GH_TOKEN: ${{ secrets.CACHE_TOKEN }}
+      - name: Move the generated content to the content folder
         run: |
-          gh cache list
-          gh cache delete --all
+          content_folder=content
+          echo "Creating the ${content_folder} folder"
+          mkdir -p ${content_folder}
+          echo "Moving the content of ${{env.FINAL_OUTPUT}} to ${content_folder}"
+          mv ${{env.FINAL_OUTPUT}} ${content_folder}
+          echo "Creating folder ${{env.FINAL_OUTPUT}}"
+          mkdir -p ${{env.FINAL_OUTPUT}}
+          echo "Moving ${content_folder} into the folder ${{env.FINAL_OUTPUT}}"
+          mv "${content_folder}" "${{env.FINAL_OUTPUT}}/${content_folder}"
+
+      - name: Save the commit message
+        run: |
+          echo "${{ steps.body-message.outputs.COMMIT_MESSAGE }}" > "${{env.FINAL_OUTPUT}}/commit_message.txt"
+        
+      - name: Save the commit reference
+        run: |
+          echo "${{ github.ref }}" > "${{env.FINAL_OUTPUT}}/commit_reference.txt"
+
+      - name: Store the final version of the flow
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{env.FINAL_CACHE}}
+          path: "${{env.FINAL_OUTPUT}}"
+
+      # - name: Publish binary as GitHub release
+      #   uses: softprops/action-gh-release@v2
+      #   if: startsWith(github.ref, 'refs/tags/')
+      #   with:
+      #     files: ${{env.FINAL_OUTPUT}}/*
+      #     name: ${{ github.ref }}
+      #     body: ${{ steps.body-message.outputs.COMMIT_MESSAGE }}
+      #     draft: false
+      #     prerelease: false
+      #     make_latest: true
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+
+  # clean_created_cache:
+  #   name: Clear the cache generated during the build time
+  #   permissions: write-all
+  #   runs-on: ubuntu-latest
+  #   needs: [upload_to_github ]
+  #   steps:
+
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: Delete Created cache
+  #       env:
+  #         GH_TOKEN: ${{ secrets.CACHE_TOKEN }}
+  #       run: |
+  #         gh cache list
+  #         gh cache delete --all

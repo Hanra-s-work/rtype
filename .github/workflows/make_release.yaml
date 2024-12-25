@@ -1,0 +1,110 @@
+name: Make a release for the compilation
+
+# version: 1.0.0
+
+on:
+  workflow_run:
+    workflows: ["Compile the program for the different systems", "doxygen_generator"]
+    types:
+      - completed
+
+env:
+  CACHE_TARGET_1: final_compilation_result
+  CACHE_TARGER_2: final_documentation_output
+
+  OUTPUT_DIRECTORY_TARGET_1: compilation_result
+  OUTPUT_DIRECTORY_TARGET_2: documentation_result
+
+  COMMIT_TITLE: Sample title
+  COMMIT_MESSAGE: Sample message
+
+jobs:
+  gather_and_sort_and_release:
+    name: "Gather and sort the caches of the previous workflows"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Access the repository
+        uses: actions/checkout@v4
+
+      - name: Download the first cache target
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{env.CACHE_TARGET_1}}
+          path: "${{env.OUTPUT_DIRECTORY_TARGET_1}}"
+
+      - name: Download the second cache target
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{env.CACHE_TARGER_2}}
+          path: "${{env.OUTPUT_DIRECTORY_TARGET_2}}"
+      
+      - name: List the content of the restored caches
+        run: |
+          echo "Listing the content of the current directories."
+          ls -la -R
+
+      - name: Restore the commit message
+        id: commit-message
+        run: |
+          MESSAGE="$(cat ${{env.OUTPUT_DIRECTORY_TARGET_2}}/commit_message.txt)"
+          echo "Restoring the commit message."
+          echo "COMMIT_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+
+      - name: Restore the title message
+        id: title-message
+        run: |
+          TITLE="$(cat ${{env.OUTPUT_DIRECTORY_TARGET_2}}/commit_title.txt)"
+          echo "Restoring the commit message."
+          echo "COMMIT_TITLE=$TITLE" >> $GITHUB_ENV
+
+      - name: Gather and merge
+        id: anchor-point
+        run: |
+          TEMP_FOLD=tmp
+          echo "Creating temporary folder"
+          mkdir -p ${TEMP_FOLD}
+          echo "Restoring the content of the first folder to the temporary folder"
+          cp -rf ${{env.OUTPUT_DIRECTORY_TARGET_1}}/content/* ${TEMP_FOLD}/
+          echo "Restoring the content of the second folder to the temporary folder"
+          cp -rf ${{env.OUTPUT_DIRECTORY_TARGET_2}}/content/* ${TEMP_FOLD}
+          echo "Content of ${TEMP_FOLD}:"
+          ls -a "${TEMP_FOLD}"
+          echo "sending content to github output"
+          {
+            echo 'AP<<EOF'
+            find ./${TEMP_FOLD} -maxdepth 1 -type f
+            echo EOF
+          } >> "$GITHUB_OUTPUT" # anchor point
+
+
+      - name: Publish binary as GitHub release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ steps.anchor-point.outputs.AP}}
+          name: ${{ env.COMMIT_TITLE }}
+          body: ${{ env.COMMIT_MESSAGE }}
+          draft: false
+          prerelease: false
+          make_latest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+
+  clean_created_cache:
+    name: Clear the cache generated during the build time
+    permissions: write-all
+    runs-on: ubuntu-latest
+    needs: [gather_and_sort_and_release ]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete Created cache
+        env:
+          GH_TOKEN: ${{ secrets.CACHE_TOKEN }}
+        run: |
+          gh cache list
+          gh cache delete --all
