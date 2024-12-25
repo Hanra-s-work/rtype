@@ -199,9 +199,9 @@ function compile_sfml {
     display_title "Compiling the SFML library..."
     cd $FILE_LOCATION/$FOLDER_NAME
     if [ $SILENT -eq $TRUE ]; then
-        cmake . . >/dev/null
+        cmake -DBUILD_SHARED_LIBS=ON . . >/dev/null
     else
-        cmake . .
+        cmake -DBUILD_SHARED_LIBS=ON . .
     fi
     STATUS=$?
     display_status $STATUS "Configuring the SFML library"
