@@ -32,22 +32,23 @@ set(SOURCES
     src/GUI/ECS/EntityNode.cpp
 
     # ECS Components
-    src/GUI/ECS/Components/AnimationComponent.cpp
-    src/GUI/ECS/Components/CollisionComponent.cpp
+    src/GUI/ECS/Components/TextComponent.cpp
     src/GUI/ECS/Components/MusicComponent.cpp
     src/GUI/ECS/Components/ShapeComponent.cpp
-    src/GUI/ECS/Components/TextComponent.cpp
-    src/GUI/ECS/Components/TextureComponent.cpp
     src/GUI/ECS/Components/SpriteComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
+    src/GUI/ECS/Components/TextureComponent.cpp
+    src/GUI/ECS/Components/CollisionComponent.cpp
+    src/GUI/ECS/Components/AnimationComponent.cpp
 
     # ECS system components
-    src/GUI/ECS/Systems/AnimationSystem.cpp
-    src/GUI/ECS/Systems/ButtonSystem.cpp
     src/GUI/ECS/Systems/InputSystem.cpp
+    src/GUI/ECS/Systems/ButtonSystem.cpp
     src/GUI/ECS/Systems/RenderSystem.cpp
+    src/GUI/ECS/Systems/AnimationSystem.cpp
 
     # ECS Utilities
+    src/GUI/ECS/Utilities/key.cpp
     src/GUI/ECS/Utilities/Font.cpp
     src/GUI/ECS/Utilities/Clock.cpp
     src/GUI/ECS/Utilities/Window.cpp
