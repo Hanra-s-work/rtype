@@ -7,7 +7,7 @@ include(FetchContent)
 FetchContent_Declare(
     asio
     GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
-    GIT_TAG asio-1-24-0
+    GIT_TAG asio-1-32-0
 )
 
 # Make Asio available
