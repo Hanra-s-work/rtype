@@ -92,6 +92,7 @@ void GUI::ECS::Utilities::EventManager::clearEvents()
 
 void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Window &windowItem)
 {
+    int counter = 0;
     clearEvents();
     while (const std::optional<sf::Event> event = windowItem.pollEvent()) {
         if (event->is<sf::Event::Closed>()) {
@@ -111,10 +112,13 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
             event->is<sf::Event::MouseWheelScrolled>() || event->is<sf::Event::TouchBegan>() ||
             event->is<sf::Event::TouchEnded>() || event->is<sf::Event::TouchMoved>()
             ) {
+            Debug::getInstance() << "Begin processing the mouse Event." << std::endl;
             _mouse.update(event);
-        } //else {
-        //     // Debug::getInstance() << "Event type not supported by this program." << std::endl;
-        // }
+            Debug::getInstance() << "End processing the mouse Event." << std::endl;
+        } else {
+            counter += 1;
+            // Debug::getInstance() << "Event type not supported by this program." << std::endl;
+        }
     }
 }
 
