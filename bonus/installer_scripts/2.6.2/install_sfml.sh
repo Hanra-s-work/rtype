@@ -268,6 +268,7 @@ function main {
     # clean_up
 }
 
+echo "(c) Created by Henry Letellier"
 process_input_arguments $@
 STATUS=$?
 update_global_status $STATUS
@@ -285,5 +286,6 @@ if [ $GLOBAL_STATUS -eq $ERROR ] && [ $STATUS -eq $SUCCESS ]; then
     display_info "The global status is $GLOBAL_STATUS"
     display_status $GLOBAL_STATUS "The installation of the SFML library"
 fi
+display_info "(c) Created by Henry Letellier"
 display_default "End of script"
 exit $GLOBAL_STATUS

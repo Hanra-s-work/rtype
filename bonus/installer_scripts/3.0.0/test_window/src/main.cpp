@@ -5,6 +5,7 @@
 ** main.cpp
 */
 
+#include <optional>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -18,17 +19,23 @@
 
 void moveText(sf::Text &text, int x, int y)
 {
-    text.setPosition(static_cast<float>(x), static_cast<float>(y));
+    sf::Vector2f pos;
+    pos.x = x;
+    pos.y = y;
+    text.setPosition(pos);
 }
 
 void resizeSprite(sf::Sprite &sprite, int width, int height)
 {
-    sprite.setScale(static_cast<float>(width), static_cast<float>(height));
+    sf::Vector2f size;
+    size.x = width;
+    size.y = height;
+    sprite.setScale(size);
 }
 
 sf::Text loadText(const std::string &textContent, int x, int y, sf::Font &font)
 {
-    sf::Text text;
+    sf::Text text(font, textContent, 40);
     text.setString(textContent);
     text.setFont(font);
     text.setFillColor(sf::Color::Black);
@@ -52,7 +59,7 @@ int main()
 
     // Create a graphical text to display
     sf::Font font;
-    if (!font.loadFromFile(FONT_PATH))
+    if (!font.openFromFile(FONT_PATH))
         return EXIT_ERROR;
     sf::Text text = loadText("Hello Csfml", 0, 0, font);
     sf::Text musicTitle = loadText("Music Title:", 0, 40, font);
@@ -69,11 +76,15 @@ int main()
 
     // Start the game loop
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
+        while (const std::optional event = window.pollEvent()) {
             // Close window : exit
-            if (event.type == sf::Event::Closed)
+            if (event->is<sf::Event::Closed>())
                 window.close();
+            // Check if the escape key was the one pressed
+            // if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            //     if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
+            //         window.close();
+            // }
         }
 
         // Clear the screen
