@@ -96,6 +96,11 @@ Once done, your folder should look like this:
     │   ├── Undertale_Damage_Sound_Effect.ogg
     │   └── undertale_new.wav
     ├── font
+    │   ├── 6809 Chargen
+    │   │   ├── Licenses
+    │   │   │   └── Desktop EULA 1.7.txt
+    │   │   └── TTF Fonts
+    │   │       └── 6809_chargen.ttf
     │   ├── Color Basic
     │   │   ├── Licenses
     │   │   │   └── Desktop EULA 1.7.txt
