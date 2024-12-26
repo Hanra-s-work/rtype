@@ -335,6 +335,48 @@ namespace MyException
         return _buffer;
     }
 
+    InvalidConfigurationSpritesheetType::InvalidConfigurationSpritesheetType(const std::string &path, const std::string &key, const std::string &type, const std::string &expectedType)
+    {
+        _msg = "Error: The type '" + type + "' of the key '" + key + "' for the spritesheet in the configuration file '" + path + "' is incorrect.\n";
+        _msg += "The expected type is '" + expectedType + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidConfigurationSpritesheetType::~InvalidConfigurationSpritesheetType() {};
+
+    const char *InvalidConfigurationSpritesheetType::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidConfigurationMusicType::InvalidConfigurationMusicType(const std::string &path, const std::string &key, const std::string &type, const std::string &expectedType)
+    {
+        _msg = "Error: The type '" + type + "' of the key '" + key + "' for the music in the configuration file '" + path + "' is incorrect.\n";
+        _msg += "The expected type is '" + expectedType + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidConfigurationMusicType::~InvalidConfigurationMusicType() {};
+
+    const char *InvalidConfigurationMusicType::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidConfigurationFontType::InvalidConfigurationFontType(const std::string &path, const std::string &key, const std::string &type, const std::string &expectedType)
+    {
+        _msg = "Error: The type '" + type + "' of the key '" + key + "' for the font in the configuration file '" + path + "' is incorrect.\n";
+        _msg += "The expected type is '" + expectedType + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidConfigurationFontType::~InvalidConfigurationFontType() {};
+
+    const char *InvalidConfigurationFontType::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoSpriteSheet::NoSpriteSheet()
     {
         _msg = "Error: There is no spritesheet set.\n";
@@ -455,5 +497,63 @@ namespace MyException
     {
         return _buffer;
     }
+
+    NoSpritesInConfigFile::NoSpritesInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There are no sprites in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoSpritesInConfigFile::~NoSpritesInConfigFile() {};
+
+    const char *NoSpritesInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoMusicInConfigFile::NoMusicInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There is no music in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoMusicInConfigFile::~NoMusicInConfigFile() {};
+
+    const char *NoMusicInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoFontInConfigFile::NoFontInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There are no sprites in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoFontInConfigFile::~NoFontInConfigFile() {};
+
+    const char *NoFontInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
 
 }

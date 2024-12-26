@@ -293,6 +293,51 @@ namespace MyException
     };
 
     /**
+     * @brief This is the class in charge of informing the user
+     * that the key type present in the file is of the wrong expected type for the spritesheet.
+     *
+     */
+    class InvalidConfigurationSpritesheetType : public std::exception {
+        public:
+        InvalidConfigurationSpritesheetType(const std::string &path = "", const std::string &key = "", const std::string &type = "", const std::string &expectedType = "");
+        ~InvalidConfigurationSpritesheetType();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the key type present in the file is of the wrong expected type for the music.
+     *
+     */
+    class InvalidConfigurationMusicType : public std::exception {
+        public:
+        InvalidConfigurationMusicType(const std::string &path = "", const std::string &key = "", const std::string &type = "", const std::string &expectedType = "");
+        ~InvalidConfigurationMusicType();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the key type present in the file is of the wrong expected type for the spritesheet.
+     *
+     */
+    class InvalidConfigurationFontType : public std::exception {
+        public:
+        InvalidConfigurationFontType(const std::string &path = "", const std::string &key = "", const std::string &type = "", const std::string &expectedType = "");
+        ~InvalidConfigurationFontType();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
      *@brief This is the class in charge of informing the user
      * that they tried to access a non-existant spritesheet.
      *
@@ -406,6 +451,51 @@ namespace MyException
         public:
         NoTOMLKey(const std::string &tomlPath = "", const std::string &tomlKey = "");
         ~NoTOMLKey();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the program could not find the sprite section in the configuration file.
+     *
+     */
+    class NoSpritesInConfigFile : public std::exception {
+        public:
+        NoSpritesInConfigFile(const std::string &tomlPath = "", const std::string &tomlKey = "");
+        ~NoSpritesInConfigFile();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the program could not find the music section in the configuration file.
+     *
+     */
+    class NoMusicInConfigFile : public std::exception {
+        public:
+        NoMusicInConfigFile(const std::string &tomlPath = "", const std::string &tomlKey = "");
+        ~NoMusicInConfigFile();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the program could not find the font section in the configuration file.
+     *
+     */
+    class NoFontInConfigFile : public std::exception {
+        public:
+        NoFontInConfigFile(const std::string &tomlPath = "", const std::string &tomlKey = "");
+        ~NoFontInConfigFile();
         const char *what() const noexcept;
         private:
         std::string _msg;
