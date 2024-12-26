@@ -2,10 +2,20 @@
 
 ## Table of contents
 
-1. [Introduction](#introduction)
-2. [Compiling](#compiling)
-3. [Running the client](#running-the-client)
-4. [Configuration file](#configuration-file)
+* [Introduction](#introduction)
+* [Compiling](#compiling)
+* [Running the client](#running-the-client)
+* [Configuration file](#configuration-file)
+* [Troubleshooting](#troubleshooting)
+  * [Common issues](#common-issues)
+    * [Missing dependencies](#1-missing-dependencies)
+    * [Cmake configuration fails](#2-cmake-configuration-fails)
+    * [Build errors](#3-build-errors)
+    * [Runtime errors](#4-runtime-errors)
+    * [Graphics issues](#5-graphics-issues)
+    * [Missing or corrupted assets](#6-missing-or-corrupted-assets)
+  * [Debugging Tips](#debugging-tips)
+  * [Getting help](#getting-help)
 
 ## Introduction
 
@@ -848,3 +858,76 @@ The construction of a `[spritesheet]` block, element in charge of displaying the
 * `sprite_height = <height>` (`0` to `1000`) : set the height of the sprite view field, in pixels
 * `start_left = true` (or `false`) : set the starting position of the sprite view field to start from the left (or not)
 * `start_top = true` (or `false`) : set the starting position of the sprite view field to start from the top (or not)
+
+## Troubleshooting
+
+This section provides solutions for common issues you might encounter while compiling, running, or configuring the R-Type client.
+
+### Common Issues
+
+#### 1. Missing Dependencies
+
+* **Symptom**: Errors during the `cmake` or `cmake --build` process indicating missing tools or libraries.
+
+* **Solution**:
+  * Ensure all dependencies listed in the [Getting Started - Dependencies - From Source](../getting_started/README.md#from-source) section are installed.
+  * Verify that `CMake` and `G++` are installed and available in your system's `PATH`.
+
+#### 2. CMake Configuration Fails
+
+* **Symptom**: Errors during the `cmake -S . -B ./build` step, such as `cloning error` or missing components.
+
+* **Solution**:
+  * Check your internet connection; cloning errors often occur due to connectivity issues.
+  * Verify the integrity of the source code and re-clone the repository if necessary.
+  * Install any missing dependencies mentioned in the error logs.
+
+#### 3. Build Errors
+
+* **Symptom**: The `cmake --build ./build` command fails with errors about missing files or incorrect configurations.
+
+* **Solution**:
+  * Ensure the `build` folder is located in the `gui` directory.
+  * Delete and recreate the `build` directory, then rerun the configuration and build commands.
+
+#### 4. Runtime Errors
+
+* **Symptom**: The client binary crashes or exits with errors when executed.
+
+* **Solution**:
+  * Run `./r-type_client --help` to ensure the binary is functioning and the options are properly configured.
+  * Verify the presence of the `client_config.toml` file in the same directory as the binary.
+  * Ensure all asset paths in the `client_config.toml` file are correct.
+
+#### 5. Graphics Issues
+
+* **Symptom**: The client fails to display graphics properly or does not open a window.
+
+* **Solution**:
+  * Check the configuration file (`client_config.toml`) to ensure the paths for fonts, spritesheets, and music are correct.
+  * Verify that your system supports OpenGL, as required by SFML.
+
+#### 6. Missing or Corrupted Assets
+
+* **Symptom**: Errors related to missing assets or configuration files during runtime.
+
+* **Solution**:
+  * Ensure all assets listed in the `client_config.toml` file are present in their respective directories.
+  * Redownload the assets if they appear corrupted.
+
+### Debugging Tips
+
+* Use the `--debug` flag when running the client binary to get detailed log output.
+
+* Verify the configuration file syntax, as an invalid `toml` file can cause runtime issues.
+* Run the client binary with a minimal set of options to isolate the issue, e.g., `./r-type_client --config-file client_config.toml`.
+
+### Getting Help
+
+* Refer to the [Getting Started](../getting_started/README.md) guide for dependency setup and compilation instructions.
+
+* Check the [GitHub Issues](https://github.com/Hanra-s-work/rtype/issues) page for previously reported problems.
+* Provide detailed information when seeking assistance:
+  * Operating system and environment details.
+  * Steps to reproduce the issue.
+  * Complete error messages or logs.

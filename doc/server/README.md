@@ -2,10 +2,20 @@
 
 ## Table of contents
 
-1. [Introduction](#introduction)
-2. [Compiling](#compiling)
-3. [Running the server](#running-the-server)
-4. [Configuration file](#configuration-file)
+* [Introduction](#introduction)
+* [Compiling](#compiling)
+* [Running the server](#running-the-server)
+* [Configuration file](#configuration-file)
+* [Troubleshooting](#troubleshooting)
+  * [Common issues](#common-issues)
+    * [Missing dependencies](#1-missing-dependencies)
+    * [CMake configuration failure](#2-cmake-configuration-fails)
+    * [Build errors](#3-build-errors)
+    * [Runtime errors](#4-runtime-errors)
+    * [Networking issues](#5-networking-issues)
+    * [High latency or disconnects](#6-high-latency-or-disconnects)
+  * [Debugging tips](#debugging-tips)
+  * [Getting help](#getting-help)
 
 ## Introduction
 
@@ -187,3 +197,77 @@ Located in the `[client]`  section:
 Located in the `[timeouts]` section:
 
 * `max_connection_time`: The maximum time in seconds a client can stay inactive connected before being disconnected
+
+## Troubleshooting
+
+This section addresses common issues and solutions for the R-Type server.
+
+### Common Issues
+
+#### 1. Missing Dependencies
+
+* **Symptom**: Errors during the `cmake` or `cmake --build` process indicating missing tools or libraries.
+
+* **Solution**:
+  * Ensure all dependencies are installed as per the [Getting Started - Dependencies - From Source](../getting_started/README.md#from-source) section.
+  * Verify that `CMake` and `G++` are installed and accessible in your system's `PATH`.
+
+#### 2. CMake Configuration Fails
+
+* **Symptom**: Errors during the `cmake -S . -B ./build` step, such as `cloning error` or missing components.
+
+* **Solution**:
+  * Check your internet connection as cloning errors often result from connectivity issues.
+  * Re-clone the repository if the source code appears incomplete or corrupted.
+  * Address any missing dependencies highlighted in the error logs.
+
+#### 3. Build Errors
+
+* **Symptom**: The `cmake --build ./build` command fails with errors about missing files or incorrect configurations.
+
+* **Solution**:
+  * Ensure the `build` folder is created within the `server` directory.
+  * Delete and recreate the `build` directory, then rerun the configuration and build commands.
+
+#### 4. Runtime Errors
+
+* **Symptom**: The server binary crashes or fails to start with unexpected errors.
+
+* **Solution**:
+  * Verify that the `server_config.toml` file is present in the same directory as the binary.
+  * Check the configuration file for invalid values or missing required fields.
+  * Use `./r-type_server --help` to confirm the binary is working as expected.
+
+#### 5. Networking Issues
+
+* **Symptom**: Clients cannot connect to the server, or the server is unreachable.
+
+* **Solution**:
+  * Ensure the server is running on a machine with an accessible IP address and port as specified in `server_config.toml`.
+  * Check firewall or security settings that might block incoming or outgoing connections.
+  * Verify the host and port settings in the `[Connectivity]` section of `server_config.toml`.
+
+#### 6. High Latency or Disconnects
+
+* **Symptom**: Clients experience lag or are disconnected frequently.
+
+* **Solution**:
+  * Increase the `max_connection_time` in the `[timeouts]` section of `server_config.toml`.
+  * Ensure the server has adequate hardware resources and network bandwidth to handle the number of connected clients.
+
+### Debugging Tips
+
+* Run the server with logging enabled (if supported) to capture detailed runtime information.
+
+* Validate the configuration file syntax to ensure all fields are correctly defined.
+* Test the server in isolation (without client connections) to identify potential issues with the server setup.
+
+### Getting Help
+
+* Refer to the [Getting Started](../getting_started/README.md) guide for dependency setup and compilation instructions.
+
+* Check the [GitHub Issues](https://github.com/Hanra-s-work/rtype/issues) page for existing problem reports.
+* Provide detailed information when seeking assistance:
+  * Operating system and environment details.
+  * Steps to reproduce the issue.
+  * Complete error messages or logs.

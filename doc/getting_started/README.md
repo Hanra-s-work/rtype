@@ -10,6 +10,14 @@
 * [Deploy from source](#deploy-from-source)
 * [Running the programs](#running-the-programs)
 * [Troubleshooting](#troubleshooting)
+  * [Common Issues](#common-issues)
+    * [Missing dependencies](#1-missing-dependencies)
+    * [Build fails](#2-build-fails)
+    * [Missing ressources](#3-missing-resources)
+    * [Permission issues](#4-permission-issues)
+    * [Runtime errors](#5-runtime-errors)
+  * [Debugging tips](#debugging-tips)
+  * [Getting help](#getting-help)
 
 ## Dependencies
 
@@ -401,3 +409,65 @@ One you have the client configuration file, it is recommended to take a look at 
 But what is a client without a server, you can thus follow the [server - running the server](../server/README.md#running-the-server) section in order to learn how to start the server binary, if you wish to edit the configuration file, you can have a look at the [server - Configuration file](../server/README.md#configuration-file) section.
 
 ## Troubleshooting
+
+If you encounter issues while setting up, compiling, or running the project, refer to the following troubleshooting tips:
+
+### Common Issues
+
+#### 1. Missing Dependencies
+
+* **Symptom**: Errors related to missing files or packages during compilation or execution.
+
+* **Solution**:
+  * Ensure all dependencies listed in the [Dependencies](#dependencies) section are installed.
+  * For Linux/Mac: Use the package manager (`apt`, `dnf`, or `brew`) to verify and install missing dependencies.
+  * For Windows: Verify installations by checking the paths of executables like `cmake`, `g++`, or `git`.
+
+#### 2. Build Fails
+
+* **Symptom**: Errors during the `cmake` or `cmake --build` process.
+
+* **Solution**:
+  * Ensure the `build` folder exists in the root directory.
+  * Delete the `build` folder and re-run the `cmake -S . -B ./build` and `cmake --build ./build` commands.
+  * Check the version of `CMake` and `G++` to ensure compatibility with the project.
+
+#### 3. Missing Resources
+
+* **Symptom**: Errors indicating missing files such as `client_config.toml` or assets.
+
+* **Solution**:
+  * Verify that all required resources listed in the [Pre-compiled](#pre-compiled) section are present in the correct directory.
+  * Redownload the assets if necessary.
+
+#### 4. Permission Issues
+
+* **Symptom**: Scripts like `RUN_ME.sh` fail to execute.
+
+* **Solution**:
+  * For Linux/Mac, run `chmod +x RUN_ME.sh` to make the script executable.
+  * Ensure you have the necessary permissions in the project directory.
+
+#### 5. Runtime Errors
+
+* **Symptom**: Errors or crashes when running the `r-type_client` or `r-type_server`.
+
+* **Solution**:
+  * Verify the configuration files (`client_config.toml`, `server_config.toml`) are correctly placed and formatted.
+  * Check the console logs for hints about missing or incompatible resources.
+
+### Debugging Tips
+
+* Run the command with `--verbose` (if supported) for detailed logs.
+
+* Check the GitHub repository for open issues or FAQs.
+* Validate file paths and ensure no unexpected directory changes occurred during extraction.
+
+### Getting Help
+
+* Check the project's [GitHub Issues](https://github.com/Hanra-s-work/rtype/issues) for similar problems and possible resolutions.
+
+* Open a new issue providing:
+  * Steps to reproduce the problem.
+  * Operating system and environment details.
+  * Relevant error messages or logs.
