@@ -319,10 +319,19 @@ jobs:
         with:
           # Upload selected content
           path: ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}
+          name: "github-pages"
+
+      - name: Go the main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+
 
   export_other_formats_when_present:
     runs-on: ubuntu-latest
