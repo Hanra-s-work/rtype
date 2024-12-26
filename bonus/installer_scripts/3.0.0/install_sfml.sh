@@ -36,6 +36,10 @@ SILENT=$TRUE
 # Sleep after the warning message
 SLEEP=$TRUE
 
+# Install dynamically
+# ON or OFF
+DYNAMIC=ON
+
 # Colour list
 RESET='\033[0m'
 BACKGROUND='\033[0;40m'
@@ -199,9 +203,9 @@ function compile_sfml {
     display_title "Compiling the SFML library..."
     cd $FILE_LOCATION/$FOLDER_NAME
     if [ $SILENT -eq $TRUE ]; then
-        cmake -DBUILD_SHARED_LIBS=ON . . >/dev/null
+        cmake -DBUILD_SHARED_LIBS=$DYNAMIC . . >/dev/null
     else
-        cmake -DBUILD_SHARED_LIBS=ON . .
+        cmake -DBUILD_SHARED_LIBS=$DYNAMIC . .
     fi
     STATUS=$?
     display_status $STATUS "Configuring the SFML library"

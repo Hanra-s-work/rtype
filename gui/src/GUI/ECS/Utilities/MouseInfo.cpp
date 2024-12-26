@@ -37,31 +37,25 @@ GUI::ECS::Utilities::MouseInfo::~MouseInfo() {};
 void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &event)
 {
     if (event->is<sf::Event::MouseButtonPressed>()) {
-        const sf::Event::MouseMoved *data = event->getIf<sf::Event::MouseMoved>();
-        int posx = data->position.x;
-        int posy = data->position.y;
+        Debug::getInstance() << "MouseInfo, mouse button pressed." << std::endl;
         if (event->is<sf::Event::MouseLeft>()) {
-            Debug::getInstance() << "MouseInfo: Left mouse button clicked at ("
-                << posx << ", " << posy << ")" << std::endl;
+            Debug::getInstance() << "MouseInfo: Left mouse button clicked." << std::endl;
             _leftButtonClicked = true;
         } else {
-            Debug::getInstance() << "MouseInfo: Right mouse button clicked at ("
-                << posx << ", " << posy << ")" << std::endl;
+            Debug::getInstance() << "MouseInfo: Right mouse button clicked." << std::endl;
             _rightButtonClicked = true;
         }
+        Debug::getInstance() << "MouseInfo, out of the button being pressed." << std::endl;
     } else if (event->is<sf::Event::MouseButtonReleased>()) {
-        const sf::Event::MouseMoved *data = event->getIf<sf::Event::MouseMoved>();
-        int posx = data->position.x;
-        int posy = data->position.y;
+        Debug::getInstance() << "MouseInfo, mouse button released." << std::endl;
         if (event->is<sf::Event::MouseLeft>()) {
-            Debug::getInstance() << "MouseInfo: Left mouse button clicked at ("
-                << posx << ", " << posy << ")" << std::endl;
+            Debug::getInstance() << "MouseInfo: Left mouse button clicked." << std::endl;
             _leftButtonClicked = false;
         } else {
-            Debug::getInstance() << "MouseInfo: Right mouse button clicked at ("
-                << posx << ", " << posy << ")" << std::endl;
+            Debug::getInstance() << "MouseInfo: Right mouse button clicked." << std::endl;
             _rightButtonClicked = false;
         }
+        Debug::getInstance() << "MouseInfo, out of the button being released." << std::endl;
     } else if (event->is<sf::Event::MouseEntered>()) {
         Debug::getInstance() << "MouseInfo: the mouse is in focus" << std::endl;
         _mouseInFocus = true;
