@@ -585,7 +585,7 @@ jobs:
           mkdir -p ${{env.FINAL_OUTPUT}}/${content_folder}
           echo "Copying the content of ${{steps.anchor-point.outputs.AP}} to ${{env.FINAL_OUTPUT}}"
           for FILE in ${{steps.anchor-point.outputs.AP}}; do
-            cp -v $FILE ${{env.FINAL_OUTPUT}}/${content_folder}
+            cp -rvf $FILE ${{env.FINAL_OUTPUT}}/${content_folder}
           done
 
       - name: Save the commit message
