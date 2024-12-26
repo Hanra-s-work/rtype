@@ -584,7 +584,7 @@ jobs:
           echo "Creating the content folder (that will contain the generated data)"
           mkdir -p ${{env.FINAL_OUTPUT}}/${content_folder}
           echo "Copying the content of ${{steps.anchor-point.outputs.AP}} to ${{env.FINAL_OUTPUT}}"
-          for FILE in ${{steps.anchor-point.outputs.AP}}; do
+          for FILE in $({{ steps.anchor-point.outputs.AP }}) ; do
             echo "Copying $FILE to ${{env.FINAL_OUTPUT}}/${content_folder}"
             cp -rvf $FILE ${{env.FINAL_OUTPUT}}/${content_folder}
           done
