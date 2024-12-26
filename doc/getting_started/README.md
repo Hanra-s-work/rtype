@@ -41,7 +41,7 @@ Once you have these elements, please head to the [Pre-compiled](#pre-compiled) s
 However, if you wish to compile the code from source, you will need the following:
 
 > It is recommended to follow the [Obtaining the source code](#obtaining-the-source-code) section for an explanation on how to (obviously) obtain the source code so that you can compile the project.
-
+>
 > If you are on Linux or Mac, it might be simpler to obtain these dependencies via you system package manager (i.e. `apt`, `dnf`, `brew` (apple))
 
 * [Cmake](https://cmake.org/download/)
@@ -96,21 +96,21 @@ Once done, your folder should look like this:
     │   ├── Undertale_Damage_Sound_Effect.ogg
     │   └── undertale_new.wav
     ├── font
-    │   ├── 6809 Chargen
-    │   │   ├── Licenses
-    │   │   │   └── Desktop EULA 1.7.txt
-    │   │   └── TTF Fonts
-    │   │       └── 6809_chargen.ttf
-    │   ├── Color Basic
-    │   │   ├── Licenses
-    │   │   │   └── Desktop EULA 1.7.txt
-    │   │   └── TTF Fonts
-    │   │       └── color_basic.ttf
-    │   └── Joystix
-    │       ├── Licenses
-    │       │   └── Desktop Ebook EULA 1.7.txt
-    │       └── TTF Fonts
-    │           └── joystix_monospace.ttf
+    │   ├── 6809 Chargen
+    │   │   ├── Licenses
+    │   │   │   └── Desktop EULA 1.7.txt
+    │   │   └── TTF Fonts
+    │   │       └── 6809_chargen.ttf
+    │   ├── Color Basic
+    │   │   ├── Licenses
+    │   │   │   └── Desktop EULA 1.7.txt
+    │   │   └── TTF Fonts
+    │   │       └── color_basic.ttf
+    │   └── Joystix
+    │       ├── Licenses
+    │       │   └── Desktop Ebook EULA 1.7.txt
+    │       └── TTF Fonts
+    │           └── joystix_monospace.ttf
     └── img
         ├── r-typesheet10.gif
         ├── r-typesheet11.gif
