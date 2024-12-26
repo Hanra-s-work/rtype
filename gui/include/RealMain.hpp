@@ -38,7 +38,7 @@
   */
 class Main {
   public:
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string configFilePath = "config.toml", bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string configFilePath = "client_config.toml", bool debug = false);
   ~Main();
   void run();
   void setIp(const std::string &ip);
@@ -116,7 +116,7 @@ class Main {
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
   std::uint32_t _baseId = 0;
-  std::string _configFilePath = "config.toml";
+  std::string _configFilePath = "client_config.toml";
   TOMLLoader _tomlContent;
 };
 
