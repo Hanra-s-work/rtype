@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <typeindex>
 #include <unordered_map>
+#include <toml++/toml.hpp>
+
 #include "Debug.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
