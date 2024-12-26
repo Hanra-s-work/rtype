@@ -234,19 +234,48 @@ void Main::_closeConnection()
  */
 void Main::_initialiseSprites()
 {
-
+    TOMLLoader sprites(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string spriteSheetKey = "spritesheets";
+    const std::string spriteSheetKeyAlt = "spritesheet";
     std::unordered_map<std::string, std::string> spritesheets;
 
-    unsigned int frameWidth = 20;
-    unsigned int frameHeight = 20;
-    bool startLeft = true;
-    bool startTop = true;
+    if (_tomlContent.hasKey(spriteSheetKey)) {
+        Debug::getInstance() << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
+        if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
+            sprites = _tomlContent.getTable(spriteSheetKey);
+        } else {
+            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
+        Debug::getInstance() << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
+        if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
+            sprites = _tomlContent.getTable(spriteSheetKey);
+        } else {
+            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else {
+        Debug::getInstance() << "The key " << spriteSheetKey << " is missing from the config file, " <<
+            "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
+        throw MyException::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
+    }
+
+    Debug::getInstance() << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
 
     spritesheets["r-typesheet1"] = "assets/img/r-typesheet1.gif";
 
+    bool startTop = true;
+    bool startLeft = true;
+    unsigned int frameWidth = 0;
+    unsigned int frameHeight = 0;
+
     for (const auto &[name, info] : spritesheets) {
         std::string path = info;
-        GUI::ECS::Components::CollisionComponent collision(0);
+        GUI::ECS::Components::CollisionComponent collision(_baseId);
+        collision.setHeight(frameWidth);
+        collision.setWidth(frameHeight);
         GUI::ECS::Components::AnimationComponent animation(_baseId);
         animation.setAnimation(path, frameWidth, frameHeight, startLeft, startTop);
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> nodeSprite = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, collision, animation);
@@ -260,6 +289,37 @@ void Main::_initialiseSprites()
  */
 void Main::_initialiseAudio()
 {
+    TOMLLoader audio(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string musicKey = "music";
+    const std::string musicKeyAlt = "musics";
+    std::unordered_map<std::string, std::string> audios;
+
+    if (_tomlContent.hasKey(musicKey)) {
+        Debug::getInstance() << "Fetching the content for '" << musicKey << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
+        if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
+            audio = _tomlContent.getTable(musicKey);
+        } else {
+            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else if (_tomlContent.hasKey(musicKeyAlt)) {
+        Debug::getInstance() << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
+        if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
+            audio = _tomlContent.getTable(musicKey);
+        } else {
+            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else {
+        Debug::getInstance() << "The key " << musicKey << " is missing from the config file, " <<
+            "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
+        throw MyException::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
+    }
+
+    Debug::getInstance() << audio.getRawTOML() << std::endl;
+
+
     std::string mainMenuPath = "assets/audio/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.ogg";
     std::string bossFightPath = "assets/audio/2021-08-30_-_Boss_Time_-_www.FesliyanStudios.com.ogg";
     std::string gameLoopPath = "assets/audio/FASTER-2020-03-22_-_A_Bit_Of_Hope_-_David_Fesliyan.ogg";
@@ -307,6 +367,37 @@ void Main::_initialiseAudio()
  */
 void Main::_initialiseFonts()
 {
+    TOMLLoader font(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string fontKey = "font";
+    const std::string fontKeyAlt = "fonts";
+    std::unordered_map<std::string, std::string> fonts;
+
+    if (_tomlContent.hasKey(fontKey)) {
+        Debug::getInstance() << "Fetching the content for '" << fontKey << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
+        if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
+            font = _tomlContent.getTable(fontKey);
+        } else {
+            throw MyException::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else if (_tomlContent.hasKey(fontKeyAlt)) {
+        Debug::getInstance() << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
+        if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
+            font = _tomlContent.getTable(fontKey);
+        } else {
+            throw MyException::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else {
+        Debug::getInstance() << "The key " << fontKey << " is missing from the config file, " <<
+            "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
+        throw MyException::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
+    }
+
+    Debug::getInstance() << font.getRawTOML() << std::endl;
+
+
     std::string titleFontPath = "assets/font/Color Basic/TTF Fonts/color_basic.ttf";
     std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
     _baseId++;
