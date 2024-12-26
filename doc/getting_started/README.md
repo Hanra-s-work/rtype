@@ -151,6 +151,8 @@ If this is not the case, please download the missing ressources before proceedin
 
 This section assumes you have successfully completed in the [dependencies](#dependencies) section, the [from source](#from-source) category.
 
+If you wish to only compile the client, please follow the [client - compiling](../client/README.md#compiling) section.
+
 In order to compile the client program, you can either:
 
 * run the `RUN_ME.sh` (if on linux or mac) or run the `RUN_ME.bat` or `RUN_ME.ps1` if on windows.
@@ -175,8 +177,227 @@ If you wish to use the `RUN_ME` scripts, you will need to do the following actio
 
 If you wish to compile the project at the root, please use the following steps:
 
-1. Create a folder `build` to contain the
+Create a folder `build` to contain the configuration build.
+
+While in the root of the project, run the command: `cmake -S . -B ./build` (or `cmake -S . -B build` for Windows).
+
+This should provide the following output (or at least a similar one):
+
+```cmake
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Found X11: /usr/include  found components: Xrandr Xcursor Xi 
+-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so;/usr/lib/x86_64-linux-gnu/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so  found components: OpenGL 
+-- libudev stable: 1
+-- Found UDev: /usr/lib/x86_64-linux-gnu/libudev.so
+--    include: /usr/include
+-- Found UDev: /usr/include  
+-- Performing Test ATOMIC_TEST
+-- Performing Test ATOMIC_TEST - Success
+-- Found Freetype: /usr/lib/x86_64-linux-gnu/libfreetype.so  
+-- Found Vorbis: /usr/include  
+-- Found FLAC: /usr/lib/x86_64-linux-gnu/libFLAC.so  
+-- Configuring done (40.1s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/<user_account>/path/to/the/project/rtype/build
+
+```
+
+If there were no errors, (no red text), while remaining in the root of the project, you can run the command: `cmake --build ./build` (or `cmake --build build`), this should output the following output (or at least something similar):
+
+```cmake
+[  1%] Building CXX object server/CMakeFiles/r-type_server.dir/src/GameManager.cpp.o
+[  2%] Building CXX object server/CMakeFiles/r-type_server.dir/src/main.cpp.o
+[  2%] Building CXX object server/CMakeFiles/r-type_server.dir/src/NetworkManager.cpp.o
+[  3%] Building CXX object server/CMakeFiles/r-type_server.dir/src/ProtocolHandler.cpp.o
+[  4%] Building CXX object server/CMakeFiles/r-type_server.dir/src/Server.cpp.o
+[  4%] Building CXX object server/CMakeFiles/r-type_server.dir/src/ThreadPool.cpp.o
+[  5%] Linking CXX executable /home/eletellier/Documents/001_github/Hanra-s-work/rtype/bin/r-type_server
+[  5%] Built target r-type_server
+[  6%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Clock.cpp.o
+[  7%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Err.cpp.o
+[  7%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Sleep.cpp.o
+[  8%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/String.cpp.o
+[  9%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Utils.cpp.o
+[  9%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Vector2.cpp.o
+[ 10%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Vector3.cpp.o
+[ 11%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/FileInputStream.cpp.o
+[ 11%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/MemoryInputStream.cpp.o
+[ 12%] Building CXX object _deps/sfml-build/src/SFML/System/CMakeFiles/sfml-system.dir/Unix/SleepImpl.cpp.o
+[ 13%] Linking CXX static library ../../../lib/libsfml-system.a
+[ 13%] Built target sfml-system
+[ 14%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/AudioResource.cpp.o
+[ 14%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/AudioDevice.cpp.o
+[ 15%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/Listener.cpp.o
+[ 16%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/Miniaudio.cpp.o
+[ 17%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/MiniaudioUtils.cpp.o
+[ 17%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/Music.cpp.o
+[ 18%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/PlaybackDevice.cpp.o
+[ 19%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/Sound.cpp.o
+[ 19%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundBuffer.cpp.o
+[ 20%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundBufferRecorder.cpp.o
+[ 21%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/InputSoundFile.cpp.o
+[ 21%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/OutputSoundFile.cpp.o
+[ 22%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundRecorder.cpp.o
+[ 23%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundSource.cpp.o
+[ 24%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundStream.cpp.o
+[ 24%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileFactory.cpp.o
+[ 25%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileReaderFlac.cpp.o
+[ 26%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileReaderMp3.cpp.o
+[ 26%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileReaderOgg.cpp.o
+[ 27%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileReaderWav.cpp.o
+[ 28%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileWriterFlac.cpp.o
+[ 28%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileWriterOgg.cpp.o
+[ 29%] Building CXX object _deps/sfml-build/src/SFML/Audio/CMakeFiles/sfml-audio.dir/SoundFileWriterWav.cpp.o
+[ 30%] Linking CXX static library ../../../lib/libsfml-audio.a
+[ 30%] Built target sfml-audio
+[ 31%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Clipboard.cpp.o
+[ 31%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Context.cpp.o
+[ 32%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Cursor.cpp.o
+[ 33%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/GlContext.cpp.o
+[ 33%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/GlResource.cpp.o
+[ 34%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Joystick.cpp.o
+[ 35%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/JoystickManager.cpp.o
+[ 35%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Keyboard.cpp.o
+[ 36%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Mouse.cpp.o
+[ 37%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Touch.cpp.o
+[ 38%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Sensor.cpp.o
+[ 38%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/SensorManager.cpp.o
+[ 39%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/VideoMode.cpp.o
+[ 40%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Vulkan.cpp.o
+[ 40%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Window.cpp.o
+[ 41%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/WindowBase.cpp.o
+[ 42%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/WindowImpl.cpp.o
+[ 42%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/CursorImpl.cpp.o
+[ 43%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/ClipboardImpl.cpp.o
+[ 44%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/InputImpl.cpp.o
+[ 45%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/KeyboardImpl.cpp.o
+[ 45%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/KeySymToKeyMapping.cpp.o
+[ 46%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/KeySymToUnicodeMapping.cpp.o
+[ 47%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/SensorImpl.cpp.o
+[ 47%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/Display.cpp.o
+[ 48%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/VideoModeImpl.cpp.o
+[ 49%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/VulkanImplX11.cpp.o
+[ 49%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/WindowImplX11.cpp.o
+[ 50%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/GlxContext.cpp.o
+[ 51%] Building CXX object _deps/sfml-build/src/SFML/Window/CMakeFiles/sfml-window.dir/Unix/JoystickImpl.cpp.o
+[ 52%] Linking CXX static library ../../../lib/libsfml-window.a
+[ 52%] Built target sfml-window
+[ 53%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/Ftp.cpp.o
+[ 54%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/Http.cpp.o
+[ 55%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/IpAddress.cpp.o
+[ 55%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/Packet.cpp.o
+[ 56%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/Socket.cpp.o
+[ 57%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/SocketSelector.cpp.o
+[ 57%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/TcpListener.cpp.o
+[ 58%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/TcpSocket.cpp.o
+[ 59%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/UdpSocket.cpp.o
+[ 59%] Building CXX object _deps/sfml-build/src/SFML/Network/CMakeFiles/sfml-network.dir/Unix/SocketImpl.cpp.o
+[ 60%] Linking CXX static library ../../../lib/libsfml-network.a
+[ 60%] Built target sfml-network
+[ 61%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/BlendMode.cpp.o
+[ 61%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Font.cpp.o
+[ 62%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Glsl.cpp.o
+[ 63%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/GLCheck.cpp.o
+[ 63%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/GLExtensions.cpp.o
+[ 64%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Image.cpp.o
+[ 65%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderStates.cpp.o
+[ 65%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTexture.cpp.o
+[ 66%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTarget.cpp.o
+[ 67%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderWindow.cpp.o
+[ 68%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Shader.cpp.o
+[ 68%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/StencilMode.cpp.o
+[ 69%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Texture.cpp.o
+[ 70%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/TextureSaver.cpp.o
+[ 70%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Transform.cpp.o
+[ 71%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Transformable.cpp.o
+[ 72%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/View.cpp.o
+[ 72%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Shape.cpp.o
+[ 73%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/CircleShape.cpp.o
+[ 74%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RectangleShape.cpp.o
+[ 75%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/ConvexShape.cpp.o
+[ 75%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Sprite.cpp.o
+[ 76%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/Text.cpp.o
+[ 77%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/VertexArray.cpp.o
+[ 77%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/VertexBuffer.cpp.o
+[ 78%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTextureImplFBO.cpp.o
+[ 79%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTextureImplDefault.cpp.o
+[ 79%] Linking CXX static library ../../../lib/libsfml-graphics.a
+[ 79%] Built target sfml-graphics
+[ 80%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/Main.cpp.o
+[ 81%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/Debug.cpp.o
+[ 81%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/RealMain.cpp.o
+[ 82%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/MainClass.cpp.o
+[ 83%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/TOMLLoader.cpp.o
+[ 83%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/HelpFunctions.cpp.o
+[ 84%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/ExceptionHandling.cpp.o
+[ 85%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/Network/NetworkManager.cpp.o
+[ 85%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/Network/ProtocolHandler.cpp.o
+[ 86%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Component.cpp.o
+[ 87%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/EntityNode.cpp.o
+[ 88%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/TextComponent.cpp.o
+[ 88%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/MusicComponent.cpp.o
+[ 89%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ShapeComponent.cpp.o
+[ 90%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/SpriteComponent.cpp.o
+[ 90%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ButtonComponent.cpp.o
+[ 91%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/TextureComponent.cpp.o
+[ 92%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/CollisionComponent.cpp.o
+[ 92%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/AnimationComponent.cpp.o
+[ 93%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/InputSystem.cpp.o
+[ 94%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/ButtonSystem.cpp.o
+[ 95%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/RenderSystem.cpp.o
+[ 95%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/AnimationSystem.cpp.o
+[ 96%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/key.cpp.o
+[ 97%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/Font.cpp.o
+[ 97%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/Clock.cpp.o
+[ 98%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/Window.cpp.o
+[ 99%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/MouseInfo.cpp.o
+[ 99%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/EventManager.cpp.o
+[100%] Linking CXX executable /home/<user_account>/pat/to/project/rtype/bin/r-type_client
+[100%] Built target r-type_client
+[100%] Built target copy_binaries
+```
+
+If you type `ls` (or `dir` for Windows) in your terminal you should now see 2 new files :
+
+* `r-type_server` (the server executable)
+* `r-type_client` (the client executable)
+
+However, we are not done yet, it is necessary to copy the `client_config.toml` to the root of the project, `cp ./gui/client_config.toml .` (or `copy gui/client_config.toml .`)
+
+We can now go to run the programs by going to the [Running the programs](#running-the-programs) section.
 
 ## Running the programs
+
+This section assumes that you have either followed the [Pre-compiled](#pre-compiled) or [Deploy from source](#deploy-from-source) route.
+
+One you have the client configuration file, it is recommended to take a look at the [client - Running the client](../client/README.md#running-the-client) section in order to learn how to start the client binary, if you wish to edit the configuration file, you can have a look at the [client - Configuration file](../client/README.md#configuration-file) section.
+
+But what is a client without a server, you can thus follow the [server - running the server](../server/README.md#running-the-server) section in order to learn how to start the server binary, if you wish to edit the configuration file, you can have a look at the [server - Configuration file](../server/README.md#configuration-file) section.
 
 ## Troubleshooting

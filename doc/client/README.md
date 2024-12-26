@@ -774,3 +774,77 @@ start_top = true
 ```
 
 Let's break it down:
+
+```toml
+# The font
+[font]
+
+# Default structure
+# [font.<font_name>] # the name of the font (unique identifier)
+# name = "<name of the font>" # set the name of the font  (a human readable name)
+# path = "<path to the font file>" # set the path to the file (supported format, ttf, otf [and other SFML Font supported formats])
+# default_size = <size> # (0 -> 100) set the default size of the font to display, in pixels
+# bold = false # (or true) set the font to bold
+# italic = false # (or true) set the font to italic
+
+# The music
+[music]
+
+# Default structure
+# [music.<music_name>] # the name of the music (unique identifier)
+# name = "<name of the music>" # set the name of the music  (a human readable name)
+# path = "<valid path to the audio file>" # set the path to the file (supported format, ogg, wav [and other SFML Music supported formats])
+# loop = true # (or false) # play the music on repeat
+# volume = <volume> # (0 -> 100) set the volume of the track to play.
+
+# The spritesheets
+[spritesheets]
+
+# Default structure
+# [spritesheet.<spritesheet_name>] # the name of the spritesheet to load (unique identifier)
+# name = "<name of the sprite>" # set the name of the sprite  (a human readable name)
+# path = "<valid path to the image file>" # set the path to the file (supported format, gif, png [and other SFML Texture supported formats])
+# sprite_width = <width> # (0 -> 1000) set the width of the sprite view field, in pixels
+# sprite_height = <height> # (0-> 1000) set the height of the sprite view field, in pixels
+# start_left = true # (or false) set the starting position of the sprite view field to start from the left (or not)
+# start_top = true # (or false) set the starting position of the sprite view field to start from the top (or not)
+```
+
+The `[font]`, `[music]`, `[spritesheets]` represent the main sections of the configuration file:
+
+* `[font]`: Font configuration
+* `[music]`: Music configuration
+* `[spritesheets]`: Spritesheet configuration
+
+The `[font]` block will contain the different fonts used for the different sections, i.e: the block `[font.title]` represents the design for text that is supposed to be a title.
+
+The construction of a `[font]` block is the following:
+
+* `[font.<font_name>]` : the name of the font (unique identifier)
+* `name = "<name of the font>"` : set the name of the font  (a human readable name)
+* `path = "<path to the font file>"` : set the path to the file (supported format, ttf, otf [and other SFML Font supported formats])
+* `default_size = <size>` (`0` to `100`) : set the default size of the font to display, in pixels
+* `bold = false` (or `true`) : set the font to bold
+* `italic = false` (or `true`) : set the font to italic
+
+The `[music]` block will contain the different musics and their names, they are meant to be referenced by name in the program so that the server can tell the client which music to play and when.
+
+The construction of a `[music]` block is the following:
+
+* `[music.<music_name>]` : the name of the music (unique identifier)
+* `name = "<name of the music>"` : set the name of the music  (a human readable name)
+* `path = "<valid path to the audio file>"` : set the path to the file (supported format, ogg, wav [and other SFML Music supported formats])
+* `loop = true` (or `false`) : play the music on repeat
+* `volume = <volume>` (`0` to `100`) : set the volume of the track to play
+
+The `[spritesheet]` block will contain all the sprites that are available to the client, it is not recommended to remove any of the default ones that are already present.
+
+The construction of a `[spritesheet]` block, element in charge of displaying the characters (images) on screen is the following:
+
+* [spritesheet.<spritesheet_name>] : the name of the spritesheet to load (unique identifier)
+* `name = "<name of the sprite>"` : set the name of the sprite  (a human readable name)
+* `path = "<valid path to the image file>"` : set the path to the file (supported format, gif, png [and other SFML Texture supported formats])
+* `sprite_width = <width>` (`0` to `1000`) : set the width of the sprite view field, in pixels
+* `sprite_height = <height>` (`0` to `1000`) : set the height of the sprite view field, in pixels
+* `start_left = true` (or `false`) : set the starting position of the sprite view field to start from the left (or not)
+* `start_top = true` (or `false`) : set the starting position of the sprite view field to start from the top (or not)
