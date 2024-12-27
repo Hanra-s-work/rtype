@@ -41,7 +41,7 @@ class TOMLLoader {
 
     const std::string getTOMLString() const;
 
-    toml::table getRawTOML() const;
+    const toml::table getRawTOML() const;
 
     // Do not move this function code or compilation issues will arise.
     template <typename T>
@@ -54,9 +54,11 @@ class TOMLLoader {
         throw MyException::NoTOMLKey(_tomlPath, key);
     };
 
-    toml::node_type getValueType(const std::string &key) const;
+    const toml::node_type getValueType(const std::string &key) const;
 
     const std::string getValueTypeAsString(const std::string &key) const;
+
+    const std::string getTypeAsString(const std::string &key) const;
     const std::string getTypeAsString(const toml::node_type &type) const;
 
     const bool hasKey(const std::string &key) const;

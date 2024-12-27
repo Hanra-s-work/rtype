@@ -74,13 +74,13 @@ const std::string TOMLLoader::getTOMLString() const
     return _tomlString;
 };
 
-toml::table TOMLLoader::getRawTOML() const
+const toml::table TOMLLoader::getRawTOML() const
 {
     _ensureLoaded();
     return _toml;
 };
 
-toml::node_type TOMLLoader::getValueType(const std::string &key) const
+const toml::node_type TOMLLoader::getValueType(const std::string &key) const
 {
     _ensureLoaded();
     if (!hasKey(key)) {
@@ -98,6 +98,11 @@ const std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
         return it->second;
     }
     return "unknown";
+}
+
+const std::string TOMLLoader::getTypeAsString(const std::string &key) const
+{
+    return getValueTypeAsString(key);
 }
 
 const std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
