@@ -53,10 +53,10 @@ namespace MyException
      * that the entered ip is incorrect.
      *
      */
-    class IpIncorrect : public std::exception {
+    class IncorrectIp : public std::exception {
         public:
-        IpIncorrect(const std::string &error = "");
-        ~IpIncorrect();
+        IncorrectIp(const std::string &error = "");
+        ~IncorrectIp();
         const char *what() const noexcept;
 
         private:
@@ -69,10 +69,58 @@ namespace MyException
      * that the port is incorrect.
      *
      */
-    class PortIncorrect : public std::exception {
+    class IncorrectPort : public std::exception {
         public:
-        PortIncorrect(const std::string &error = "");
-        ~PortIncorrect();
+        IncorrectPort(const std::string &error = "");
+        ~IncorrectPort();
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the font configuration they provided is incorrect.
+     *
+     */
+    class IncorrectFontConfiguration : public std::exception {
+        public:
+        IncorrectFontConfiguration(const std::string &userConfiguration = "", const std::string &fontName = "");
+        ~IncorrectFontConfiguration();
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the music configuration they provided is incorrect.
+     *
+     */
+    class IncorrectMusicConfiguration : public std::exception {
+        public:
+        IncorrectMusicConfiguration(const std::string &userConfiguration = "", const std::string &musicName = "");
+        ~IncorrectMusicConfiguration();
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the sprite configuration they provided is incorrect.
+     *
+     */
+    class IncorrectSpriteConfiguration : public std::exception {
+        public:
+        IncorrectSpriteConfiguration(const std::string &userConfiguration = "", const std::string &spriteName = "");
+        ~IncorrectSpriteConfiguration();
         const char *what() const noexcept;
 
         private:
@@ -429,6 +477,54 @@ namespace MyException
 
     /**
      *@brief This is the class in charge of informing the user
+     * that there is no configuration for the font in charge of displaying text
+     * when it is a title.
+     *
+     */
+    class NoTitleFontConfiguration : public std::exception {
+        public:
+        NoTitleFontConfiguration(const std::string &tomlPath = "");
+        ~NoTitleFontConfiguration();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that there is no configuration for the font in charge of displaying text
+     * when it is a body.
+     *
+     */
+    class NoBodyFontConfiguration : public std::exception {
+        public:
+        NoBodyFontConfiguration(const std::string &tomlPath = "");
+        ~NoBodyFontConfiguration();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that there is no configuration for the font in charge of displaying text
+     * when it is not a title nor a body.
+     *
+     */
+    class NoTitleFontConfiguration : public std::exception {
+        public:
+        NoTitleFontConfiguration(const std::string &tomlPath = "");
+        ~NoTitleFontConfiguration();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
      * that they tried to access a non-existant toml instance.
      *
      */
@@ -436,6 +532,22 @@ namespace MyException
         public:
         NoTOML(const std::string &tomlPath = "");
         ~NoTOML();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that there is no configuration for the font in charge of displaying text
+     * when it is neither body nor title.
+     *
+     */
+    class NoDefaultFontConfiguration : public std::exception {
+        public:
+        NoDefaultFontConfiguration(const std::string &tomlPath = "");
+        ~NoDefaultFontConfiguration();
         const char *what() const noexcept;
         private:
         std::string _msg;

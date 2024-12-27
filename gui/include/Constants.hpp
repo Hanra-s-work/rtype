@@ -14,3 +14,4 @@
 
 static const int ERROR = 84;
 static const int SUCCESS = 0;
+static const char VERSION[] = "1.0.0";
