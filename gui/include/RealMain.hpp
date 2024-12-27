@@ -93,9 +93,9 @@ class Main {
   const bool _isSpriteConfigurationCorrect(const TOMLLoader &node) const;
   const bool _isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std::string &key, const toml::node_type &valueType) const;
 
-  void _initialiseAudio();
-  void _initialiseFonts();
-  void _initialiseSprites();
+  std::uint32_t _initialiseAudio();
+  std::uint32_t _initialiseFonts();
+  std::uint32_t _initialiseSprites();
   void _initialiseConnection();
   void _initialiseRessources();
 

@@ -314,7 +314,7 @@ void Main::_closeConnection()
  *@brief This is the function in charge of loading the Sprites and Spritesheets into the program.
  *
  */
-void Main::_initialiseSprites()
+std::uint32_t Main::_initialiseSprites()
 {
     TOMLLoader sprites(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
@@ -393,13 +393,15 @@ void Main::_initialiseSprites()
     }
 
     Debug::getInstance() << "The sprites are loaded." << std::endl;
+    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
 }
 
 /**
  *@brief This is the function in charge of loading the ²s into the program.
  *
  */
-void Main::_initialiseAudio()
+std::uint32_t Main::_initialiseAudio()
 {
     TOMLLoader audio(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
@@ -485,13 +487,15 @@ void Main::_initialiseAudio()
     }
 
     Debug::getInstance() << "The musics are loaded." << std::endl;
+    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
 }
 
 /**
  *@brief This is the function in charge of loading the fonts into the program.
  *
  */
-void Main::_initialiseFonts()
+std::uint32_t Main::_initialiseFonts()
 {
     TOMLLoader font(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
@@ -586,6 +590,8 @@ void Main::_initialiseFonts()
         _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(node);
         _baseId++;
     }
+    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
 }
 
 /**
@@ -612,9 +618,10 @@ void Main::_initialiseRessources()
     _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
 
-    _initialiseSprites();
-    _initialiseAudio();
-    _initialiseFonts();
+    _baseId = _initialiseSprites();
+    _baseId = _initialiseAudio();
+    _baseId = _initialiseFonts();
+    Debug::getInstance() << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
 void Main::_testContent()
