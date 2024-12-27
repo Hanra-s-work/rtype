@@ -570,6 +570,22 @@ namespace MyException
         const char *_buffer;
     };
 
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the type of the toml key is not the one that was expected.
+     *
+     */
+    class InvalidTOMLKeyType : public std::exception {
+        public:
+        InvalidTOMLKeyType(const std::string &tomlPath = "", const std::string &tomlKey = "", const std::string &currentType = "", const std::string &expectedType = "");
+        ~InvalidTOMLKeyType();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
     /**
      *@brief This is the class in charge of informing the user
      * that the program could not find the sprite section in the configuration file.

@@ -79,8 +79,7 @@ namespace MyException
 
     InvalidFontConfiguration::InvalidFontConfiguration(const std::string &userConfiguration, const std::string &fontName)
     {
-        _msg = "Error: The configuration you provided for the font '";
-        _msg += fontName + "' is incorrect.\n";
+        _msg = "Error: The configuration you provided for the font '" + fontName + "' is incorrect.\n";
         _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
         _msg += "You provided:\n" + userConfiguration + "\n";
         _msg += "When the following structure was expected:\n";
@@ -102,8 +101,7 @@ namespace MyException
 
     InvalidMusicConfiguration::InvalidMusicConfiguration(const std::string &userConfiguration, const std::string &musicName)
     {
-        _msg = "Error: The configuration you provided for the music '";
-        _msg += musicName + "' is incorrect.\n";
+        _msg = "Error: The configuration you provided for the music '" + musicName + "' is incorrect.\n";
         _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
         _msg += "You provided:\n" + userConfiguration + "\n";
         _msg += "When the following structure was expected:\n";
@@ -124,8 +122,7 @@ namespace MyException
 
     InvalidSpriteConfiguration::InvalidSpriteConfiguration(const std::string &userConfiguration, const std::string &spriteName)
     {
-        _msg = "Error: The configuration you provided for the font '";
-        _msg += spriteName + "' is incorrect.\n";
+        _msg = "Error: The configuration you provided for the sprite '" + spriteName + "' is incorrect.\n";
         _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
         _msg += "You provided:\n" + userConfiguration + "\n";
         _msg += "When the following structure was expected:\n";
@@ -633,6 +630,27 @@ namespace MyException
     NoTOMLKey::~NoTOMLKey() {};
 
     const char *NoTOMLKey::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidTOMLKeyType::InvalidTOMLKeyType(const std::string &tomlPath, const std::string &tomlKey, const std::string &currentType, const std::string &expectedType)
+    {
+        _msg = "Error: The type of the key '";
+        _msg += tomlKey;
+        _msg += "' is '";
+        _msg += currentType;
+        _msg += "' but '";
+        _msg += expectedType;
+        _msg += "' type was expected for the configuration file '";
+        _msg += tomlPath;
+        _msg += "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidTOMLKeyType::~InvalidTOMLKeyType() {};
+
+    const char *InvalidTOMLKeyType::what() const noexcept
     {
         return _buffer;
     }
