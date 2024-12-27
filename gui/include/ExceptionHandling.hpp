@@ -53,10 +53,10 @@ namespace MyException
      * that the entered ip is incorrect.
      *
      */
-    class IncorrectIp : public std::exception {
+    class InvalidIp : public std::exception {
         public:
-        IncorrectIp(const std::string &error = "");
-        ~IncorrectIp();
+        InvalidIp(const std::string &error = "");
+        ~InvalidIp();
         const char *what() const noexcept;
 
         private:
@@ -69,10 +69,10 @@ namespace MyException
      * that the port is incorrect.
      *
      */
-    class IncorrectPort : public std::exception {
+    class InvalidPort : public std::exception {
         public:
-        IncorrectPort(const std::string &error = "");
-        ~IncorrectPort();
+        InvalidPort(const std::string &error = "");
+        ~InvalidPort();
         const char *what() const noexcept;
 
         private:
@@ -85,10 +85,10 @@ namespace MyException
      * that the font configuration they provided is incorrect.
      *
      */
-    class IncorrectFontConfiguration : public std::exception {
+    class InvalidFontConfiguration : public std::exception {
         public:
-        IncorrectFontConfiguration(const std::string &userConfiguration = "", const std::string &fontName = "");
-        ~IncorrectFontConfiguration();
+        InvalidFontConfiguration(const std::string &userConfiguration = "", const std::string &fontName = "");
+        ~InvalidFontConfiguration();
         const char *what() const noexcept;
 
         private:
@@ -101,10 +101,10 @@ namespace MyException
      * that the music configuration they provided is incorrect.
      *
      */
-    class IncorrectMusicConfiguration : public std::exception {
+    class InvalidMusicConfiguration : public std::exception {
         public:
-        IncorrectMusicConfiguration(const std::string &userConfiguration = "", const std::string &musicName = "");
-        ~IncorrectMusicConfiguration();
+        InvalidMusicConfiguration(const std::string &userConfiguration = "", const std::string &musicName = "");
+        ~InvalidMusicConfiguration();
         const char *what() const noexcept;
 
         private:
@@ -117,10 +117,10 @@ namespace MyException
      * that the sprite configuration they provided is incorrect.
      *
      */
-    class IncorrectSpriteConfiguration : public std::exception {
+    class InvalidSpriteConfiguration : public std::exception {
         public:
-        IncorrectSpriteConfiguration(const std::string &userConfiguration = "", const std::string &spriteName = "");
-        ~IncorrectSpriteConfiguration();
+        InvalidSpriteConfiguration(const std::string &userConfiguration = "", const std::string &spriteName = "");
+        ~InvalidSpriteConfiguration();
         const char *what() const noexcept;
 
         private:
@@ -135,7 +135,7 @@ namespace MyException
      */
     class InvalidWindowWidth : public std::exception {
         public:
-        InvalidWindowWidth();
+        InvalidWindowWidth(const std::string &arguemnt = "");
         ~InvalidWindowWidth();
         const char *what() const noexcept;
         private:
@@ -150,7 +150,7 @@ namespace MyException
      */
     class InvalidWindowHeight : public std::exception {
         public:
-        InvalidWindowHeight();
+        InvalidWindowHeight(const std::string &argument = "");
         ~InvalidWindowHeight();
         const char *what() const noexcept;
         private:
@@ -184,6 +184,22 @@ namespace MyException
         public:
         HelpFound();
         ~HelpFound();
+        const char *what() const noexcept;
+        private:
+        std::string _msg;
+        const char *_buffer;
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that the version flag was found.
+     * This is not an error.
+     *
+     */
+    class VersionFound : public std::exception {
+        public:
+        VersionFound();
+        ~VersionFound();
         const char *what() const noexcept;
         private:
         std::string _msg;

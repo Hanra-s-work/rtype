@@ -47,7 +47,7 @@ namespace MyException
         return _buffer;
     }
 
-    IncorrectIp::IncorrectIp(const std::string &error)
+    InvalidIp::InvalidIp(const std::string &error)
     {
         _msg = "Error: The ip you provided '";
         _msg += error;
@@ -55,14 +55,14 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    IncorrectIp::~IncorrectIp() {};
+    InvalidIp::~InvalidIp() {};
 
-    const char *IncorrectIp::what() const noexcept
+    const char *InvalidIp::what() const noexcept
     {
         return _buffer;
     }
 
-    IncorrectPort::IncorrectPort(const std::string &error)
+    InvalidPort::InvalidPort(const std::string &error)
     {
         _msg = "Error: The port you provided '";
         _msg += error;
@@ -70,14 +70,14 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    IncorrectPort::~IncorrectPort() {};
+    InvalidPort::~InvalidPort() {};
 
-    const char *IncorrectPort::what() const noexcept
+    const char *InvalidPort::what() const noexcept
     {
         return _buffer;
     }
 
-    IncorrectFontConfiguration::IncorrectFontConfiguration(const std::string &userConfiguration, const std::string &fontName)
+    InvalidFontConfiguration::InvalidFontConfiguration(const std::string &userConfiguration, const std::string &fontName)
     {
         _msg = "Error: The configuration you provided for the font '";
         _msg += fontName + "' is incorrect.\n";
@@ -93,14 +93,14 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    IncorrectFontConfiguration::~IncorrectFontConfiguration() {};
+    InvalidFontConfiguration::~InvalidFontConfiguration() {};
 
-    const char *IncorrectFontConfiguration::what() const noexcept
+    const char *InvalidFontConfiguration::what() const noexcept
     {
         return _buffer;
     }
 
-    IncorrectMusicConfiguration::IncorrectMusicConfiguration(const std::string &userConfiguration, const std::string &musicName)
+    InvalidMusicConfiguration::InvalidMusicConfiguration(const std::string &userConfiguration, const std::string &musicName)
     {
         _msg = "Error: The configuration you provided for the music '";
         _msg += musicName + "' is incorrect.\n";
@@ -115,14 +115,14 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    IncorrectMusicConfiguration::~IncorrectMusicConfiguration() {};
+    InvalidMusicConfiguration::~InvalidMusicConfiguration() {};
 
-    const char *IncorrectMusicConfiguration::what() const noexcept
+    const char *InvalidMusicConfiguration::what() const noexcept
     {
         return _buffer;
     }
 
-    IncorrectSpriteConfiguration::IncorrectSpriteConfiguration(const std::string &userConfiguration, const std::string &spriteName)
+    InvalidSpriteConfiguration::InvalidSpriteConfiguration(const std::string &userConfiguration, const std::string &spriteName)
     {
         _msg = "Error: The configuration you provided for the font '";
         _msg += spriteName + "' is incorrect.\n";
@@ -139,16 +139,19 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    IncorrectSpriteConfiguration::~IncorrectSpriteConfiguration() {};
+    InvalidSpriteConfiguration::~InvalidSpriteConfiguration() {};
 
-    const char *IncorrectSpriteConfiguration::what() const noexcept
+    const char *InvalidSpriteConfiguration::what() const noexcept
     {
         return _buffer;
     }
 
-    InvalidWindowWidth::InvalidWindowWidth()
+    InvalidWindowWidth::InvalidWindowWidth(const std::string &arguemnt)
     {
-        _msg = "Error: The width you provided for the window is incorrect.";
+        _msg = "Error: The width you provided for the window is incorrect.\n";
+        _msg += "You provided: " + arguemnt + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "A positive integer, for example: 800\n";
         _buffer = _msg.c_str();
     }
 
@@ -159,9 +162,12 @@ namespace MyException
         return _buffer;
     }
 
-    InvalidWindowHeight::InvalidWindowHeight()
+    InvalidWindowHeight::InvalidWindowHeight(const std::string &argument)
     {
-        _msg = "Error: The height you provided for the window is incorrect.";
+        _msg = "Error: The height you provided for the window is incorrect.\n";
+        _msg += "You provided: " + argument + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "A positive integer, for example: 600\n";
         _buffer = _msg.c_str();
     }
 
@@ -204,6 +210,19 @@ namespace MyException
     HelpFound::~HelpFound() {}
 
     const char *HelpFound::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    VersionFound::VersionFound()
+    {
+        _msg = "Info: The Version option was found, exiting.";
+        _buffer = _msg.c_str();
+    }
+
+    VersionFound::~VersionFound() {}
+
+    const char *VersionFound::what() const noexcept
     {
         return _buffer;
     }
