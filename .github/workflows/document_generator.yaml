@@ -589,9 +589,10 @@ jobs:
 
       - name: Save the commit message
         run: |
-          echo "Saving the commit message"
-          printf "%s" "${{env.COMMIT_MESSAGE}}" > "${{env.FINAL_OUTPUT}}/commit_message.txt"
-        
+          echo "Saving the commit message"cat << EOF > "${{env.FINAL_OUTPUT}}/commit_message.txt"
+          ${{env.COMMIT_MESSAGE}}
+          EOF
+
       - name: Save the commit title
         run: |
           echo "Saving the commit title"
