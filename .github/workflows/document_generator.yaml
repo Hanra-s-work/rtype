@@ -5,12 +5,15 @@ name: doxygen_generator
 
 on:
   push:
-      tags:
-          - "v*.*.*"
+      # tags:
+      #     - "v*.*.*"
       branches:
           - main
           - dev-workflow-doxygen
           - doxygen-workflow
+  pull_request:
+      branches:
+          - main
   workflow_dispatch:
 
 
@@ -46,6 +49,7 @@ env:
   CACHE_KEY_CLEANED: doxygen-cache-key-cleaned
   # The final output folder (if you do not wish to immediately publish the content)
   FINAL_OUTPUT: final_output
+  FINAL_OUTPUT_CONTENT: content
   CACHE_NAME: final_documentation_output
 
 
@@ -328,10 +332,9 @@ jobs:
           git pull origin main
 
       - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main'
         id: deployment
         uses: actions/deploy-pages@v4
-
-
 
   export_other_formats_when_present:
     runs-on: ubuntu-latest
@@ -552,6 +555,13 @@ jobs:
           echo "Final file list='$FILE_LIST'"
           echo "FOI=$(echo $FILE_LIST | tr '\n' ' ')" >> "$GITHUB_OUTPUT" # Files of interest
 
+      - name: Create the final destinations
+        run: |
+          mkdir -p ${{env.FINAL_OUTPUT}} ${{env.FINAL_OUTPUT}}/${{env.FINAL_OUTPUT_CONTENT}}
+          echo "Final output folder created at ${{env.FINAL_OUTPUT}}"
+          echo "Content of the final output folder:"
+          ls -a ${{env.FINAL_OUTPUT}} 
+
       - name: Create a temporary load point
         id: anchor-point
         env:
@@ -564,6 +574,7 @@ jobs:
           mkdir -p $TEMPORARY_FOLDER
           for FILE in $FILES_OF_INTEREST; do
             cp -v "./$FILE" "$TEMPORARY_FOLDER"
+            cp -rvf "./$FILE" "${{env.FINAL_OUTPUT}}/${{env.FINAL_OUTPUT_CONTENT}}"
           done
           echo "Loop finished"
           echo "Content of TEMPORARY_FOLDER:"
@@ -574,22 +585,6 @@ jobs:
             find ./$TEMPORARY_FOLDER -maxdepth 1 -type f
             echo EOF
           } >> "$GITHUB_OUTPUT" # anchor point
-
-      - name: Save the final generation of the content
-        run: |
-          content_folder=content
-          echo "Saving the final generation of the content"
-          echo "Creating the final output folder: ${{env.FINAL_OUTPUT}}"
-          mkdir -p ${{env.FINAL_OUTPUT}}
-          echo "Creating the content folder (that will contain the generated data)"
-          mkdir -p ${{env.FINAL_OUTPUT}}/${content_folder}
-          echo "Copying the content of ${{steps.anchor-point.outputs.AP}} to ${{env.FINAL_OUTPUT}}"
-          for FILE in $(${{steps.anchor-point.outputs.AP}}) ; do
-            echo "Owning ($USER) the file $FILE"
-            sudo chown $USER:$USER -Rv $FILE
-            echo "Copying $FILE to ${{env.FINAL_OUTPUT}}/${content_folder}"
-            cp -rvf $FILE ${{env.FINAL_OUTPUT}}/${content_folder}
-          done
 
       - name: Save the commit message
         run: |
