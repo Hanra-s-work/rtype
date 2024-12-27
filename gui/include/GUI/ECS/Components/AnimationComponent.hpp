@@ -31,8 +31,16 @@ namespace GUI
         {
             class AnimationComponent : public EntityNode {
                 public:
-                AnimationComponent(const std::uint32_t entitynode = 0);
+                AnimationComponent();
+                AnimationComponent(const std::uint32_t entityId);
+                AnimationComponent(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                AnimationComponent(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::uint32_t entityId, const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
                 ~AnimationComponent();
+
                 virtual void setLoop(bool loop);
                 virtual void setReadReverse(bool reverse);
                 virtual void setDelay(float frameDuration);

@@ -373,27 +373,26 @@ void Main::_initialiseSprites()
     };
     Debug::getInstance() << data << std::endl;
 
-    // Debug::getInstance() << "Initialising the sprites" << std::endl;
+    Debug::getInstance() << "Initialising the sprites" << std::endl;
 
-    // for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedSprites.begin(); it != loadedSprites.end(); ++it) {
-    //     std::string application = it->first;
-    //     std::string name = it->second.getValue<std::string>("name");
-    //     std::string path = it->second.getValue<std::string>("path");
-    //     int volume = 100;
-    //     bool loop = false;
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedSprites.begin(); it != loadedSprites.end(); ++it) {
+        std::string application = it->first;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int sprite_width = it->second.getValue<int>("sprite_width");
+        int sprite_height = it->second.getValue<int>("sprite_height");
+        bool start_left = it->second.getValue<bool>("start_left");
+        bool start_top = it->second.getValue<bool>("start_top");
 
-    //     if (_isKeyPresentAndOfCorrectType(it->second, "volume", toml::node_type::integer)) {
-    //         volume = it->second.getValue<int>("volume");
-    //     }
-    //     if (_isKeyPresentAndOfCorrectType(it->second, "loop", toml::node_type::boolean)) {
-    //         loop = it->second.getValue<bool>("loop");
-    //     }
-    //     std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, path, name, application, volume, loop);
-    //     _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
-    //     _baseId++;
-    // }
+        Debug::getInstance() << "Loading sprite '" << name << "' ..." << std::endl;
 
-    // Debug::getInstance() << "The sprites are loaded." << std::endl;
+        GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, animationNode);
+        _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
+        _baseId++;
+    }
+
+    Debug::getInstance() << "The sprites are loaded." << std::endl;
 }
 
 /**

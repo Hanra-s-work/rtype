@@ -12,7 +12,47 @@
 
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 
+GUI::ECS::Components::AnimationComponent::AnimationComponent() : EntityNode(0) {};
+
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
+
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::vector<GUI::ECS::Components::TextureComponent> &textures)
+    : EntityNode(0)
+{
+    setAnimation(textures);
+};
+
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
+    : EntityNode(0)
+{
+    setAnimation(path, frameWidth, frameHeight, startLeft, startTop);
+};
+
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
+    : EntityNode(0)
+{
+    setAnimation(spritesheet, frameWidth, frameHeight, startLeft, startTop);
+};
+
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::vector<GUI::ECS::Components::TextureComponent> &textures)
+    : EntityNode(entityId)
+{
+    setAnimation(textures);
+};
+
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
+    : EntityNode(entityId)
+{
+    setAnimation(path, frameWidth, frameHeight, startLeft, startTop);
+};
+
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
+    : EntityNode(entityId)
+{
+    setAnimation(spritesheet, frameWidth, frameHeight, startLeft, startTop);
+};
+
+
 
 GUI::ECS::Components::AnimationComponent::~AnimationComponent() {};
 
