@@ -58,11 +58,20 @@ void TOMLLoader::setTOMLPath(const std::string &tomlPath)
     _loadTOML();
 };
 
-bool TOMLLoader::isTOMLLoaded() const { return _tomlLoaded; };
+const bool TOMLLoader::isTOMLLoaded() const
+{
+    return _tomlLoaded;
+};
 
-std::string TOMLLoader::getTOMLPath() const
+const std::string TOMLLoader::getTOMLPath() const
 {
     return _tomlPath;
+};
+
+const std::string TOMLLoader::getTOMLString() const
+{
+    _ensureLoaded();
+    return _tomlString;
 };
 
 toml::table TOMLLoader::getRawTOML() const
@@ -80,7 +89,7 @@ toml::node_type TOMLLoader::getValueType(const std::string &key) const
     return _toml[key].type();
 }
 
-std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
+const std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
 {
     _ensureLoaded();
     toml::node_type nodeType = getValueType(key);
@@ -91,7 +100,7 @@ std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
     return "unknown";
 }
 
-std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
+const std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
 {
     auto it = _nodeTypeEquivalence.find(type);
     if (it != _nodeTypeEquivalence.end()) {
@@ -100,7 +109,7 @@ std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
     return "unknown";
 }
 
-bool TOMLLoader::hasKey(const std::string &key) const
+const bool TOMLLoader::hasKey(const std::string &key) const
 {
     _ensureLoaded();
     return _toml.contains(key);

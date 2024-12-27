@@ -35,9 +35,11 @@ class TOMLLoader {
 
     void setTOMLPath(const std::string &tomlPath);
 
-    bool isTOMLLoaded() const;
+    const bool isTOMLLoaded() const;
 
-    std::string getTOMLPath() const;
+    const std::string getTOMLPath() const;
+
+    const std::string getTOMLString() const;
 
     toml::table getRawTOML() const;
 
@@ -54,10 +56,10 @@ class TOMLLoader {
 
     toml::node_type getValueType(const std::string &key) const;
 
-    std::string getValueTypeAsString(const std::string &key) const;
-    std::string getTypeAsString(const toml::node_type &type) const;
+    const std::string getValueTypeAsString(const std::string &key) const;
+    const std::string getTypeAsString(const toml::node_type &type) const;
 
-    bool hasKey(const std::string &key) const;
+    const bool hasKey(const std::string &key) const;
 
     std::vector<std::string> getKeys() const;
 
