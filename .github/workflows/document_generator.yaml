@@ -600,6 +600,8 @@ jobs:
         with:
           name: ${{env.CACHE_NAME}}
           path: "${{env.FINAL_OUTPUT}}"
+          retention-days: 1
+          overwrite: true
 
       # - name: Publish binary as GitHub release
       #   uses: softprops/action-gh-release@v2
