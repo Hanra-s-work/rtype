@@ -47,7 +47,7 @@ namespace MyException
         return _buffer;
     }
 
-    IpIncorrect::IpIncorrect(const std::string &error)
+    InvalidIp::InvalidIp(const std::string &error)
     {
         _msg = "Error: The ip you provided '";
         _msg += error;
@@ -55,14 +55,14 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    IpIncorrect::~IpIncorrect() {};
+    InvalidIp::~InvalidIp() {};
 
-    const char *IpIncorrect::what() const noexcept
+    const char *InvalidIp::what() const noexcept
     {
         return _buffer;
     }
 
-    PortIncorrect::PortIncorrect(const std::string &error)
+    InvalidPort::InvalidPort(const std::string &error)
     {
         _msg = "Error: The port you provided '";
         _msg += error;
@@ -70,16 +70,88 @@ namespace MyException
         _buffer = _msg.c_str();
     };
 
-    PortIncorrect::~PortIncorrect() {};
+    InvalidPort::~InvalidPort() {};
 
-    const char *PortIncorrect::what() const noexcept
+    const char *InvalidPort::what() const noexcept
     {
         return _buffer;
     }
 
-    InvalidWindowWidth::InvalidWindowWidth()
+    InvalidFontConfiguration::InvalidFontConfiguration(const std::string &userConfiguration, const std::string &fontName)
     {
-        _msg = "Error: The width you provided for the window is incorrect.";
+        _msg = "Error: The configuration you provided for the font '";
+        _msg += fontName + "' is incorrect.\n";
+        _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
+        _msg += "You provided:\n" + userConfiguration + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "[<font_name>] (this is the loaded version, in the file it should be [font.<font_name>]) : the name of the font (unique identifier)\n";
+        _msg += "name = \"<name of the font>\"                                                           : set the name of the font (a human readable name)\n";
+        _msg += "path = \"<path to the font file>\"                                                      : set the path to the file (supported format, ttf, otf [and other SFML Font supported formats])\n";
+        _msg += "default_size = <size>                                                                   : (0 to 100) set the default size of the font to display, in pixels.\n";
+        _msg += "bold = false                                                                            : (or true) set the font to bold.\n";
+        _msg += "italic = false                                                                          : (or true) set the font to italic\n";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidFontConfiguration::~InvalidFontConfiguration() {};
+
+    const char *InvalidFontConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidMusicConfiguration::InvalidMusicConfiguration(const std::string &userConfiguration, const std::string &musicName)
+    {
+        _msg = "Error: The configuration you provided for the music '";
+        _msg += musicName + "' is incorrect.\n";
+        _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
+        _msg += "You provided:\n" + userConfiguration + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "[<music_name>] (this is the loaded version, in the file it should be [music.<music_name>]) : the name of the music (unique identifier)\n";
+        _msg += "name = \"<name of the music>\"                                                             : set the name of the music  (a human readable name).\n";
+        _msg += "path = \"<valid path to the audio file>\"                                                  : set the path to the file (supported format, ogg, wav [and other SFML Music supported formats]).\n";
+        _msg += "loop = true                                                                                : (or false) # play the music on repeat.\n";
+        _msg += "volume = <volume>                                                                          : (0 to 100) set the volume of the track to play.\n";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidMusicConfiguration::~InvalidMusicConfiguration() {};
+
+    const char *InvalidMusicConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidSpriteConfiguration::InvalidSpriteConfiguration(const std::string &userConfiguration, const std::string &spriteName)
+    {
+        _msg = "Error: The configuration you provided for the font '";
+        _msg += spriteName + "' is incorrect.\n";
+        _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
+        _msg += "You provided:\n" + userConfiguration + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "[<spritesheet_name>] (this is the loaded version, in the file it should be [spritesheet.<spritesheet_name>]) : the name of the spritesheet (unique identifier)\n";
+        _msg += "name = \"<name of the sprite>\"                                                                              : set the name of the sprite  (a human readable name).\n";
+        _msg += "path = \"<valid path to the image file>\"                                                                    : set the path to the file (supported format, gif, png [and other SFML Texture supported formats]).\n";
+        _msg += "sprite_width = <width>                                                                                       : (0 to 1000) set the width of the sprite view field, in pixels.\n";
+        _msg += "sprite_height = <height>                                                                                     : (0 to 1000) set the height of the sprite view field, in pixels.\n";
+        _msg += "start_left = true                                                                                            : (or false) set the starting position of the sprite view field to start from the left (or not).\n";
+        _msg += "start_top = true                                                                                             : (or false) set the starting position of the sprite view field to start from the top (or not).\n";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidSpriteConfiguration::~InvalidSpriteConfiguration() {};
+
+    const char *InvalidSpriteConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWindowWidth::InvalidWindowWidth(const std::string &arguemnt)
+    {
+        _msg = "Error: The width you provided for the window is incorrect.\n";
+        _msg += "You provided: " + arguemnt + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "A positive integer, for example: 800\n";
         _buffer = _msg.c_str();
     }
 
@@ -90,9 +162,12 @@ namespace MyException
         return _buffer;
     }
 
-    InvalidWindowHeight::InvalidWindowHeight()
+    InvalidWindowHeight::InvalidWindowHeight(const std::string &argument)
     {
-        _msg = "Error: The height you provided for the window is incorrect.";
+        _msg = "Error: The height you provided for the window is incorrect.\n";
+        _msg += "You provided: " + argument + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "A positive integer, for example: 600\n";
         _buffer = _msg.c_str();
     }
 
@@ -135,6 +210,19 @@ namespace MyException
     HelpFound::~HelpFound() {}
 
     const char *HelpFound::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    VersionFound::VersionFound()
+    {
+        _msg = "Info: The Version option was found, exiting.";
+        _buffer = _msg.c_str();
+    }
+
+    VersionFound::~VersionFound() {}
+
+    const char *VersionFound::what() const noexcept
     {
         return _buffer;
     }
@@ -335,6 +423,48 @@ namespace MyException
         return _buffer;
     }
 
+    InvalidConfigurationSpritesheetType::InvalidConfigurationSpritesheetType(const std::string &path, const std::string &key, const std::string &type, const std::string &expectedType)
+    {
+        _msg = "Error: The type '" + type + "' of the key '" + key + "' for the spritesheet in the configuration file '" + path + "' is incorrect.\n";
+        _msg += "The expected type is '" + expectedType + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidConfigurationSpritesheetType::~InvalidConfigurationSpritesheetType() {};
+
+    const char *InvalidConfigurationSpritesheetType::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidConfigurationMusicType::InvalidConfigurationMusicType(const std::string &path, const std::string &key, const std::string &type, const std::string &expectedType)
+    {
+        _msg = "Error: The type '" + type + "' of the key '" + key + "' for the music in the configuration file '" + path + "' is incorrect.\n";
+        _msg += "The expected type is '" + expectedType + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidConfigurationMusicType::~InvalidConfigurationMusicType() {};
+
+    const char *InvalidConfigurationMusicType::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidConfigurationFontType::InvalidConfigurationFontType(const std::string &path, const std::string &key, const std::string &type, const std::string &expectedType)
+    {
+        _msg = "Error: The type '" + type + "' of the key '" + key + "' for the font in the configuration file '" + path + "' is incorrect.\n";
+        _msg += "The expected type is '" + expectedType + "'.";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidConfigurationFontType::~InvalidConfigurationFontType() {};
+
+    const char *InvalidConfigurationFontType::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoSpriteSheet::NoSpriteSheet()
     {
         _msg = "Error: There is no spritesheet set.\n";
@@ -419,13 +549,64 @@ namespace MyException
         return _buffer;
     }
 
-    NoTOML::NoTOML(const std::string &tomlPath)
+    NoTitleFontConfiguration::NoTitleFontConfiguration(const std::string &tomlPath)
+    {
+        _msg = "Error: There is no configuration for the title font in the toml's configuration file ";
+        if (!tomlPath.empty()) {
+            _msg += "path " + tomlPath + " ";
+        }
+        _msg += "that is set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoTitleFontConfiguration::~NoTitleFontConfiguration() {};
+
+    const char *NoTitleFontConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoBodyFontConfiguration::NoBodyFontConfiguration(const std::string &tomlPath)
+    {
+        _msg = "Error: There is no configuration for the body font in the toml's configuration file ";
+        if (!tomlPath.empty()) {
+            _msg += "path " + tomlPath + " ";
+        }
+        _msg += "that is set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoBodyFontConfiguration::~NoBodyFontConfiguration() {};
+
+    const char *NoBodyFontConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoDefaultFontConfiguration::NoDefaultFontConfiguration(const std::string &tomlPath)
     {
         _msg = "Error: There is no toml ";
         if (!tomlPath.empty()) {
             _msg += "path " + tomlPath + " ";
         }
         _msg += "set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoDefaultFontConfiguration::~NoDefaultFontConfiguration() {};
+
+    const char *NoDefaultFontConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoTOML::NoTOML(const std::string &tomlPath)
+    {
+        _msg = "Error: There is no configuration for the default font in the toml's configuration file ";
+        if (!tomlPath.empty()) {
+            _msg += "path " + tomlPath + " ";
+        }
+        _msg += "that is set to be used.";
         _buffer = _msg.c_str();
     };
 
@@ -455,5 +636,63 @@ namespace MyException
     {
         return _buffer;
     }
+
+    NoSpritesInConfigFile::NoSpritesInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There are no sprites in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoSpritesInConfigFile::~NoSpritesInConfigFile() {};
+
+    const char *NoSpritesInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoMusicInConfigFile::NoMusicInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There is no music in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoMusicInConfigFile::~NoMusicInConfigFile() {};
+
+    const char *NoMusicInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoFontInConfigFile::NoFontInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There are no sprites in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoFontInConfigFile::~NoFontInConfigFile() {};
+
+    const char *NoFontInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
 
 }

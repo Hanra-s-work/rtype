@@ -22,6 +22,8 @@
 #include <algorithm>
 #include <typeindex>
 #include <unordered_map>
+#include <toml++/toml.hpp>
+
 #include "Debug.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
@@ -82,10 +84,14 @@ class Main {
   void _loadToml();
   void _mainLoop();
   std::string _lowerText(const std::string &text);
-  bool _isIpInRange(const std::string &ip);
-  bool _isPortCorrect(const unsigned int port);
-  bool _isFilePresent(const std::string &filepath);
-  bool _isFrameLimitCorrect(unsigned int frameLimit);
+  const bool _isIpInRange(const std::string &ip) const;
+  const bool _isPortCorrect(const unsigned int port) const;
+  const bool _isFilePresent(const std::string &filepath) const;
+  const bool _isFrameLimitCorrect(const unsigned int frameLimit) const;
+  const bool _isFontConfigurationCorrect(const TOMLLoader &node) const;
+  const bool _isMusicConfigurationCorrect(const TOMLLoader &node) const;
+  const bool _isSpriteConfigurationCorrect(const TOMLLoader &node) const;
+  const bool _isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std::string &key, const toml::node_type &valueType) const;
 
   void _initialiseAudio();
   void _initialiseFonts();
@@ -122,3 +128,4 @@ class Main {
 
 int RealMain(int argc, char **argv);
 void DisplayHelp(const std::string binName);
+void DisplayVersion(bool helpMode = false);
