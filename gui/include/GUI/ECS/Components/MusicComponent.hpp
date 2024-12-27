@@ -31,14 +31,23 @@ namespace GUI
                 MusicComponents();
                 MusicComponents(const std::uint32_t entityId);
                 MusicComponents(const MusicComponents &music);
+                MusicComponents(const std::uint32_t entityId, const MusicComponents &music);
                 MusicComponents(const std::string &filePath, const std::string &name);
+                MusicComponents(const std::string &filePath, const std::string &name, bool loop);
                 MusicComponents(const std::string &filePath, const std::string &name, float volume);
+                MusicComponents(const std::string &filePath, const std::string &name, float volume, bool loop);
                 MusicComponents(const std::string &filePath, const std::string &name, const std::string &application);
+                MusicComponents(const std::string &filePath, const std::string &name, const std::string &application, bool loop);
                 MusicComponents(const std::string &filePath, const std::string &name, const std::string &application, float volume);
+                MusicComponents(const std::string &filePath, const std::string &name, const std::string &application, float volume, bool loop);
                 MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, bool loop);
                 MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume, bool loop);
                 MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, bool loop);
                 MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, float volume);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, float volume, bool loop);
                 ~MusicComponents();
 
                 void setVolume(float volume);
@@ -72,7 +81,7 @@ namespace GUI
                 MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy);
 
                 private:
-                float _volume;
+                float _volume = 100;
                 bool _isLooping = false;
                 bool _isPlaying = false;
                 bool _isPaused = false;
