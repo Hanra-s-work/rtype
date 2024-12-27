@@ -529,10 +529,10 @@ namespace MyException
      * when it is not a title nor a body.
      *
      */
-    class NoTitleFontConfiguration : public std::exception {
+    class NoDefaultFontConfiguration : public std::exception {
         public:
-        NoTitleFontConfiguration(const std::string &tomlPath = "");
-        ~NoTitleFontConfiguration();
+        NoDefaultFontConfiguration(const std::string &tomlPath = "");
+        ~NoDefaultFontConfiguration();
         const char *what() const noexcept;
         private:
         std::string _msg;
@@ -554,21 +554,6 @@ namespace MyException
         const char *_buffer;
     };
 
-    /**
-     *@brief This is the class in charge of informing the user
-     * that there is no configuration for the font in charge of displaying text
-     * when it is neither body nor title.
-     *
-     */
-    class NoDefaultFontConfiguration : public std::exception {
-        public:
-        NoDefaultFontConfiguration(const std::string &tomlPath = "");
-        ~NoDefaultFontConfiguration();
-        const char *what() const noexcept;
-        private:
-        std::string _msg;
-        const char *_buffer;
-    };
 
     /**
      *@brief This is the class in charge of informing the user

@@ -77,13 +77,13 @@ Main::Main(
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::IpIncorrect(ip);
+        throw MyException::InvalidIp(ip);
     }
     Debug::getInstance() << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::PortIncorrect(std::to_string(port));
+        throw MyException::InvalidPort(std::to_string(port));
     }
     Debug::getInstance() << "Processing cursor icon" << std::endl;
     std::string windowText = _lowerText(windowCursorIcon);
@@ -140,7 +140,7 @@ std::string Main::_lowerText(const std::string &text)
  * @return true The ip is correct
  * @return false The ip is incorrect
  */
-bool Main::_isIpInRange(const std::string &ip)
+const bool Main::_isIpInRange(const std::string &ip) const
 {
     std::istringstream iss(ip);
     std::string segment;
@@ -172,7 +172,7 @@ bool Main::_isIpInRange(const std::string &ip)
  * @return true The port is correct.
  * @return false The port is incorrect.
  */
-bool Main::_isPortCorrect(const unsigned int port)
+const bool Main::_isPortCorrect(const unsigned int port) const
 {
     return port >= 0 && port <= 65535;
 }
@@ -184,7 +184,7 @@ bool Main::_isPortCorrect(const unsigned int port)
  * @return true The path is present
  * @return false The path is not present
  */
-bool Main::_isFilePresent(const std::string &filepath)
+const bool Main::_isFilePresent(const std::string &filepath) const
 {
     return std::ifstream(filepath).good();
 }
@@ -196,9 +196,74 @@ bool Main::_isFilePresent(const std::string &filepath)
  * @return true
  * @return false
  */
-bool Main::_isFrameLimitCorrect(unsigned int frameLimit)
+const bool Main::_isFrameLimitCorrect(const unsigned int frameLimit) const
 {
     if (frameLimit < 10 || frameLimit > 1000) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ *@brief Check if a font configuration is correct.
+ *
+ * @param node
+ * @return true
+ * @return false
+ */
+const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
+{
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string)
+        ) {
+        return false;
+    }
+
+    return true;
+}
+
+
+/**
+ *@brief Check if a music configuration is correct.
+ *
+ * @param node
+ * @return true
+ * @return false
+ */
+const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
+{
+    return true;
+}
+
+/**
+ *@brief Check if a sprite configuration is correct.
+ *
+ * @param node
+ * @return true
+ * @return false
+ */
+const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
+{
+    return true;
+}
+
+
+/**
+ *@brief This is a generic function that will check if a given key is present and that the type of the value is correct.
+ *
+ * @param node
+ * @param key
+ * @param valueType
+ * @return true
+ * @return false
+ */
+const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std::string &key, const toml::node_type &valueType) const
+{
+    if (!node.hasKey(key)) {
+        return false;
+    }
+    if (node.getValueType(key) != valueType) {
         return false;
     }
     return true;
@@ -397,8 +462,34 @@ void Main::_initialiseFonts()
 
     Debug::getInstance() << font.getRawTOML() << std::endl;
 
+    const std::string titleFontNode = "title";
+    const std::string bodyFontNode = "body";
+    const std::string defaultFontNode = "default";
 
-    std::string titleFontPath = "assets/font/Color Basic/TTF Fonts/color_basic.ttf";
+    if (!font.hasKey(titleFontNode)) {
+        throw MyException::NoTitleFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(bodyFontNode)) {
+        throw MyException::NoBodyFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(defaultFontNode)) {
+        throw MyException::NoDefaultFontConfiguration(tomlPath);
+    }
+
+
+    TOMLLoader titleData(font);
+    TOMLLoader bodyData(font);
+    TOMLLoader defaultData(font);
+
+    titleData.update(font.getTable(titleFontNode));
+    bodyData.update(font.getTable(bodyFontNode));
+    defaultData.update(font.getTable(defaultFontNode));
+
+    _isFontConfigurationCorrect(titleData);
+    _isFontConfigurationCorrect(bodyData);
+    _isFontConfigurationCorrect(defaultData);
+
+    std::string titleFontPath = "assets/font/Blox/TTF Fonts/Blox.ttf";
     std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
     _baseId++;
 
@@ -488,7 +579,7 @@ void Main::run()
  *
  * @param ip : std::string
  *
- * @throws MyException::IpIncorrect(ip) : This error is thrown
+ * @throws MyException::IncorrectIp(ip) : This error is thrown
  * if the ip format is wrong.
  */
 void Main::setIp(const std::string &ip)
@@ -496,7 +587,7 @@ void Main::setIp(const std::string &ip)
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::IpIncorrect(ip);
+        throw MyException::InvalidIp(ip);
     }
 }
 
@@ -504,7 +595,7 @@ void Main::setIp(const std::string &ip)
  *@brief Set the port on which the GUI is going to connect to.
  *
  * @param port
- * @throws MyException::PortIncorrect(port) This error is thrown
+ * @throws MyException::InvalidPort(port) This error is thrown
  * if the port format is incorrect
  */
 void Main::setPort(const unsigned int port)
@@ -512,7 +603,7 @@ void Main::setPort(const unsigned int port)
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::PortIncorrect(std::to_string(port));
+        throw MyException::InvalidPort(std::to_string(port));
     }
 }
 
