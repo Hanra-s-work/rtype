@@ -7,18 +7,20 @@ assignees: DoctorTangerina, floksdev, HenraL, marianna-titova
 
 ---
 
+_All lines marked with a '*' need to be checked before proceeding_
+
 **Checklist**
 Please ensure the following items are completed before submitting your report:
 
-- [ ] I have read the [Code of Conduct](https://github.com/Hanra-s-work/rtype/blob/main/CODE_OF_CONDUCT.md).
-- [ ] I have searched existing issues to ensure this bug has not been reported.
-- [ ] I have read the [Documentation](https://github.com/Hanra-s-work/rtype/blob/main/README.md) to ensure that my bug hasn't already been answered.
-- [ ] I have provided all necessary details, including logs and configuration.
+- [ ] * I have read the [Code of Conduct](https://github.com/Hanra-s-work/rtype/blob/main/CODE_OF_CONDUCT.md).
+- [ ] * I have searched existing issues to ensure this bug has not been reported.
+- [ ] * I have read the [Documentation](https://github.com/Hanra-s-work/rtype/blob/main/README.md) to ensure that my bug hasn't already been answered.
+- [ ] * I have provided all necessary details, including logs and configuration.
 
-**Describe the bug**
+**\* Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**\* To Reproduce**
 Steps to reproduce the behavior:
 
 1. Go to '...'
@@ -26,7 +28,7 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error.
 
-**Expected behavior**
+**\* Expected behavior**
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
@@ -40,8 +42,8 @@ If applicable, add screenshots to help explain your problem.
 
 - g++ version: [e.g., 13.3.0]
 
-**Logs and Error Messages**
-Please attach any relevant logs or terminal output.
+**\* Logs and Error Messages**
+Please attach any relevant logs or terminal output. If it concerns the r-type_client binary, please put the `--debug` in the first position when running the script (this will make the output a lot more verbose). You can also redirect the content to a file by adding the `>file_name` at the end of your command.
 
 **Configuration and Assets**
 List any relevant config files, values, or asset names that might relate to this bug.
@@ -57,3 +59,5 @@ Please ensure your report adheres to our [Code of Conduct](https://github.com/Ha
 
 **Contribution**
 If you plan to submit a fix, please follow our [commit conventions](https://github.com/Hanra-s-work/rtype/blob/main/COMMIT_CONVENTION.md) and [contribution guidelines](https://github.com/Hanra-s-work/rtype/blob/main/CONTRIBUTING.md).
+
+_Note: Please ensure you have filled out the mandatory sections before submitting._
