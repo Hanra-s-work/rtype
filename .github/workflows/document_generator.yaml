@@ -590,12 +590,12 @@ jobs:
       - name: Save the commit message
         run: |
           echo "Saving the commit message"
-          echo '${{env.COMMIT_MESSAGE}}' > "${{env.FINAL_OUTPUT}}/commit_message.txt"
+          printf "%s" "${{env.COMMIT_MESSAGE}}" > "${{env.FINAL_OUTPUT}}/commit_message.txt"
         
       - name: Save the commit title
         run: |
           echo "Saving the commit title"
-          echo "${{env.COMMIT_TITLE}}" > "${{env.FINAL_OUTPUT}}/commit_title.txt"
+          printf "%s" "${{env.COMMIT_TITLE}}" > "${{env.FINAL_OUTPUT}}/commit_title.txt"
 
       - name: Uploading the cache so that the 3rd workflow can access it
         uses: actions/upload-artifact@v4
