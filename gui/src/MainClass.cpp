@@ -223,7 +223,6 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
     return true;
 }
 
-
 /**
  *@brief Check if a music configuration is correct.
  *
@@ -233,6 +232,14 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
  */
 const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
 {
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "loop", toml::node_type::boolean) ||
+        !_isKeyPresentAndOfCorrectType(node, "volume", toml::node_type::integer)
+        ) {
+        return false;
+    }
     return true;
 }
 
@@ -245,6 +252,16 @@ const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
  */
 const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
 {
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "sprite_width", toml::node_type::integer) ||
+        !_isKeyPresentAndOfCorrectType(node, "sprite_height", toml::node_type::integer) ||
+        !_isKeyPresentAndOfCorrectType(node, "start_left", toml::node_type::boolean) ||
+        !_isKeyPresentAndOfCorrectType(node, "start_top", toml::node_type::boolean)
+        ) {
+        return false;
+    }
     return true;
 }
 
@@ -485,9 +502,21 @@ void Main::_initialiseFonts()
     bodyData.update(font.getTable(bodyFontNode));
     defaultData.update(font.getTable(defaultFontNode));
 
-    _isFontConfigurationCorrect(titleData);
-    _isFontConfigurationCorrect(bodyData);
-    _isFontConfigurationCorrect(defaultData);
+    if (!_isFontConfigurationCorrect(titleData)) {
+        const std::string userConfig = titleData.getTOMLString();
+        const std::string fontName = titleFontNode;
+        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(bodyData)) {
+        const std::string userConfig = bodyData.getTOMLString();
+        const std::string fontName = bodyFontNode;
+        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(defaultData)) {
+        const std::string userConfig = defaultData.getTOMLString();
+        const std::string fontName = defaultFontNode;
+        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+    }
 
     std::string titleFontPath = "assets/font/Blox/TTF Fonts/Blox.ttf";
     std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
