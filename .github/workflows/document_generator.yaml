@@ -290,7 +290,7 @@ jobs:
     # The system on which we are running the actions
     runs-on: ubuntu-latest
     needs: clean_up_generation
-    if: success()
+    if: success() && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -325,11 +325,11 @@ jobs:
           path: ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}
           name: "github-pages"
 
-      - name: Go the main branch
-        run: |
-          git fetch origin main
-          git checkout main
-          git pull origin main
+      # - name: Go the main branch
+      #   run: |
+      #     git fetch origin main
+      #     git checkout main
+      #     git pull origin main
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
@@ -360,6 +360,13 @@ jobs:
             cache-key-doxygen
             doxygen_cache_key
             cache_key_doxygen
+
+      - name: Create the final destinations
+        run: |
+          mkdir -p ${{env.FINAL_OUTPUT}} ${{env.FINAL_OUTPUT}}/${{env.FINAL_OUTPUT_CONTENT}}
+          echo "Final output folder created at ${{env.FINAL_OUTPUT}}"
+          echo "Content of the final output folder:"
+          ls -a ${{env.FINAL_OUTPUT}} 
       
       - name: List directory content
         run: |
@@ -555,12 +562,6 @@ jobs:
           echo "Final file list='$FILE_LIST'"
           echo "FOI=$(echo $FILE_LIST | tr '\n' ' ')" >> "$GITHUB_OUTPUT" # Files of interest
 
-      - name: Create the final destinations
-        run: |
-          mkdir -p ${{env.FINAL_OUTPUT}} ${{env.FINAL_OUTPUT}}/${{env.FINAL_OUTPUT_CONTENT}}
-          echo "Final output folder created at ${{env.FINAL_OUTPUT}}"
-          echo "Content of the final output folder:"
-          ls -a ${{env.FINAL_OUTPUT}} 
 
       - name: Create a temporary load point
         id: anchor-point
@@ -589,7 +590,7 @@ jobs:
       - name: Save the commit message
         run: |
           echo "Saving the commit message"
-          echo "${{env.COMMIT_MESSAGE}}" > "${{env.FINAL_OUTPUT}}/commit_message.txt"
+          echo '${{env.COMMIT_MESSAGE}}' > "${{env.FINAL_OUTPUT}}/commit_message.txt"
         
       - name: Save the commit title
         run: |
