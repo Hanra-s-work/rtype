@@ -30,6 +30,7 @@ env:
   # variables managing name publishing
   COMMIT_TITLE: "There is no title"
   COMMIT_MESSAGE: "There is no message"
+  COMMIT_MESSAGE_FILE: commit_message.txt
   #Variables for the extras scripts
   DOXYFILE: doxygen_generation/Doxyfile
   MAN_INSTALL_PATH: doxygen_generation/man/installer.sh
@@ -502,6 +503,8 @@ jobs:
             echo -e "$COMMIT_MESSAGE"
             echo EOH
           } >> $GITHUB_ENV
+          echo "Saving the commit message to a file"
+          echo -e "$COMMIT_MESSAGE" > "${{env.FINAL_OUTPUT}}/${{env.COMMIT_MESSAGE_FILE}}"
 
       - name: Restore the documentation to it's original directory
         run: |
@@ -586,12 +589,6 @@ jobs:
             find ./$TEMPORARY_FOLDER -maxdepth 1 -type f
             echo EOF
           } >> "$GITHUB_OUTPUT" # anchor point
-
-      - name: Save the commit message
-        run: |
-          echo "Saving the commit message"cat << EOF > "${{env.FINAL_OUTPUT}}/commit_message.txt"
-          ${{env.COMMIT_MESSAGE}}
-          EOF
 
       - name: Save the commit title
         run: |
