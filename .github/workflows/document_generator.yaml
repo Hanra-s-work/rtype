@@ -5,8 +5,8 @@ name: doxygen_generator
 
 on:
   push:
-      # tags:
-      #     - "v*.*.*"
+      tags:
+          - "v*.*.*"
       branches:
           - main
           - dev-workflow-doxygen
