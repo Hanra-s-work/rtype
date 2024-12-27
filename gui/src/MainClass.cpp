@@ -453,7 +453,7 @@ void Main::_initialiseFonts()
     const std::string tomlPath = _tomlContent.getTOMLPath();
     const std::string fontKey = "font";
     const std::string fontKeyAlt = "fonts";
-    std::unordered_map<std::string, std::string> fonts;
+    std::unordered_map<std::string, TOMLLoader> loadedFonts;
 
     if (_tomlContent.hasKey(fontKey)) {
         Debug::getInstance() << "Fetching the content for '" << fontKey << "'." << std::endl;
@@ -518,11 +518,31 @@ void Main::_initialiseFonts()
         throw MyException::InvalidFontConfiguration(userConfig, fontName);
     }
 
-    std::string titleFontPath = "assets/font/Blox/TTF Fonts/Blox.ttf";
-    std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
-    _baseId++;
+    loadedFonts["body"] = bodyData;
+    loadedFonts["title"] = titleData;
+    loadedFonts["default"] = defaultData;
 
-    _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(titleFont);
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
+        std::string application = it->first;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int defaultSize = 50;
+        bool bold = false;
+        bool italic = false;
+
+        if (_isKeyPresentAndOfCorrectType(it->second, "default_size", toml::node_type::integer)) {
+            defaultSize = it->second.getValue<int>("default_size");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "bold", toml::node_type::boolean)) {
+            bold = it->second.getValue<bool>("bold");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
+            italic = it->second.getValue<bool>("italic");
+        }
+        std::shared_ptr<GUI::ECS::Utilities::Font> node = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, name, path, defaultSize, application, bold, italic);
+        _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(node);
+        _baseId++;
+    }
 }
 
 /**
