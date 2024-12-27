@@ -17,11 +17,13 @@ GUI::ECS::Components::MusicComponents::MusicComponents() : EntityNode(0) {};
 GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entityId) : EntityNode(entityId) {};
 
 GUI::ECS::Components::MusicComponents::MusicComponents(const MusicComponents &music)
+    : EntityNode(0)
 {
     update(music);
 };
 
 GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePath, const std::string &name)
+    : EntityNode(0)
 {
     setMusicName(name);
     setMusic(filePath);
@@ -29,10 +31,31 @@ GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePa
 };
 
 GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePath, const std::string &name, float volume)
+    : EntityNode(0)
 {
     setVolume(volume);
     setMusicName(name);
     setMusic(filePath);
+    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+};
+
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePath, const std::string &name, const std::string &application)
+    : EntityNode(0)
+{
+    setMusicName(name);
+    setMusic(filePath);
+    setApplication(application);
+    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+};
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::string &filePath, const std::string &name, const std::string &application, float volume)
+    : EntityNode(0)
+{
+    setVolume(volume);
+    setMusicName(name);
+    setMusic(filePath);
+    setApplication(application);
     Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
@@ -50,6 +73,25 @@ GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entit
     setVolume(volume);
     setMusicName(name);
     setMusic(filePath);
+    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+};
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application)
+    : EntityNode(entityId)
+{
+    setMusicName(name);
+    setMusic(filePath);
+    setApplication(application);
+    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+};
+
+GUI::ECS::Components::MusicComponents::MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, float volume)
+    : EntityNode(entityId)
+{
+    setVolume(volume);
+    setMusicName(name);
+    setMusic(filePath);
+    setApplication(application);
     Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
@@ -110,6 +152,11 @@ void GUI::ECS::Components::MusicComponents::setMusic(const std::string &filePath
     setMusic(filePath);
 }
 
+void GUI::ECS::Components::MusicComponents::setApplication(const std::string &application)
+{
+    _application = application;
+}
+
 void GUI::ECS::Components::MusicComponents::play()
 {
     if (_isInitialised == false) {
@@ -143,27 +190,27 @@ void GUI::ECS::Components::MusicComponents::pause()
     _music.pause();
 }
 
-bool GUI::ECS::Components::MusicComponents::isPaused() const
+const bool GUI::ECS::Components::MusicComponents::isPaused() const
 {
     return _isPaused;
 }
 
-bool GUI::ECS::Components::MusicComponents::isPlaying() const
+const bool GUI::ECS::Components::MusicComponents::isPlaying() const
 {
     return _isPlaying;
 }
 
-bool GUI::ECS::Components::MusicComponents::isStopped() const
+const bool GUI::ECS::Components::MusicComponents::isStopped() const
 {
     return _isStoped;
 }
 
-bool GUI::ECS::Components::MusicComponents::isLooping() const
+const bool GUI::ECS::Components::MusicComponents::isLooping() const
 {
     return _isLooping;
 }
 
-bool GUI::ECS::Components::MusicComponents::isInitialised() const
+const bool GUI::ECS::Components::MusicComponents::isInitialised() const
 {
     return _isInitialised;
 }
@@ -183,19 +230,24 @@ void GUI::ECS::Components::MusicComponents::update(const GUI::ECS::Components::M
     };
 }
 
-float GUI::ECS::Components::MusicComponents::getVolume() const
+const float GUI::ECS::Components::MusicComponents::getVolume() const
 {
     return _volume;
 }
 
-std::string GUI::ECS::Components::MusicComponents::getMusicName() const
+const std::string GUI::ECS::Components::MusicComponents::getMusicName() const
 {
     return _name;
 }
 
-std::string GUI::ECS::Components::MusicComponents::getFilePath() const
+const std::string GUI::ECS::Components::MusicComponents::getFilePath() const
 {
     return _filePath;
+}
+
+const std::string GUI::ECS::Components::MusicComponents::getApplication() const
+{
+    return _application;
 }
 
 GUI::ECS::Components::MusicComponents &GUI::ECS::Components::MusicComponents::operator =(const GUI::ECS::Components::MusicComponents &copy)

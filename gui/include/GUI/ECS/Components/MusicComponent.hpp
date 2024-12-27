@@ -33,33 +33,41 @@ namespace GUI
                 MusicComponents(const MusicComponents &music);
                 MusicComponents(const std::string &filePath, const std::string &name);
                 MusicComponents(const std::string &filePath, const std::string &name, float volume);
+                MusicComponents(const std::string &filePath, const std::string &name, const std::string &application);
+                MusicComponents(const std::string &filePath, const std::string &name, const std::string &application, float volume);
                 MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name);
                 MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application);
+                MusicComponents(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, float volume);
                 ~MusicComponents();
 
-                virtual void setVolume(float volume);
-                virtual void setLoopMusic(bool loop);
-                virtual void setMusicName(const std::string &name);
+                void setVolume(float volume);
+                void setLoopMusic(bool loop);
+                void setMusicName(const std::string &name);
 
-                virtual void setMusic(const std::string &filePath);
-                virtual void setMusic(const std::string &filePath, const std::string &name);
-                virtual void setMusic(const std::string &filePath, const std::string &name, float volume);
+                void setMusic(const std::string &filePath);
+                void setMusic(const std::string &filePath, const std::string &name);
+                void setMusic(const std::string &filePath, const std::string &name, float volume);
 
-                virtual void play();
-                virtual void stop();
-                virtual void pause();
+                void setApplication(const std::string &application);
 
-                virtual bool isPaused() const;
-                virtual bool isPlaying() const;
-                virtual bool isStopped() const;
-                virtual bool isLooping() const;
-                virtual bool isInitialised() const;
+                void play();
+                void stop();
+                void pause();
 
-                virtual void update(const MusicComponents &copy);
+                const bool isPaused() const;
+                const bool isPlaying() const;
+                const bool isStopped() const;
+                const bool isLooping() const;
+                const bool isInitialised() const;
 
-                virtual float getVolume() const;
-                virtual std::string getMusicName() const;
-                virtual std::string getFilePath() const;
+                void update(const MusicComponents &copy);
+
+                const float getVolume() const;
+                const std::string getMusicName() const;
+                const std::string getFilePath() const;
+
+                const std::string getApplication() const;
 
                 MusicComponents &operator =(const GUI::ECS::Components::MusicComponents &copy);
 
@@ -72,6 +80,7 @@ namespace GUI
                 bool _isInitialised = false;
                 std::string _name = "";
                 std::string _filePath = "";
+                std::string _application = "";
                 sf::Music _music;
             };
         }

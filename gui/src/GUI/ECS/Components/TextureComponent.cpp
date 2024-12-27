@@ -15,17 +15,20 @@
 GUI::ECS::Components::TextureComponent::TextureComponent() :EntityNode(0) {};
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const TextureComponent &other)
+    : EntityNode(0)
 {
     update(other);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+    : EntityNode(0)
 {
     setFilePath(filePath);
     setCollisionInfo(collisionInfo);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+    : EntityNode(0)
 {
     setTexture(texture);
     setCollisionInfo(collisionInfo);

@@ -10,29 +10,34 @@
 GUI::ECS::Components::SpriteComponent::SpriteComponent() :EntityNode(0) {};
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name)
+    : EntityNode(0)
 {
     setName(name);
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Components::CollisionComponent &collision)
+    : EntityNode(0)
 {
     setCollision(collision);
     _processSprite();
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Components::AnimationComponent &animation)
+    : EntityNode(0)
 {
     setAnimation(animation);
     _processSprite();
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Components::TextureComponent &spritesheetTexture)
+    : EntityNode(0)
 {
     setSpritesheet(spritesheetTexture);
     _processSprite();
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const std::string &spritesheetPath)
+    : EntityNode(0)
 {
     setName(name);
     setSpritesheet(spritesheetPath);
@@ -40,6 +45,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision)
+    : EntityNode(0)
 {
     setName(name);
     setCollision(collision);
@@ -47,6 +53,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation)
+    : EntityNode(0)
 {
     setName(name);
     setAnimation(animation);
@@ -54,6 +61,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
+    : EntityNode(0)
 {
     setName(name);
     setSpritesheet(spritesheetTexture);
@@ -61,6 +69,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation)
+    : EntityNode(0)
 {
     setName(name);
     setCollision(collision);
@@ -69,6 +78,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
+    : EntityNode(0)
 {
     setName(name);
     setCollision(collision);
@@ -77,6 +87,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(0)
 {
     setName(name);
     setHoverColor(hoverColor);
@@ -86,6 +97,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(0)
 {
     setName(name);
     setCollision(collision);
@@ -96,6 +108,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(0)
 {
     setName(name);
     setAnimation(animation);
@@ -106,6 +119,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(0)
 {
     setName(name);
     setSpritesheet(spritesheetTexture);
@@ -116,6 +130,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(0)
 {
     setName(name);
     setCollision(collision);
@@ -127,6 +142,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
 };
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor)
+    : EntityNode(0)
 {
     setName(name);
     setCollision(collision);
