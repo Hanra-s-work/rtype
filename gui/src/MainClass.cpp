@@ -659,7 +659,7 @@ void Main::_mainLoop()
     GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
     GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
 
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Utilities::Colour::White, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 20 });
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Utilities::Colour::YellowGreen, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 50 });
 
     while (window.isOpen()) {
         event.processEvents(window);

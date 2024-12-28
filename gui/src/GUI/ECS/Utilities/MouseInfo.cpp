@@ -247,8 +247,8 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
  */
 void GUI::ECS::Utilities::MouseInfo::clear()
 {
-    _mousePosition.x = 0;
-    _mousePosition.y = 0;
+    // _mousePosition.x = 0;
+    // _mousePosition.y = 0;
     _leftButtonClicked = false;
     _rightButtonClicked = false;
     _mouseInFocus = false;

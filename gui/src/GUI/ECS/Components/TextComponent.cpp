@@ -295,11 +295,13 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 void GUI::ECS::Components::TextComponent::_processTextComponent()
 {
     if (!_sfTextComponent.has_value()) {
+        Debug::getInstance() << "No known instance of sf::Text, creating." << std::endl;
         if (_font.getFontPath().empty()) {
+            Debug::getInstance() << "No font, skipping update." << std::endl;
             return;
         }
-        sf::String nodeText(_text);
-        sf::Text node(_font.getFontInstance(), nodeText, _size);
+
+        sf::Text node(_font.getFontInstance(), _text, _size);
         _sfTextComponent.emplace(node);
     }
     if (_textPos.isClicked()) {
