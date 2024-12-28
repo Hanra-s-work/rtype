@@ -41,12 +41,18 @@ namespace GUI
                  * @brief Copy constructor. Creates a color by copying another color.
                  * @param copy The color to copy.
                  */
-                Colour(const Colour &copy);
+                Colour(const GUI::ECS::Utilities::Colour &copy);
                 /**
                  * @brief Constructs a color associated with a specific entity ID.
                  * @param entityId The ID of the entity.
                  */
                 Colour(const std::uint32_t entityId);
+                /**
+                 * @brief Constructs a color associated with a specific entity ID.
+                 * @param color The 32-bit integer color value (0xRRGGBBAA).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                Colour(const std::uint32_t colour, const std::string &name);
                 /**
                  * @brief Constructs a color associated with an entity ID and copies properties from another color.
                  * @param entityId The ID of the entity.
@@ -57,8 +63,25 @@ namespace GUI
                  * @brief Constructs a color from a 32-bit integer representation.
                  * @param entityId The ID of the entity.
                  * @param color The 32-bit integer color value (0xRRGGBBAA).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
                  */
-                explicit Colour(const std::uint32_t entityId, const std::uint32_t color);
+                Colour(const std::uint32_t entityId, const std::uint32_t color, const std::string &name);
+                /**
+                 * @brief Constructs a color with specific RGBA components.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                Colour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue);
+                /**
+                 * @brief Constructs a color with specific RGBA components.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                Colour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::string &name);
                 /**
                  * @brief Constructs a color with specific RGBA components.
                  * @param red Red component (0-255).
@@ -66,7 +89,24 @@ namespace GUI
                  * @param blue Blue component (0-255).
                  * @param alpha Alpha component (0-255, defaults to 255).
                  */
-                Colour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha = 255);
+                Colour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha);
+                /**
+                 * @brief Constructs a color with specific RGBA components.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 * @param alpha Alpha component (0-255, defaults to 255).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                Colour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha, const std::string &name);
+                /**
+                 * @brief Constructs a color with specific RGBA components, associated with an entity ID.
+                 * @param entityId The ID of the entity.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 */
+                Colour(const std::uint32_t entityId, const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue);
                 /**
                  * @brief Constructs a color with specific RGBA components, associated with an entity ID.
                  * @param entityId The ID of the entity.
@@ -78,10 +118,42 @@ namespace GUI
                 Colour(const std::uint32_t entityId, const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha);
 
                 /**
+                 * @brief Constructs a color with specific RGBA components, associated with an entity ID.
+                 * @param entityId The ID of the entity.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 * @param alpha Alpha component (0-255, defaults to 255).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                Colour(const std::uint32_t entityId, const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha, const std::string &name);
+
+                /**
+                 *@brief Set the Name of the colour in the class
+                 *
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                void setName(const std::string &name);
+
+                /**
                  * @brief Sets the color using a 32-bit integer representation.
                  * @param color The 32-bit integer color value (0xRRGGBBAA).
                  */
                 void setColour(const std::uint32_t color);
+
+                /**
+                 * @brief Sets the color using a 32-bit integer representation.
+                 * @param color The 32-bit integer color value (0xRRGGBBAA).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                void setColour(const std::uint32_t color, const std::string &name);
+                /**
+                 * @brief Sets the color using individual RGBA components.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 */
+                void setColour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue);
                 /**
                  * @brief Sets the color using individual RGBA components.
                  * @param red Red component (0-255).
@@ -89,7 +161,24 @@ namespace GUI
                  * @param blue Blue component (0-255).
                  * @param alpha Alpha component (0-255, defaults to 255).
                  */
-                void setColour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha = 255);
+                void setColour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha);
+                /**
+                 * @brief Sets the color using individual RGBA components.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                void setColour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::string &name);
+                /**
+                 * @brief Sets the color using individual RGBA components.
+                 * @param red Red component (0-255).
+                 * @param green Green component (0-255).
+                 * @param blue Blue component (0-255).
+                 * @param alpha Alpha component (0-255, defaults to 255).
+                 * @param name The name of the colour (this is a way to make the class mor human readable)
+                 */
+                void setColour(const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha, const std::string &name);
                 /**
                  * @brief Sets the red component of the color.
                  * @param red Red component (0-255).
@@ -170,6 +259,12 @@ namespace GUI
                  * @return The SFML color representation.
                  */
                 const sf::Color getColourSFML() const;
+                /**
+                 *@brief Get the Name of the colour contained in the class
+                 *
+                 * @return const std::string
+                 */
+                const std::string getName() const;
 
                 /**
                 * @brief This is a function meant for debugging purposes
@@ -247,6 +342,7 @@ namespace GUI
                 static const Colour LavenderBlush3;
                 static const Colour LavenderBlush2;
                 static const Colour LavenderBlush4;
+                static const Colour Maroon5;
                 static const Colour HotPink3;
                 static const Colour VioletRed3;
                 static const Colour VioletRed1;
@@ -866,6 +962,7 @@ namespace GUI
                 static const Colour Transparent;
 
                 private:
+                std::string _colourName = ""; ///< The name of the colourxs
                 std::uint8_t _red = 0;     ///< The red component (0-255).
                 std::uint8_t _blue = 0;    ///< The blue component (0-255).
                 std::uint8_t _green = 0;   ///< The green component (0-255).
