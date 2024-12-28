@@ -570,6 +570,7 @@ std::uint32_t Main::_initialiseFonts()
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
         std::string application = it->first;
+        Debug::getInstance() << "Font application = '" + application << std::endl;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
         int defaultSize = 50;
@@ -658,22 +659,19 @@ void Main::_mainLoop()
     GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
     GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
 
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text d,jnpmazjeoazjeopazejopazejopazjeopazjoepjazoejazopejazopejaozpjeopazje", 40, GUI::ECS::Utilities::Colour::White, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 20 });
-
-    Debug::getInstance() << "Text Component (before set visible): " << text << std::endl;
-
-    text.setVisible(true);
-
-    Debug::getInstance() << "Text Component (after set visible): " << text << std::endl;
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Utilities::Colour::White, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 20 });
 
     while (window.isOpen()) {
         event.processEvents(window);
         if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
             _testContent();
         }
+        sf::Vector2f mousePos = event.getMousePosition();
+        Debug::getInstance() << "Text Component: \n" << text << std::endl;
+        Debug::getInstance() << "Mouse position: (x: " << mousePos.x << ", y: " << mousePos.y << ")" << std::endl;
         window.draw(text);
-        window.clear();
         window.display();
+        window.clear();
     }
 }
 
