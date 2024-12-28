@@ -287,6 +287,7 @@ jobs:
         with:
           name: ${{env.CACHE_KEY_CLEANED}}
           path: "${{env.TEMPORARY_FOLDER}}"
+          # path: "${{env.TEMPORARY_FOLDER}}/${{env.OUTPUT_GENERATION}}" # If the html issue was not fixed, try the following
           retention-days: 1
           overwrite: true
 
