@@ -112,6 +112,16 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::SpriteCompone
     sprite.render(_sfWindow);
 }
 
+void GUI::ECS::Utilities::Window::draw(const sf::Text &text)
+{
+    _sfWindow.draw(text);
+}
+
+void GUI::ECS::Utilities::Window::draw(const sf::Sprite &sprite)
+{
+    _sfWindow.draw(sprite);
+}
+
 std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::Window &item)
 {
     os << item.getInfo();

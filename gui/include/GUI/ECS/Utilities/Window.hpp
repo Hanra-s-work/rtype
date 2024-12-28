@@ -55,10 +55,12 @@ namespace GUI
 
                 const bool getFullScreen() const;
 
+                void draw(const sf::Text &text);
+                void draw(const sf::Sprite &sprite);
                 void draw(const GUI::ECS::Components::TextComponent &text);
                 void draw(const GUI::ECS::Components::ShapeComponent &shape);
                 void draw(const GUI::ECS::Components::ButtonComponent &button);
-                void draw(const GUI::ECS::Components::SpriteComponent &texture);
+                void draw(const GUI::ECS::Components::SpriteComponent &sprite);
 
                 sf::RenderWindow &getWindow();
 
