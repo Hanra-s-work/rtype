@@ -79,8 +79,8 @@ static void displayAuthors()
 }
 
 /**
- *@brief A function in charge of displaying the programs version.
- *
+ * @brief Displays version information for the program.
+ * @param helpMode If true, will prepend a 'VERSION\:\\n' string to the output (default: false).
  */
 void DisplayVersion(bool helpMode = false)
 {
@@ -93,7 +93,7 @@ void DisplayVersion(bool helpMode = false)
 /**
  *@brief The main function of the help display.
  *
- * @param binName
+ * @param binName Name of the executable binary.
  */
 void DisplayHelp(const std::string binName)
 {

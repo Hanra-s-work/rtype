@@ -16,26 +16,25 @@
 #include "RealMain.hpp"
 
  /**
-  *@brief Construct a new Main:: Main object
-  *
-  * @param ip
-  * @param port
-  * @param windowWidth
-  * @param windowHeight
-  * @param windowCursor
-  * @param windowFullscreen
-  * @param windowTitle
-  * @param windowX
-  * @param windowY
-  * @param windowCursorIcon
-  * @param imageIsSprite
-  * @param spriteStartTop
-  * @param spriteStartLeft
-  * @param spriteWidth
-  * @param spriteHeight
-  * @param frameLimit
-  * @param configFilePath
-  * @param debug
+  * @brief Constructor for the Main class.
+  * @param ip The IP address to use for connections (default: "127.0.0.1").
+  * @param port The port number to use for connections (default: 5000).
+  * @param windowWidth The width of the application window (default: 800).
+  * @param windowHeight The height of the application window (default: 600).
+  * @param windowCursor Whether the cursor should be visible (default: true).
+  * @param windowFullscreen Whether the window should start in fullscreen mode (default: false).
+  * @param windowTitle The title of the window (default: "R-Type").
+  * @param windowX The X position of the window (default: 0).
+  * @param windowY The Y position of the window (default: 0).
+  * @param windowCursorIcon Path to the cursor icon image (default: "NULL").
+  * @param imageIsSprite Whether the cursor is rendered as a sprite (default: false).
+  * @param spriteStartTop Whether the sprite rendering starts from the top (default: false).
+  * @param spriteStartLeft Whether the sprite rendering starts from the left (default: false).
+  * @param spriteWidth The width of the sprite (default: 20).
+  * @param spriteHeight The height of the sprite (default: 20).
+  * @param frameLimit The frame rate limit for the application (default: 60).
+  * @param configFilePath Path to the configuration file (default: "client_config.toml").
+  * @param debug Whether debug mode is enabled (default: false).
   */
 Main::Main(
     const std::string &ip,
@@ -543,8 +542,8 @@ std::uint32_t Main::_initialiseFonts()
 
     TOMLLoader tempNode(font);
 
-    loadedFonts["body"] = tempNode;
     loadedFonts["title"] = tempNode;
+    loadedFonts["body"] = tempNode;
     loadedFonts["default"] = tempNode;
 
 
@@ -642,18 +641,33 @@ void Main::_testContent()
  */
 void Main::_mainLoop()
 {
-    std::vector<sf::Keyboard::Key> keys;
+    // Get the window and event
     std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
     std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
 
     GUI::ECS::Utilities::Window &window = *window_ptr;
     GUI::ECS::Utilities::EventManager &event = *event_ptr;
 
+    // Get the fonts
+
+    std::shared_ptr<GUI::ECS::Utilities::Font> font_title_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][0]);
+    std::shared_ptr<GUI::ECS::Utilities::Font> font_body_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][1]);
+    std::shared_ptr<GUI::ECS::Utilities::Font> font_default_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][2]);
+
+    GUI::ECS::Utilities::Font &font_title = *font_title_ptr;
+    GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
+    GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
+
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text d,jnpmazjeoazjeopazejopazejopazjeopazjoepjazoejazopejazopejaozpjeopazje", 40, sf::Color::White, sf::Color::Cyan, sf::Color::Yellow, { 20, 20 });
+
+    text.setVisible(true);
+
     while (window.isOpen()) {
         event.processEvents(window);
         if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
             _testContent();
         }
+        window.draw(text);
         window.clear();
         window.display();
     }
