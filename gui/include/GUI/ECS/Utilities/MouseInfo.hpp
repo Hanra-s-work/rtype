@@ -14,7 +14,9 @@
 
 #include <optional>
 #include <SFML/Window/Event.hpp>
+
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
@@ -33,14 +35,24 @@ namespace GUI
                 void update(const sf::Vector2i &position);
                 void update(const sf::Vector2f &position);
 
-                sf::Vector2f getMousePosition() const;
-                sf::Event::MouseWheelScrolled getMouseWheelEvent() const;
+                const sf::Vector2f getMousePosition() const;
+                const sf::Event::MouseWheelScrolled getMouseWheelEvent() const;
 
-                bool isMouseInFocus() const;
-                bool isMouseLeftButtonClicked() const;
-                bool isMouseRightButtonClicked() const;
-                float getPositionX() const;
-                float getPositionY() const;
+                const bool isMouseInFocus() const;
+                const bool isMouseLeftButtonClicked() const;
+                const bool isMouseRightButtonClicked() const;
+
+                const float getPositionX() const;
+                const float getPositionY() const;
+                /**
+                  *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 void clear();
 
@@ -53,6 +65,14 @@ namespace GUI
                 sf::Vector2f _mousePosition;
                 sf::Event::MouseWheelScrolled _mouseWheel;
             };
+
+            /**
+             * @brief Outputs the Mouse's info to a stream.
+             * @param os The output stream.
+             * @param item The Mouse to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const MouseInfo &item);
         }
     }
 }

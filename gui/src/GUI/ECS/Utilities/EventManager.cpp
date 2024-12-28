@@ -17,22 +17,22 @@ GUI::ECS::Utilities::EventManager::EventManager(const std::uint32_t entityId) :E
 
 GUI::ECS::Utilities::EventManager::~EventManager() {}
 
-float GUI::ECS::Utilities::EventManager::getPositionX() const
+const float GUI::ECS::Utilities::EventManager::getPositionX() const
 {
     return _mouse.getPositionX();
 }
 
-float GUI::ECS::Utilities::EventManager::getPositionY() const
+const float GUI::ECS::Utilities::EventManager::getPositionY() const
 {
     return _mouse.getPositionY();
 }
 
-sf::Vector2f GUI::ECS::Utilities::EventManager::getMousePosition() const
+const sf::Vector2f GUI::ECS::Utilities::EventManager::getMousePosition() const
 {
     return _mouse.getMousePosition();
 }
 
-GUI::ECS::Utilities::MouseInfo GUI::ECS::Utilities::EventManager::getMouseInfo() const
+const GUI::ECS::Utilities::MouseInfo GUI::ECS::Utilities::EventManager::getMouseInfo() const
 {
     return _mouse;
 }
@@ -53,27 +53,47 @@ void GUI::ECS::Utilities::EventManager::update(const GUI::ECS::Utilities::EventM
     _keys = copy.getKeys();
 }
 
-std::vector<GUI::ECS::Utilities::Key> GUI::ECS::Utilities::EventManager::getKeys() const
+const std::vector<GUI::ECS::Utilities::Key> GUI::ECS::Utilities::EventManager::getKeys() const
 {
     return _keys;
 }
 
-bool GUI::ECS::Utilities::EventManager::isMouseInFocus() const
+const std::string GUI::ECS::Utilities::EventManager::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Event Manager:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Mouse info: {\n" + _mouse.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Key Mapper: {\n" + _mapper.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- keys: {\n";
+    for (unsigned int i = 0; i < _keys.size(); i++) {
+        result += indentation + "\t" + MyRecodes::myToString(i) + ": " + _mapper.stringKey(_keys[i]) + "\n";
+    }
+    result += indentation + "}\n";
+    return result;
+}
+
+
+const bool GUI::ECS::Utilities::EventManager::isMouseInFocus() const
 {
     return _mouse.isMouseInFocus();
 }
 
-bool GUI::ECS::Utilities::EventManager::isLeftButtonClicked() const
+const bool GUI::ECS::Utilities::EventManager::isLeftButtonClicked() const
 {
     return _mouse.isMouseLeftButtonClicked();
 }
 
-bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
+const bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
 {
     return _mouse.isMouseRightButtonClicked();
 }
 
-bool GUI::ECS::Utilities::EventManager::isKeyPressed(const GUI::ECS::Utilities::Key &key) const
+const bool GUI::ECS::Utilities::EventManager::isKeyPressed(const GUI::ECS::Utilities::Key &key) const
 {
     for (const auto &keyNodes : _keys) {
         if (keyNodes == key) {
@@ -130,3 +150,9 @@ GUI::ECS::Utilities::EventManager &GUI::ECS::Utilities::EventManager::operator=(
     }
     return *this;
 };
+
+std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::EventManager &item)
+{
+    os << item.getInfo();
+    return os;
+}

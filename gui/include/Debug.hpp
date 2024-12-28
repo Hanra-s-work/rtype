@@ -19,45 +19,46 @@
 #include <iomanip>
 #include <iostream>
 
+#include "MyRecodes.hpp"
+
 
  /**
-  *@brief The Debug class in charge of displaying information
-  * only if the _debugEnabled is set to true.
-  * It is designed to be used globally throughout the program.
-  *
+  * @class Debug
+  * @brief A singleton class that provides thread-safe logging capabilities
+  * with timestamps, active only when debugging is enabled.
   */
 class Debug {
     public:
+    /**
+     * @brief Provides access to the singleton instance of the `Debug` class.
+     * @return Reference to the `Debug` instance.
+     */
     static Debug &getInstance();
 
     /**
-     *@brief Set the Debug Enabled value to true or false.
-     *
-     * @param enabled
+     * @brief Enables or disables the debug logging.
+     * @param enabled Set to `true` to enable debugging; `false` to disable.
      */
     void setDebugEnabled(bool enabled);
 
     /**
-     *@brief A logging function for if called in an non-overloading manner.
-     *
-     * @param message
+     * @brief Logs a message if debugging is enabled.
+     * @param message The message to log.
      */
     void log(const std::string &message);
 
     /**
-     *@brief A logging function for if called in an non-overloading manner.
-     *
-     * @param message
+     * @brief Logs a message if debugging is enabled.
+     * @param message A C-string containing the message to log.
      */
     void log(const char *message);
 
     /**
-     *@brief This function is used to log a message with a
-     * timestamp is the debug mode is activated.
-     *
-     * @tparam T
-     * @param message
-     * @return Debug&
+     * @brief Appends a message to the debug log if debugging is enabled.
+     * @tparam T The type of the message.
+     * @param message The message to log.
+     * @return Reference to the `Debug` instance for chaining.
+     * @warning Do not try and initialise it outside of the header file or compilation issues will occur.
      */
     template <typename T>
     Debug &operator<<(const T &message)
@@ -70,11 +71,9 @@ class Debug {
     };
 
     /**
-     *@brief This is the function used to log a message with a
-     * timestamp if the debug mode is activated.
-     *
-     * @param message
-     * @return Debug&
+     * @brief Appends a string message to the debug log if debugging is enabled.
+     * @param message The string message to log.
+     * @return Reference to the `Debug` instance for chaining.
      */
     Debug &operator<<(const std::string &message)
     {
@@ -86,11 +85,10 @@ class Debug {
     };
 
     /**
-     *@brief This is the overload to allow the debug function
-     * to output a messsage if the debug mode is activated.
-     *
-     * @param os
-     * @return Debug&
+     * @brief Handles special stream manipulators (e.g., `std::endl`)
+     * for logging with timestamps if debugging is enabled.
+     * @param os The stream manipulator to apply.
+     * @return Reference to the `Debug` instance for chaining.
      */
     Debug &operator<<(std::ostream &(*os)(std::ostream &))
     {
@@ -109,12 +107,21 @@ class Debug {
 
 
     private:
-    bool _debugEnabled;
-    std::mutex _mtx;
-    std::ostringstream _buffer;
+    bool _debugEnabled;               ///< Indicates whether debugging is enabled.
+    std::mutex _mtx;                  ///< Ensures thread-safe access to the logging buffer.
+    std::ostringstream _buffer;       ///< Buffer for accumulating messages before output.
 
-    Debug() : _debugEnabled(false) {};
-    Debug(const Debug &) = delete;
-    Debug &operator=(const Debug &) = delete;
+    /**
+     * @brief Private constructor for singleton pattern. Debugging is disabled by default.
+     */
+    Debug() : _debugEnabled(false) {}
+
+    Debug(const Debug &) = delete;            ///< Deleted copy constructor.
+    Debug &operator=(const Debug &) = delete; ///< Deleted assignment operator.
+
+    /**
+     * @brief Retrieves the current date and time as a formatted string.
+     * @return The current date and time in "YYYY-MM-DD HH:MM:SS" format.
+     */
     std::string getCurrentDateTime();
 };

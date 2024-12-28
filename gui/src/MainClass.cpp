@@ -16,26 +16,25 @@
 #include "RealMain.hpp"
 
  /**
-  *@brief Construct a new Main:: Main object
-  *
-  * @param ip
-  * @param port
-  * @param windowWidth
-  * @param windowHeight
-  * @param windowCursor
-  * @param windowFullscreen
-  * @param windowTitle
-  * @param windowX
-  * @param windowY
-  * @param windowCursorIcon
-  * @param imageIsSprite
-  * @param spriteStartTop
-  * @param spriteStartLeft
-  * @param spriteWidth
-  * @param spriteHeight
-  * @param frameLimit
-  * @param configFilePath
-  * @param debug
+  * @brief Constructor for the Main class.
+  * @param ip The IP address to use for connections (default: "127.0.0.1").
+  * @param port The port number to use for connections (default: 5000).
+  * @param windowWidth The width of the application window (default: 800).
+  * @param windowHeight The height of the application window (default: 600).
+  * @param windowCursor Whether the cursor should be visible (default: true).
+  * @param windowFullscreen Whether the window should start in fullscreen mode (default: false).
+  * @param windowTitle The title of the window (default: "R-Type").
+  * @param windowX The X position of the window (default: 0).
+  * @param windowY The Y position of the window (default: 0).
+  * @param windowCursorIcon Path to the cursor icon image (default: "NULL").
+  * @param imageIsSprite Whether the cursor is rendered as a sprite (default: false).
+  * @param spriteStartTop Whether the sprite rendering starts from the top (default: false).
+  * @param spriteStartLeft Whether the sprite rendering starts from the left (default: false).
+  * @param spriteWidth The width of the sprite (default: 20).
+  * @param spriteHeight The height of the sprite (default: 20).
+  * @param frameLimit The frame rate limit for the application (default: 60).
+  * @param configFilePath Path to the configuration file (default: "client_config.toml").
+  * @param debug Whether debug mode is enabled (default: false).
   */
 Main::Main(
     const std::string &ip,
@@ -223,7 +222,6 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
     return true;
 }
 
-
 /**
  *@brief Check if a music configuration is correct.
  *
@@ -233,6 +231,14 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
  */
 const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
 {
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "loop", toml::node_type::boolean) ||
+        !_isKeyPresentAndOfCorrectType(node, "volume", toml::node_type::integer)
+        ) {
+        return false;
+    }
     return true;
 }
 
@@ -245,6 +251,16 @@ const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
  */
 const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
 {
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "sprite_width", toml::node_type::integer) ||
+        !_isKeyPresentAndOfCorrectType(node, "sprite_height", toml::node_type::integer) ||
+        !_isKeyPresentAndOfCorrectType(node, "start_left", toml::node_type::boolean) ||
+        !_isKeyPresentAndOfCorrectType(node, "start_top", toml::node_type::boolean)
+        ) {
+        return false;
+    }
     return true;
 }
 
@@ -297,13 +313,13 @@ void Main::_closeConnection()
  *@brief This is the function in charge of loading the Sprites and Spritesheets into the program.
  *
  */
-void Main::_initialiseSprites()
+std::uint32_t Main::_initialiseSprites()
 {
     TOMLLoader sprites(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
     const std::string spriteSheetKey = "spritesheets";
     const std::string spriteSheetKeyAlt = "spritesheet";
-    std::unordered_map<std::string, std::string> spritesheets;
+    std::unordered_map<std::string, TOMLLoader> loadedSprites;
 
     if (_tomlContent.hasKey(spriteSheetKey)) {
         Debug::getInstance() << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
@@ -329,36 +345,69 @@ void Main::_initialiseSprites()
 
     Debug::getInstance() << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
 
-    spritesheets["r-typesheet1"] = "assets/img/r-typesheet1.gif";
+    TOMLLoader tempNode(sprites);
 
-    bool startTop = true;
-    bool startLeft = true;
-    unsigned int frameWidth = 0;
-    unsigned int frameHeight = 0;
+    Debug::getInstance() << "Getting the sprite configuration chunks" << std::endl;
 
-    for (const auto &[name, info] : spritesheets) {
-        std::string path = info;
-        GUI::ECS::Components::CollisionComponent collision(_baseId);
-        collision.setHeight(frameWidth);
-        collision.setWidth(frameHeight);
-        GUI::ECS::Components::AnimationComponent animation(_baseId);
-        animation.setAnimation(path, frameWidth, frameHeight, startLeft, startTop);
-        std::shared_ptr<GUI::ECS::Components::SpriteComponent> nodeSprite = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, collision, animation);
+    unsigned int counter = 1;
+    std::string data = "Processed Sprites: \n";
+    const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
+
+    for (std::string &it : sprites.getKeys()) {
+        data += "\t" + std::to_string(counter) + " : " + "'" + it + "'\n";
+        Debug::getInstance() << "Processing sprite: '" << it << "'" << std::endl;
+        if (!sprites.hasKey(it)) {
+            throw MyException::NoTOMLKey(tomlPath, it);
+        }
+        loadedSprites[it] = tempNode;
+        if (sprites.getValueType(it) != toml::node_type::table) {
+            throw MyException::InvalidTOMLKeyType(tomlPath, it, sprites.getTypeAsString(it), expectedStringType);
+        }
+        loadedSprites[it].update(sprites.getTable(it));
+        if (!_isSpriteConfigurationCorrect(loadedSprites[it])) {
+            std::string userConfig = loadedSprites[it].getTOMLString();
+            throw MyException::InvalidSpriteConfiguration(userConfig, it);
+        }
+        counter++;
+    };
+    Debug::getInstance() << data << std::endl;
+
+    Debug::getInstance() << "Initialising the sprites" << std::endl;
+
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedSprites.begin(); it != loadedSprites.end(); ++it) {
+        std::string application = it->first;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int sprite_width = it->second.getValue<int>("sprite_width");
+        int sprite_height = it->second.getValue<int>("sprite_height");
+        bool start_left = it->second.getValue<bool>("start_left");
+        bool start_top = it->second.getValue<bool>("start_top");
+
+        Debug::getInstance() << "Loading sprite '" << name << "' ..." << std::endl;
+
+        GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, animationNode);
+        _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
         _baseId++;
     }
+
+    Debug::getInstance() << "The sprites are loaded." << std::endl;
+    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
 }
 
 /**
- *@brief This is the function in charge of loading the audios into the program.
+ *@brief This is the function in charge of loading the ²s into the program.
  *
  */
-void Main::_initialiseAudio()
+std::uint32_t Main::_initialiseAudio()
 {
     TOMLLoader audio(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
     const std::string musicKey = "music";
     const std::string musicKeyAlt = "musics";
-    std::unordered_map<std::string, std::string> audios;
+    std::vector<std::string> audios;
+    std::unordered_map<std::string, TOMLLoader> loadedAudios;
 
     if (_tomlContent.hasKey(musicKey)) {
         Debug::getInstance() << "Fetching the content for '" << musicKey << "'." << std::endl;
@@ -385,58 +434,73 @@ void Main::_initialiseAudio()
     Debug::getInstance() << audio.getRawTOML() << std::endl;
 
 
-    std::string mainMenuPath = "assets/audio/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.ogg";
-    std::string bossFightPath = "assets/audio/2021-08-30_-_Boss_Time_-_www.FesliyanStudios.com.ogg";
-    std::string gameLoopPath = "assets/audio/FASTER-2020-03-22_-_A_Bit_Of_Hope_-_David_Fesliyan.ogg";
-    std::string shootingPath = "assets/audio/Laser-A1-www.fesliyanstudios.com.ogg";
-    std::string damagePath = "assets/audio/Undertale_Damage_Sound_Effect.ogg";
-    std::string deadPath = "assets/audio/Bomb-Explosion-Big-www.fesliyanstudios.com.ogg";
-    std::string buttonPath = "assets/audio/Game-Menu-Selection-Z-www.fesliyanstudios.com.ogg";
-    std::string gameOverPath = "assets/audio/game-over-arcade.ogg";
-    std::string successPath = "assets/audio/success-fanfare-trumpets-6185.ogg";
+    TOMLLoader tempNode(audio);
 
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> mainMenu = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, mainMenuPath, "Main Menu");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> bossFight = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, bossFightPath, "Boss Fight");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> gameLoop = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, gameLoopPath, "Game Loop");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> shooting = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, shootingPath, "Shooting");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> damage = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, damagePath, "Damage");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> dead = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, deadPath, "Dead");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> button = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, buttonPath, "Button");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> gameOver = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, gameOverPath, "Game Over");
-    _baseId++;
-    std::shared_ptr<GUI::ECS::Components::MusicComponents> success = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, successPath, "Success");
-    _baseId++;
+    audios.push_back("mainMenu");
+    audios.push_back("bossFight");
+    audios.push_back("gameLoop");
+    audios.push_back("shooting");
+    audios.push_back("damage");
+    audios.push_back("dead");
+    audios.push_back("button");
+    audios.push_back("gameOver");
+    audios.push_back("success");
 
+    const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
 
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(mainMenu);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(bossFight);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(gameLoop);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(shooting);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(damage);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(dead);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(button);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(gameOver);
-    _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(success);
+    Debug::getInstance() << "Getting the music configuration chunks" << std::endl;
+
+    for (std::string &iterator : audios) {
+        if (!audio.hasKey(iterator)) {
+            throw MyException::NoTOMLKey(tomlPath, iterator);
+        }
+        loadedAudios[iterator] = tempNode;
+        if (audio.getValueType(iterator) != toml::node_type::table) {
+            throw MyException::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
+        }
+        loadedAudios[iterator].update(audio.getTable(iterator));
+        if (!_isMusicConfigurationCorrect(loadedAudios[iterator])) {
+            std::string userConfig = loadedAudios[iterator].getTOMLString();
+            throw MyException::InvalidMusicConfiguration(userConfig, iterator);
+        }
+    }
+
+    Debug::getInstance() << "Initialising the musics" << std::endl;
+
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedAudios.begin(); it != loadedAudios.end(); ++it) {
+        std::string application = it->first;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int volume = 100;
+        bool loop = false;
+
+        if (_isKeyPresentAndOfCorrectType(it->second, "volume", toml::node_type::integer)) {
+            volume = it->second.getValue<int>("volume");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "loop", toml::node_type::boolean)) {
+            loop = it->second.getValue<bool>("loop");
+        }
+        std::shared_ptr<GUI::ECS::Components::MusicComponent> node = std::make_shared<GUI::ECS::Components::MusicComponent>(_baseId, path, name, application, volume, loop);
+        _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)].push_back(node);
+        _baseId++;
+    }
+
+    Debug::getInstance() << "The musics are loaded." << std::endl;
+    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
 }
 
 /**
  *@brief This is the function in charge of loading the fonts into the program.
  *
  */
-void Main::_initialiseFonts()
+std::uint32_t Main::_initialiseFonts()
 {
     TOMLLoader font(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
     const std::string fontKey = "font";
     const std::string fontKeyAlt = "fonts";
-    std::unordered_map<std::string, std::string> fonts;
+    std::unordered_map<std::string, TOMLLoader> loadedFonts;
 
     if (_tomlContent.hasKey(fontKey)) {
         Debug::getInstance() << "Fetching the content for '" << fontKey << "'." << std::endl;
@@ -476,24 +540,58 @@ void Main::_initialiseFonts()
         throw MyException::NoDefaultFontConfiguration(tomlPath);
     }
 
+    TOMLLoader tempNode(font);
 
-    TOMLLoader titleData(font);
-    TOMLLoader bodyData(font);
-    TOMLLoader defaultData(font);
+    loadedFonts["title"] = tempNode;
+    loadedFonts["body"] = tempNode;
+    loadedFonts["default"] = tempNode;
 
-    titleData.update(font.getTable(titleFontNode));
-    bodyData.update(font.getTable(bodyFontNode));
-    defaultData.update(font.getTable(defaultFontNode));
 
-    _isFontConfigurationCorrect(titleData);
-    _isFontConfigurationCorrect(bodyData);
-    _isFontConfigurationCorrect(defaultData);
+    loadedFonts["body"].update(font.getTable(titleFontNode));
+    loadedFonts["title"].update(font.getTable(bodyFontNode));
+    loadedFonts["default"].update(font.getTable(defaultFontNode));
 
-    std::string titleFontPath = "assets/font/Blox/TTF Fonts/Blox.ttf";
-    std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
-    _baseId++;
+    if (!_isFontConfigurationCorrect(loadedFonts["title"])) {
+        const std::string userConfig = loadedFonts["title"].getTOMLString();
+        const std::string fontName = titleFontNode;
+        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(loadedFonts["body"])) {
+        const std::string userConfig = loadedFonts["body"].getTOMLString();
+        const std::string fontName = bodyFontNode;
+        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(loadedFonts["default"])) {
+        const std::string userConfig = loadedFonts["default"].getTOMLString();
+        const std::string fontName = defaultFontNode;
+        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+    }
 
-    _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(titleFont);
+
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
+        std::string application = it->first;
+        Debug::getInstance() << "Font application = '" + application << std::endl;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int defaultSize = 50;
+        bool bold = false;
+        bool italic = false;
+
+        if (_isKeyPresentAndOfCorrectType(it->second, "default_size", toml::node_type::integer)) {
+            defaultSize = it->second.getValue<int>("default_size");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "bold", toml::node_type::boolean)) {
+            bold = it->second.getValue<bool>("bold");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
+            italic = it->second.getValue<bool>("italic");
+        }
+        std::shared_ptr<GUI::ECS::Utilities::Font> node = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, name, path, defaultSize, application, bold, italic);
+        _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(node);
+        _baseId++;
+    }
+    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
 }
 
 /**
@@ -520,17 +618,18 @@ void Main::_initialiseRessources()
     _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
 
-    _initialiseSprites();
-    _initialiseAudio();
-    _initialiseFonts();
+    _baseId = _initialiseSprites();
+    _baseId = _initialiseAudio();
+    _baseId = _initialiseFonts();
+    Debug::getInstance() << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
 void Main::_testContent()
 {
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)];
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
 
     for (unsigned int index = 0; index < musics.size(); index++) {
-        std::shared_ptr<GUI::ECS::Components::MusicComponents> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponents>>(musics[index]);
+        std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
         Debug::getInstance() << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
         music_ptr->play();
     }
@@ -543,20 +642,36 @@ void Main::_testContent()
  */
 void Main::_mainLoop()
 {
-    std::vector<sf::Keyboard::Key> keys;
+    // Get the window and event
     std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
     std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
 
     GUI::ECS::Utilities::Window &window = *window_ptr;
     GUI::ECS::Utilities::EventManager &event = *event_ptr;
 
+    // Get the fonts
+
+    std::shared_ptr<GUI::ECS::Utilities::Font> font_title_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][0]);
+    std::shared_ptr<GUI::ECS::Utilities::Font> font_body_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][1]);
+    std::shared_ptr<GUI::ECS::Utilities::Font> font_default_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][2]);
+
+    GUI::ECS::Utilities::Font &font_title = *font_title_ptr;
+    GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
+    GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
+
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Utilities::Colour::YellowGreen, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 50 });
+
     while (window.isOpen()) {
         event.processEvents(window);
         if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
             _testContent();
         }
-        window.clear();
+        sf::Vector2f mousePos = event.getMousePosition();
+        Debug::getInstance() << "Text Component: \n" << text << std::endl;
+        Debug::getInstance() << "Mouse position: (x: " << mousePos.x << ", y: " << mousePos.y << ")" << std::endl;
+        window.draw(text);
         window.display();
+        window.clear();
     }
 }
 

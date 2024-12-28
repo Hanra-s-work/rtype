@@ -19,8 +19,10 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Clock.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 
 namespace GUI
@@ -31,37 +33,58 @@ namespace GUI
         {
             class AnimationComponent : public EntityNode {
                 public:
-                AnimationComponent(const std::uint32_t entitynode = 0);
+                AnimationComponent();
+                AnimationComponent(const std::uint32_t entityId);
+                AnimationComponent(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                AnimationComponent(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::uint32_t entityId, const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
                 ~AnimationComponent();
-                virtual void setLoop(bool loop);
-                virtual void setReadReverse(bool reverse);
-                virtual void setDelay(float frameDuration);
-                virtual void setInitialFrame(std::uint32_t frameIndex);
 
-                virtual void setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
-                virtual void setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
-                virtual void setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                void setLoop(bool loop);
+                void setReadReverse(bool reverse);
+                void setDelay(float frameDuration);
+                void setInitialFrame(std::uint32_t frameIndex);
 
-                virtual void checkTick();
+                void setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                void setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                void setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
 
-                virtual bool hasTicked();
+                void checkTick();
 
-                virtual void update(const GUI::ECS::Components::AnimationComponent &copy);
+                void start();
 
-                virtual bool getLoop() const;
-                virtual bool getReadReverse() const;
-                virtual float getDelay() const;
-                virtual std::uint32_t getFrameCount() const;
-                virtual std::uint32_t getInitialFrame() const;
-                virtual std::uint32_t getCurrentFrame() const;
-                virtual GUI::ECS::Components::TextureComponent getCurrentTexture() const;
-                virtual std::vector<GUI::ECS::Components::TextureComponent> getFrames() const;
+                void stop();
+
+                const bool hasTicked();
+
+                void update(const GUI::ECS::Components::AnimationComponent &copy);
+
+                const bool getLoop() const;
+                const bool getReadReverse() const;
+                const float getDelay() const;
+                const std::uint32_t getFrameCount() const;
+                const std::uint32_t getInitialFrame() const;
+                const std::uint32_t getCurrentFrame() const;
+                const GUI::ECS::Components::TextureComponent getCurrentTexture() const;
+                const std::vector<GUI::ECS::Components::TextureComponent> getFrames() const;
+                /**
+                 *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 AnimationComponent &operator =(const GUI::ECS::Components::AnimationComponent &copy);
 
                 protected:
                 void _tick();
-                bool _loop;
+                bool _loop = false;
                 bool _hasTicked = false;
                 bool _readReverse;
                 std::uint32_t _frameDelay;
@@ -71,8 +94,17 @@ namespace GUI
                 GUI::ECS::Components::TextureComponent _baseTexture;
                 std::vector<GUI::ECS::Components::TextureComponent> _frames;
                 GUI::ECS::Components::TextureComponent _currentTexture;
-                std::chrono::_V2::steady_clock::time_point _lastTick = std::chrono::steady_clock::now();
+                GUI::ECS::Utilities::Clock _clock;
             };
+
+            /**
+             * @brief Outputs the animation's info to a stream.
+             * @param os The output stream.
+             * @param item The animation to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const AnimationComponent &item);
+
         }
     }
 }

@@ -58,20 +58,29 @@ void TOMLLoader::setTOMLPath(const std::string &tomlPath)
     _loadTOML();
 };
 
-bool TOMLLoader::isTOMLLoaded() const { return _tomlLoaded; };
+const bool TOMLLoader::isTOMLLoaded() const
+{
+    return _tomlLoaded;
+};
 
-std::string TOMLLoader::getTOMLPath() const
+const std::string TOMLLoader::getTOMLPath() const
 {
     return _tomlPath;
 };
 
-toml::table TOMLLoader::getRawTOML() const
+const std::string TOMLLoader::getTOMLString() const
+{
+    _ensureLoaded();
+    return _tomlString;
+};
+
+const toml::table TOMLLoader::getRawTOML() const
 {
     _ensureLoaded();
     return _toml;
 };
 
-toml::node_type TOMLLoader::getValueType(const std::string &key) const
+const toml::node_type TOMLLoader::getValueType(const std::string &key) const
 {
     _ensureLoaded();
     if (!hasKey(key)) {
@@ -80,7 +89,7 @@ toml::node_type TOMLLoader::getValueType(const std::string &key) const
     return _toml[key].type();
 }
 
-std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
+const std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
 {
     _ensureLoaded();
     toml::node_type nodeType = getValueType(key);
@@ -91,7 +100,12 @@ std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
     return "unknown";
 }
 
-std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
+const std::string TOMLLoader::getTypeAsString(const std::string &key) const
+{
+    return getValueTypeAsString(key);
+}
+
+const std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
 {
     auto it = _nodeTypeEquivalence.find(type);
     if (it != _nodeTypeEquivalence.end()) {
@@ -100,7 +114,7 @@ std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
     return "unknown";
 }
 
-bool TOMLLoader::hasKey(const std::string &key) const
+const bool TOMLLoader::hasKey(const std::string &key) const
 {
     _ensureLoaded();
     return _toml.contains(key);
@@ -168,30 +182,6 @@ void TOMLLoader::printTOML() const
     Debug::getInstance() << "TOML Contents:\n" + _tomlString << std::endl;
 };
 
-// template <typename T>
-// TOMLLoader &TOMLLoader::operator<<(const T &message)
-// {
-//     _ensureLoaded();
-//     std::lock_guard<std::mutex> lock(_mtx);
-//     _buffer << message;
-//     return *this;
-// };
-
-// TOMLLoader &TOMLLoader::operator<<(const std::string &message)
-// {
-//     _ensureLoaded();
-//     std::lock_guard<std::mutex> lock(_mtx);
-//     _buffer << message;
-//     return *this;
-// };
-
-// TOMLLoader &TOMLLoader::operator<<(std::ostream &(*os)(std::ostream &))
-// {
-//     _ensureLoaded();
-//     std::cout << _tomlString << os;
-//     return *this;
-// };
-
 TOMLLoader &TOMLLoader::operator=(const TOMLLoader &copy)
 {
     update(copy);
@@ -245,3 +235,9 @@ void TOMLLoader::_loadNodeTypeEquivalence()
     _nodeTypeEquivalence[toml::node_type::date_time] = "date_time";
     _nodeTypeEquivalence[toml::node_type::floating_point] = "floating_point";
 }
+
+std::ostream &operator<<(std::ostream &os, const TOMLLoader &node)
+{
+    os << node.getTOMLString();
+    return os;
+};

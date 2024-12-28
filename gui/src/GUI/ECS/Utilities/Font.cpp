@@ -193,6 +193,25 @@ const sf::Font &GUI::ECS::Utilities::Font::getFontInstance() const
     return _fontInstance;
 }
 
+const std::string GUI::ECS::Utilities::Font::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Font:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Bold: " + MyRecodes::myToString(_bold) + "\n";
+    result += indentation + "- Italic: " + MyRecodes::myToString(_italic) + "\n";
+    result += indentation + "- Font Name: '" + _fontName + "'\n";
+    result += indentation + "- Font Path: '" + _fontPath + "'\n";
+    result += indentation + "- Font instance set: " + MyRecodes::myToString(_fontInstanceSet) + "\n";
+    result += indentation + "- Font Application: '" + _fontApplication + "'\n";
+    result += indentation + "- Default Size: " + MyRecodes::myToString(_fontDefaultSize) + "\n";
+    return result;
+}
+
 void GUI::ECS::Utilities::Font::update(const sf::Font &font)
 {
     _fontInstance = font;
@@ -205,9 +224,13 @@ void GUI::ECS::Utilities::Font::update(const GUI::ECS::Utilities::Font &copy)
     _fontInstanceSet = true;
     _fontPath = copy.getFontPath();
     _fontName = copy.getFontName();
+    _fontApplication = copy.getApplication();
+    _bold = copy.isBold();
+    _italic = copy.isItalic();
+    _fontDefaultSize = copy.getDefaultSize();
 }
 
-bool GUI::ECS::Utilities::Font::isLoaded() const
+const bool GUI::ECS::Utilities::Font::isLoaded() const
 {
     return _fontInstanceSet;
 }
@@ -216,4 +239,10 @@ GUI::ECS::Utilities::Font &GUI::ECS::Utilities::Font::operator=(const GUI::ECS::
 {
     update(copy);
     return *this;
+}
+
+std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::Font &item)
+{
+    os << item.getInfo();
+    return os;
 }
