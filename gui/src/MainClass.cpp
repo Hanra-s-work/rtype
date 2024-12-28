@@ -480,8 +480,8 @@ std::uint32_t Main::_initialiseAudio()
         if (_isKeyPresentAndOfCorrectType(it->second, "loop", toml::node_type::boolean)) {
             loop = it->second.getValue<bool>("loop");
         }
-        std::shared_ptr<GUI::ECS::Components::MusicComponents> node = std::make_shared<GUI::ECS::Components::MusicComponents>(_baseId, path, name, application, volume, loop);
-        _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)].push_back(node);
+        std::shared_ptr<GUI::ECS::Components::MusicComponent> node = std::make_shared<GUI::ECS::Components::MusicComponent>(_baseId, path, name, application, volume, loop);
+        _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)].push_back(node);
         _baseId++;
     }
 
@@ -625,10 +625,10 @@ void Main::_initialiseRessources()
 
 void Main::_testContent()
 {
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponents)];
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
 
     for (unsigned int index = 0; index < musics.size(); index++) {
-        std::shared_ptr<GUI::ECS::Components::MusicComponents> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponents>>(musics[index]);
+        std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
         Debug::getInstance() << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
         music_ptr->play();
     }
@@ -658,9 +658,13 @@ void Main::_mainLoop()
     GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
     GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
 
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text d,jnpmazjeoazjeopazejopazejopazjeopazjoepjazoejazopejazopejaozpjeopazje", 40, sf::Color::White, sf::Color::Cyan, sf::Color::Yellow, { 20, 20 });
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text d,jnpmazjeoazjeopazejopazejopazjeopazjoepjazoejazopejazopejaozpjeopazje", 40, GUI::ECS::Utilities::Colour::White, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 20 });
+
+    Debug::getInstance() << "Text Component (before set visible): " << text << std::endl;
 
     text.setVisible(true);
+
+    Debug::getInstance() << "Text Component (after set visible): " << text << std::endl;
 
     while (window.isOpen()) {
         event.processEvents(window);

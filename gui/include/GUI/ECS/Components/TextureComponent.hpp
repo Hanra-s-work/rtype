@@ -17,6 +17,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/MouseInfo.hpp"
@@ -51,17 +52,34 @@ namespace GUI
 
                 void update(const TextureComponent &copy);
 
-                bool getVisible() const;
+                const bool getVisible() const;
                 const sf::Texture &getTexture() const;
-                GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
+                const GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
+                /**
+                 *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 TextureComponent &operator =(const GUI::ECS::Components::TextureComponent &copy);
 
                 private:
-                bool _visible;
+                bool _visible = true;
                 sf::Texture _texture;
                 GUI::ECS::Components::CollisionComponent _collisionInfo;
             };
+
+            /**
+             * @brief Outputs the texture's info to a stream.
+             * @param os The output stream.
+             * @param item The texture to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const TextureComponent &item);
         }
     }
 }

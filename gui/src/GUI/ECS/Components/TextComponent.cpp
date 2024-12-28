@@ -186,50 +186,74 @@ void GUI::ECS::Components::TextComponent::setVisible(const bool visible)
     _visible = visible;
 }
 
-GUI::ECS::Utilities::Font GUI::ECS::Components::TextComponent::getFont() const
+const GUI::ECS::Utilities::Font GUI::ECS::Components::TextComponent::getFont() const
 {
     return _font;
 }
 
-std::string GUI::ECS::Components::TextComponent::getFontPath() const
+const std::string GUI::ECS::Components::TextComponent::getFontPath() const
 {
     return _font.getFontPath();
 }
 
-GUI::ECS::Utilities::Colour GUI::ECS::Components::TextComponent::getNormalColor() const
+const GUI::ECS::Utilities::Colour GUI::ECS::Components::TextComponent::getNormalColor() const
 {
     return _color;
 }
 
-GUI::ECS::Utilities::Colour GUI::ECS::Components::TextComponent::getHoverColor() const
+const GUI::ECS::Utilities::Colour GUI::ECS::Components::TextComponent::getHoverColor() const
 {
     return _hoverColor;
 }
 
-GUI::ECS::Utilities::Colour GUI::ECS::Components::TextComponent::getClickedColor() const
+const GUI::ECS::Utilities::Colour GUI::ECS::Components::TextComponent::getClickedColor() const
 {
     return _clickedColor;
 }
 
-std::string GUI::ECS::Components::TextComponent::getText() const
+const std::string GUI::ECS::Components::TextComponent::getText() const
 {
     return _text;
 }
 
-std::uint32_t GUI::ECS::Components::TextComponent::getSize() const
+const std::uint32_t GUI::ECS::Components::TextComponent::getSize() const
 {
     return _size;
 }
 
-sf::Vector2f GUI::ECS::Components::TextComponent::getPosition() const
+const sf::Vector2f GUI::ECS::Components::TextComponent::getPosition() const
 {
     return _textPos.getPosition();
 }
 
-bool GUI::ECS::Components::TextComponent::getVisible() const
+const bool GUI::ECS::Components::TextComponent::getVisible() const
 {
     return _visible;
 }
+
+
+const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Text:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
+    result += indentation + "- Text: '" + _text + "'\n";
+    result += indentation + "- (sfText) Has text:" + MyRecodes::myToString(_sfTextComponent.has_value()) + "\n";
+    result += indentation + "- Size: " + MyRecodes::myToString(_size) + "\n";
+    result += indentation + "- Text Position: {\n" + _textPos.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Font: {\n" + _font.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Normal Color: {\n" + _color.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
+    return result;
+}
+
+
 
 void GUI::ECS::Components::TextComponent::render(sf::RenderWindow &window) const
 {
@@ -257,11 +281,6 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::Tex
     setPosition(copy.getPosition());
     setVisible(copy.getVisible());
     _processTextComponent();
-}
-
-const std::string GUI::ECS::Components::TextComponent::getInfo() const
-{
-    std::string result = "TextComponent Info:";
 }
 
 void GUI::ECS::Components::TextComponent::_loadFont()
@@ -299,3 +318,9 @@ GUI::ECS::Components::TextComponent &GUI::ECS::Components::TextComponent::operat
     }
     return *this;
 };
+
+std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::TextComponent &item)
+{
+    os << item.getInfo();
+    return os;
+}

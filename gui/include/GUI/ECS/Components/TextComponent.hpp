@@ -19,6 +19,7 @@
 #include <SFML/Graphics/Color.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Font.hpp"
 #include "GUI/ECS/Utilities/Colour.hpp"
@@ -63,28 +64,35 @@ namespace GUI
 
                 void setVisible(const bool visible);
 
-                GUI::ECS::Utilities::Font getFont() const;
+                const GUI::ECS::Utilities::Font getFont() const;
 
-                std::string getFontPath() const;
+                const std::string getFontPath() const;
 
-                GUI::ECS::Utilities::Colour getNormalColor() const;
-                GUI::ECS::Utilities::Colour getHoverColor() const;
-                GUI::ECS::Utilities::Colour getClickedColor() const;
+                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Utilities::Colour getClickedColor() const;
 
-                std::string getText() const;
+                const std::string getText() const;
 
-                std::uint32_t getSize() const;
+                const std::uint32_t getSize() const;
 
-                sf::Vector2f getPosition() const;
+                const sf::Vector2f getPosition() const;
 
-                bool getVisible() const;
+                const bool getVisible() const;
+                /**
+                 *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 void render(sf::RenderWindow &window) const;
 
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::TextComponent &copy);
-
-                const std::string getInfo() const;
 
                 GUI::ECS::Components::TextComponent &operator =(const GUI::ECS::Components::TextComponent &copy);
 
@@ -102,6 +110,15 @@ namespace GUI
                 GUI::ECS::Utilities::Colour _hoverColor = GUI::ECS::Utilities::Colour::Black;
                 GUI::ECS::Utilities::Colour _clickedColor = GUI::ECS::Utilities::Colour::Black;
             };
+
+            /**
+             * @brief Outputs the text's info to a stream.
+             * @param os The output stream.
+             * @param item The text to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const TextComponent &item);
+
         }
     }
 }

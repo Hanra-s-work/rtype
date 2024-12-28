@@ -144,13 +144,19 @@ const sf::Color GUI::ECS::Utilities::Colour::getColourSFML() const
 };
 
 
-const std::string GUI::ECS::Utilities::Colour::getInfo() const
+const std::string GUI::ECS::Utilities::Colour::getInfo(const unsigned int indent) const
 {
-    std::string result = "The vales of this colour are: ";
-    result += "Red: " + std::to_string(getRed()) + ", ";
-    result += "Green: " + std::to_string(getGreen()) + ", ";
-    result += "Blue: " + std::to_string(getBlue()) + ", ";
-    result += "Alpha: " + std::to_string(getAlpha());
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Colour:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += "Red: " + MyRecodes::myToString(getRed()) + ", ";
+    result += "Green: " + MyRecodes::myToString(getGreen()) + ", ";
+    result += "Blue: " + MyRecodes::myToString(getBlue()) + ", ";
+    result += "Alpha: " + MyRecodes::myToString(getAlpha());
     return result;
 };
 
@@ -294,7 +300,6 @@ const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::LavenderBlush1(25
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::LavenderBlush3(205, 193, 197);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::LavenderBlush2(238, 224, 229);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::LavenderBlush4(139, 131, 134);
-const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Maroon(176, 48, 96);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::HotPink3(205, 96, 144);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::VioletRed3(205, 50, 120);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::VioletRed1(255, 62, 150);
@@ -350,7 +355,7 @@ const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::DarkOrchid1(191, 
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::DarkOrchid3(154, 50, 205);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::DarkOrchid2(178, 58, 238);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::DarkOrchid4(104, 34, 139);
-const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Purple(160, 32, 240);
+const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Purple5(160, 32, 240);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Indigo(75, 0, 130);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::BlueViolet(138, 43, 226);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Purple2(145, 44, 238);
@@ -696,7 +701,6 @@ const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Salmon(250, 128, 
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::MistyRose3(205, 183, 181);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::White(255, 255, 255);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Gray100(255, 255, 255);
-const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Grey100(255, 255, 255);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Grey100(255, 255, 255);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Gray99(252, 252, 252);
 const GUI::ECS::Utilities::Colour GUI::ECS::Utilities::Colour::Grey99(252, 252, 252);

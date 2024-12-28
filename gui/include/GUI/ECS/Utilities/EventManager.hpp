@@ -20,6 +20,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Key.hpp"
 #include "GUI/ECS/Utilities/Window.hpp"
@@ -39,23 +40,32 @@ namespace GUI
                 void clearEvents();
                 void processEvents(GUI::ECS::Utilities::Window &window);
 
-                bool isMouseInFocus() const;
-                bool isLeftButtonClicked() const;
-                bool isRightButtonClicked() const;
+                const bool isMouseInFocus() const;
+                const bool isLeftButtonClicked() const;
+                const bool isRightButtonClicked() const;
 
-                bool isKeyPressed(const GUI::ECS::Utilities::Key &key) const;
+                const bool isKeyPressed(const GUI::ECS::Utilities::Key &key) const;
 
-                float getPositionX() const;
-                float getPositionY() const;
+                const float getPositionX() const;
+                const float getPositionY() const;
 
-                sf::Vector2f getMousePosition() const;
-                GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+                const sf::Vector2f getMousePosition() const;
+                const GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+
+                const std::vector<GUI::ECS::Utilities::Key> getKeys() const;
+                /**
+                 *@brief This is a function meant for debugging purposes
+                * It will dump the current state of the variables upon call.
+                * It will dump them for itself and any of it's underlying classes
+                *
+                * @param indent The level to which the class should be indented in the dump.
+                * @return const std::string The formatted output.
+                */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 void update(GUI::ECS::Utilities::Window &window);
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Utilities::EventManager &copy);
-
-                std::vector<GUI::ECS::Utilities::Key> getKeys() const;
 
                 EventManager &operator=(const GUI::ECS::Utilities::EventManager &copy);
 
@@ -64,6 +74,14 @@ namespace GUI
                 GUI::ECS::Utilities::KeyMapper _mapper;
                 std::vector<GUI::ECS::Utilities::Key> _keys;
             };
+
+            /**
+             * @brief Outputs the event's info to a stream.
+             * @param os The output stream.
+             * @param item The event to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const EventManager &item);
         }
     }
 }

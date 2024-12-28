@@ -10,6 +10,7 @@
 #include <SFML/Graphics/Font.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
@@ -50,11 +51,20 @@ namespace GUI
                 const std::string getApplication() const;
                 const unsigned int getDefaultSize() const;
                 const sf::Font &getFontInstance() const;
+                /**
+                  *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 void update(const sf::Font &font);
                 void update(const GUI::ECS::Utilities::Font &copy);
 
-                bool isLoaded() const;
+                const bool isLoaded() const;
 
                 GUI::ECS::Utilities::Font &operator =(const GUI::ECS::Utilities::Font &copy);
 
@@ -69,6 +79,15 @@ namespace GUI
                 std::string _fontApplication = "";
                 unsigned int _fontDefaultSize = 30;
             };
+
+
+            /**
+             * @brief Outputs the font's info to a stream.
+             * @param os The output stream.
+             * @param item The font to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const Font &item);
         }
     }
 }

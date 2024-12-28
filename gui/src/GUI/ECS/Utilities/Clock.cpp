@@ -21,7 +21,7 @@ GUI::ECS::Utilities::Clock::Clock(const std::uint32_t entityId)
 
 GUI::ECS::Utilities::Clock::~Clock() {}
 
-std::int64_t GUI::ECS::Utilities::Clock::reset()
+const std::int64_t GUI::ECS::Utilities::Clock::reset()
 {
     std::int64_t node = 0;
     if (_isRunning) {
@@ -32,7 +32,7 @@ std::int64_t GUI::ECS::Utilities::Clock::reset()
     return node;
 }
 
-std::int64_t GUI::ECS::Utilities::Clock::getElapsedTime() const
+const std::int64_t GUI::ECS::Utilities::Clock::getElapsedTime() const
 {
     return _clock.getElapsedTime().asMicroseconds();
 }
@@ -49,7 +49,28 @@ void GUI::ECS::Utilities::Clock::stop()
     _isRunning = false;
 }
 
-bool GUI::ECS::Utilities::Clock::isRunning() const
+const bool GUI::ECS::Utilities::Clock::isRunning() const
 {
     return _isRunning;
+}
+
+
+const std::string GUI::ECS::Utilities::Clock::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Clock:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Is Running: " + MyRecodes::myToString(isRunning()) + "\n";
+    result += indentation + "- Elapsed Time: " + MyRecodes::myToString(getElapsedTime()) + "\n";
+    return result;
+}
+
+std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::Clock &item)
+{
+    os << item.getInfo();
+    return os;
 }

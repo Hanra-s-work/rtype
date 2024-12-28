@@ -100,39 +100,31 @@ void GUI::ECS::Components::AnimationComponent::setAnimation(const GUI::ECS::Comp
     Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
 }
 
-bool GUI::ECS::Components::AnimationComponent::getLoop() const
+void GUI::ECS::Components::AnimationComponent::checkTick()
 {
-    return _loop;
+    if (_clock.getElapsedTime() >= _frameDelay) {
+        _tick();
+        _hasTicked = true;
+    }
 }
 
-bool GUI::ECS::Components::AnimationComponent::getReadReverse() const
+void GUI::ECS::Components::AnimationComponent::start()
 {
-    return _readReverse;
+    _clock.start();
 }
 
-float GUI::ECS::Components::AnimationComponent::getDelay() const
+void GUI::ECS::Components::AnimationComponent::stop()
 {
-    return _frameDelay;
+    _clock.stop();
 }
 
-std::uint32_t GUI::ECS::Components::AnimationComponent::getFrameCount() const
+const bool GUI::ECS::Components::AnimationComponent::hasTicked()
 {
-    return _totalFrames;
-}
-
-std::uint32_t GUI::ECS::Components::AnimationComponent::getInitialFrame() const
-{
-    return _frameInitial;
-}
-
-std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrame() const
-{
-    return _currentFrame;
-}
-
-std::vector<GUI::ECS::Components::TextureComponent> GUI::ECS::Components::AnimationComponent::getFrames() const
-{
-    return _frames;
+    if (_hasTicked) {
+        _hasTicked = false;
+        return true;
+    }
+    return false;
 }
 
 void GUI::ECS::Components::AnimationComponent::update(const GUI::ECS::Components::AnimationComponent &copy)
@@ -146,29 +138,72 @@ void GUI::ECS::Components::AnimationComponent::update(const GUI::ECS::Components
     _currentFrame = copy.getCurrentFrame();
 }
 
-void GUI::ECS::Components::AnimationComponent::checkTick()
+const bool GUI::ECS::Components::AnimationComponent::getLoop() const
 {
-    std::chrono::_V2::steady_clock::time_point  currentTick = std::chrono::steady_clock::now();
-    std::chrono::duration<float> elapsedTime = currentTick - _lastTick;
-
-    if (elapsedTime.count() >= _frameDelay) {
-        _tick();
-        _lastTick = currentTick;
-    }
+    return _loop;
 }
 
-bool GUI::ECS::Components::AnimationComponent::hasTicked()
+const bool GUI::ECS::Components::AnimationComponent::getReadReverse() const
 {
-    if (_hasTicked) {
-        _hasTicked = false;
-        return true;
-    }
-    return false;
+    return _readReverse;
 }
 
-GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getCurrentTexture() const
+const float GUI::ECS::Components::AnimationComponent::getDelay() const
+{
+    return _frameDelay;
+}
+
+const std::uint32_t GUI::ECS::Components::AnimationComponent::getFrameCount() const
+{
+    return _totalFrames;
+}
+
+const std::uint32_t GUI::ECS::Components::AnimationComponent::getInitialFrame() const
+{
+    return _frameInitial;
+}
+
+const std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrame() const
+{
+    return _currentFrame;
+}
+
+const GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getCurrentTexture() const
 {
     return _currentTexture;
+}
+
+const std::vector<GUI::ECS::Components::TextureComponent> GUI::ECS::Components::AnimationComponent::getFrames() const
+{
+    return _frames;
+}
+
+const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsigned int indent) const
+{
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "AnimationComponent:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Loop: " + MyRecodes::myToString(_loop) + "\n";
+    result += indentation + "- Has Ticked: " + MyRecodes::myToString(_hasTicked) + "\n";
+    result += indentation + "- Read Reverse: " + MyRecodes::myToString(_readReverse) + "\n";
+    result += indentation + "- Frame Delay: " + MyRecodes::myToString(_frameDelay) + "\n";
+    result += indentation + "- Frame Initial: " + MyRecodes::myToString(_frameInitial) + "\n";
+    result += indentation + "- Current Frame: " + MyRecodes::myToString(_currentFrame) + "\n";
+    result += indentation + "- Total Frames: " + MyRecodes::myToString(_totalFrames) + "\n";
+    result += indentation + "- Base texture: {\n" + _baseTexture.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Frames: {\n";
+    for (unsigned int i = 0; i < _frames.size(); i++) {
+        result += indentation + "\t" + MyRecodes::myToString(i) + ": {\n";
+        result += _frames[i].getInfo(indent + 2);
+        result += indentation + "\t}\n";
+    }
+    result += indentation + "}\n";
+    result += indentation + "Current Texture: {\n" + _currentTexture.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + "}\n";
+    return result;
 }
 
 GUI::ECS::Components::AnimationComponent &GUI::ECS::Components::AnimationComponent::operator=(const GUI::ECS::Components::AnimationComponent &copy)
@@ -198,4 +233,11 @@ void GUI::ECS::Components::AnimationComponent::_tick()
         _currentFrame = nextFrame;
     }
     _currentTexture = _frames[_currentFrame];
+}
+
+
+std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::AnimationComponent &item)
+{
+    os << item.getInfo();
+    return os;
 }

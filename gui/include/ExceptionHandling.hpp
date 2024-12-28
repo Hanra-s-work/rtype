@@ -14,6 +14,8 @@
 #include <string>
 #include <exception>
 
+#include "MyRecodes.hpp"
+
 namespace MyException
 {
     /**

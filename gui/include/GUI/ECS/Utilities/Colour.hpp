@@ -17,6 +17,7 @@
 #include <SFML/Graphics/Color.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
@@ -171,10 +172,14 @@ namespace GUI
                 const sf::Color getColourSFML() const;
 
                 /**
-                 * @brief Provides a human-readable string representation of the color.
-                 * @return A string describing the RGBA components.
-                 */
-                const std::string getInfo() const;
+                * @brief This is a function meant for debugging purposes
+                * It will dump the current state of the variables upon call.
+                * It will dump them for itself and any of it's underlying classes
+                *
+                * @param indent The level to which the class should be indented in the dump.
+                * @return const std::string The formatted output.
+                */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 /**
                  * @brief Clamps a value between a minimum and maximum range.
@@ -242,7 +247,6 @@ namespace GUI
                 static const Colour LavenderBlush3;
                 static const Colour LavenderBlush2;
                 static const Colour LavenderBlush4;
-                static const Colour Maroon;
                 static const Colour HotPink3;
                 static const Colour VioletRed3;
                 static const Colour VioletRed1;
@@ -298,7 +302,7 @@ namespace GUI
                 static const Colour DarkOrchid3;
                 static const Colour DarkOrchid2;
                 static const Colour DarkOrchid4;
-                static const Colour Purple;
+                static const Colour Purple5;
                 static const Colour Indigo;
                 static const Colour BlueViolet;
                 static const Colour Purple2;
@@ -644,7 +648,6 @@ namespace GUI
                 static const Colour MistyRose3;
                 static const Colour White;
                 static const Colour Gray100;
-                static const Colour Grey100;
                 static const Colour Grey100;
                 static const Colour Gray99;
                 static const Colour Grey99;

@@ -19,6 +19,8 @@
 #include <iomanip>
 #include <iostream>
 
+#include "MyRecodes.hpp"
+
 
  /**
   * @class Debug

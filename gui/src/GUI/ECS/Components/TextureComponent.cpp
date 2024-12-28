@@ -107,14 +107,27 @@ const sf::Texture &GUI::ECS::Components::TextureComponent::getTexture() const
     return _texture;
 }
 
-bool GUI::ECS::Components::TextureComponent::getVisible() const
+const bool GUI::ECS::Components::TextureComponent::getVisible() const
 {
     return _visible;
 }
 
-GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextureComponent::getCollisionInfo() const
+const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextureComponent::getCollisionInfo() const
 {
     return _collisionInfo;
+}
+
+const std::string GUI::ECS::Components::TextureComponent::getInfo(const unsigned int indent) const
+{
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Texture:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
+    result += indentation + "- Collision Info: \n" + _collisionInfo.getInfo(indent + 1) + "\n";
+    return result;
 }
 
 GUI::ECS::Components::TextureComponent &GUI::ECS::Components::TextureComponent::operator =(const GUI::ECS::Components::TextureComponent &copy)
@@ -124,3 +137,10 @@ GUI::ECS::Components::TextureComponent &GUI::ECS::Components::TextureComponent::
     }
     return *this;
 };
+
+
+std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::TextureComponent &item)
+{
+    os << item.getInfo();
+    return os;
+}

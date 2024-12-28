@@ -15,6 +15,9 @@
 #pragma once
 #include <unordered_map>
 #include <SFML/Window/Event.hpp>
+
+#include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
@@ -179,14 +182,29 @@ namespace GUI
                 const std::string stringKey(const sf::Keyboard::Key &keyCode) const;
                 const std::string stringKey(const sf::Keyboard::Scancode &keyCode) const;
                 const std::string stringKey(const GUI::ECS::Utilities::Key &keyCode) const;
-
-
+                /**
+                  *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 private:
                 std::unordered_map<sf::Keyboard::Key, Key> _sfmlKeyToCustom;
                 std::unordered_map<sf::Keyboard::Scancode, Key> _sfmlScanCodeToCustom;
                 std::unordered_map<Key, std::string> _keyCodeEquivalence;
             };
+
+            /**
+             * @brief Outputs the keyMapper's info to a stream.
+             * @param os The output stream.
+             * @param item The keyMapper to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const KeyMapper &item);
 
         }
     }

@@ -20,6 +20,7 @@
 #include <toml++/toml.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 
  /**

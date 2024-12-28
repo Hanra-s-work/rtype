@@ -13,6 +13,7 @@
 #pragma once
 #include <cstdint>
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI

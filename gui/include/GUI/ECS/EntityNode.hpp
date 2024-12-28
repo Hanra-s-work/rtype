@@ -13,7 +13,9 @@
 
 #pragma once
 #include <cstdint>
+
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 
 namespace GUI
 {
