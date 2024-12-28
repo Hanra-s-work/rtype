@@ -226,7 +226,7 @@ jobs:
 
       - name: Inject external html ressources if html is present
         run: |
-          if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION}}/html" ]; then
+          if [ -e "${{env.TEMPORARY_FOLDER}}/${{env.OUTPUT_GENERATION}}/html" ]; then
             CWD=$(pwd)
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html"
             if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files" ]; then
@@ -325,7 +325,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload selected content
-          path: ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}
+          path: ${{env.OUTPUT_GENERATION}}/documentation/${{env.HTML_GENERATION}}
           name: "github-pages"
 
       - name: Deploy to GitHub Pages
