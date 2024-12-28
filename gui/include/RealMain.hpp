@@ -40,9 +40,33 @@
   */
 class Main {
   public:
+  /**
+   * @brief Constructor for the Main class.
+   * @param ip The IP address to use for connections (default: "127.0.0.1").
+   * @param port The port number to use for connections (default: 5000).
+   * @param windowWidth The width of the application window (default: 800).
+   * @param windowHeight The height of the application window (default: 600).
+   * @param windowCursor Whether the cursor should be visible (default: true).
+   * @param windowFullscreen Whether the window should start in fullscreen mode (default: false).
+   * @param windowTitle The title of the window (default: "R-Type").
+   * @param windowX The X position of the window (default: 0).
+   * @param windowY The Y position of the window (default: 0).
+   * @param windowCursorIcon Path to the cursor icon image (default: "NULL").
+   * @param imageIsSprite Whether the cursor is rendered as a sprite (default: false).
+   * @param spriteStartTop Whether the sprite rendering starts from the top (default: false).
+   * @param spriteStartLeft Whether the sprite rendering starts from the left (default: false).
+   * @param spriteWidth The width of the sprite (default: 20).
+   * @param spriteHeight The height of the sprite (default: 20).
+   * @param frameLimit The frame rate limit for the application (default: 60).
+   * @param configFilePath Path to the configuration file (default: "client_config.toml").
+   * @param debug Whether debug mode is enabled (default: false).
+   */
   Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string configFilePath = "client_config.toml", bool debug = false);
   ~Main();
+
   void run();
+
+  // Setters 
   void setIp(const std::string &ip);
   void setPort(const unsigned int port);
   void setWindowWidth(unsigned int width);
@@ -61,6 +85,8 @@ class Main {
   void setFrameLimit(unsigned int frameLimit);
   void setConfigFile(const std::string &configFile);
   void setDebug(bool debug);
+
+  // Getters
   const std::string getIp();
   const unsigned int getPort();
   unsigned int  getWindowWidth();
@@ -81,6 +107,7 @@ class Main {
   std::tuple<unsigned int, unsigned int> getWindowSize();
 
   private:
+  // Private helper methods
   void _loadToml();
   void _mainLoop();
   std::string _lowerText(const std::string &text);
@@ -103,6 +130,7 @@ class Main {
 
   void _closeConnection();
 
+  // Private members
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
   std::string _ip;
   unsigned int _port;
