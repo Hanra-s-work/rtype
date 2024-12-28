@@ -67,16 +67,28 @@ std::vector<std::string> extract_argument(char *arg)
  * @param main The main class, initialised.
  * @param args The current argument
  * @param binName The name of the program binary.
+ *
+ * @throws MyException::HelpFound(); This is an information that allows the program to know that the help flag was passed.
+ * @throws MyException::VersionFound(); This is an information that allows the program to know that the version flag was passed.
+ * @throws MyException::InvalidPort(args[1]); This is an error informing the user that the port value they passed is invalid.
+ * @throws MyException::NoFlagParameter(args[0]); This is an error informing the user that a parameter was expected for the flag but was not found.
+ * @throws MyException::UnknownArgument(args[0]); This is an error informing the user that the flag they passed is unknown.
+ * @throws MyException::InvalidFrameLimit(args[1]); This is an error informing the user that the frame limit that was passed is invalid.
+ * @throws MyException::InvalidWindowWidth(args[1]); This is an error informing the user that the value for the window's width is invalid.
+ * @throws MyException::InvalidWindowHeight(args[1]); This is an error informing the user the the value for the window's height is invalid.
  */
 void process_given_argument(Main &main, const std::vector<std::string> &args, std::string const &binName)
 {
     if (args[0] == "help" || args[0] == "h" || args[0] == "?") {
         DisplayHelp(binName);
         throw MyException::HelpFound();
+    } else if (args[0] == "version" || args[0] == "v") {
+        DisplayVersion(false);
+        throw MyException::VersionFound();
     } else if (args[0] == "ip" || args[0] == "i") {
         Debug::getInstance() << "Ip is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
-            std::cerr << "Error: Port number is required" << std::endl;
+            std::cerr << "Error: Ip value is required" << std::endl;
             throw MyException::NoFlagParameter(args[0]);
         }
         main.setIp(args[1]);
@@ -92,11 +104,11 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidPort(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidPort(args[1]);
         }
         main.setPort(port);
     } else if (args[0] == "debug" || args[0] == "d") {
@@ -117,11 +129,11 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidWindowWidth(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidWindowWidth(args[1]);
         }
         main.setWindowWidth(windowWidth);
     } else if (args[0] == "window-height" || args[0] == "wh" || args[0] == "windowheight") {
@@ -136,11 +148,11 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidWindowHeight(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::PortIncorrect(args[1]);
+            throw MyException::InvalidWindowHeight(args[1]);
         }
         main.setWindowHeight(windowHeight);
     } else if (args[0] == "frame-rate-limit" || args[0] == "frl" || args[0] == "frameratelimit") {
@@ -213,6 +225,7 @@ int RealMain(int argc, char **argv)
 {
     int status = SUCCESS;
     bool help_found = false;
+    bool version_found = false;
 
     Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, "client_config.toml", false);
 
@@ -225,13 +238,18 @@ int RealMain(int argc, char **argv)
             help_found = true;
             Debug::getInstance() << "Help was found: '" << e.what() << "'." << std::endl;
         }
+        catch (const MyException::VersionFound &e) {
+            status = SUCCESS;
+            version_found = true;
+            Debug::getInstance() << "Version was found: '" << e.what() << "'." << std::endl;
+        }
         catch (const std::exception &e) {
             status = ERROR;
             std::cerr << "An error occurred: '" << e.what() << "'." << std::endl;
         }
     }
 
-    if (help_found || status == ERROR) {
+    if (help_found || version_found || status == ERROR) {
         return status;
     }
 

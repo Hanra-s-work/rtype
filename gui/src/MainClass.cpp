@@ -77,13 +77,13 @@ Main::Main(
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::IpIncorrect(ip);
+        throw MyException::InvalidIp(ip);
     }
     Debug::getInstance() << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::PortIncorrect(std::to_string(port));
+        throw MyException::InvalidPort(std::to_string(port));
     }
     Debug::getInstance() << "Processing cursor icon" << std::endl;
     std::string windowText = _lowerText(windowCursorIcon);
@@ -140,7 +140,7 @@ std::string Main::_lowerText(const std::string &text)
  * @return true The ip is correct
  * @return false The ip is incorrect
  */
-bool Main::_isIpInRange(const std::string &ip)
+const bool Main::_isIpInRange(const std::string &ip) const
 {
     std::istringstream iss(ip);
     std::string segment;
@@ -172,7 +172,7 @@ bool Main::_isIpInRange(const std::string &ip)
  * @return true The port is correct.
  * @return false The port is incorrect.
  */
-bool Main::_isPortCorrect(const unsigned int port)
+const bool Main::_isPortCorrect(const unsigned int port) const
 {
     return port >= 0 && port <= 65535;
 }
@@ -184,7 +184,7 @@ bool Main::_isPortCorrect(const unsigned int port)
  * @return true The path is present
  * @return false The path is not present
  */
-bool Main::_isFilePresent(const std::string &filepath)
+const bool Main::_isFilePresent(const std::string &filepath) const
 {
     return std::ifstream(filepath).good();
 }
@@ -196,9 +196,74 @@ bool Main::_isFilePresent(const std::string &filepath)
  * @return true
  * @return false
  */
-bool Main::_isFrameLimitCorrect(unsigned int frameLimit)
+const bool Main::_isFrameLimitCorrect(const unsigned int frameLimit) const
 {
     if (frameLimit < 10 || frameLimit > 1000) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ *@brief Check if a font configuration is correct.
+ *
+ * @param node
+ * @return true
+ * @return false
+ */
+const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
+{
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string)
+        ) {
+        return false;
+    }
+
+    return true;
+}
+
+
+/**
+ *@brief Check if a music configuration is correct.
+ *
+ * @param node
+ * @return true
+ * @return false
+ */
+const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
+{
+    return true;
+}
+
+/**
+ *@brief Check if a sprite configuration is correct.
+ *
+ * @param node
+ * @return true
+ * @return false
+ */
+const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
+{
+    return true;
+}
+
+
+/**
+ *@brief This is a generic function that will check if a given key is present and that the type of the value is correct.
+ *
+ * @param node
+ * @param key
+ * @param valueType
+ * @return true
+ * @return false
+ */
+const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std::string &key, const toml::node_type &valueType) const
+{
+    if (!node.hasKey(key)) {
+        return false;
+    }
+    if (node.getValueType(key) != valueType) {
         return false;
     }
     return true;
@@ -234,19 +299,48 @@ void Main::_closeConnection()
  */
 void Main::_initialiseSprites()
 {
-
+    TOMLLoader sprites(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string spriteSheetKey = "spritesheets";
+    const std::string spriteSheetKeyAlt = "spritesheet";
     std::unordered_map<std::string, std::string> spritesheets;
 
-    unsigned int frameWidth = 20;
-    unsigned int frameHeight = 20;
-    bool startLeft = true;
-    bool startTop = true;
+    if (_tomlContent.hasKey(spriteSheetKey)) {
+        Debug::getInstance() << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
+        if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
+            sprites = _tomlContent.getTable(spriteSheetKey);
+        } else {
+            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
+        Debug::getInstance() << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
+        if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
+            sprites = _tomlContent.getTable(spriteSheetKey);
+        } else {
+            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else {
+        Debug::getInstance() << "The key " << spriteSheetKey << " is missing from the config file, " <<
+            "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
+        throw MyException::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
+    }
+
+    Debug::getInstance() << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
 
     spritesheets["r-typesheet1"] = "assets/img/r-typesheet1.gif";
 
+    bool startTop = true;
+    bool startLeft = true;
+    unsigned int frameWidth = 0;
+    unsigned int frameHeight = 0;
+
     for (const auto &[name, info] : spritesheets) {
         std::string path = info;
-        GUI::ECS::Components::CollisionComponent collision(0);
+        GUI::ECS::Components::CollisionComponent collision(_baseId);
+        collision.setHeight(frameWidth);
+        collision.setWidth(frameHeight);
         GUI::ECS::Components::AnimationComponent animation(_baseId);
         animation.setAnimation(path, frameWidth, frameHeight, startLeft, startTop);
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> nodeSprite = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, collision, animation);
@@ -260,6 +354,37 @@ void Main::_initialiseSprites()
  */
 void Main::_initialiseAudio()
 {
+    TOMLLoader audio(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string musicKey = "music";
+    const std::string musicKeyAlt = "musics";
+    std::unordered_map<std::string, std::string> audios;
+
+    if (_tomlContent.hasKey(musicKey)) {
+        Debug::getInstance() << "Fetching the content for '" << musicKey << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
+        if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
+            audio = _tomlContent.getTable(musicKey);
+        } else {
+            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else if (_tomlContent.hasKey(musicKeyAlt)) {
+        Debug::getInstance() << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
+        if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
+            audio = _tomlContent.getTable(musicKey);
+        } else {
+            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else {
+        Debug::getInstance() << "The key " << musicKey << " is missing from the config file, " <<
+            "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
+        throw MyException::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
+    }
+
+    Debug::getInstance() << audio.getRawTOML() << std::endl;
+
+
     std::string mainMenuPath = "assets/audio/2019-12-11_-_Retro_Platforming_-_David_Fesliyan.ogg";
     std::string bossFightPath = "assets/audio/2021-08-30_-_Boss_Time_-_www.FesliyanStudios.com.ogg";
     std::string gameLoopPath = "assets/audio/FASTER-2020-03-22_-_A_Bit_Of_Hope_-_David_Fesliyan.ogg";
@@ -307,7 +432,64 @@ void Main::_initialiseAudio()
  */
 void Main::_initialiseFonts()
 {
-    std::string titleFontPath = "assets/font/Color Basic/TTF Fonts/color_basic.ttf";
+    TOMLLoader font(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string fontKey = "font";
+    const std::string fontKeyAlt = "fonts";
+    std::unordered_map<std::string, std::string> fonts;
+
+    if (_tomlContent.hasKey(fontKey)) {
+        Debug::getInstance() << "Fetching the content for '" << fontKey << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
+        if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
+            font = _tomlContent.getTable(fontKey);
+        } else {
+            throw MyException::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else if (_tomlContent.hasKey(fontKeyAlt)) {
+        Debug::getInstance() << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
+        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
+        if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
+            font = _tomlContent.getTable(fontKey);
+        } else {
+            throw MyException::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        }
+    } else {
+        Debug::getInstance() << "The key " << fontKey << " is missing from the config file, " <<
+            "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
+        throw MyException::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
+    }
+
+    Debug::getInstance() << font.getRawTOML() << std::endl;
+
+    const std::string titleFontNode = "title";
+    const std::string bodyFontNode = "body";
+    const std::string defaultFontNode = "default";
+
+    if (!font.hasKey(titleFontNode)) {
+        throw MyException::NoTitleFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(bodyFontNode)) {
+        throw MyException::NoBodyFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(defaultFontNode)) {
+        throw MyException::NoDefaultFontConfiguration(tomlPath);
+    }
+
+
+    TOMLLoader titleData(font);
+    TOMLLoader bodyData(font);
+    TOMLLoader defaultData(font);
+
+    titleData.update(font.getTable(titleFontNode));
+    bodyData.update(font.getTable(bodyFontNode));
+    defaultData.update(font.getTable(defaultFontNode));
+
+    _isFontConfigurationCorrect(titleData);
+    _isFontConfigurationCorrect(bodyData);
+    _isFontConfigurationCorrect(defaultData);
+
+    std::string titleFontPath = "assets/font/Blox/TTF Fonts/Blox.ttf";
     std::shared_ptr<GUI::ECS::Utilities::Font> titleFont = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, "Color Basic", titleFontPath);
     _baseId++;
 
@@ -397,7 +579,7 @@ void Main::run()
  *
  * @param ip : std::string
  *
- * @throws MyException::IpIncorrect(ip) : This error is thrown
+ * @throws MyException::IncorrectIp(ip) : This error is thrown
  * if the ip format is wrong.
  */
 void Main::setIp(const std::string &ip)
@@ -405,7 +587,7 @@ void Main::setIp(const std::string &ip)
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::IpIncorrect(ip);
+        throw MyException::InvalidIp(ip);
     }
 }
 
@@ -413,7 +595,7 @@ void Main::setIp(const std::string &ip)
  *@brief Set the port on which the GUI is going to connect to.
  *
  * @param port
- * @throws MyException::PortIncorrect(port) This error is thrown
+ * @throws MyException::InvalidPort(port) This error is thrown
  * if the port format is incorrect
  */
 void Main::setPort(const unsigned int port)
@@ -421,7 +603,7 @@ void Main::setPort(const unsigned int port)
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::PortIncorrect(std::to_string(port));
+        throw MyException::InvalidPort(std::to_string(port));
     }
 }
 

@@ -368,6 +368,14 @@ default_size = 50
 bold = false
 italic = false
 
+# The font that will be defaulted to when no other font is specified or available
+[font.default]
+name = "6809 Chargen"
+path = "assets/font/Joystix/TTF Fonts/6809_chargen.ttf"
+default_size = 50
+bold = false
+italic = false
+
 # The music
 [music]
 

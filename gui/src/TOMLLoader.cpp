@@ -12,9 +12,44 @@
 
 #include "TOMLLoader.hpp"
 
+TOMLLoader::TOMLLoader()
+{
+    _loadNodeTypeEquivalence();
+};
+
 TOMLLoader::TOMLLoader(const std::string &tomlPath)
 {
     setTOMLPath(tomlPath);
+    _loadNodeTypeEquivalence();
+};
+
+TOMLLoader::TOMLLoader(const TOMLLoader &tomlInstance)
+{
+    update(tomlInstance);
+};
+
+TOMLLoader::TOMLLoader(const toml::table &tomlTable, const std::string &tomlPath)
+{
+    _toml = tomlTable;
+    _tomlLoaded = true;
+    _tomlPath = tomlPath;
+    _loadNodeTypeEquivalence();
+};
+
+TOMLLoader::TOMLLoader(const toml::array &tomlArray, const std::string &tomlPath)
+{
+    _tomlLoaded = true;
+    update(tomlArray);
+    _tomlPath = tomlPath;
+    _loadNodeTypeEquivalence();
+};
+
+TOMLLoader::TOMLLoader(const toml::array &tomlArray, const std::string &key, const std::string &tomlPath)
+{
+    _tomlLoaded = true;
+    update(tomlArray);
+    _tomlPath = tomlPath;
+    _loadNodeTypeEquivalence();
 };
 
 void TOMLLoader::setTOMLPath(const std::string &tomlPath)
@@ -36,15 +71,34 @@ toml::table TOMLLoader::getRawTOML() const
     return _toml;
 };
 
-template <typename T>
-T TOMLLoader::getValue(const std::string &key) const
+toml::node_type TOMLLoader::getValueType(const std::string &key) const
 {
     _ensureLoaded();
-    if (auto value = _toml[key].value<T>()) {
-        return *value;
+    if (!hasKey(key)) {
+        throw MyException::NoTOMLKey(_tomlPath, key);
     }
-    throw MyException::NoTOMLKey(_tomlPath, key);
-};
+    return _toml[key].type();
+}
+
+std::string TOMLLoader::getValueTypeAsString(const std::string &key) const
+{
+    _ensureLoaded();
+    toml::node_type nodeType = getValueType(key);
+    auto it = _nodeTypeEquivalence.find(nodeType);
+    if (it != _nodeTypeEquivalence.end()) {
+        return it->second;
+    }
+    return "unknown";
+}
+
+std::string TOMLLoader::getTypeAsString(const toml::node_type &type) const
+{
+    auto it = _nodeTypeEquivalence.find(type);
+    if (it != _nodeTypeEquivalence.end()) {
+        return it->second;
+    }
+    return "unknown";
+}
 
 bool TOMLLoader::hasKey(const std::string &key) const
 {
@@ -80,6 +134,34 @@ toml::array TOMLLoader::getArray(const std::string &key) const
     throw MyException::NoTOMLKey(_tomlPath, key);
 };
 
+void TOMLLoader::update(const TOMLLoader &copy)
+{
+    _tomlLoaded = copy.isTOMLLoaded();
+    if (!_tomlLoaded) {
+        return;
+    }
+    _tomlPath = copy.getTOMLPath();
+    _toml = copy.getRawTOML();
+}
+
+void TOMLLoader::update(const toml::table &copy)
+{
+    _toml = copy;
+    _tomlLoaded = true;
+}
+
+void TOMLLoader::update(const toml::array &copy)
+{
+    _toml = toml::table{ {"array", copy} };
+    _tomlLoaded = true;
+}
+
+void TOMLLoader::update(const toml::array &copy, const std::string &key)
+{
+    _toml = toml::table{ {key, copy} };
+    _tomlLoaded = true;
+}
+
 void TOMLLoader::printTOML() const
 {
     _ensureLoaded();
@@ -110,6 +192,24 @@ void TOMLLoader::printTOML() const
 //     return *this;
 // };
 
+TOMLLoader &TOMLLoader::operator=(const TOMLLoader &copy)
+{
+    update(copy);
+    return *this;
+}
+
+TOMLLoader &TOMLLoader::operator=(const toml::table &copy)
+{
+    update(copy);
+    return *this;
+}
+
+TOMLLoader &TOMLLoader::operator=(const toml::array &copy)
+{
+    update(copy);
+    return *this;
+}
+
 void TOMLLoader::_loadTOML()
 {
     _tomlLoaded = false;
@@ -132,5 +232,16 @@ void TOMLLoader::_ensureLoaded() const
     }
 };
 
-
-
+void TOMLLoader::_loadNodeTypeEquivalence()
+{
+    _nodeTypeEquivalence[toml::node_type::none] = "none";
+    _nodeTypeEquivalence[toml::node_type::date] = "date";
+    _nodeTypeEquivalence[toml::node_type::time] = "time";
+    _nodeTypeEquivalence[toml::node_type::table] = "table";
+    _nodeTypeEquivalence[toml::node_type::array] = "array";
+    _nodeTypeEquivalence[toml::node_type::string] = "string";
+    _nodeTypeEquivalence[toml::node_type::integer] = "integer";
+    _nodeTypeEquivalence[toml::node_type::boolean] = "boolean";
+    _nodeTypeEquivalence[toml::node_type::date_time] = "date_time";
+    _nodeTypeEquivalence[toml::node_type::floating_point] = "floating_point";
+}

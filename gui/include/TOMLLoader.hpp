@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <unordered_map>
 #include <toml++/toml.hpp>
 
 #include "Debug.hpp"
@@ -23,8 +24,12 @@
 
 class TOMLLoader {
     public:
-    TOMLLoader() = default;
+    TOMLLoader();
     TOMLLoader(const std::string &tomlPath);
+    TOMLLoader(const TOMLLoader &tomlInstance);
+    TOMLLoader(const toml::table &tomlTable, const std::string &tomlPath);
+    TOMLLoader(const toml::array &tomlArray, const std::string &tomlPath);
+    TOMLLoader(const toml::array &tomlArray, const std::string &key, const std::string &tomlPath);
 
     ~TOMLLoader() = default;
 
@@ -36,8 +41,21 @@ class TOMLLoader {
 
     toml::table getRawTOML() const;
 
+    // Do not move this function code or compilation issues will arise.
     template <typename T>
-    T getValue(const std::string &key) const;
+    T getValue(const std::string &key) const
+    {
+        _ensureLoaded();
+        if (auto value = _toml[key].value<T>()) {
+            return *value;
+        }
+        throw MyException::NoTOMLKey(_tomlPath, key);
+    };
+
+    toml::node_type getValueType(const std::string &key) const;
+
+    std::string getValueTypeAsString(const std::string &key) const;
+    std::string getTypeAsString(const toml::node_type &type) const;
 
     bool hasKey(const std::string &key) const;
 
@@ -47,22 +65,52 @@ class TOMLLoader {
 
     toml::array getArray(const std::string &key) const;
 
+    void update(const TOMLLoader &copy);
+    void update(const toml::table &copy);
+    void update(const toml::array &copy);
+    void update(const toml::array &copy, const std::string &key);
+
     void printTOML() const;
 
-    // template <typename T>
-    // TOMLLoader &operator<<(const T &message);
-    // TOMLLoader &operator<<(const std::string &message);
-    // TOMLLoader &operator<<(std::ostream &(*os)(std::ostream &));
+    // template <typename O>
+    // TOMLLoader &operator<<(const O &message)
+    // {
+    //     _ensureLoaded();
+    //     std::lock_guard<std::mutex> lock(_mtx);
+    //     _buffer << message;
+    //     return *this;
+    // };
+
+    // TOMLLoader &operator<<(const std::string &message)
+    // {
+    //     _ensureLoaded();
+    //     std::lock_guard<std::mutex> lock(_mtx);
+    //     _buffer << message;
+    //     return *this;
+    // };
+
+    // TOMLLoader &operator<<(std::ostream &(*os)(std::ostream &))
+    // {
+    //     _ensureLoaded();
+    //     std::cout << _tomlString << os;
+    //     return *this;
+    // };
+
+    TOMLLoader &operator=(const TOMLLoader &copy);
+    TOMLLoader &operator=(const toml::table &copy);
+    TOMLLoader &operator=(const toml::array &copy);
 
     private:
     void _loadTOML();
     void _ensureLoaded() const;
+    void _loadNodeTypeEquivalence();
 
-    std::string _tomlPath;
-    bool _tomlLoaded = false;
     toml::table _toml;
+    bool _tomlLoaded = false;
+    std::string _tomlPath = "";
     std::string _tomlString = "";
 
     std::mutex _mtx;
     std::ostringstream _buffer;
+    std::unordered_map<toml::node_type, std::string> _nodeTypeEquivalence;
 };
