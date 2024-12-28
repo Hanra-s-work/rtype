@@ -7,8 +7,9 @@
 
 /**
  * @file TOMLLoader.hpp
- * @brief This is the file in charge of containing the class that will handle the loading and navigation of the TOML language.
+ * @brief Contains the TOMLLoader class responsible for handling loading and navigation of the TOML format.
  */
+
 
 #pragma once
 
@@ -22,6 +23,10 @@
 #include "Debug.hpp"
 #include "ExceptionHandling.hpp"
 
+ /**
+  * @class TOMLLoader
+  * @brief A utility class for loading, navigating, and interacting with TOML files.
+  */
 class TOMLLoader {
     public:
     TOMLLoader();
@@ -76,30 +81,6 @@ class TOMLLoader {
 
     void printTOML() const;
 
-    // template <typename O>
-    // TOMLLoader &operator<<(const O &message)
-    // {
-    //     _ensureLoaded();
-    //     std::lock_guard<std::mutex> lock(_mtx);
-    //     _buffer << message;
-    //     return *this;
-    // };
-
-    // TOMLLoader &operator<<(const std::string &message)
-    // {
-    //     _ensureLoaded();
-    //     std::lock_guard<std::mutex> lock(_mtx);
-    //     _buffer << message;
-    //     return *this;
-    // };
-
-    // TOMLLoader &operator<<(std::ostream &(*os)(std::ostream &))
-    // {
-    //     _ensureLoaded();
-    //     std::cout << _tomlString << os;
-    //     return *this;
-    // };
-
     TOMLLoader &operator=(const TOMLLoader &copy);
     TOMLLoader &operator=(const toml::table &copy);
     TOMLLoader &operator=(const toml::array &copy);
@@ -118,3 +99,5 @@ class TOMLLoader {
     std::ostringstream _buffer;
     std::unordered_map<toml::node_type, std::string> _nodeTypeEquivalence;
 };
+
+std::ostream &operator<<(std::ostream &os, const TOMLLoader &node);

@@ -182,30 +182,6 @@ void TOMLLoader::printTOML() const
     Debug::getInstance() << "TOML Contents:\n" + _tomlString << std::endl;
 };
 
-// template <typename T>
-// TOMLLoader &TOMLLoader::operator<<(const T &message)
-// {
-//     _ensureLoaded();
-//     std::lock_guard<std::mutex> lock(_mtx);
-//     _buffer << message;
-//     return *this;
-// };
-
-// TOMLLoader &TOMLLoader::operator<<(const std::string &message)
-// {
-//     _ensureLoaded();
-//     std::lock_guard<std::mutex> lock(_mtx);
-//     _buffer << message;
-//     return *this;
-// };
-
-// TOMLLoader &TOMLLoader::operator<<(std::ostream &(*os)(std::ostream &))
-// {
-//     _ensureLoaded();
-//     std::cout << _tomlString << os;
-//     return *this;
-// };
-
 TOMLLoader &TOMLLoader::operator=(const TOMLLoader &copy)
 {
     update(copy);
@@ -259,3 +235,9 @@ void TOMLLoader::_loadNodeTypeEquivalence()
     _nodeTypeEquivalence[toml::node_type::date_time] = "date_time";
     _nodeTypeEquivalence[toml::node_type::floating_point] = "floating_point";
 }
+
+std::ostream &operator<<(std::ostream &os, const TOMLLoader &node)
+{
+    os << node.getTOMLString();
+    return os;
+};
