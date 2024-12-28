@@ -316,8 +316,8 @@ const std::string GUI::ECS::Components::CollisionComponent::getInfo(const unsign
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Hovered: " + MyRecodes::myToString(_isHovered) + "\n";
     result += indentation + "- Clicked: " + MyRecodes::myToString(_isClicked) + "\n";
-    result += indentation + "- Position: ( x: " + MyRecodes::myToString(_posX) + ", y: " + MyRecodes::myToString(_posY) + ")\n";
-    result += indentation + "- Dimensions: ( width: " + MyRecodes::myToString(_width) + ", height: " + MyRecodes::myToString(_height) + ")\n";
+    result += indentation + "- Position: ( x: " + MyRecodes::myToString(_posX) + ", y: " + MyRecodes::myToString(_posY) + " )\n";
+    result += indentation + "- Dimensions: ( width: " + MyRecodes::myToString(_width) + ", height: " + MyRecodes::myToString(_height) + " )\n";
     return result;
 }
 

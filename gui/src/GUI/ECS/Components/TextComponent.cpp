@@ -243,7 +243,7 @@ const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned in
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
     result += indentation + "- Text: '" + _text + "'\n";
-    result += indentation + "- (sfText) Has text:" + MyRecodes::myToString(_sfTextComponent.has_value()) + "\n";
+    result += indentation + "- (sfText) Has text: " + MyRecodes::myToString(_sfTextComponent.has_value()) + "\n";
     result += indentation + "- Size: " + MyRecodes::myToString(_size) + "\n";
     result += indentation + "- Text Position: {\n" + _textPos.getInfo(indent + 1) + "}\n";
     result += indentation + "- Font: {\n" + _font.getInfo(indent + 1) + "}\n";

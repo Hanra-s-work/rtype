@@ -204,8 +204,8 @@ const std::string GUI::ECS::Utilities::Font::getInfo(const unsigned int indent) 
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Bold: " + MyRecodes::myToString(_bold) + "\n";
     result += indentation + "- Italic: " + MyRecodes::myToString(_italic) + "\n";
-    result += indentation + "- Font Name: " + _fontName + "\n";
-    result += indentation + "- Font Path: " + _fontPath + "\n";
+    result += indentation + "- Font Name: '" + _fontName + "'\n";
+    result += indentation + "- Font Path: '" + _fontPath + "'\n";
     result += indentation + "- Font instance set: " + MyRecodes::myToString(_fontInstanceSet) + "\n";
     result += indentation + "- Font Application: '" + _fontApplication + "'\n";
     result += indentation + "- Default Size: " + MyRecodes::myToString(_fontDefaultSize) + "\n";
@@ -224,6 +224,10 @@ void GUI::ECS::Utilities::Font::update(const GUI::ECS::Utilities::Font &copy)
     _fontInstanceSet = true;
     _fontPath = copy.getFontPath();
     _fontName = copy.getFontName();
+    _fontApplication = copy.getApplication();
+    _bold = copy.isBold();
+    _italic = copy.isItalic();
+    _fontDefaultSize = copy.getDefaultSize();
 }
 
 const bool GUI::ECS::Utilities::Font::isLoaded() const
