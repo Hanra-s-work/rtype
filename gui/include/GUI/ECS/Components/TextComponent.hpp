@@ -21,6 +21,7 @@
 #include "Debug.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Font.hpp"
+#include "GUI/ECS/Utilities/Colour.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
@@ -36,21 +37,21 @@ namespace GUI
                 TextComponent(const std::uint32_t entityId, const std::string &fontPath);
                 TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text);
                 TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size);
-                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const sf::Vector2f &position);
+                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position);
                 TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance);
                 TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text);
                 TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size);
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor, const sf::Vector2f &position);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position);
                 ~TextComponent();
 
                 void setFont(const sf::Font &font);
                 void setFont(const GUI::ECS::Utilities::Font &font);
 
-                void setNormalColor(const sf::Color &color);
-                void setHoverColor(const sf::Color &color);
-                void setClickedColor(const sf::Color &color);
+                void setNormalColor(const GUI::ECS::Utilities::Colour &color);
+                void setHoverColor(const GUI::ECS::Utilities::Colour &color);
+                void setClickedColor(const GUI::ECS::Utilities::Colour &color);
 
                 void setText(const std::string &text);
 
@@ -66,9 +67,9 @@ namespace GUI
 
                 std::string getFontPath() const;
 
-                sf::Color getNormalColor() const;
-                sf::Color getHoverColor() const;
-                sf::Color getClickedColor() const;
+                GUI::ECS::Utilities::Colour getNormalColor() const;
+                GUI::ECS::Utilities::Colour getHoverColor() const;
+                GUI::ECS::Utilities::Colour getClickedColor() const;
 
                 std::string getText() const;
 
@@ -83,21 +84,23 @@ namespace GUI
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::TextComponent &copy);
 
+                const std::string getInfo() const;
+
                 GUI::ECS::Components::TextComponent &operator =(const GUI::ECS::Components::TextComponent &copy);
 
                 private:
                 void _processTextComponent();
                 void _loadFont();
 
-                bool _visible;
+                bool _visible = true;
                 std::string _text = "SampleText";
                 unsigned int _size = 30;
                 std::optional<sf::Text> _sfTextComponent;
                 CollisionComponent _textPos;
                 GUI::ECS::Utilities::Font _font;
-                sf::Color _color = sf::Color::Black;
-                sf::Color _hoverColor = sf::Color::Black;
-                sf::Color _clickedColor = sf::Color::Black;
+                GUI::ECS::Utilities::Colour _color = GUI::ECS::Utilities::Colour::Black;
+                GUI::ECS::Utilities::Colour _hoverColor = GUI::ECS::Utilities::Colour::Black;
+                GUI::ECS::Utilities::Colour _clickedColor = GUI::ECS::Utilities::Colour::Black;
             };
         }
     }
