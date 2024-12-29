@@ -100,6 +100,8 @@ namespace GUI
                 void _processTextComponent();
                 void _loadFont();
 
+                bool _fontAltered = false;
+                bool _inConstructor = false;
                 bool _visible = true;
                 std::string _text = "SampleText";
                 unsigned int _size = 30;
