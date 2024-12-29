@@ -424,6 +424,26 @@ void GUI::ECS::Components::SpriteComponent::render(sf::RenderWindow &window) con
     }
 }
 
+void GUI::ECS::Components::SpriteComponent::start()
+{
+    _animation.start();
+}
+
+void GUI::ECS::Components::SpriteComponent::pause()
+{
+    _animation.pause();
+}
+
+void GUI::ECS::Components::SpriteComponent::resume()
+{
+    _animation.resume();
+}
+
+void GUI::ECS::Components::SpriteComponent::stop()
+{
+    _animation.stop();
+}
+
 const bool GUI::ECS::Components::SpriteComponent::isCollisionSet() const
 {
     return _collisionSet;
@@ -447,6 +467,31 @@ const bool GUI::ECS::Components::SpriteComponent::isSpriteSet() const
 const bool GUI::ECS::Components::SpriteComponent::isVisible() const
 {
     return _visible;
+}
+
+const bool GUI::ECS::Components::SpriteComponent::isLooping() const
+{
+    return _animation.isLooping();
+}
+
+const bool GUI::ECS::Components::SpriteComponent::isPaused() const
+{
+    return _animation.isPaused();
+}
+
+const bool GUI::ECS::Components::SpriteComponent::isStopped() const
+{
+    return _animation.isStopped();
+}
+
+const bool GUI::ECS::Components::SpriteComponent::hasTicked()
+{
+    return _animation.hasTicked();
+}
+
+const bool GUI::ECS::Components::SpriteComponent::hasLooped() const
+{
+    return _animation.hasLooped();
 }
 
 void GUI::ECS::Components::SpriteComponent::checkTick()

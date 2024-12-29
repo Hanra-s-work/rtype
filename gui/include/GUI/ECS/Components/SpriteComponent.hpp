@@ -549,6 +549,29 @@ namespace GUI
                 void render(sf::RenderWindow &window) const;
 
                 /**
+                 * @brief Start the playing of the animation from the current index in memory
+                 *
+                 */
+                void start();
+
+                /**
+                 * @brief Pause the playing of the animation but does not reset the index to the default frame
+                 *
+                 */
+                void pause();
+                /**
+                 * @brief Resume the playing of the animation (has no effect if already playing)
+                 *
+                 */
+                void resume();
+
+                /**
+                 * @brief A function to stop the animation, and reset the index to the default frame
+                 *
+                 */
+                void stop();
+
+                /**
                  * @brief Checks if collision data is set.
                  *
                  * @return True if collision data is set, false otherwise.
@@ -580,6 +603,52 @@ namespace GUI
                  * @return false
                  */
                 const bool isVisible() const;
+
+                /**
+                 * @brief Get the information about if the component is set to loop the animation
+                 *
+                 * @return true The component will loop the animation
+                 * @return false The component will not loop the animation
+                 */
+                const bool isLooping() const;
+
+                /**
+                 * @brief Get the information about the state of the animation (paused)
+                 *
+                 * @return true The animation is paused
+                 * @return false The animation is playing or stopped
+                 */
+                const bool isPaused() const;
+                /**
+                 * @brief Get the information about the state of the animation (playing)
+                 *
+                 * @return true The animation is playing
+                 * @return false The animation is paused or stopped
+                 */
+                const bool isPlaying() const;
+                /**
+                 * @brief Get the information about the state of the animation (stopped)
+                 *
+                 * @return true The animation is stopped
+                 * @return false The animation is playing or paused
+                 */
+                const bool isStopped() const;
+
+                /**
+                 * @brief A function to check if the frame has changed
+                 *
+                 * @return true
+                 * @return false
+                 */
+                const bool hasTicked();
+
+                /**
+                 * @brief A function to check if the animation has looped around (valid for the 1rst frame of the new loop)
+                 *
+                 * @return true The animation has looped
+                 * @return false The animation has not looped
+                 */
+                const bool hasLooped() const;
 
                 /**
                  * @brief Processes and updates sprite properties based on tick state of the clock internal to it's animation component instance.
