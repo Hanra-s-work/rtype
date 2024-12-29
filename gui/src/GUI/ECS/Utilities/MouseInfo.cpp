@@ -38,22 +38,46 @@ void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &even
 {
     if (event->is<sf::Event::MouseButtonPressed>()) {
         Debug::getInstance() << "MouseInfo, mouse button pressed." << std::endl;
-        if (event->is<sf::Event::MouseLeft>()) {
+        const sf::Event::MouseButtonPressed *node = event->getIf<sf::Event::MouseButtonPressed>();
+        if (node->button == sf::Mouse::Button::Left) {
             Debug::getInstance() << "MouseInfo: Left mouse button clicked." << std::endl;
             _leftButtonClicked = true;
-        } else {
+        } else if (node->button == sf::Mouse::Button::Right) {
             Debug::getInstance() << "MouseInfo: Right mouse button clicked." << std::endl;
             _rightButtonClicked = true;
+        } else if (node->button == sf::Mouse::Button::Middle) {
+            Debug::getInstance() << "MouseInfo: Middle mouse button clicked." << std::endl;
+            _middleButtonClicked = true;
+        } else if (node->button == sf::Mouse::Button::Extra1) {
+            Debug::getInstance() << "MouseInfo: Extra1 mouse button clicked." << std::endl;
+            _extra1ButtonClicked = true;
+        } else if (node->button == sf::Mouse::Button::Extra2) {
+            Debug::getInstance() << "MouseInfo: Extra2 mouse button clicked." << std::endl;
+            _extra2ButtonClicked = true;
+        } else {
+            Debug::getInstance() << "MouseInfo: Unknown mouse button clicked." << std::endl;
         }
         Debug::getInstance() << "MouseInfo, out of the button being pressed." << std::endl;
     } else if (event->is<sf::Event::MouseButtonReleased>()) {
         Debug::getInstance() << "MouseInfo, mouse button released." << std::endl;
-        if (event->is<sf::Event::MouseLeft>()) {
-            Debug::getInstance() << "MouseInfo: Left mouse button clicked." << std::endl;
+        const sf::Event::MouseButtonPressed *node = event->getIf<sf::Event::MouseButtonPressed>();
+        if (node->button == sf::Mouse::Button::Left) {
+            Debug::getInstance() << "MouseInfo: Left mouse button released." << std::endl;
             _leftButtonClicked = false;
-        } else {
-            Debug::getInstance() << "MouseInfo: Right mouse button clicked." << std::endl;
+        } else if (node->button == sf::Mouse::Button::Right) {
+            Debug::getInstance() << "MouseInfo: Right mouse button released." << std::endl;
             _rightButtonClicked = false;
+        } else if (node->button == sf::Mouse::Button::Middle) {
+            Debug::getInstance() << "MouseInfo: Middle mouse button released." << std::endl;
+            _middleButtonClicked = false;
+        } else if (node->button == sf::Mouse::Button::Extra1) {
+            Debug::getInstance() << "MouseInfo: Extra1 mouse button released." << std::endl;
+            _extra1ButtonClicked = false;
+        } else if (node->button == sf::Mouse::Button::Extra2) {
+            Debug::getInstance() << "MouseInfo: Extra2 mouse button released." << std::endl;
+            _extra2ButtonClicked = false;
+        } else {
+            Debug::getInstance() << "MouseInfo: Unknown mouse button released." << std::endl;
         }
         Debug::getInstance() << "MouseInfo, out of the button being released." << std::endl;
     } else if (event->is<sf::Event::MouseEntered>()) {
@@ -117,7 +141,10 @@ void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
     _mouseInFocus = entity.isMouseInFocus();
     _mousePosition = entity.getMousePosition();
     _leftButtonClicked = entity.isMouseLeftButtonClicked();
+    _middleButtonClicked = entity.isMouseMiddleButtonClicked();
     _rightButtonClicked = entity.isMouseRightButtonClicked();
+    _extra1ButtonClicked = entity.isMouseExtra1ButtonClicked();
+    _extra2ButtonClicked = entity.isMouseExtra2ButtonClicked();
 };
 
 /**
@@ -184,6 +211,16 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
 };
 
 /**
+ * @brief Checks if the middle mouse button is pressed.
+ *
+ * @return true if the midle button is pressed, false otherwise.
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseMiddleButtonClicked() const
+{
+    return _middleButtonClicked;
+};
+
+/**
  * @brief Checks if the right mouse button is pressed.
  *
  * @return true if the right button is pressed, false otherwise.
@@ -191,6 +228,26 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
 const bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonClicked() const
 {
     return _rightButtonClicked;
+};
+
+/**
+ * @brief Checks if the extra1 mouse button is pressed.
+ *
+ * @return true if the extra1 button is pressed, false otherwise.
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra1ButtonClicked() const
+{
+    return _extra1ButtonClicked;
+};
+
+/**
+ * @brief Checks if the extra2 mouse button is pressed.
+ *
+ * @return true if the extra2 button is pressed, false otherwise.
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra2ButtonClicked() const
+{
+    return _extra2ButtonClicked;
 };
 
 /**
@@ -225,9 +282,12 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Mouse in focus: " + MyRecodes::myToString(_mouseInFocus) + "\n";
     result += indentation + "- Mouse left button clicked: " + MyRecodes::myToString(_leftButtonClicked) + "\n";
+    result += indentation + "- Mouse middle button clicked: " + MyRecodes::myToString(_middleButtonClicked) + "\n";
     result += indentation + "- Mouse right button clicked: " + MyRecodes::myToString(_rightButtonClicked) + "\n";
-    result += indentation + "- Mouse position: ( x:" + MyRecodes::myToString(_mousePosition.x) + ", y: " + MyRecodes::myToString(_mousePosition.y) + ")\n";
-    result += indentation + "- Mouse Wheel Scrolled: {";
+    result += indentation + "- Mouse extra1 button clicked: " + MyRecodes::myToString(_extra1ButtonClicked) + "\n";
+    result += indentation + "- Mouse extra2 button clicked: " + MyRecodes::myToString(_extra2ButtonClicked) + "\n";
+    result += indentation + "- Mouse position: ( x: " + MyRecodes::myToString(_mousePosition.x) + ", y: " + MyRecodes::myToString(_mousePosition.y) + ")\n";
+    result += indentation + "- Mouse Wheel Scrolled: {\n";
     result += indentation + "\t- wheel: ";
     if (_mouseWheel.wheel == sf::Mouse::Wheel::Vertical) {
         result += "Vertical";
@@ -235,9 +295,9 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
         result += "Horizontal";
     }
     result += "\n";
-    result += indentation + "\t- delta: " + MyRecodes::myToString(_mouseWheel.delta) + "\n";
-    result += indentation + "\t- position: ( x: " + MyRecodes::myToString(_mouseWheel.position.x) + ", y: " + MyRecodes::myToString(_mouseWheel.position.y) + ")\n";
-    result += indentation + "\n}";
+    result += indentation + "\t- Delta: " + MyRecodes::myToString(_mouseWheel.delta) + "\n";
+    result += indentation + "\t- Position: ( x: " + MyRecodes::myToString(_mouseWheel.position.x) + ", y: " + MyRecodes::myToString(_mouseWheel.position.y) + ")\n";
+    result += indentation + "}\n";
     return result;
 }
 
@@ -251,7 +311,11 @@ void GUI::ECS::Utilities::MouseInfo::clear()
     // _mousePosition.y = 0;
     _leftButtonClicked = false;
     _rightButtonClicked = false;
-    _mouseInFocus = false;
+    _middleButtonClicked = false;
+    _extra1ButtonClicked = false;
+    _extra2ButtonClicked = false;
+    // _mouseInFocus = false;
+    _mouseInFocus = true;
     _mouseWheel.delta = 0;
     _mouseWheel.position.x = 0;
     _mouseWheel.position.y = 0;

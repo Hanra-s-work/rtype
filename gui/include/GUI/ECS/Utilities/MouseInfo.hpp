@@ -40,7 +40,10 @@ namespace GUI
 
                 const bool isMouseInFocus() const;
                 const bool isMouseLeftButtonClicked() const;
+                const bool isMouseMiddleButtonClicked() const;
                 const bool isMouseRightButtonClicked() const;
+                const bool isMouseExtra1ButtonClicked() const;
+                const bool isMouseExtra2ButtonClicked() const;
 
                 const float getPositionX() const;
                 const float getPositionY() const;
@@ -59,10 +62,13 @@ namespace GUI
                 MouseInfo &operator=(const GUI::ECS::Utilities::MouseInfo &copy);
 
                 private:
-                bool _mouseInFocus;
-                bool _leftButtonClicked;
-                bool _rightButtonClicked;
-                sf::Vector2f _mousePosition;
+                bool _mouseInFocus = false;
+                bool _leftButtonClicked = false;
+                bool _rightButtonClicked = false;
+                bool _middleButtonClicked = false;
+                bool _extra1ButtonClicked = false;
+                bool _extra2ButtonClicked = false;
+                sf::Vector2f _mousePosition = { 0,0 };
                 sf::Event::MouseWheelScrolled _mouseWheel;
             };
 
