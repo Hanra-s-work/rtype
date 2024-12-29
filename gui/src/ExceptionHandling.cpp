@@ -546,6 +546,22 @@ namespace MyException
         return _buffer;
     }
 
+    NoText::NoText(const std::string &errorReason)
+    {
+        _msg = "Error: There is no text component";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoText::~NoText() {};
+
+    const char *NoText::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoTitleFontConfiguration::NoTitleFontConfiguration(const std::string &tomlPath)
     {
         _msg = "Error: There is no configuration for the title font in the toml's configuration file ";

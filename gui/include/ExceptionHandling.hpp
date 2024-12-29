@@ -943,6 +943,35 @@ namespace MyException
 
     /**
      *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant text instance.
+     *
+     */
+    class NoText : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Text object
+         *
+         * @param errorReason The reason for the error
+         */
+        NoText(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Text object
+         *
+         */
+        ~NoText();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
      * that there is no configuration for the font in charge of displaying text
      * when it is a title.
      *
