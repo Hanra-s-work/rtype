@@ -88,12 +88,12 @@ namespace GUI
 
                 protected:
                 void _updateMouseCollisionData();
-                bool _isHovered;
-                bool _isClicked;
-                float _posX;
-                float _posY;
-                float _width;
-                float _height;
+                bool _isHovered = false;
+                bool _isClicked = false;
+                float _posX = 0;
+                float _posY = 0;
+                float _width = 0;
+                float _height = 0;
                 GUI::ECS::Utilities::MouseInfo _mouse;
             };
 
