@@ -386,7 +386,8 @@ std::uint32_t Main::_initialiseSprites()
         Debug::getInstance() << "Loading sprite '" << name << "' ..." << std::endl;
 
         GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
-        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, animationNode);
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, animationNode);
+        node->setApplication(application);
         _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
         _baseId++;
     }
@@ -668,7 +669,7 @@ void Main::_mainLoop()
         }
         sf::Vector2f mousePos = event.getMousePosition();
         text.update(event.getMouseInfo());
-        Debug::getInstance() << "Text Component: \n" << text << std::endl;
+        // Debug::getInstance() << "Text Component: \n" << text << std::endl;
         // Debug::getInstance() << "Event: \n" << event << std::endl;
         Debug::getInstance() << "Mouse position: (x: " << mousePos.x << ", y: " << mousePos.y << ")" << std::endl;
         window.draw(text);
