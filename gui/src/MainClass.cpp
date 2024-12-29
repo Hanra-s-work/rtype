@@ -625,6 +625,41 @@ void Main::_initialiseRessources()
     Debug::getInstance() << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
+void Main::_updateMouseForAllRendererables(const GUI::ECS::Utilities::MouseInfo &mouse)
+{
+    Debug::getInstance() << "Updating mouse information for renderable components." << std::endl;
+    std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    std::vector<std::any> shapes = _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)];
+
+    for (unsigned int index = 0; index < sprites.size(); index++) {
+        Debug::getInstance() << "Processing index for sprite : " << std::to_string(index) << std::endl;
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = std::any_cast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(sprites[index]);
+        sprite->update(mouse);
+    }
+    for (unsigned int index = 0; index < texts.size(); index++) {
+        Debug::getInstance() << "Processing index for text : " << std::to_string(index) << std::endl;
+        std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::any_cast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(texts[index]);
+        text->update(mouse);
+    }
+    for (unsigned int index = 0; index < buttons.size(); index++) {
+        Debug::getInstance() << "Processing index for button : " << std::to_string(index) << std::endl;
+        std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::any_cast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttons[index]);
+        button->update(mouse);
+    }
+    for (unsigned int index = 0; index < shapes.size(); index++) {
+        Debug::getInstance() << "Processing index for shape : " << std::to_string(index) << std::endl;
+        std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::any_cast<std::shared_ptr<GUI::ECS::Components::ShapeComponent>>(shapes[index]);
+        shape->update(mouse);
+    }
+    Debug::getInstance() << "Updated mouse information for renderable components." << std::endl;
+}
+
+/**
+ * @brief Small function in charge of launching all the loaded musics.
+ *
+ */
 void Main::_testContent()
 {
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
@@ -664,6 +699,7 @@ void Main::_mainLoop()
 
     while (window.isOpen()) {
         event.processEvents(window);
+        _updateMouseForAllRendererables(event.getMouseInfo());
         if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
             _testContent();
         }

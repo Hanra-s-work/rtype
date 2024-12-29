@@ -128,6 +128,8 @@ class Main {
   void _initialiseConnection();
   void _initialiseRessources();
 
+  void _updateMouseForAllRendererables(const GUI::ECS::Utilities::MouseInfo &mouse);
+
   void _testContent();
 
   void _closeConnection();
