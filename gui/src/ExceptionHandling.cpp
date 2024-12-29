@@ -503,6 +503,19 @@ namespace MyException
         return _buffer;
     }
 
+    NoAnimationFrames::NoAnimationFrames()
+    {
+        _msg = "Error: There are no frames in the animation.";
+        _buffer = _msg.c_str();
+    };
+
+    NoAnimationFrames::~NoAnimationFrames() {};
+
+    const char *NoAnimationFrames::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoSprite::NoSprite()
     {
         _msg = "Error: There is no sprite set to be used.";

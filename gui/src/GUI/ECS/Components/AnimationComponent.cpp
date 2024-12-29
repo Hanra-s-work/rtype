@@ -127,15 +127,74 @@ const bool GUI::ECS::Components::AnimationComponent::hasTicked()
     return false;
 }
 
+const bool GUI::ECS::Components::AnimationComponent::hasLooped() const
+{
+    return _looped;
+}
+
+const bool GUI::ECS::Components::AnimationComponent::isLooping() const
+{
+    return _loop;
+}
+
+const bool GUI::ECS::Components::AnimationComponent::isPaused() const
+{
+    return _paused;
+}
+
+const bool GUI::ECS::Components::AnimationComponent::isPlaying() const
+{
+    return _playing;
+}
+
+const bool GUI::ECS::Components::AnimationComponent::isStopped() const
+{
+    return _stopped;
+}
+
 void GUI::ECS::Components::AnimationComponent::update(const GUI::ECS::Components::AnimationComponent &copy)
 {
     _loop = copy.getLoop();
+    _clock = copy.getClock();
     _frames = copy.getFrames();
+    _looped = copy.getLooped();
+    _paused = copy.getPaused();
+    _frames = copy.getFrames();
+    _playing = copy.getPlaying();
+    _stopped = copy.getStopped();
+    _hasTicked = copy.getTicked();
     _frameDelay = copy.getDelay();
     _totalFrames = copy.getFrameCount();
+    _baseTexture = copy.getBaseTexture();
     _readReverse = copy.getReadReverse();
     _frameInitial = copy.getInitialFrame();
     _currentFrame = copy.getCurrentFrame();
+    _currentTexture = copy.getCurrentTexture();
+}
+
+const bool GUI::ECS::Components::AnimationComponent::getTicked() const
+{
+    return _hasTicked;
+}
+
+const bool GUI::ECS::Components::AnimationComponent::getPaused() const
+{
+    return isPaused();
+}
+
+const bool GUI::ECS::Components::AnimationComponent::getPlaying() const
+{
+    return isPlaying();
+}
+
+const bool GUI::ECS::Components::AnimationComponent::getStopped() const
+{
+    return isStopped();
+}
+
+const bool GUI::ECS::Components::AnimationComponent::getLooped() const
+{
+    return _looped;
 }
 
 const bool GUI::ECS::Components::AnimationComponent::getLoop() const
@@ -163,9 +222,22 @@ const std::uint32_t GUI::ECS::Components::AnimationComponent::getInitialFrame() 
     return _frameInitial;
 }
 
+const sf::Vector2f GUI::ECS::Components::AnimationComponent::getFrameDimensions() const
+{
+    if (_frames.size() <= 0) {
+        throw MyException::NoAnimationFrames();
+    }
+    return _frames[0].getCollisionInfo().getDimension();
+}
+
 const std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrame() const
 {
     return _currentFrame;
+}
+
+const GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getBaseTexture() const
+{
+    return _baseTexture;
 }
 
 const GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getCurrentTexture() const
@@ -186,7 +258,11 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
     }
     std::string result = indentation + "AnimationComponent:\n";
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Looped: " + MyRecodes::myToString(_looped) + "\n";
     result += indentation + "- Loop: " + MyRecodes::myToString(_loop) + "\n";
+    result += indentation + "- Paused: " + MyRecodes::myToString(_paused) + "\n";
+    result += indentation + "- Playing: " + MyRecodes::myToString(_playing) + "\n";
+    result += indentation + "- Stopped: " + MyRecodes::myToString(_stopped) + "\n";
     result += indentation + "- Has Ticked: " + MyRecodes::myToString(_hasTicked) + "\n";
     result += indentation + "- Read Reverse: " + MyRecodes::myToString(_readReverse) + "\n";
     result += indentation + "- Frame Delay: " + MyRecodes::myToString(_frameDelay) + "\n";
@@ -204,6 +280,11 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
     result += indentation + "Current Texture: {\n" + _currentTexture.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + "}\n";
     return result;
+}
+
+const GUI::ECS::Utilities::Clock GUI::ECS::Components::AnimationComponent::getClock() const
+{
+    return _clock;
 }
 
 GUI::ECS::Components::AnimationComponent &GUI::ECS::Components::AnimationComponent::operator=(const GUI::ECS::Components::AnimationComponent &copy)
