@@ -67,6 +67,8 @@ const std::string GUI::ECS::Utilities::EventManager::getInfo(const unsigned int 
     }
     std::string result = indentation + "Event Manager:\n";
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- ResetDelay: " + MyRecodes::myToString(_resetDelay) + "\n";
+    result += indentation + "- Reset Index: " + MyRecodes::myToString(_resetIndex) + "\n";
     result += indentation + "- Mouse info: {\n" + _mouse.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Key Mapper: {\n" + _mapper.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- keys: {\n";
@@ -105,8 +107,13 @@ const bool GUI::ECS::Utilities::EventManager::isKeyPressed(const GUI::ECS::Utili
 
 void GUI::ECS::Utilities::EventManager::clearEvents()
 {
-    _keys.clear();
-    _mouse.clear();
+    if (_resetIndex >= _resetDelay) {
+        _keys.clear();
+        _mouse.clear();
+        _resetIndex = 0;
+    } else {
+        _resetIndex++;
+    }
 }
 
 
