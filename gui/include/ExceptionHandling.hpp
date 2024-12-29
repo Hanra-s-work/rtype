@@ -858,6 +858,34 @@ namespace MyException
 
     /**
      *@brief This is the class in charge of informing the user
+     * that there are no frames for the animation.
+     *
+     */
+    class NoAnimationFrames : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Animation Frames object
+         *
+         */
+        NoAnimationFrames();
+        /**
+         *@brief Destroy the No Animation Frames object
+         *
+         */
+        ~NoAnimationFrames();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
      * that they tried to access a non-existant animation class.
      *
      */
