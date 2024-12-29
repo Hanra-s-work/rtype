@@ -7,7 +7,7 @@
 
 /**
  * @file Clock.cpp
- * @brief This is the file in charge of managing the clock ticking.
+ * @brief This file contains the implementation of the Clock class for time management.
  */
 
 #include "GUI/ECS/Utilities/Clock.hpp"
