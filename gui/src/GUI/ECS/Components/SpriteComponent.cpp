@@ -313,6 +313,11 @@ void GUI::ECS::Components::SpriteComponent::setName(const std::string &name)
     _spriteName = name;
 };
 
+void GUI::ECS::Components::SpriteComponent::setApplication(const std::string &application)
+{
+    _application = application;
+}
+
 void GUI::ECS::Components::SpriteComponent::setCollision(const GUI::ECS::Components::CollisionComponent &copy)
 {
     _collision.update(copy);
@@ -367,6 +372,20 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
     _animationSet = true;
 }
 
+void GUI::ECS::Components::SpriteComponent::setVisible(const bool visible)
+{
+    _visible = visible;
+}
+
+void GUI::ECS::Components::SpriteComponent::toggleVisibility()
+{
+    if (_visible) {
+        _visible = false;
+    } else {
+        _visible = true;
+    }
+}
+
 void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
 {
     if (_collisionSet) {
@@ -399,24 +418,29 @@ void GUI::ECS::Components::SpriteComponent::render(sf::RenderWindow &window) con
     }
 }
 
-bool GUI::ECS::Components::SpriteComponent::isCollisionSet() const
+const bool GUI::ECS::Components::SpriteComponent::isCollisionSet() const
 {
     return _collisionSet;
 }
 
-bool GUI::ECS::Components::SpriteComponent::isAnimationSet() const
+const bool GUI::ECS::Components::SpriteComponent::isAnimationSet() const
 {
     return _animationSet;
 }
 
-bool GUI::ECS::Components::SpriteComponent::isSpritesheetSet() const
+const bool GUI::ECS::Components::SpriteComponent::isSpritesheetSet() const
 {
     return _spritesheetSet;
 }
 
-bool GUI::ECS::Components::SpriteComponent::isSpriteSet() const
+const bool GUI::ECS::Components::SpriteComponent::isSpriteSet() const
 {
     return _spriteSet;
+}
+
+const bool GUI::ECS::Components::SpriteComponent::isVisible() const
+{
+    return _visible;
 }
 
 void GUI::ECS::Components::SpriteComponent::checkTick()
@@ -434,9 +458,19 @@ void GUI::ECS::Components::SpriteComponent::checkTick()
     }
 }
 
+const bool GUI::ECS::Components::SpriteComponent::getVisible() const
+{
+    return _visible;
+}
+
 const std::string GUI::ECS::Components::SpriteComponent::getName() const
 {
     return _spriteName;
+}
+
+const std::string GUI::ECS::Components::SpriteComponent::getApplication() const
+{
+    return _application;
 }
 
 const GUI::ECS::Components::TextureComponent GUI::ECS::Components::SpriteComponent::getSpritesheet() const
@@ -490,6 +524,7 @@ const std::string GUI::ECS::Components::SpriteComponent::getInfo(const unsigned 
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
     result += indentation + "- Name: '" + _spriteName + "'\n";
+    result += indentation + "- Application: '" + _application + "'\n";
     result += indentation + "- Spritesheet Set: " + MyRecodes::myToString(_spritesheetSet) + "\n";
     result += indentation + "- Spritesheet: {\n" + _spritesheet.getInfo(indent + 1) + "}\n";
     result += indentation + "- Collision Set: " + MyRecodes::myToString(_collisionSet) + "}\n";

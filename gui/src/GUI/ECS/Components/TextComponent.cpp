@@ -244,6 +244,15 @@ void GUI::ECS::Components::TextComponent::setVisible(const bool visible)
     _visible = visible;
 }
 
+void GUI::ECS::Components::TextComponent::toggleVisibility()
+{
+    if (_visible) {
+        _visible = false;
+    } else {
+        _visible = true;
+    }
+}
+
 const GUI::ECS::Utilities::Font GUI::ECS::Components::TextComponent::getFont() const
 {
     return _font;

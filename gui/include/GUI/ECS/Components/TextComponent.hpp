@@ -64,6 +64,8 @@ namespace GUI
 
                 void setVisible(const bool visible);
 
+                void toggleVisibility();
+
                 const GUI::ECS::Utilities::Font getFont() const;
 
                 const std::string getFontPath() const;
