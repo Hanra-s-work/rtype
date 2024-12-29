@@ -365,6 +365,7 @@ void GUI::ECS::Components::SpriteComponent::setSpritesheet(const GUI::ECS::Compo
 void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Components::AnimationComponent &animation)
 {
     _animation.update(animation);
+    _collision.setDimension(animation.getFrameDimensions());
     if (_sfSprite.has_value()) {
         _sfSprite->setTexture(_animation.getCurrentTexture().getTexture());
         _spriteSet = true;
@@ -394,6 +395,11 @@ void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Utilities::Mo
     } else {
         throw MyException::NoCollision();
     }
+}
+
+void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Components::AnimationComponent &animation)
+{
+    setAnimation(animation);
 }
 
 void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Components::SpriteComponent &copy)

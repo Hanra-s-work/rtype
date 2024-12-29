@@ -526,6 +526,13 @@ namespace GUI
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
 
                 /**
+                 * @brief Updates the animation component that is used by the sprite.
+                 *
+                 * @param animation Animation instance.
+                 */
+                void update(const GUI::ECS::Components::AnimationComponent &animation);
+
+                /**
                  * @brief Updates the sprite by copying another SpriteComponent.
                  *
                  * @param copy The SpriteComponent to copy data from.
