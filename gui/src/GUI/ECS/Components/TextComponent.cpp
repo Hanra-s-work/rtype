@@ -19,8 +19,8 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId)
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFontPath(fontPath);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -28,9 +28,9 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFontPath(fontPath);
     setText(text);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -38,10 +38,10 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFontPath(fontPath);
     setText(text);
     setSize(size);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -49,13 +49,13 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFontPath(fontPath);
     setText(text);
     setSize(size);
     setHoverColor(hoverColor);
     setNormalColor(normalColor);
     setClickedColor(clickedColor);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -63,6 +63,7 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFontPath(fontPath);
     setText(text);
     setSize(size);
@@ -70,7 +71,6 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
     setHoverColor(hoverColor);
     setNormalColor(normalColor);
     setClickedColor(clickedColor);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -78,8 +78,8 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFont(fontInstance);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -87,9 +87,9 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFont(fontInstance);
     setText(text);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -97,10 +97,10 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFont(fontInstance);
     setText(text);
     setSize(size);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -108,13 +108,13 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFont(fontInstance);
     setText(text);
     setSize(size);
     setHoverColor(hoverColor);
     setNormalColor(normalColor);
     setClickedColor(clickedColor);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -122,6 +122,7 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position)
     : EntityNode(entityId)
 {
+    _inConstructor = true;
     setFont(fontInstance);
     setText(text);
     setSize(size);
@@ -129,7 +130,6 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
     setHoverColor(hoverColor);
     setNormalColor(normalColor);
     setClickedColor(clickedColor);
-    _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();
 };
@@ -140,8 +140,7 @@ GUI::ECS::Components::TextComponent::~TextComponent() {};
 void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
 {
     _font.update(font);
-    _fontAltered = true;
-    _sfTextComponent->setFont(_font.getFontInstance());
+    _fontChanged = true;
     if (!_inConstructor) {
         _processTextComponent();
     }
@@ -150,20 +149,9 @@ void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
 void GUI::ECS::Components::TextComponent::setFont(const GUI::ECS::Utilities::Font &font)
 {
     _font.update(font);
-    _fontAltered = true;
-    _sfTextComponent->setFont(_font.getFontInstance());
+    _fontChanged = true;
     if (!_inConstructor) {
         _processTextComponent();
-    }
-}
-
-void GUI::ECS::Components::TextComponent::setNormalColor(const GUI::ECS::Utilities::Colour &color)
-{
-    if (_color != color) {
-        _color = color;
-        if (!_inConstructor) {
-            _processTextComponent();
-        }
     }
 }
 
@@ -171,8 +159,7 @@ void GUI::ECS::Components::TextComponent::setText(const std::string &text)
 {
     if (_text != text) {
         _text = text;
-        _sfTextComponent->setString(text);
-        _fontAltered = true;
+        _textAltered = true;
         if (!_inConstructor) {
             _processTextComponent();
         }
@@ -183,8 +170,17 @@ void GUI::ECS::Components::TextComponent::setSize(const std::uint32_t &size)
 {
     if (_size != size) {
         _size = size;
-        _fontAltered = true;
-        _sfTextComponent->setCharacterSize(size);
+        _sizeAltered = true;
+        if (!_inConstructor) {
+            _processTextComponent();
+        }
+    }
+}
+
+void GUI::ECS::Components::TextComponent::setNormalColor(const GUI::ECS::Utilities::Colour &color)
+{
+    if (_color != color) {
+        _color = color;
         if (!_inConstructor) {
             _processTextComponent();
         }
@@ -211,16 +207,19 @@ void GUI::ECS::Components::TextComponent::setClickedColor(const GUI::ECS::Utilit
     }
 }
 
-void GUI::ECS::Components::TextComponent::setFontPath(const std::string &fontPath)
+void GUI::ECS::Components::TextComponent::setFontPath(const std::string &fontPath, const std::string &name)
 {
     if (fontPath.empty()) {
         throw MyException::InvalidFontPath("<empty path>");
     }
     if (_font.getFontPath() != fontPath) {
-        GUI::ECS::Utilities::Font font(_font.getFontName(), fontPath);
+        std::string nameChild = name;
+        if (nameChild == "") {
+            nameChild = _font.getFontName();
+        }
+        GUI::ECS::Utilities::Font font(nameChild, fontPath);
         _font = font;
-        _fontAltered = true;
-        _loadFont();
+        _fontChanged = true;
         if (!_inConstructor) {
             _processTextComponent();
         }
@@ -231,8 +230,7 @@ void GUI::ECS::Components::TextComponent::setPosition(const sf::Vector2f &positi
 {
     if (_textPos.getPosition() != position) {
         _textPos.setPosition(position);
-        _fontAltered = true;
-        _sfTextComponent->setPosition(position);
+        _positionAltered = true;
         if (!_inConstructor) {
             _processTextComponent();
         }
@@ -309,7 +307,11 @@ const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned in
     std::string result = indentation + "Text:\n";
     result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- In Constructor: " + MyRecodes::myToString(_inConstructor) + "\n";
-    result += indentation + "- Component Altered: " + MyRecodes::myToString(_fontAltered) + "\n";
+    result += indentation + "- Font Altered: " + MyRecodes::myToString(_fontAltered) + "\n";
+    result += indentation + "- Font Changed: " + MyRecodes::myToString(_fontChanged) + "\n";
+    result += indentation + "- Text Altered: " + MyRecodes::myToString(_textAltered) + "\n";
+    result += indentation + "- Size Altered: " + MyRecodes::myToString(_sizeAltered) + "\n";
+    result += indentation + "- Position Altered: " + MyRecodes::myToString(_positionAltered) + "\n";
     result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
     result += indentation + "- Text: '" + _text + "'\n";
     result += indentation + "- (sfText) Has text: " + MyRecodes::myToString(_sfTextComponent.has_value()) + "\n";
@@ -328,6 +330,9 @@ void GUI::ECS::Components::TextComponent::render(sf::RenderWindow &window) const
 {
     if (_visible) {
         Debug::getInstance() << "Rendering text" << std::endl;
+        if (!_sfTextComponent.has_value()) {
+            throw MyException::NoText("to be rendered.");
+        }
         sf::Text data = _sfTextComponent.value();
         window.draw(data);
     }
@@ -343,32 +348,22 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Utilities::Mous
 
 void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::TextComponent &copy)
 {
-    setFont(copy.getFont());
-    setNormalColor(copy.getNormalColor());
-    setClickedColor(copy.getClickedColor());
+    _inConstructor = true;
     setText(copy.getText());
     setSize(copy.getSize());
-    setHoverColor(copy.getHoverColor());
-    setPosition(copy.getPosition());
+    setFont(copy.getFont());
     setVisible(copy.getVisible());
+    setPosition(copy.getPosition());
+    setHoverColor(copy.getHoverColor());
+    setNormalColor(copy.getNormalColor());
+    setClickedColor(copy.getClickedColor());
     _fontAltered = true;
-    if (!_inConstructor) {
-        _processTextComponent();
-    }
-}
-
-void GUI::ECS::Components::TextComponent::_loadFont()
-{
-    if (!_font.isLoaded()) {
-        return;
-    }
+    _inConstructor = false;
     _processTextComponent();
-    _sfTextComponent->setFont(_font.getFontInstance());
 }
 
-void GUI::ECS::Components::TextComponent::_processTextComponent()
+void GUI::ECS::Components::TextComponent::_initialiseText()
 {
-    Debug::getInstance() << "Checking initiailisation" << std::endl;
     if (!_sfTextComponent.has_value()) {
         Debug::getInstance() << "No known instance of sf::Text, creating." << std::endl;
         if (_font.getFontPath().empty()) {
@@ -379,16 +374,60 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
         sf::Text node(_font.getFontInstance(), _text, _size);
         _sfTextComponent.emplace(node);
     }
-    Debug::getInstance() << "Going to check the font" << std::endl;
-    if (_fontAltered) {
-        if (_sfTextComponent.has_value()) {
+}
+
+void GUI::ECS::Components::TextComponent::_loadFont()
+{
+    if (!_font.isLoaded()) {
+        std::string msg = "Font name : '" + _font.getFontName() + "' (not found) in '" + _font.getFontPath() + "'";
+        throw MyException::NoFont(msg);
+    }
+    if (!_sfTextComponent.has_value()) {
+        Debug::getInstance() << "Text not initialised, initialising..." << std::endl;
+        _initialiseText();
+    }
+    _sfTextComponent->setFont(_font.getFontInstance());
+}
+
+void GUI::ECS::Components::TextComponent::_processTextComponent()
+{
+    Debug::getInstance() << "Checking initiailisation" << std::endl;
+    _initialiseText();
+    if (_sfTextComponent.has_value()) {
+        if (_fontChanged) {
+            Debug::getInstance() << "Going to update the font." << std::endl;
+            _loadFont();
+            _fontChanged = false;
+            _fontAltered = true;
+        }
+        if (_textAltered) {
+            Debug::getInstance() << "Going to update the text." << std::endl;
+            _sfTextComponent->setString(_text);
+            _textAltered = false;
+            _fontAltered = true;
+            Debug::getInstance() << "Text Updated" << std::endl;
+        }
+        if (_sizeAltered) {
+            Debug::getInstance() << "Going to update the font size" << std::endl;
+            _sfTextComponent->setCharacterSize(_size);
+            _sizeAltered = false;
+            _fontAltered = true;
+        }
+        if (_positionAltered) {
+            Debug::getInstance() << "Going to check the position" << std::endl;
+            _sfTextComponent->setPosition(_textPos.getPosition());
+            _positionAltered = false;
+            _fontAltered = true;
+        }
+        if (_fontAltered) {
+            Debug::getInstance() << "Going to update the font" << std::endl;
             Debug::getInstance() << "Text component has a value" << std::endl;
             sf::FloatRect textBounds = _sfTextComponent->getGlobalBounds();
             _textPos.setDimension(textBounds.size);
-        } else {
-            Debug::getInstance() << "No text component value to be managed" << std::endl;
+            _fontAltered = false;
         }
-        _fontAltered = false;
+    } else {
+        Debug::getInstance() << "No text component value to be managed" << std::endl;
     }
     Debug::getInstance() << "Font loaded, updating text colour" << std::endl;
     if (_textPos.isClicked()) {
