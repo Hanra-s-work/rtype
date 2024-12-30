@@ -26,6 +26,7 @@ namespace GUI
         namespace Utilities
         {
             enum class Key;
+            enum class MouseWheel;
             class KeyMapper;
             class Font;
             class Clock;
