@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <chrono>
+#include <utility>
 #include <cstdint>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -370,13 +371,13 @@ namespace GUI
                  */
                 const GUI::ECS::Components::TextureComponent getBaseTexture() const;
                 /**
-                 * @brief Get the dimension of the first frame under an sf::Vector2f instance.
+                 * @brief Get the dimension of the first frame under an std::pair<float, float> instance.
                  *
-                 * @return const sf::Vector2f
+                 * @return const std::pair<float, float>
                  *
                 * @throws MyException::NoAnimationFrames if there are no frames to read the content from.
                  */
-                const sf::Vector2f getFrameDimensions() const;
+                const std::pair<float, float> getFrameDimensions() const;
                 /**
                  * @brief Get the texture that is currently in use.
                  *
@@ -417,8 +418,18 @@ namespace GUI
                 /**
                  * @brief Function in charge of changing the frame when it is time.
                  *
+                 * @throws MyException::InvalidIndex is there are no frames or if the initial frame is greater than the total number of frames.
                  */
                 void _tick();
+                /**
+                 * @brief Function in charge of generating the animation frames based on the provided information.
+                 *
+                 * @param frameWidth The width of the resulting sprite
+                 * @param frameHeight The height of the resulting sprite
+                 * @param startLeft Start from the left
+                 * @param startTop Start from the top
+                 */
+                void _processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
                 bool _looped = false;                                          //!< A boolean instance in charge of informing the user that the program has looped (valid for the first 2 frames after the loop has occurred)
                 bool _loop = false;                                            //!< A boolean instance in charge of informing the program to play the animation as a loop
                 bool _paused = false;                                          //!< A boolean instance in charge of informing the program to not play the animation but retain the current position

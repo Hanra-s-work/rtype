@@ -91,13 +91,13 @@ void GUI::ECS::Components::AnimationComponent::setAnimation(const std::vector<GU
 void GUI::ECS::Components::AnimationComponent::setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
 {
     _baseTexture.setFilePath(path);
-    Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
+    _processAnimation(frameWidth, frameHeight, startLeft, startTop);
 }
 
 void GUI::ECS::Components::AnimationComponent::setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
 {
     _baseTexture.update(spritesheet);
-    Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
+    _processAnimation(frameWidth, frameHeight, startLeft, startTop);
 }
 
 void GUI::ECS::Components::AnimationComponent::checkTick()
@@ -111,11 +111,37 @@ void GUI::ECS::Components::AnimationComponent::checkTick()
 void GUI::ECS::Components::AnimationComponent::start()
 {
     _clock.start();
+    _hasTicked = false;
+    _playing = true;
+    _paused = false;
+    _stopped = false;
+}
+
+void GUI::ECS::Components::AnimationComponent::pause()
+{
+    _clock.stop();
+    _hasTicked = false;
+    _playing = false;
+    _paused = true;
+    _stopped = false;
+}
+
+void GUI::ECS::Components::AnimationComponent::resume()
+{
+    _clock.start();
+    _hasTicked = false;
+    _playing = true;
+    _paused = false;
+    _stopped = false;
 }
 
 void GUI::ECS::Components::AnimationComponent::stop()
 {
-    _clock.stop();
+    _clock.reset();
+    _hasTicked = false;
+    _playing = false;
+    _paused = false;
+    _stopped = true;
 }
 
 const bool GUI::ECS::Components::AnimationComponent::hasTicked()
@@ -222,7 +248,7 @@ const std::uint32_t GUI::ECS::Components::AnimationComponent::getInitialFrame() 
     return _frameInitial;
 }
 
-const sf::Vector2f GUI::ECS::Components::AnimationComponent::getFrameDimensions() const
+const std::pair<float, float> GUI::ECS::Components::AnimationComponent::getFrameDimensions() const
 {
     if (_frames.size() <= 0) {
         throw MyException::NoAnimationFrames();
@@ -314,6 +340,21 @@ void GUI::ECS::Components::AnimationComponent::_tick()
         _currentFrame = nextFrame;
     }
     _currentTexture = _frames[_currentFrame];
+}
+
+void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
+{
+    Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
+
+    GUI::ECS::Components::CollisionComponent spritesheetSize;
+    std::any textureCapsule = _baseTexture.getTexture();
+    if (!textureCapsule.has_value()) {
+        throw MyException::NoTexture("Base texture for the spritesheet animation");
+    }
+    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+    sf::Vector2u tmp = texture.getSize();
+    spritesheetSize.setDimension({ tmp.x, tmp.y });
+
 }
 
 
