@@ -28,15 +28,16 @@ namespace GUI
     {
         namespace Components
         {
+            class TextComponent;
             class ImageComponent;
-            class AnimationComponent;
-            class ButtonComponent;
-            class CollisionComponent;
             class MusicComponent;
             class ShapeComponent;
+            class ButtonComponent;
             class SpriteComponent;
-            class TextComponent;
+            enum class ActiveShape;
             class TextureComponent;
+            class CollisionComponent;
+            class AnimationComponent;
         }
     }
 }
