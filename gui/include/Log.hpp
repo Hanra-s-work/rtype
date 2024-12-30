@@ -2,12 +2,12 @@
 ** EPITECH PROJECT, 2024
 ** rtype (Workspace)
 ** File description:
-** Debug.hpp
+** Log.hpp
 */
 
 /**
- * @file Debug.hpp
- * @brief This is the file in charge of containing the Debug class (the one in charge of outputing info only when asked to)
+ * @file Log.hpp
+ * @brief This is the file in charge of containing the Log class (the one in charge of outputing info only when asked to)
  */
 
 #pragma once
@@ -19,27 +19,33 @@
 #include <iomanip>
 #include <iostream>
 
-#include "MyRecodes.hpp"
-
 
  /**
-  * @class Debug
+  * @class Log
   * @brief A singleton class that provides thread-safe logging capabilities
-  * with timestamps, active only when debugging is enabled.
+  * with timestamps, active only when loggin and debug outputs only when debugging and logging is enabled.
   */
-class Debug {
+class Log {
     public:
     /**
      * @brief Provides access to the singleton instance of the `Debug` class.
      * @return Reference to the `Debug` instance.
      */
-    static Debug &getInstance();
+    static Log &getInstance();
+    /**
+     * @brief Generates a formatted debug information string with file, line, and function details.
+     * @param file The name of the file where the debug information is generated.
+     * @param line The line number where the debug information is generated.
+     * @param func The name of the function where the debug information is generated.
+     * @return A formatted string containing the debug information.
+     */
+    std::string getLogLocation(const char *file, int line, const char *func);
 
     /**
      * @brief Enables or disables the debug logging.
      * @param enabled Set to `true` to enable debugging; `false` to disable.
      */
-    void setDebugEnabled(bool enabled);
+    void setLogEnabled(bool enabled);
 
     /**
      * @brief Logs a message if debugging is enabled.
@@ -57,11 +63,11 @@ class Debug {
      * @brief Appends a message to the debug log if debugging is enabled.
      * @tparam T The type of the message.
      * @param message The message to log.
-     * @return Reference to the `Debug` instance for chaining.
+     * @return Reference to the `Log` instance for chaining.
      * @warning Do not try and initialise it outside of the header file or compilation issues will occur.
      */
     template <typename T>
-    Debug &operator<<(const T &message)
+    Log &operator<<(const T &message)
     {
         if (_debugEnabled) {
             std::lock_guard<std::mutex> lock(_mtx);
@@ -73,9 +79,9 @@ class Debug {
     /**
      * @brief Appends a string message to the debug log if debugging is enabled.
      * @param message The string message to log.
-     * @return Reference to the `Debug` instance for chaining.
+     * @return Reference to the `Log` instance for chaining.
      */
-    Debug &operator<<(const std::string &message)
+    Log &operator<<(const std::string &message)
     {
         if (_debugEnabled) {
             std::lock_guard<std::mutex> lock(_mtx);
@@ -88,9 +94,9 @@ class Debug {
      * @brief Handles special stream manipulators (e.g., `std::endl`)
      * for logging with timestamps if debugging is enabled.
      * @param os The stream manipulator to apply.
-     * @return Reference to the `Debug` instance for chaining.
+     * @return Reference to the `Log` instance for chaining.
      */
-    Debug &operator<<(std::ostream &(*os)(std::ostream &))
+    Log &operator<<(std::ostream &(*os)(std::ostream &))
     {
         if (_debugEnabled) {
             std::lock_guard<std::mutex> lock(_mtx);
@@ -112,12 +118,12 @@ class Debug {
     std::ostringstream _buffer;       ///< Buffer for accumulating messages before output.
 
     /**
-     * @brief Private constructor for singleton pattern. Debugging is disabled by default.
+     * @brief Private constructor for singleton pattern. Logging is disabled by default.
      */
-    Debug() : _debugEnabled(false) {}
+    Log() : _debugEnabled(false) {}
 
-    Debug(const Debug &) = delete;            ///< Deleted copy constructor.
-    Debug &operator=(const Debug &) = delete; ///< Deleted assignment operator.
+    Log(const Log &) = delete;            ///< Deleted copy constructor.
+    Log &operator=(const Log &) = delete; ///< Deleted assignment operator.
 
     /**
      * @brief Retrieves the current date and time as a formatted string.

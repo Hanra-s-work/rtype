@@ -2,41 +2,48 @@
 ** EPITECH PROJECT, 2024
 ** rtype (Workspace)
 ** File description:
-** Debug.cpp
+** Log.cpp
 */
 
 /**
- * @file Debug.cpp
+ * @file Log.cpp
  * @brief This is the file in charge of managing the functions for the debug class
  */
 
-#include "Debug.hpp"
+#include "Log.hpp"
 
-Debug &Debug::getInstance()
+Log &Log::getInstance()
 {
-    static Debug instance;
+    static Log instance;
     return instance;
 }
 
-void Debug::setDebugEnabled(bool enabled)
+std::string Log::getLogLocation(const char *file, int line, const char *func)
+{
+    std::ostringstream oss;
+    oss << file << ":" << line << " " << func << "()";
+    return oss.str();
+}
+
+void Log::setLogEnabled(bool enabled)
 {
     _debugEnabled = enabled;
 }
 
-void Debug::log(const std::string &message)
+void Log::log(const std::string &message)
 {
     if (_debugEnabled) {
         std::lock_guard<std::mutex> lock(_mtx);
-        std::cout << getCurrentDateTime() << " DEBUG: " << message << std::endl;
+        std::cout << getCurrentDateTime() << message << std::endl;
     }
 }
 
-void Debug::log(const char *message)
+void Log::log(const char *message)
 {
     log(std::string(message));
 }
 
-std::string Debug::getCurrentDateTime()
+std::string Log::getCurrentDateTime()
 {
     auto now = std::chrono::system_clock::now();
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
