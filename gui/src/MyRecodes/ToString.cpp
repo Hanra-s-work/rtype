@@ -59,3 +59,8 @@ const std::string MyRecodes::myToString(double value)
 {
     return std::to_string(value);
 };
+
+const std::string MyRecodes::myToString(std::pair<int, int> value)
+{
+    return "( x: " + myToString(value.first) + ", y: " + myToString(value.second) + ")";
+};

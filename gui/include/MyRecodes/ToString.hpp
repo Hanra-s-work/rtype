@@ -14,6 +14,7 @@
  */
 
 #pragma once
+#include <utility>
 #include <string>
 
 namespace MyRecodes
@@ -89,4 +90,12 @@ namespace MyRecodes
      * @return A string representation of the double.
      */
     const std::string myToString(double value);
+
+    /**
+     * @brief Converts a double value to its string representation.
+     *
+     * @param value The double value to convert.
+     * @return A string representation of the double.
+     */
+    const std::string myToString(const std::pair<int, int> value);
 }
