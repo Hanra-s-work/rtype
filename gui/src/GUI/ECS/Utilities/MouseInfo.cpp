@@ -18,8 +18,8 @@
 GUI::ECS::Utilities::MouseInfo::MouseInfo(const std::uint32_t entityId)
     :EntityNode(entityId)
 {
-    _mousePosition.x = 0;
-    _mousePosition.y = 0;
+    _mousePosition.first = 0;
+    _mousePosition.second = 0;
     _leftButtonClicked = false;
     _rightButtonClicked = false;
 };
@@ -34,11 +34,16 @@ GUI::ECS::Utilities::MouseInfo::~MouseInfo() {};
  *
  * @param event The SFML event to process.
  */
-void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &event)
+void GUI::ECS::Utilities::MouseInfo::update(const std::any &eventCapsule)
 {
-    if (event->is<sf::Event::MouseButtonPressed>()) {
+    if (!eventCapsule.has_value()) {
+        Debug::getInstance() << "There is no event to process, skipping code." << std::endl;
+        return;
+    }
+    sf::Event event = std::any_cast<sf::Event>(eventCapsule);
+    if (event.is<sf::Event::MouseButtonPressed>()) {
         Debug::getInstance() << "MouseInfo, mouse button pressed." << std::endl;
-        const sf::Event::MouseButtonPressed *node = event->getIf<sf::Event::MouseButtonPressed>();
+        const sf::Event::MouseButtonPressed *node = event.getIf<sf::Event::MouseButtonPressed>();
         if (node->button == sf::Mouse::Button::Left) {
             Debug::getInstance() << "MouseInfo: Left mouse button clicked." << std::endl;
             _leftButtonClicked = true;
@@ -58,9 +63,9 @@ void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &even
             Debug::getInstance() << "MouseInfo: Unknown mouse button clicked." << std::endl;
         }
         Debug::getInstance() << "MouseInfo, out of the button being pressed." << std::endl;
-    } else if (event->is<sf::Event::MouseButtonReleased>()) {
+    } else if (event.is<sf::Event::MouseButtonReleased>()) {
         Debug::getInstance() << "MouseInfo, mouse button released." << std::endl;
-        const sf::Event::MouseButtonPressed *node = event->getIf<sf::Event::MouseButtonPressed>();
+        const sf::Event::MouseButtonPressed *node = event.getIf<sf::Event::MouseButtonPressed>();
         if (node->button == sf::Mouse::Button::Left) {
             Debug::getInstance() << "MouseInfo: Left mouse button released." << std::endl;
             _leftButtonClicked = false;
@@ -80,51 +85,51 @@ void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &even
             Debug::getInstance() << "MouseInfo: Unknown mouse button released." << std::endl;
         }
         Debug::getInstance() << "MouseInfo, out of the button being released." << std::endl;
-    } else if (event->is<sf::Event::MouseEntered>()) {
+    } else if (event.is<sf::Event::MouseEntered>()) {
         Debug::getInstance() << "MouseInfo: the mouse is in focus" << std::endl;
         _mouseInFocus = true;
-    } else if (event->is<sf::Event::MouseLeft>()) {
+    } else if (event.is<sf::Event::MouseLeft>()) {
         Debug::getInstance() << "MouseInfo: the mouse is not in focus" << std::endl;
         _mouseInFocus = false;
-    } else if (event->is<sf::Event::MouseMoved>()) {
-        const sf::Event::MouseMoved *data = event->getIf<sf::Event::MouseMoved>();
+    } else if (event.is<sf::Event::MouseMoved>()) {
+        const sf::Event::MouseMoved *data = event.getIf<sf::Event::MouseMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
         Debug::getInstance() << "MouseInfo: The mouse was moved, it's position is ("
             << posx << ", " << posy << ")" << std::endl;
-        _mousePosition.x = posx;
-        _mousePosition.y = posy;
-    } else if (event->is<sf::Event::MouseWheelScrolled>()) {
-        const sf::Event::MouseWheelScrolled *data = event->getIf<sf::Event::MouseWheelScrolled>();
+        _mousePosition.first = posx;
+        _mousePosition.second = posy;
+    } else if (event.is<sf::Event::MouseWheelScrolled>()) {
+        const sf::Event::MouseWheelScrolled *data = event.getIf<sf::Event::MouseWheelScrolled>();
         Debug::getInstance() << "MouseInfo: Update the position of the wheel." << std::endl;
         _mouseWheel.delta = data->delta;
         _mouseWheel.wheel = data->wheel;
         _mouseWheel.position = data->position;
-    } else if (event->is<sf::Event::TouchMoved>()) {
-        const sf::Event::TouchMoved *data = event->getIf<sf::Event::TouchMoved>();
+    } else if (event.is<sf::Event::TouchMoved>()) {
+        const sf::Event::TouchMoved *data = event.getIf<sf::Event::TouchMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
         Debug::getInstance() << "MouseInfo: Touch position (" << posx << ", " << posy << ")" << std::endl;
-        _mousePosition.x = posx;
-        _mousePosition.y = posy;
-    } else if (event->is<sf::Event::TouchBegan>()) {
-        const sf::Event::TouchMoved *data = event->getIf<sf::Event::TouchMoved>();
+        _mousePosition.first = posx;
+        _mousePosition.second = posy;
+    } else if (event.is<sf::Event::TouchBegan>()) {
+        const sf::Event::TouchMoved *data = event.getIf<sf::Event::TouchMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
         Debug::getInstance() << "MouseInfo: Touch (translated as a left click) began at ("
             << posx << ", " << posy << ")" << std::endl;
         _leftButtonClicked = true;
-        _mousePosition.x = posx;
-        _mousePosition.y = posy;
-    } else if (event->is<sf::Event::TouchEnded>()) {
-        const sf::Event::TouchMoved *data = event->getIf<sf::Event::TouchMoved>();
+        _mousePosition.first = posx;
+        _mousePosition.second = posy;
+    } else if (event.is<sf::Event::TouchEnded>()) {
+        const sf::Event::TouchMoved *data = event.getIf<sf::Event::TouchMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
         Debug::getInstance() << "MouseInfo: Touch (translated as a left click) began at ("
             << posx << ", " << posy << ")" << std::endl;
         _leftButtonClicked = false;
-        _mousePosition.x = posx;
-        _mousePosition.y = posy;
+        _mousePosition.first = posx;
+        _mousePosition.second = posy;
     } else {
         Debug::getInstance() << "MouseInfo: Unknown event type" << std::endl;
     }
@@ -137,7 +142,13 @@ void GUI::ECS::Utilities::MouseInfo::update(const std::optional<sf::Event> &even
  */
 void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
 {
-    _mouseWheel = entity.getMouseWheelEvent();
+    _mouseWheel.delta = entity.getScrollIndex();
+    _mouseWheel.position = { entity.getPositionX(), entity.getPositionY() };
+    if (entity.getScrollDirection() == MouseWheel::Vertical) {
+        _mouseWheel.wheel = sf::Mouse::Wheel::Vertical;
+    } else {
+        _mouseWheel.wheel = sf::Mouse::Wheel::Horizontal;
+    }
     _mouseInFocus = entity.isMouseInFocus();
     _mousePosition = entity.getMousePosition();
     _leftButtonClicked = entity.isMouseLeftButtonClicked();
@@ -150,44 +161,23 @@ void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
 /**
  * @brief Updates the mouse position using an integer-based vector.
  *
- * @param mousePosition The new mouse position as an sf::Vector2i.
+ * @param mousePosition The new mouse position as an std::pair<int, int>.
  */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2i &mousePosition)
-{
-    Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
-    _mousePosition.x = mousePosition.x;
-    _mousePosition.y = mousePosition.y;
-};
-
-/**
- * @brief Updates the mouse position using a floating-point vector.
- *
- * @param mousePosition The new mouse position as an sf::Vector2f.
- */
-void GUI::ECS::Utilities::MouseInfo::update(const sf::Vector2f &mousePosition)
+void GUI::ECS::Utilities::MouseInfo::update(const std::pair<int, int> &mousePosition)
 {
     Debug::getInstance() << "MouseInfo: Mouse position updated" << std::endl;
     _mousePosition = mousePosition;
 };
 
+
 /**
  * @brief Retrieves the current mouse position.
  *
- * @return sf::Vector2f The current mouse position.
+ * @return std::pair<int, int> The current mouse position.
  */
-const sf::Vector2f GUI::ECS::Utilities::MouseInfo::getMousePosition() const
+const std::pair<int, int> GUI::ECS::Utilities::MouseInfo::getMousePosition() const
 {
     return _mousePosition;
-};
-
-/**
- * @brief Retrieves the most recent mouse wheel event.
- *
- * @return sf::Event::MouseWheelScrolled The last mouse wheel event data.
- */
-const sf::Event::MouseWheelScrolled GUI::ECS::Utilities::MouseInfo::getMouseWheelEvent() const
-{
-    return _mouseWheel;
 };
 
 /**
@@ -251,23 +241,117 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra2ButtonClicked() const
 };
 
 /**
+ *@brief Check if the mouse has scrolled
+ *
+ * @return true it has scrolled
+ * @return false it has not scrolled
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolled() const
+{
+    if (_mouseWheel.delta == 0) {
+        return false;
+    }
+    return true;
+}
+
+/**
+ *@brief Check if the mouse has scrolled upwards
+ *
+ * @return true it has scrolled upwards
+ * @return false it has scrolled in another direction
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledUp() const
+{
+    if (_mouseWheel.delta > 0 && getScrollDirection() == MouseWheel::Vertical) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ *@brief Check if the mouse has scrolled downwards
+ *
+ * @return true it has scrolled downwards
+ * @return false it has scrolled in another direction
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledDown() const
+{
+    if (_mouseWheel.delta < 0 && getScrollDirection() == MouseWheel::Vertical) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ *@brief Check if the mouse has scrolled to the left
+ *
+ * @return true it has scrolled to the left
+ * @return false it has scrolled in another direction
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledLeft() const
+{
+    if (_mouseWheel.delta > 0 && getScrollDirection() == MouseWheel::Horizontal) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ *@brief Check if the mouse has scrolled to the right
+ *
+ * @return true it has scrolled to the right
+ * @return false it has scrolled in another direction
+ */
+const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledRight() const
+{
+    if (_mouseWheel.delta < 0 && getScrollDirection() == MouseWheel::Horizontal) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ *@brief Function in charge of returning the scroll index of the mouse.
+ *
+ * @return const float
+ */
+const float GUI::ECS::Utilities::MouseInfo::getScrollIndex() const
+{
+    return _mouseWheel.delta;
+}
+
+/**
+ *@brief Function in charge of returning the direction in which the user scrolled.
+ *
+ * @return const GUI::ECS::Utilities::MouseWheel
+ */
+const GUI::ECS::Utilities::MouseWheel GUI::ECS::Utilities::MouseInfo::getScrollDirection() const
+{
+    if (_mouseWheel.wheel == sf::Mouse::Wheel::Vertical) {
+        return GUI::ECS::Utilities::MouseWheel::Vertical;
+    } else {
+        return GUI::ECS::Utilities::MouseWheel::Horizontal;
+    }
+}
+
+/**
  * @brief Retrieves the x-coordinate of the mouse position.
  *
- * @return float The x-coordinate of the mouse position.
+ * @return int The x-coordinate of the mouse position.
  */
-const float GUI::ECS::Utilities::MouseInfo::getPositionX() const
+const int GUI::ECS::Utilities::MouseInfo::getPositionX() const
 {
-    return _mousePosition.x;
+    return _mousePosition.first;
 };
 
 /**
  * @brief Retrieves the y-coordinate of the mouse position.
  *
- * @return float The y-coordinate of the mouse position.
+ * @return int The y-coordinate of the mouse position.
  */
-const float GUI::ECS::Utilities::MouseInfo::getPositionY() const
+const int GUI::ECS::Utilities::MouseInfo::getPositionY() const
 {
-    return _mousePosition.y;
+    return _mousePosition.second;
 };
 
 
@@ -286,7 +370,7 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
     result += indentation + "- Mouse right button clicked: " + MyRecodes::myToString(_rightButtonClicked) + "\n";
     result += indentation + "- Mouse extra1 button clicked: " + MyRecodes::myToString(_extra1ButtonClicked) + "\n";
     result += indentation + "- Mouse extra2 button clicked: " + MyRecodes::myToString(_extra2ButtonClicked) + "\n";
-    result += indentation + "- Mouse position: ( x: " + MyRecodes::myToString(_mousePosition.x) + ", y: " + MyRecodes::myToString(_mousePosition.y) + ")\n";
+    result += indentation + "- Mouse position: " + MyRecodes::myToString(_mousePosition) + "\n";
     result += indentation + "- Mouse Wheel Scrolled: {\n";
     result += indentation + "\t- wheel: ";
     if (_mouseWheel.wheel == sf::Mouse::Wheel::Vertical) {
@@ -296,7 +380,7 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
     }
     result += "\n";
     result += indentation + "\t- Delta: " + MyRecodes::myToString(_mouseWheel.delta) + "\n";
-    result += indentation + "\t- Position: ( x: " + MyRecodes::myToString(_mouseWheel.position.x) + ", y: " + MyRecodes::myToString(_mouseWheel.position.y) + ")\n";
+    result += indentation + "\t- Position: " + MyRecodes::myToString({ _mouseWheel.position.x,_mouseWheel.position.y }) + "\n";
     result += indentation + "}\n";
     return result;
 }
