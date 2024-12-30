@@ -12,7 +12,9 @@
 
 #pragma once
 
+#include <any>
 #include <memory>
+#include <utility>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -32,6 +34,14 @@ namespace GUI
     {
         namespace Components
         {
+
+            enum class ActiveShape {
+                NONE = -1,
+                RECTANGLE = 0,
+                CIRCLE,
+                CONVEX
+            };
+
             class ShapeComponent : public EntityNode {
                 public:
                 ShapeComponent(const std::uint32_t entityId = 0);
@@ -41,21 +51,31 @@ namespace GUI
                 void setNormalColor(const GUI::ECS::Utilities::Colour &normalColor);
                 void setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor);
 
-                void setShape(sf::Shape &&shape);
-                void setShape(const sf::Shape &shape);
-                void setShape(std::unique_ptr<sf::Shape> shape);
+                void setShape(const GUI::ECS::Components::ActiveShape &shape);
+                void setShape(const GUI::ECS::Components::ActiveShape &type, const std::any &shape);
+                void setShape(const std::pair<GUI::ECS::Components::ActiveShape, std::any> &shape);
 
-                void setPosition(const sf::Vector2f position);
-                void setDimension(const sf::Vector2f dimension);
+                void setVisible(const bool visible);
+
+                void setPosition(const std::pair<float, float> position);
+                void setDimension(const std::pair<float, float> dimension);
                 void setCollision(const GUI::ECS::Components::CollisionComponent &collision);
+
+                void toggleVisibility();
+
+                const bool isVisible() const;
+                const bool isShapeInitialised() const;
+
+                const GUI::ECS::Components::ActiveShape getShapeType() const;
+                const std::pair<GUI::ECS::Components::ActiveShape, std::any> getActiveShape() const;
 
                 const GUI::ECS::Utilities::Colour getHoverColor() const;
                 const GUI::ECS::Utilities::Colour getNormalColor() const;
                 const GUI::ECS::Utilities::Colour getClickedColor() const;
 
-                const sf::Vector2f getPosition() const;
-                const sf::Vector2f getDimension() const;
-                const sf::Shape &getShape() const;
+                const std::pair<float, float> getPosition() const;
+                const std::pair<float, float> getDimension() const;
+                const std::pair<GUI::ECS::Components::ActiveShape, std::any> getShape() const;
                 const GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
                 /**
                  *@brief This is a function meant for debugging purposes
@@ -67,19 +87,26 @@ namespace GUI
                  */
                 const std::string getInfo(const unsigned int indent = 0) const;
 
+                const bool getVisible() const;
+
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::ShapeComponent &copy);
 
-                void render(sf::RenderWindow &window) const;
+                void clearShapes();
 
-                ShapeComponent &operator=(const ShapeComponent &copy);
-                ShapeComponent &operator=(ShapeComponent &&move) noexcept;
+                std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> render() const;
+
+                ShapeComponent &operator=(const GUI::ECS::Components::ShapeComponent &copy);
 
                 private:
-                static std::unique_ptr<sf::Shape> cloneShape(const sf::Shape &shape);
                 void _processColor();
+                void _processCollisions();
 
-                std::unique_ptr<sf::Shape> _sfShape;
+                bool _visible = true;
+                ActiveShape _shape = ActiveShape::NONE;
+                std::optional<sf::CircleShape> _sfShapeCircle;
+                std::optional<sf::ConvexShape> _sfShapeConvex;
+                std::optional<sf::RectangleShape> _sfShapeRectangle;
                 GUI::ECS::Utilities::Colour _hoverColor;
                 GUI::ECS::Utilities::Colour _normalColor;
                 GUI::ECS::Utilities::Colour _clickedColor;
