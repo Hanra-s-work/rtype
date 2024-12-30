@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <any>
 #include <SFML/Graphics/Font.hpp>
 
 #include "Debug.hpp"
@@ -50,7 +51,7 @@ namespace GUI
                 const std::string getFontPath() const;
                 const std::string getApplication() const;
                 const unsigned int getDefaultSize() const;
-                const sf::Font &getFontInstance() const;
+                const std::any &getFontInstance() const;
                 /**
                   *@brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -61,7 +62,6 @@ namespace GUI
                  */
                 const std::string getInfo(const unsigned int indent = 0) const;
 
-                void update(const sf::Font &font);
                 void update(const GUI::ECS::Utilities::Font &copy);
 
                 const bool isLoaded() const;

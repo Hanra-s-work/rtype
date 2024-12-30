@@ -184,13 +184,13 @@ const unsigned int GUI::ECS::Utilities::Font::getDefaultSize() const
     return _fontDefaultSize;
 }
 
-const sf::Font &GUI::ECS::Utilities::Font::getFontInstance() const
+const std::any &GUI::ECS::Utilities::Font::getFontInstance() const
 {
     if (!_fontInstanceSet) {
         Debug::getInstance() << "Error: Font instance not set." << std::endl;
         throw MyException::NoFont(_fontName);
     }
-    return _fontInstance;
+    return std::any(_fontInstance);
 }
 
 const std::string GUI::ECS::Utilities::Font::getInfo(const unsigned int indent) const
@@ -212,16 +212,20 @@ const std::string GUI::ECS::Utilities::Font::getInfo(const unsigned int indent) 
     return result;
 }
 
-void GUI::ECS::Utilities::Font::update(const sf::Font &font)
-{
-    _fontInstance = font;
-    _fontInstanceSet = true;
-}
-
 void GUI::ECS::Utilities::Font::update(const GUI::ECS::Utilities::Font &copy)
 {
-    _fontInstance = copy.getFontInstance();
-    _fontInstanceSet = true;
+    std::any systemFont = copy.getFontInstance();
+    if (!systemFont.has_value()) {
+        throw MyException::NoFont("<There is no sf::Font instance to manipulate>");
+    }
+    try {
+        sf::Font font = std::any_cast<sf::Font>(systemFont);
+        _fontInstance = font;
+        _fontInstanceSet = true;
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
+    }
     _fontPath = copy.getFontPath();
     _fontName = copy.getFontName();
     _fontApplication = copy.getApplication();
