@@ -774,6 +774,34 @@ namespace MyException
 
     /**
      *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant window.
+     *
+     */
+    class NoWindow : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Sprite Sheet object
+         *
+         */
+        NoWindow();
+        /**
+         * @brief Destroy the No Sprite Sheet object
+         *
+         */
+        ~NoWindow();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
      * that they tried to access a non-existant spritesheet.
      *
      */
@@ -997,6 +1025,176 @@ namespace MyException
         std::string _msg; ///< Stores the error message.
         const char *_buffer; ///< Buffer for formatted error message.
     };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant texture instance.
+     *
+     */
+    class NoTexture : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Texture object
+         *
+         * @param errorReason The reason for the error
+         */
+        NoTexture(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Texture object
+         *
+         */
+        ~NoTexture();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to render a non-existing text component.
+     *
+     */
+    class NoRenderableText : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Renderable Text object
+         *
+         */
+        NoRenderableText(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Renderable Text object
+         *
+         */
+        ~NoRenderableText();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to render a non-existing Shape component.
+     *
+     */
+    class NoRenderableShape : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Renderable Shape object
+         *
+         */
+        NoRenderableShape(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Renderable Shape object
+         *
+         */
+        ~NoRenderableShape();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to render a non-existing Image component.
+     *
+     */
+    class NoRenderableImage : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Renderable Image object
+         *
+         */
+        NoRenderableImage(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Renderable Image object
+         *
+         */
+        ~NoRenderableImage();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to render a non-existing Sprite component.
+     *
+     */
+    class NoRenderableSprite : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Renderable Sprite object
+         *
+         */
+        NoRenderableSprite(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Renderable Sprite object
+         *
+         */
+        ~NoRenderableSprite();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
+     * that they tried to render a non-existing Button component.
+     *
+     */
+    class NoRenderableButton : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Renderable Button object
+         *
+         */
+        NoRenderableButton(const std::string &errorReason = "");
+        /**
+         *@brief Destroy the No Renderable Button object
+         *
+         */
+        ~NoRenderableButton();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
 
     /**
      *@brief This is the class in charge of informing the user

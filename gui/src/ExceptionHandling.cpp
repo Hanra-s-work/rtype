@@ -462,6 +462,19 @@ namespace MyException
         return _buffer;
     }
 
+    NoWindow::NoWindow()
+    {
+        _msg = "Error: There is no window to on which to render component.\n";
+        _buffer = _msg.c_str();
+    };
+
+    NoWindow::~NoWindow() {};
+
+    const char *NoWindow::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoSpriteSheet::NoSpriteSheet()
     {
         _msg = "Error: There is no spritesheet set.\n";
@@ -571,6 +584,102 @@ namespace MyException
     NoText::~NoText() {};
 
     const char *NoText::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoTexture::NoTexture(const std::string &errorReason)
+    {
+        _msg = "Error: There is no text component";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoTexture::~NoTexture() {};
+
+    const char *NoTexture::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoRenderableText::NoRenderableText(const std::string &errorReason)
+    {
+        _msg = "Error: There is no text instance that can be rendered.";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoRenderableText::~NoRenderableText() {};
+
+    const char *NoRenderableText::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoRenderableShape::NoRenderableShape(const std::string &errorReason)
+    {
+        _msg = "Error: There is no shape instance that can be rendered.";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoRenderableShape::~NoRenderableShape() {};
+
+    const char *NoRenderableShape::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoRenderableImage::NoRenderableImage(const std::string &errorReason)
+    {
+        _msg = "Error: There is no image instance that can be rendered.";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoRenderableImage::~NoRenderableImage() {};
+
+    const char *NoRenderableImage::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoRenderableSprite::NoRenderableSprite(const std::string &errorReason)
+    {
+        _msg = "Error: There is no sprite instance that can be rendered.";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoRenderableSprite::~NoRenderableSprite() {};
+
+    const char *NoRenderableSprite::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoRenderableButton::NoRenderableButton(const std::string &errorReason)
+    {
+        _msg = "Error: There is no button instance that can be rendered.";
+        if (!errorReason.empty()) {
+            _msg += errorReason;
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoRenderableButton::~NoRenderableButton() {};
+
+    const char *NoRenderableButton::what() const noexcept
     {
         return _buffer;
     }
