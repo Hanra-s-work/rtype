@@ -703,11 +703,10 @@ void Main::_mainLoop()
         if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
             _testContent();
         }
-        sf::Vector2f mousePos = event.getMousePosition();
         text.update(event.getMouseInfo());
         // Debug::getInstance() << "Text Component: \n" << text << std::endl;
         // Debug::getInstance() << "Event: \n" << event << std::endl;
-        Debug::getInstance() << "Mouse position: (x: " << mousePos.x << ", y: " << mousePos.y << ")" << std::endl;
+        Debug::getInstance() << "Mouse position: " << MyRecodes::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
         window.display();
         window.clear();
