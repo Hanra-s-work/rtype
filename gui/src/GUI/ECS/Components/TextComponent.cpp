@@ -364,8 +364,22 @@ void GUI::ECS::Components::TextComponent::_initialiseText()
             return;
         }
 
-        sf::Text node(_font.getFontInstance(), _text, _size);
-        _sfTextComponent.emplace(node);
+        std::any systemFont = _font.getFontInstance();
+        if (systemFont.has_value()) {
+            throw MyException::NoFont("<There is no sf::Font instance to apply>");
+        }
+        try {
+            sf::Font font = std::any_cast<sf::Font>(systemFont);
+            if (_sfTextComponent.has_value()) {
+                _sfTextComponent->setFont(font);
+            } else {
+                sf::Text node(font, _text, _size);
+                _sfTextComponent.emplace(node);
+            }
+        }
+        catch (std::bad_any_cast &e) {
+            throw MyException::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
+        }
     }
 }
 
@@ -379,7 +393,17 @@ void GUI::ECS::Components::TextComponent::_loadFont()
         Debug::getInstance() << "Text not initialised, initialising..." << std::endl;
         _initialiseText();
     }
-    _sfTextComponent->setFont(_font.getFontInstance());
+    std::any systemFont = _font.getFontInstance();
+    if (systemFont.has_value()) {
+        throw MyException::NoFont("<There is no sf::Font instance to apply>");
+    }
+    try {
+        sf::Font font = std::any_cast<sf::Font>(systemFont);
+        _sfTextComponent->setFont(font);
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
+    }
 }
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
@@ -424,12 +448,23 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
         Debug::getInstance() << "No text component value to be managed" << std::endl;
     }
     Debug::getInstance() << "Font loaded, updating text colour" << std::endl;
+    std::any systemColour;
     if (_textPos.isClicked()) {
-        _sfTextComponent->setFillColor(_clickedColor.getColourSFML());
+        systemColour = _clickedColor.getRenderColour();
     } else if (_textPos.isHovered()) {
-        _sfTextComponent->setFillColor(_hoverColor.getColourSFML());
+        systemColour = _hoverColor.getRenderColour();
     } else {
-        _sfTextComponent->setFillColor(_color.getColourSFML());
+        systemColour = _color.getRenderColour();
+    }
+    if (!systemColour.has_value()) {
+        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+    }
+    try {
+        sf::Color result = std::any_cast<sf::Color>(systemColour);
+        _sfTextComponent->setFillColor(result);
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 
