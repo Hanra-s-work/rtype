@@ -35,6 +35,7 @@ set(SOURCES
     src/GUI/ECS/Components/TextComponent.cpp
     src/GUI/ECS/Components/MusicComponent.cpp
     src/GUI/ECS/Components/ShapeComponent.cpp
+    src/GUI/ECS/Components/ImageComponent.cpp
     src/GUI/ECS/Components/SpriteComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
     src/GUI/ECS/Components/TextureComponent.cpp
