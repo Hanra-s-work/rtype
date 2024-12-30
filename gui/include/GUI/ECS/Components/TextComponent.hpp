@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <any>
 #include <cstdint>
 #include <optional>
 #include <SFML/Graphics/Text.hpp>
@@ -100,7 +101,7 @@ namespace GUI
                  * @param clickedColor The color of the text when clicked.
                  * @param position The position of the text in 2D space.
                  */
-                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position);
+                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::pair<float, float> &position);
                 /**
                  * @brief Constructor with a font instance.
                  *
@@ -149,19 +150,13 @@ namespace GUI
                  * @param clickedColor The color of the text when clicked.
                  * @param position The position of the text in 2D space.
                  */
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::pair<float, float> &position);
 
                 /**
                  * @brief Destructor for TextComponent.
                  */
                 ~TextComponent();
 
-                /**
-                 * @brief Set the Font of the text using a loaded sf::Font instance
-                 *
-                 * @param font The loaded sf::Font instance
-                 */
-                void setFont(const sf::Font &font);
                 /**
                  * @brief Set the Font of the text using a loaded Font instance from GUI::ECS::Utilities::Font
                  *
@@ -217,7 +212,7 @@ namespace GUI
                  *
                  * @param position The position to be set.
                  */
-                void setPosition(const sf::Vector2f &position);
+                void setPosition(const std::pair<float, float> &position);
 
                 /**
                  * @brief Set the visibility of the object using a boolean
@@ -234,6 +229,14 @@ namespace GUI
                  * @else hidden
                  */
                 void toggleVisibility();
+
+                /**
+                 *@brief Check if the text is set to be rendered or not.
+                 *
+                 * @return true The text is set to be rendered
+                 * @return false The text is not set to be rendered
+                 */
+                const bool isVisible() const;
 
                 /**
                  * @brief Get the Font object contained in the class
@@ -285,9 +288,9 @@ namespace GUI
                 /**
                  * @brief Get the Position of the text
                  *
-                 * @return const sf::Vector2f
+                 * @return const std::pair<float, float>
                  */
-                const sf::Vector2f getPosition() const;
+                const std::pair<float, float> getPosition() const;
 
                 /**
                  * @brief Get the Visibility of the text
@@ -310,9 +313,9 @@ namespace GUI
                 /**
                  * @brief Function in charge of rendering the text if it is set to visible, otherwise, does nothing
                  *
-                 * @param window The window instance in which to render the content.
+                 * @return std::optional<std::any>
                  */
-                void render(sf::RenderWindow &window) const;
+                std::any render() const;
 
                 /**
                  * @brief The function in charge of updating the stored mouse information

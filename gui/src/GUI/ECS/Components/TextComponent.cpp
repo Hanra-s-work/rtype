@@ -60,7 +60,7 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
     _processTextComponent();
 };
 
-GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position)
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::pair<float, float> &position)
     : EntityNode(entityId)
 {
     _inConstructor = true;
@@ -119,7 +119,7 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
     _processTextComponent();
 };
 
-GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const sf::Vector2f &position)
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::pair<float, float> &position)
     : EntityNode(entityId)
 {
     _inConstructor = true;
@@ -136,15 +136,6 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 
 
 GUI::ECS::Components::TextComponent::~TextComponent() {};
-
-void GUI::ECS::Components::TextComponent::setFont(const sf::Font &font)
-{
-    _font.update(font);
-    _fontChanged = true;
-    if (!_inConstructor) {
-        _processTextComponent();
-    }
-}
 
 void GUI::ECS::Components::TextComponent::setFont(const GUI::ECS::Utilities::Font &font)
 {
@@ -226,7 +217,7 @@ void GUI::ECS::Components::TextComponent::setFontPath(const std::string &fontPat
     }
 }
 
-void GUI::ECS::Components::TextComponent::setPosition(const sf::Vector2f &position)
+void GUI::ECS::Components::TextComponent::setPosition(const std::pair<float, float> &position)
 {
     if (_textPos.getPosition() != position) {
         _textPos.setPosition(position);
@@ -249,6 +240,11 @@ void GUI::ECS::Components::TextComponent::toggleVisibility()
     } else {
         _visible = true;
     }
+}
+
+const bool GUI::ECS::Components::TextComponent::isVisible() const
+{
+    return _visible;
 }
 
 const GUI::ECS::Utilities::Font GUI::ECS::Components::TextComponent::getFont() const
@@ -286,7 +282,7 @@ const std::uint32_t GUI::ECS::Components::TextComponent::getSize() const
     return _size;
 }
 
-const sf::Vector2f GUI::ECS::Components::TextComponent::getPosition() const
+const std::pair<float, float> GUI::ECS::Components::TextComponent::getPosition() const
 {
     return _textPos.getPosition();
 }
@@ -326,17 +322,14 @@ const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned in
 
 
 
-void GUI::ECS::Components::TextComponent::render(sf::RenderWindow &window) const
+std::any GUI::ECS::Components::TextComponent::render() const
 {
-    if (_visible) {
-        Debug::getInstance() << "Rendering text" << std::endl;
-        if (!_sfTextComponent.has_value()) {
-            throw MyException::NoText("to be rendered.");
-        }
-        sf::Text data = _sfTextComponent.value();
-        window.draw(data);
+    if (!_visible || !_sfTextComponent.has_value()) {
+        Debug::getInstance() << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        return std::nullopt;
     }
-}
+    return std::make_any<sf::Text>(_sfTextComponent.value());
+};
 
 void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
 {
@@ -415,7 +408,8 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
         }
         if (_positionAltered) {
             Debug::getInstance() << "Going to check the position" << std::endl;
-            _sfTextComponent->setPosition(_textPos.getPosition());
+            std::pair<float, float> pos = _textPos.getPosition();
+            _sfTextComponent->setPosition({ pos.first, pos.second });
             _positionAltered = false;
             _fontAltered = true;
         }
@@ -423,7 +417,7 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
             Debug::getInstance() << "Going to update the font" << std::endl;
             Debug::getInstance() << "Text component has a value" << std::endl;
             sf::FloatRect textBounds = _sfTextComponent->getGlobalBounds();
-            _textPos.setDimension(textBounds.size);
+            _textPos.setDimension({ textBounds.size.x, textBounds.size.y });
             _fontAltered = false;
         }
     } else {
