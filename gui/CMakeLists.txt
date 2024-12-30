@@ -57,6 +57,7 @@ set(SOURCES
     src/GUI/ECS/Utilities/EventManager.cpp
 
     # Custom rebinds
+    src/MyRecodes/Rect.cpp
     src/MyRecodes/ToString.cpp
 )
 

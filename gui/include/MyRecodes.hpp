@@ -12,4 +12,5 @@
 
 #pragma once
 
+#include "MyRecodes/Rect.hpp"
 #include "MyRecodes/ToString.hpp"
