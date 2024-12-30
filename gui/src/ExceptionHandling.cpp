@@ -572,6 +572,22 @@ namespace MyException
         return _buffer;
     }
 
+    NoColour::NoColour(const std::string &exceptionDetail)
+    {
+        _msg = "Error: There is no colour to be stored or rendered. ";
+        if (!exceptionDetail.empty()) {
+            _msg += "( " + exceptionDetail + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoColour::~NoColour() {};
+
+    const char *NoColour::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoText::NoText(const std::string &errorReason)
     {
         _msg = "Error: There is no text component";

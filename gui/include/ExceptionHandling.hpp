@@ -999,6 +999,35 @@ namespace MyException
 
     /**
      *@brief This is the class in charge of informing the user
+     * that they tried to access a non-existant colour instance.
+     *
+     */
+    class NoColour : public std::exception {
+        public:
+        /**
+         *@brief Construct a new No Colour object
+         *
+         * @param exceptionDetail The name of the font that was provided.
+         */
+        NoColour(const std::string &exceptionDetail = "");
+        /**
+         *@brief Destroy the No Colour object
+         *
+         */
+        ~NoColour();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; ///< Stores the error message.
+        const char *_buffer; ///< Buffer for formatted error message.
+    };
+
+    /**
+     *@brief This is the class in charge of informing the user
      * that they tried to access a non-existant text instance.
      *
      */
