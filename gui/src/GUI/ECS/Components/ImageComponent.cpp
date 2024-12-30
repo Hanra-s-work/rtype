@@ -334,8 +334,13 @@ void GUI::ECS::Components::ImageComponent::_initialiseImage()
     if (!_sfImage.has_value()) {
         std::any textureCapsule = _base.getTexture();
         if (textureCapsule.has_value()) {
-            sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-            _sfImage.emplace(texture);
+            try {
+                sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+                _sfImage.emplace(texture);
+            }
+            catch (std::bad_any_cast &e) {
+                throw MyException::NoTexture("<No texture was found when a texture of type sf::Texture was expected>, system error: " + std::string(e.what()));
+            }
         }
     }
 }
@@ -345,12 +350,23 @@ void GUI::ECS::Components::ImageComponent::_processColour()
     if (!_sfImage.has_value()) {
         return;
     }
+    std::any systemColour;
     if (_collision.isClicked()) {
-        _sfImage->setColor(_clickedColor.getColourSFML());
+        systemColour = _clickedColor.getRenderColour();
     } else if (_collision.isHovered()) {
-        _sfImage->setColor(_hoverColor.getColourSFML());
+        systemColour = _hoverColor.getRenderColour();
     } else {
-        _sfImage->setColor(_normalColor.getColourSFML());
+        systemColour = _normalColor.getRenderColour();
+    }
+    if (!systemColour.has_value()) {
+        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+    }
+    try {
+        sf::Color result = std::any_cast<sf::Color>(systemColour);
+        _sfImage->setColor(result);
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 
@@ -377,9 +393,14 @@ void GUI::ECS::Components::ImageComponent::_processImageComponent()
             Debug::getInstance() << "The texture has been altered, updating image." << std::endl;
             std::any textureCapsule = _base.getTexture();
             if (textureCapsule.has_value()) {
-                sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-                _sfImage->setTexture(texture);
-                _textureAltered = false;
+                try {
+                    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+                    _sfImage->setTexture(texture);
+                    _textureAltered = false;
+                }
+                catch (std::bad_any_cast &e) {
+                    throw MyException::NoTexture("<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: " + std::string(e.what()));
+                }
             }
         }
     }

@@ -317,22 +317,31 @@ GUI::ECS::Components::ShapeComponent &GUI::ECS::Components::ShapeComponent::oper
 
 void GUI::ECS::Components::ShapeComponent::_processColor()
 {
-    GUI::ECS::Utilities::Colour colourNode;
+    std::any systemColour;
     if (_collision.isClicked()) {
-        colourNode = _clickedColor;
+        systemColour = _clickedColor.getRenderColour();
     } else if (_collision.isHovered()) {
-        colourNode = _hoverColor;
+        systemColour = _hoverColor.getRenderColour();
     } else {
-        colourNode = _normalColor;
+        systemColour = _normalColor.getRenderColour();
     }
-    if (_sfShapeCircle.has_value()) {
-        _sfShapeCircle->setFillColor(colourNode.getColourSFML());
+    if (!systemColour.has_value()) {
+        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
-    if (_sfShapeConvex.has_value()) {
-        _sfShapeConvex->setFillColor(colourNode.getColourSFML());
+    try {
+        sf::Color result = std::any_cast<sf::Color>(systemColour);
+        if (_sfShapeCircle.has_value()) {
+            _sfShapeCircle->setFillColor(result);
+        }
+        if (_sfShapeConvex.has_value()) {
+            _sfShapeConvex->setFillColor(result);
+        }
+        if (_sfShapeRectangle.has_value()) {
+            _sfShapeRectangle->setFillColor(result);
+        }
     }
-    if (_sfShapeRectangle.has_value()) {
-        _sfShapeRectangle->setFillColor(colourNode.getColourSFML());
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 

@@ -328,10 +328,15 @@ void GUI::ECS::Components::SpriteComponent::setCollision(const GUI::ECS::Compone
 void GUI::ECS::Components::SpriteComponent::setSpritesheet(const std::string &spritesheetPath)
 {
     _spritesheet.setFilePath(spritesheetPath);
+    std::any textureCapsule = _spritesheet.getTexture();
+    if (!textureCapsule.has_value()) {
+        return;
+    }
+    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
     if (!_sfSprite.has_value()) {
-        _sfSprite.emplace(_spritesheet.getTexture());
+        _sfSprite.emplace(texture);
     } else {
-        _sfSprite->setTexture(_spritesheet.getTexture());
+        _sfSprite->setTexture(texture);
     }
     _spriteSet = true;
     _spritesheetSet = true;
@@ -355,22 +360,36 @@ void GUI::ECS::Components::SpriteComponent::setClickedColor(const GUI::ECS::Util
 void GUI::ECS::Components::SpriteComponent::setSpritesheet(const GUI::ECS::Components::TextureComponent &spritesheetTexture)
 {
     _spritesheet.update(spritesheetTexture);
-    if (_sfSprite.has_value()) {
-        _sfSprite->setTexture(_spritesheet.getTexture());
-        _spriteSet = true;
-    }
     _spritesheetSet = true;
+    if (!_sfSprite.has_value()) {
+        return;
+    }
+    std::any textureCapsule = _spritesheet.getTexture();
+    if (!textureCapsule.has_value()) {
+        return;
+    }
+    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+    _sfSprite->setTexture(texture);
+    _spriteSet = true;
 }
 
 void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Components::AnimationComponent &animation)
 {
     _animation.update(animation);
     _collision.setDimension(animation.getFrameDimensions());
-    if (_sfSprite.has_value()) {
-        _sfSprite->setTexture(_animation.getCurrentTexture().getTexture());
-        _spriteSet = true;
-    }
     _animationSet = true;
+    if (!_sfSprite.has_value()) {
+        return;
+    }
+    std::any textureCapsule = _animation.getCurrentTexture().getTexture();
+    if (!textureCapsule.has_value()) {
+        return;
+    }
+    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+    _sfSprite->setTexture(texture);
+    _spriteSet = true;
+
+
 }
 
 void GUI::ECS::Components::SpriteComponent::setVisible(const bool visible)
@@ -410,19 +429,14 @@ void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Components::S
     setAnimation(copy.getAnimation());
 }
 
-void GUI::ECS::Components::SpriteComponent::render(sf::RenderWindow &window) const
+std::any GUI::ECS::Components::SpriteComponent::render() const
 {
-    if (!_sfSprite.has_value()) {
-        return;
+    if (!_visible || !_sfSprite.has_value()) {
+        Debug::getInstance() << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        return std::nullopt;
     }
-    if (!_spriteSet) {
-        throw MyException::NoSprite();
-    }
-    if (_visible) {
-        sf::Sprite node = _sfSprite.value();
-        window.draw(node);
-    }
-}
+    return std::make_any<sf::Sprite>(_sfSprite.value());
+};
 
 void GUI::ECS::Components::SpriteComponent::start()
 {
@@ -479,6 +493,11 @@ const bool GUI::ECS::Components::SpriteComponent::isPaused() const
     return _animation.isPaused();
 }
 
+const bool GUI::ECS::Components::SpriteComponent::isPlaying() const
+{
+    return _animation.isPlaying();
+}
+
 const bool GUI::ECS::Components::SpriteComponent::isStopped() const
 {
     return _animation.isStopped();
@@ -497,16 +516,25 @@ const bool GUI::ECS::Components::SpriteComponent::hasLooped() const
 void GUI::ECS::Components::SpriteComponent::checkTick()
 {
     _spriteSet = false;
-    if (_animationSet) {
-        _animation.checkTick();
-        if (_animation.hasTicked()) {
-            GUI::ECS::Components::TextureComponent node = _animation.getCurrentTexture();
-            if (!_sfSprite.has_value()) {
-                _sfSprite->setTexture(node.getTexture(), false);
-                _spriteSet = true;
-            }
-        }
+    if (!_animationSet) {
+        return;
     }
+    _animation.checkTick();
+    if (!_animation.hasTicked()) {
+        return;
+    }
+    GUI::ECS::Components::TextureComponent textureComponent = _animation.getCurrentTexture();
+    std::any textureCapsule = textureComponent.getTexture();
+    if (!textureCapsule.has_value()) {
+        return;
+    }
+    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+
+    if (!_sfSprite.has_value()) {
+        _initialiseSprite();
+    }
+    _sfSprite->setTexture(texture, false);
+    _spriteSet = true;
 }
 
 const bool GUI::ECS::Components::SpriteComponent::getVisible() const
@@ -598,6 +626,18 @@ GUI::ECS::Components::SpriteComponent &GUI::ECS::Components::SpriteComponent::op
     return *this;
 };
 
+void GUI::ECS::Components::SpriteComponent::_initialiseSprite()
+{
+    if (_sfSprite.has_value()) {
+        return;
+    }
+    std::any textureCapsule = _spritesheet.getTexture();
+    if (textureCapsule.has_value()) {
+        sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+        _sfSprite.emplace(texture);
+    }
+}
+
 void GUI::ECS::Components::SpriteComponent::_processSpriteColor()
 {
     if (!_sfSprite.has_value()) {
@@ -606,30 +646,42 @@ void GUI::ECS::Components::SpriteComponent::_processSpriteColor()
     if (!_collisionSet) {
         return;
     }
+    std::any systemColour;
     if (_collision.isClicked()) {
-        _sfSprite->setColor(_clickedColor.getColourSFML());
+        systemColour = _clickedColor.getRenderColour();
     } else if (_collision.isHovered()) {
-        _sfSprite->setColor(_hoverColor.getColourSFML());
+        systemColour = _hoverColor.getRenderColour();
     } else {
-        _sfSprite->setColor(_normalColor.getColourSFML());
+        systemColour = _normalColor.getRenderColour();
+    }
+    if (!systemColour.has_value()) {
+        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+    }
+    try {
+        sf::Color result = std::any_cast<sf::Color>(systemColour);
+        _sfSprite->setColor(result);
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 
 void GUI::ECS::Components::SpriteComponent::_processCollision()
 {
+    _initialiseSprite();
     if (!_sfSprite.has_value()) {
         return;
     }
-    _sfSprite->setPosition(_collision.getPosition());
-    _sfSprite->setScale(_collision.getDimension());
+    std::pair<float, float> pos = _collision.getPosition();
+    std::pair<float, float> dim = _collision.getDimension();
+    _sfSprite->setPosition({ pos.first, pos.second });
+    _sfSprite->setScale({ dim.first, dim.second });
     _processSpriteColor();
 }
 
 void GUI::ECS::Components::SpriteComponent::_processSprite()
 {
-    if (!_sfSprite.has_value()) {
-        _sfSprite.emplace(_spritesheet.getTexture());
-    }
+    _initialiseSprite();
     _processCollision();
     _processSpriteColor();
 }
