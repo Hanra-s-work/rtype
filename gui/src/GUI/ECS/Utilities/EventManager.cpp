@@ -27,7 +27,7 @@ const float GUI::ECS::Utilities::EventManager::getPositionY() const
     return _mouse.getPositionY();
 }
 
-const sf::Vector2f GUI::ECS::Utilities::EventManager::getMousePosition() const
+const std::pair<int, int> GUI::ECS::Utilities::EventManager::getMousePosition() const
 {
     return _mouse.getMousePosition();
 }
@@ -121,11 +121,13 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
 {
     int counter = 0;
     clearEvents();
-    while (const std::optional<sf::Event> event = windowItem.pollEvent()) {
-        if (event->is<sf::Event::Closed>()) {
+    std::any eventCapsule = windowItem.pollEvent();
+    while (eventCapsule.has_value()) {
+        sf::Event event = std::any_cast<sf::Event>(eventCapsule);
+        if (event.is<sf::Event::Closed>()) {
             Debug::getInstance() << "The window's cross has been clicked." << std::endl;
             windowItem.close();
-        } else if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+        } else if (const auto *keyPressed = event.getIf<sf::Event::KeyPressed>()) {
             sf::Keyboard::Scancode code = keyPressed->scancode;
             Debug::getInstance() << "A key was pressed, it's code is: '" << _mapper.stringKey(code) << "'." << std::endl;
             if (code == sf::Keyboard::Scancode::Escape) {
@@ -135,17 +137,18 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
                 _keys.push_back(_mapper.mapKey(code));
             }
         } else if (
-            event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseMoved>() ||
-            event->is<sf::Event::MouseWheelScrolled>() || event->is<sf::Event::TouchBegan>() ||
-            event->is<sf::Event::TouchEnded>() || event->is<sf::Event::TouchMoved>()
+            event.is<sf::Event::MouseButtonPressed>() || event.is<sf::Event::MouseMoved>() ||
+            event.is<sf::Event::MouseWheelScrolled>() || event.is<sf::Event::TouchBegan>() ||
+            event.is<sf::Event::TouchEnded>() || event.is<sf::Event::TouchMoved>()
             ) {
             Debug::getInstance() << "Begin processing the mouse Event." << std::endl;
-            _mouse.update(event);
+            _mouse.update(eventCapsule);
             Debug::getInstance() << "End processing the mouse Event." << std::endl;
         } else {
             counter += 1;
             // Debug::getInstance() << "Event type not supported by this program." << std::endl;
         }
+        eventCapsule = windowItem.pollEvent();
     }
 }
 

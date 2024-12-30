@@ -14,6 +14,7 @@
 #include <any>
 #include <vector>
 #include <string>
+#include <utility>
 #include <algorithm>
 #include <functional>
 #include <SFML/Window/Event.hpp>
@@ -49,7 +50,7 @@ namespace GUI
                 const float getPositionX() const;
                 const float getPositionY() const;
 
-                const sf::Vector2f getMousePosition() const;
+                const std::pair<int, int> getMousePosition() const;
                 const GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
 
                 const std::vector<GUI::ECS::Utilities::Key> getKeys() const;
