@@ -15,13 +15,15 @@ GUI::ECS::Utilities::Window::Window(const std::uint32_t entityId, const std::uin
     _windowName(windowName)
 {
     _sfWindow.setFramerateLimit(frameRateLimit);
+    _sfSharedWindow = std::make_shared<sf::RenderWindow>(_sfWindow);
+    _sfAnySharedWindow = std::make_any<std::shared_ptr<sf::RenderWindow>>(std::shared_ptr<sf::RenderWindow>(_sfSharedWindow));
 }
 
 GUI::ECS::Utilities::Window::~Window() {}
 
-void GUI::ECS::Utilities::Window::clear(const sf::Color &color)
+void GUI::ECS::Utilities::Window::clear(const GUI::ECS::Utilities::Colour &color)
 {
-    _sfWindow.clear(color);
+    _sfWindow.clear(color.toSFMLColour());
 }
 
 void GUI::ECS::Utilities::Window::display()
@@ -39,14 +41,21 @@ void GUI::ECS::Utilities::Window::close()
     _sfWindow.close();
 }
 
-sf::RenderWindow &GUI::ECS::Utilities::Window::getWindow()
+std::any &GUI::ECS::Utilities::Window::getWindow()
 {
-    return _sfWindow;
+    return _sfAnySharedWindow;
 }
 
-std::optional<sf::Event> GUI::ECS::Utilities::Window::pollEvent()
+std::any GUI::ECS::Utilities::Window::pollEvent()
 {
-    return _sfWindow.pollEvent();
+    std::any response;
+    std::optional<sf::Event> node = _sfWindow.pollEvent();
+    if (node.has_value()) {
+        sf::Event evt = node.value();
+        std::any tmp(static_cast<sf::Event>(evt));
+        response = tmp;
+    }
+    return response;
 }
 
 void GUI::ECS::Utilities::Window::setFramerateLimit(const unsigned int framerateLimit)
@@ -94,32 +103,146 @@ const std::string GUI::ECS::Utilities::Window::getInfo(const unsigned int indent
 
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::TextComponent &text)
 {
-    text.render(_sfWindow);
+    if (!text.isVisible()) {
+        return;
+    }
+    std::any textCapsule = text.render();
+    if (!textCapsule.has_value()) {
+        throw MyException::NoRenderableText();
+    }
+    try {
+        sf::Text txt = std::any_cast<sf::Text>(textCapsule);
+        _sfWindow.draw(txt);
+    }
+    catch (std::bad_any_cast &e) {
+        std::string response = "<Unknown text, this is not a sf::Text>, any_cast error";
+        response += e.what();
+        throw MyException::NoRenderableText(response);
+    }
 }
 
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
 {
-    shape.render(_sfWindow);
+    if (!shape.isVisible()) {
+        return;
+    }
+    std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> shapeCapsule = shape.render();
+    if (!shapeCapsule.has_value()) {
+        return;
+        // throw MyException::NoRenderableShape("<std::pair not found in std::any, have you initialised the class with a shape?>");
+    }
+    std::pair<GUI::ECS::Components::ActiveShape, std::any> pairNode = shapeCapsule.value();
+    GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
+    std::any shapeData = pairNode.second;
+    if (shapeType == GUI::ECS::Components::ActiveShape::NONE) {
+        Debug::getInstance() << "There is no shape to render, skipping" << std::endl;
+        return;
+    };
+    if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {
+        if (!shapeData.has_value()) {
+            throw MyException::NoRenderableShape("<There is no sf::RectangleShape located in std::any>");
+        }
+        try {
+            sf::RectangleShape renderableShape = std::any_cast<sf::RectangleShape>(shapeData);
+            _sfWindow.draw(renderableShape);
+        }
+        catch (std::bad_any_cast &e) {
+            std::string response = "<Unknown shape, this is not a RectangleShape>, any_cast error";
+            response += e.what();
+            throw MyException::InvalidShape(response);
+        }
+        return;
+    };
+    if (shapeType == GUI::ECS::Components::ActiveShape::CIRCLE) {
+        if (!shapeData.has_value()) {
+            throw MyException::NoRenderableShape("<There is no sf::CircleShape located in std::any>");
+        }
+        try {
+            sf::CircleShape renderableShape = std::any_cast<sf::CircleShape>(shapeData);
+            _sfWindow.draw(renderableShape);
+        }
+        catch (std::bad_any_cast &e) {
+            std::string response = "<Unknown shape, this is not a CircleShape>, any_cast error";
+            response += e.what();
+            throw MyException::InvalidShape(response);
+        }
+        return;
+    };
+    if (shapeType == GUI::ECS::Components::ActiveShape::CONVEX) {
+        if (!shapeData.has_value()) {
+            throw MyException::NoRenderableShape("<There is not an sf::ConvexShape located in std::any>");
+        }
+        try {
+            sf::ConvexShape renderableShape = std::any_cast<sf::ConvexShape>(shapeData);
+            _sfWindow.draw(renderableShape);
+        }
+        catch (std::bad_any_cast &e) {
+            std::string response = "<Unknown shape, this is not a ConvexShape>, any_cast error";
+            response += e.what();
+            throw MyException::InvalidShape(response);
+        }
+        return;
+    };
 }
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
+void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ImageComponent &image)
 {
-    button.render(_sfWindow);
+    if (!image.isVisible()) {
+        return;
+    }
+    std::any imageCapsule = image.render();
+    if (!imageCapsule.has_value()) {
+        throw MyException::NoRenderableImage("<sf::Sprite not found in std::any>");
+    }
+    try {
+        sf::Sprite sprite = std::any_cast<sf::Sprite>(imageCapsule);
+        _sfWindow.draw(sprite);
+    }
+    catch (std::bad_any_cast &e) {
+        std::string response = "<Unknown Image, this is not an sf::Sprite>, any_cast error";
+        response += e.what();
+        throw MyException::NoRenderableImage(response);
+    }
 }
 
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
 {
-    sprite.render(_sfWindow);
+    if (!sprite.isVisible()) {
+        return;
+    }
+    std::any spriteCapsule = sprite.render();
+    if (!spriteCapsule.has_value()) {
+        throw MyException::NoRenderableSprite("<sf::Sprite not found in std::any>");
+    }
+    try {
+        sf::Sprite spr = std::any_cast<sf::Sprite>(spriteCapsule);
+        _sfWindow.draw(spr);
+    }
+    catch (std::bad_any_cast &e) {
+        std::string response = "<Unknown Sprite, this is not an sf::Sprite>, any_cast error";
+        response += e.what();
+        throw MyException::NoRenderableSprite(response);
+    }
 }
 
-void GUI::ECS::Utilities::Window::draw(const sf::Text &text)
+void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
 {
-    _sfWindow.draw(text);
-}
+    if (!button.isVisible()) {
+        return;
+    }
+    std::unordered_map<std::type_index, std::any> buttonCapsule = button.render();
 
-void GUI::ECS::Utilities::Window::draw(const sf::Sprite &sprite)
-{
-    _sfWindow.draw(sprite);
+    std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
+    if (textCapsule.has_value()) {
+        GUI::ECS::Components::TextComponent text = std::any_cast<GUI::ECS::Components::TextComponent>(textCapsule);
+        draw(text);
+    }
+
+    std::any shapeCapsule = buttonCapsule[typeid(GUI::ECS::Components::ShapeComponent)];
+    if (shapeCapsule.has_value()) {
+        GUI::ECS::Components::ShapeComponent shape = std::any_cast<GUI::ECS::Components::ShapeComponent>(shapeCapsule);
+        draw(shape);
+    }
 }
 
 std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::Window &item)

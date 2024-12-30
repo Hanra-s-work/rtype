@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <any>
 #include <string>
 #include <cstring>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -15,6 +16,7 @@
 #include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components.hpp"
+#include "GUI/ECS/Utilities/Colour.hpp"
 
 namespace GUI
 {
@@ -34,12 +36,12 @@ namespace GUI
                 Window(const std::uint32_t entityId = 0, const std::uint32_t windowWidth = 800, const std::uint32_t windowHeight = 600, const std::string &windowName = "R-Type", unsigned int frameRateLimit = 60);
                 ~Window();
 
-                void clear(const sf::Color &color = sf::Color::Black);
+                void clear(const GUI::ECS::Utilities::Colour &color = GUI::ECS::Utilities::Colour::Black);
                 void display();
                 bool isOpen() const;
                 void close();
 
-                std::optional<sf::Event> pollEvent();
+                std::any pollEvent();
                 void setFramerateLimit(const unsigned int framerateLimit);
                 void setFullScreen(const bool fullScreen);
 
@@ -55,19 +57,20 @@ namespace GUI
 
                 const bool getFullScreen() const;
 
-                void draw(const sf::Text &text);
-                void draw(const sf::Sprite &sprite);
                 void draw(const GUI::ECS::Components::TextComponent &text);
                 void draw(const GUI::ECS::Components::ShapeComponent &shape);
-                void draw(const GUI::ECS::Components::ButtonComponent &button);
+                void draw(const GUI::ECS::Components::ImageComponent &image);
                 void draw(const GUI::ECS::Components::SpriteComponent &sprite);
+                void draw(const GUI::ECS::Components::ButtonComponent &button);
 
-                sf::RenderWindow &getWindow();
+                std::any &getWindow();
 
                 private:
                 bool _fullScreen;
                 std::string _windowName;
                 sf::RenderWindow _sfWindow;
+                std::shared_ptr<sf::RenderWindow> _sfSharedWindow;
+                std::any _sfAnySharedWindow;
                 std::uint32_t _windowWidth;
                 std::uint32_t _windowHeight;
                 sf::VideoMode _desktopMode = sf::VideoMode::getDesktopMode();

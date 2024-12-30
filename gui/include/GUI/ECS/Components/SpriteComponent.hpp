@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <any>
 #include <optional>
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -542,11 +543,11 @@ namespace GUI
                 /**
                  * @brief Renders the sprite to a window.
                  *
-                 * @param window The render window.
+                 * @returns std::optional<std::any> the component to render
                  *
                  * @throws MyException::NoSprite If no sprite is set.
                  */
-                void render(sf::RenderWindow &window) const;
+                std::any render() const;
 
                 /**
                  * @brief Start the playing of the animation from the current index in memory
@@ -599,8 +600,8 @@ namespace GUI
                 /**
                  * @brief Check if the sprite is set to be rendred or not
                  *
-                 * @return true
-                 * @return false
+                 * @return true The sprite is visible
+                 * @return false The sprite is hidden
                  */
                 const bool isVisible() const;
 
@@ -738,6 +739,11 @@ namespace GUI
                 SpriteComponent &operator =(const GUI::ECS::Components::SpriteComponent &copy);
 
                 private:
+                /**
+                 *@brief Function in charge of initialising the sprite instance
+                 *
+                 */
+                void _initialiseSprite();
                 /**
                  * @brief Updates the sprite color based on its state (normal, hover, clicked).
                  */
