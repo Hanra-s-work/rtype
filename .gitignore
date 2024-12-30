@@ -1,5 +1,6 @@
 # No build/cache files
 *.o
+*.out
 *.vscode
 *.DS_Store
 *.code-workspace
