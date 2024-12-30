@@ -285,6 +285,13 @@ namespace GUI
                  */
                 static const std::uint8_t clamp(std::int32_t value, std::uint8_t min = 0, std::uint8_t max = 255);
 
+                /**
+                 * @brief Operator in charge of assigning the content of one colour to another.
+                 *
+                 * @param copy The colour to copy
+                 *
+                 * @return GUI::ECS::Utilities::Colour& The resulting colour
+                 */
                 GUI::ECS::Utilities::Colour &operator =(const GUI::ECS::Utilities::Colour &copy);
 
                 // Supported colours
@@ -962,7 +969,7 @@ namespace GUI
                 static const Colour Transparent;
 
                 private:
-                std::string _colourName = ""; ///< The name of the colourxs
+                std::string _colourName = ""; ///< The name of the colour
                 std::uint8_t _red = 0;     ///< The red component (0-255).
                 std::uint8_t _blue = 0;    ///< The blue component (0-255).
                 std::uint8_t _green = 0;   ///< The green component (0-255).
