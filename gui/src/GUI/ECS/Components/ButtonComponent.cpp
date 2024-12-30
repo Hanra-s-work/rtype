@@ -145,6 +145,9 @@ void GUI::ECS::Components::ButtonComponent::setCollision(const GUI::ECS::Compone
 {
     setPosition(collision.getPosition());
     setDimension(collision.getDimension(), textSize);
+    if (_collision.isClicked()) {
+        _callback();
+    }
 }
 
 void GUI::ECS::Components::ButtonComponent::setCallback(std::function<void()> callback, const std::string &callbackName)
@@ -284,6 +287,9 @@ void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Utilities::Mo
     _collision.update(mouse);
     _componentText.update(mouse);
     _componentShape.update(mouse);
+    if (_collision.isClicked()) {
+        _callback();
+    }
 }
 
 void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Components::TextComponent &copy)
