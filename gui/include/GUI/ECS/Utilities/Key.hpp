@@ -194,9 +194,9 @@ namespace GUI
                 const std::string getInfo(const unsigned int indent = 0) const;
 
                 private:
-                std::unordered_map<sf::Keyboard::Key, Key> _sfmlKeyToCustom;
-                std::unordered_map<sf::Keyboard::Scancode, Key> _sfmlScanCodeToCustom;
-                std::unordered_map<Key, std::string> _keyCodeEquivalence;
+                std::unordered_map<sf::Keyboard::Key, Key> _sfmlKeyToCustom;           //!< An unordered map to track the equivalence between the sf::Keyboard::Key and the Key
+                std::unordered_map<sf::Keyboard::Scancode, Key> _sfmlScanCodeToCustom; //!< An unordered map to track the equivalence between the sf::Keyboard::ScanCode and the Key
+                std::unordered_map<Key, std::string> _keyCodeEquivalence;              //!< An unordered map to track the equivalence between the Key and the string representation
             };
 
             /**
