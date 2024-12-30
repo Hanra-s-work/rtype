@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -45,13 +46,13 @@ namespace GUI
                 void setPositionX(const float &posX);
                 void setPositionY(const float &posY);
 
-                void setPosition(const sf::Vector2f &position);
-                void setPosition(const sf::Vector2u &position);
+                void setPosition(const std::pair<int, int> &position);
 
-                void setDimension(const sf::Vector2f &dimension);
-                void setDimension(const sf::Vector2u &dimension);
-                void setMousePosition(const sf::Vector2f &mousePosition);
+                void setDimension(const std::pair<int, int> &position);
 
+                void setMousePosition(const std::pair<int, int> &position);
+
+                void update(const std::pair<int, int> &mousePosition);
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::CollisionComponent &copy);
 
@@ -67,11 +68,11 @@ namespace GUI
                 const float getPositionX() const;
                 const float getPositionY() const;
 
-                const sf::FloatRect getGeometry() const;
+                const MyRecodes::FloatRect getGeometry() const;
 
-                const sf::Vector2f getPosition() const;
+                const std::pair<float, float> getPosition() const;
 
-                const sf::Vector2f getDimension() const;
+                const std::pair<float, float> getDimension() const;
 
                 const GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
                 /**

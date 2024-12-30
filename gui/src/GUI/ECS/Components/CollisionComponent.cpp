@@ -79,62 +79,50 @@ void GUI::ECS::Components::CollisionComponent::setPositionY(const float &posY)
 /**
  *@brief Set the position of the object.
  *
- * @param position an sf::Vector2f of the object's position.
+ * @param position an std::pair<int, int> of the object's position.
  */
-void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2f &position)
+void GUI::ECS::Components::CollisionComponent::setPosition(const std::pair<int, int> &position)
 {
-    _posX = position.x;
-    _posY = position.y;
-    _updateMouseCollisionData();
-}
-
-/**
- *@brief Set the position of the object.
- *
- * @param position an sf::Vector2u of the object's position.
- */
-void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2u &position)
-{
-    _posX = position.x;
-    _posY = position.y;
+    _posX = position.first;
+    _posY = position.second;
     _updateMouseCollisionData();
 }
 
 /**
  *@brief Set the dimension of the object.
  *
- * @param dimension an sf::Vector2f of the of the object's dimension.
+ * @param dimension an std::pair<float, float> of the of the object's dimension.
  */
-void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2f &dimension)
+void GUI::ECS::Components::CollisionComponent::setDimension(const std::pair<int, int> &dimension)
 {
-    _width = dimension.x;
-    _height = dimension.y;
+    _width = dimension.first;
+    _height = dimension.second;
     _updateMouseCollisionData();
 }
 
-/**
- *@brief Set the dimension of the object.
- *
- * @param dimension an sf::Vector2u of the of the object's dimension.
- */
-void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2u &dimension)
-{
-    _width = dimension.x;
-    _height = dimension.y;
-    _updateMouseCollisionData();
-}
 
 /**
  * @brief Updates the mouse position for collision checks.
  *
- * @param mousePosition New mouse position as an SFML vector.
+ * @param mousePosition New mouse position as an std::pair<int, int> vector.
  */
-void GUI::ECS::Components::CollisionComponent::setMousePosition(const sf::Vector2f &mousePosition)
+void GUI::ECS::Components::CollisionComponent::setMousePosition(const std::pair<int, int> &mousePosition)
 {
     _mouse.update(mousePosition);
     _updateMouseCollisionData();
 }
 
+
+/**
+ *@brief Update the mouse info object used for mouse tracking.
+ *
+ * @param copy
+ */
+void GUI::ECS::Components::CollisionComponent::update(const std::pair<int, int> &mouse)
+{
+    _mouse.update(mouse);
+    _updateMouseCollisionData();
+}
 /**
  *@brief Update the info object used in the CollisionComponent class.
  *
@@ -161,6 +149,7 @@ void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Utilities:
     _mouse.update(mouse);
     _updateMouseCollisionData();
 }
+
 
 /**
  * @brief Updates the mouse info object used for collision checks.
@@ -238,40 +227,35 @@ const float GUI::ECS::Components::CollisionComponent::getPositionY() const
  *
  * @return sf::FloatRect instance of the coordinates.
  */
-const sf::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
+const MyRecodes::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
 {
-    sf::FloatRect rect;
-
-    rect.size.x = _width;
-    rect.size.y = _height;
-    rect.position.y = _posY;
-    rect.position.x = _posX;
-    return rect;
+    MyRecodes::FloatRect data({ 0, 0 }, { 0, 0 });
+    return data;
 }
 
 /**
  * @brief Get the position of the item in the form of an sf::Vector2i
  *
- * @return sf::Vector2f of the position of the element
+ * @return std::pair<float, float> of the position of the element
  */
-const sf::Vector2f GUI::ECS::Components::CollisionComponent::getPosition() const
+const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getPosition() const
 {
-    sf::Vector2f position;
-    position.x = _posX;
-    position.y = _posY;
+    std::pair<float, float> position;
+    position.first = _posX;
+    position.second = _posY;
     return position;
 }
 
 /**
  *@brief Get the dimension of the item in the form of an sf::Vector2i
  *
- * @return sf::Vector2f of the dimension of the element.
+ * @return std::pair<float, float> of the dimension of the element.
  */
-const sf::Vector2f GUI::ECS::Components::CollisionComponent::getDimension() const
+const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getDimension() const
 {
-    sf::Vector2f dimension;
-    dimension.x = _width;
-    dimension.y = _height;
+    std::pair<float, float> dimension;
+    dimension.first = _width;
+    dimension.second = _height;
     return dimension;
 }
 
@@ -350,12 +334,12 @@ void GUI::ECS::Components::CollisionComponent::_updateMouseCollisionData()
     Debug::getInstance() << "CollisionComponent: Updating the collision between the mouse and the shape." << std::endl;
     _isHovered = false;
     _isClicked = false;
-    const sf::Vector2f &mousePos = _mouse.getMousePosition();
+    const std::pair<int, int> &mousePos = _mouse.getMousePosition();
     const bool inFocus = _mouse.isMouseInFocus();
 
     if (
-        mousePos.x >= _posX && mousePos.x <= _posX + _width
-        && mousePos.y >= _posY && mousePos.y <= _posY + _height
+        mousePos.first >= _posX && mousePos.first <= _posX + _width
+        && mousePos.second >= _posY && mousePos.second <= _posY + _height
         && inFocus
         ) {
         _isHovered = true;
