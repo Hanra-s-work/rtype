@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <any>
+#include <utility>
 #include <optional>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -33,27 +35,27 @@ namespace GUI
                 public:
                 TextureComponent();
                 TextureComponent(const TextureComponent &other);
-                TextureComponent(const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                TextureComponent(const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
                 TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
 
                 TextureComponent(const std::uint32_t entityId);
                 TextureComponent(const std::uint32_t entityId, const TextureComponent &other);
-                TextureComponent(const std::uint32_t entityId, const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
                 TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
 
                 ~TextureComponent();
 
                 void setVisible(const bool visible);
                 void setFilePath(const std::string &filePath);
-                void setTexture(const sf::Texture &texture);
+                void setTexture(const std::any &texture);
                 void setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo);
-                void setPosition(const sf::Vector2f &position);
-                void setSize(const sf::Vector2f &size);
+                void setPosition(const std::pair<int, int> &position);
+                void setSize(const std::pair<int, int> &size);
 
                 void update(const TextureComponent &copy);
 
                 const bool getVisible() const;
-                const sf::Texture &getTexture() const;
+                const std::any getTexture() const;
                 const GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
                 /**
                  *@brief This is a function meant for debugging purposes

@@ -27,7 +27,7 @@ GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &file
     setCollisionInfo(collisionInfo);
 };
 
-GUI::ECS::Components::TextureComponent::TextureComponent(const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
     : EntityNode(0)
 {
     setTexture(texture);
@@ -52,7 +52,7 @@ GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t ent
     setCollisionInfo(collisionInfo);
 };
 
-GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const sf::Texture &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
     : EntityNode(entityId)
 {
     setTexture(texture);
@@ -72,12 +72,19 @@ void GUI::ECS::Components::TextureComponent::setFilePath(const std::string &file
     if (!loadStatus) {
         throw MyException::FileNotFound(filePath);
     }
+    sf::Vector2u node = _texture.getSize();
+    _collisionInfo.setDimension({ node.x, node.y });
 }
 
-void GUI::ECS::Components::TextureComponent::setTexture(const sf::Texture &texture)
+void GUI::ECS::Components::TextureComponent::setTexture(const std::any &texture)
 {
-    _texture.update(texture);
-    _collisionInfo.setDimension(_texture.getSize());
+    if (!texture.has_value()) {
+        return;
+    }
+    sf::Texture text = std::any_cast<sf::Texture>(texture);
+    _texture.update(text);
+    sf::Vector2u node = _texture.getSize();
+    _collisionInfo.setDimension({ node.x, node.y });
 }
 
 void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo)
@@ -85,26 +92,26 @@ void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Co
     _collisionInfo.update(collisionInfo);
 }
 
-void GUI::ECS::Components::TextureComponent::setPosition(const sf::Vector2f &position)
+void GUI::ECS::Components::TextureComponent::setPosition(const std::pair<int, int> &position)
 {
     _collisionInfo.setPosition(position);
 }
 
-void GUI::ECS::Components::TextureComponent::setSize(const sf::Vector2f &size)
+void GUI::ECS::Components::TextureComponent::setSize(const std::pair<int, int> &size)
 {
     _collisionInfo.setDimension(size);
 }
 
 void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy)
 {
-    setVisible(getVisible());
-    setTexture(getTexture());
-    setCollisionInfo(getCollisionInfo());
+    setVisible(copy.getVisible());
+    setTexture(copy.getTexture());
+    setCollisionInfo(copy.getCollisionInfo());
 }
 
-const sf::Texture &GUI::ECS::Components::TextureComponent::getTexture() const
+const std::any GUI::ECS::Components::TextureComponent::getTexture() const
 {
-    return _texture;
+    return std::make_any<sf::Texture>(_texture);
 }
 
 const bool GUI::ECS::Components::TextureComponent::getVisible() const
