@@ -156,10 +156,9 @@ const std::uint32_t GUI::ECS::Utilities::Colour::toInteger() const
     return result;
 };
 
-const sf::Color GUI::ECS::Utilities::Colour::toSFMLColour() const
+const std::any GUI::ECS::Utilities::Colour::toRenderColour() const
 {
-    sf::Color node(_red, _green, _blue, _alpha);
-    return node;
+    return std::any(sf::Color(_red, _green, _blue, _alpha));
 };
 
 void GUI::ECS::Utilities::Colour::update(const GUI::ECS::Utilities::Colour &copy)
@@ -206,9 +205,9 @@ const std::uint32_t GUI::ECS::Utilities::Colour::getInteger() const
     return toInteger();
 }
 
-const sf::Color GUI::ECS::Utilities::Colour::getColourSFML() const
+const std::any GUI::ECS::Utilities::Colour::getRenderColour() const
 {
-    return toSFMLColour();
+    return toRenderColour();
 };
 
 const std::string GUI::ECS::Utilities::Colour::getName() const

@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <any>
 #include <cstdint>
 #include <algorithm>
 #include <SFML/Graphics/Color.hpp>
@@ -207,10 +208,11 @@ namespace GUI
                 const std::uint32_t toInteger() const;
 
                 /**
-                 * @brief Converts the color to an SFML `sf::Color` object.
-                 * @return The SFML color representation.
+                 * @brief Converts the color to an SFML `sf::Color` object (or another similare object format if the rendering library isn't sfml).
+                 *
+                 * @return The an std::any of the component expected by the rendering library.
                  */
-                const sf::Color toSFMLColour() const;
+                const std::any toRenderColour() const;
 
                 /**
                  * @brief Updates the color by copying from another `Colour` instance.
@@ -255,10 +257,11 @@ namespace GUI
                  */
                 const std::uint32_t getInteger() const;
                 /**
-                 * @brief Retrieves the color as an SFML `sf::Color`.
-                 * @return The SFML color representation.
+                 * @brief Retrieves the color as an SFML `sf::Color` if the sfml library is the underlying library, otherwise, it will be another format.
+                 *
+                 * @return an std::any of the colour (for sfml, an std::any of sf::Color)
                  */
-                const sf::Color getColourSFML() const;
+                const std::any getRenderColour() const;
                 /**
                  *@brief Get the Name of the colour contained in the class
                  *
