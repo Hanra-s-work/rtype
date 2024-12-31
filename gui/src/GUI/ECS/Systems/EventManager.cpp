@@ -11,54 +11,54 @@
  */
 
 #include <iostream>
-#include "GUI/ECS/Utilities/EventManager.hpp"
+#include "GUI/ECS/Systems/EventManager.hpp"
 
-GUI::ECS::Utilities::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId), _mapper(entityId) {};
+GUI::ECS::Systems::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId), _mapper(entityId) {};
 
-GUI::ECS::Utilities::EventManager::~EventManager() {}
+GUI::ECS::Systems::EventManager::~EventManager() {}
 
-const float GUI::ECS::Utilities::EventManager::getPositionX() const
+const float GUI::ECS::Systems::EventManager::getPositionX() const
 {
     return _mouse.getPositionX();
 }
 
-const float GUI::ECS::Utilities::EventManager::getPositionY() const
+const float GUI::ECS::Systems::EventManager::getPositionY() const
 {
     return _mouse.getPositionY();
 }
 
-const std::pair<int, int> GUI::ECS::Utilities::EventManager::getMousePosition() const
+const std::pair<int, int> GUI::ECS::Systems::EventManager::getMousePosition() const
 {
     return _mouse.getMousePosition();
 }
 
-const GUI::ECS::Utilities::MouseInfo GUI::ECS::Utilities::EventManager::getMouseInfo() const
+const GUI::ECS::Systems::MouseInfo GUI::ECS::Systems::EventManager::getMouseInfo() const
 {
     return _mouse;
 }
 
-void GUI::ECS::Utilities::EventManager::update(GUI::ECS::Utilities::Window &window)
+void GUI::ECS::Systems::EventManager::update(GUI::ECS::Systems::Window &window)
 {
     processEvents(window);
 }
 
-void GUI::ECS::Utilities::EventManager::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Systems::EventManager::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _mouse.update(mouse);
 }
 
-void GUI::ECS::Utilities::EventManager::update(const GUI::ECS::Utilities::EventManager &copy)
+void GUI::ECS::Systems::EventManager::update(const GUI::ECS::Systems::EventManager &copy)
 {
     _mouse.update(copy.getMouseInfo());
     _keys = copy.getKeys();
 }
 
-const std::vector<GUI::ECS::Utilities::Key> GUI::ECS::Utilities::EventManager::getKeys() const
+const std::vector<GUI::ECS::Systems::Key> GUI::ECS::Systems::EventManager::getKeys() const
 {
     return _keys;
 }
 
-const std::string GUI::ECS::Utilities::EventManager::getInfo(const unsigned int indent) const
+const std::string GUI::ECS::Systems::EventManager::getInfo(const unsigned int indent) const
 {
 
     std::string indentation = "";
@@ -66,36 +66,36 @@ const std::string GUI::ECS::Utilities::EventManager::getInfo(const unsigned int 
         indentation += "\t";
     }
     std::string result = indentation + "Event Manager:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- ResetDelay: " + MyRecodes::myToString(_resetDelay) + "\n";
-    result += indentation + "- Reset Index: " + MyRecodes::myToString(_resetIndex) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- ResetDelay: " + Recoded::myToString(_resetDelay) + "\n";
+    result += indentation + "- Reset Index: " + Recoded::myToString(_resetIndex) + "\n";
     result += indentation + "- Mouse info: {\n" + _mouse.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Key Mapper: {\n" + _mapper.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- keys: {\n";
     for (unsigned int i = 0; i < _keys.size(); i++) {
-        result += indentation + "\t" + MyRecodes::myToString(i) + ": " + _mapper.stringKey(_keys[i]) + "\n";
+        result += indentation + "\t" + Recoded::myToString(i) + ": " + _mapper.stringKey(_keys[i]) + "\n";
     }
     result += indentation + "}\n";
     return result;
 }
 
 
-const bool GUI::ECS::Utilities::EventManager::isMouseInFocus() const
+const bool GUI::ECS::Systems::EventManager::isMouseInFocus() const
 {
     return _mouse.isMouseInFocus();
 }
 
-const bool GUI::ECS::Utilities::EventManager::isLeftButtonClicked() const
+const bool GUI::ECS::Systems::EventManager::isLeftButtonClicked() const
 {
     return _mouse.isMouseLeftButtonClicked();
 }
 
-const bool GUI::ECS::Utilities::EventManager::isRightButtonClicked() const
+const bool GUI::ECS::Systems::EventManager::isRightButtonClicked() const
 {
     return _mouse.isMouseRightButtonClicked();
 }
 
-const bool GUI::ECS::Utilities::EventManager::isKeyPressed(const GUI::ECS::Utilities::Key &key) const
+const bool GUI::ECS::Systems::EventManager::isKeyPressed(const GUI::ECS::Systems::Key &key) const
 {
     for (const auto &keyNodes : _keys) {
         if (keyNodes == key) {
@@ -105,7 +105,7 @@ const bool GUI::ECS::Utilities::EventManager::isKeyPressed(const GUI::ECS::Utili
     return false;
 }
 
-void GUI::ECS::Utilities::EventManager::clearEvents()
+void GUI::ECS::Systems::EventManager::clearEvents()
 {
     if (_resetIndex >= _resetDelay) {
         _keys.clear();
@@ -117,7 +117,7 @@ void GUI::ECS::Utilities::EventManager::clearEvents()
 }
 
 
-void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Window &windowItem)
+void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &windowItem)
 {
     int counter = 0;
     clearEvents();
@@ -153,7 +153,7 @@ void GUI::ECS::Utilities::EventManager::processEvents(GUI::ECS::Utilities::Windo
 }
 
 
-GUI::ECS::Utilities::EventManager &GUI::ECS::Utilities::EventManager::operator=(const GUI::ECS::Utilities::EventManager &copy)
+GUI::ECS::Systems::EventManager &GUI::ECS::Systems::EventManager::operator=(const GUI::ECS::Systems::EventManager &copy)
 {
     if (this != &copy) {
         update(copy);
@@ -161,7 +161,7 @@ GUI::ECS::Utilities::EventManager &GUI::ECS::Utilities::EventManager::operator=(
     return *this;
 };
 
-std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::EventManager &item)
+std::ostream &GUI::ECS::Systems::operator<<(std::ostream &os, const GUI::ECS::Systems::EventManager &item)
 {
     os << item.getInfo();
     return os;

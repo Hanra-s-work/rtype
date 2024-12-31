@@ -10,12 +10,12 @@
  * @brief Implementation of the MouseInfo class for tracking mouse events and state.
  */
 
-#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Systems/MouseInfo.hpp"
 
  /**
   * @brief Constructs a new MouseInfo object with default values.
   */
-GUI::ECS::Utilities::MouseInfo::MouseInfo(const std::uint32_t entityId)
+GUI::ECS::Systems::MouseInfo::MouseInfo(const std::uint32_t entityId)
     :EntityNode(entityId)
 {
     _mousePosition.first = 0;
@@ -27,14 +27,14 @@ GUI::ECS::Utilities::MouseInfo::MouseInfo(const std::uint32_t entityId)
 /**
  * @brief Destroys the MouseInfo object.
  */
-GUI::ECS::Utilities::MouseInfo::~MouseInfo() {};
+GUI::ECS::Systems::MouseInfo::~MouseInfo() {};
 
 /**
  * @brief Processes and updates the internal state based on a given sf::Event.
  *
  * @param event The SFML event to process.
  */
-void GUI::ECS::Utilities::MouseInfo::update(const std::any &eventCapsule)
+void GUI::ECS::Systems::MouseInfo::update(const std::any &eventCapsule)
 {
     if (!eventCapsule.has_value()) {
         PRECISE_WARNING << "There is no event to process, skipping code." << std::endl;
@@ -140,7 +140,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const std::any &eventCapsule)
  *
  * @param entity
  */
-void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
+void GUI::ECS::Systems::MouseInfo::update(const MouseInfo &entity)
 {
     _mouseWheel.delta = entity.getScrollIndex();
     _mouseWheel.position = { entity.getPositionX(), entity.getPositionY() };
@@ -163,7 +163,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const MouseInfo &entity)
  *
  * @param mousePosition The new mouse position as an std::pair<int, int>.
  */
-void GUI::ECS::Utilities::MouseInfo::update(const std::pair<int, int> &mousePosition)
+void GUI::ECS::Systems::MouseInfo::update(const std::pair<int, int> &mousePosition)
 {
     _mousePosition = mousePosition;
     PRECISE_SUCCESS << "MouseInfo: Mouse position updated" << std::endl;
@@ -175,7 +175,7 @@ void GUI::ECS::Utilities::MouseInfo::update(const std::pair<int, int> &mousePosi
  *
  * @return std::pair<int, int> The current mouse position.
  */
-const std::pair<int, int> GUI::ECS::Utilities::MouseInfo::getMousePosition() const
+const std::pair<int, int> GUI::ECS::Systems::MouseInfo::getMousePosition() const
 {
     return _mousePosition;
 };
@@ -185,7 +185,7 @@ const std::pair<int, int> GUI::ECS::Utilities::MouseInfo::getMousePosition() con
  *
  * @return true if the mouse is in focus, false otherwise.
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseInFocus() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseInFocus() const
 {
     return _mouseInFocus;
 };
@@ -195,7 +195,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseInFocus() const
  *
  * @return true if the left button is pressed, false otherwise.
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseLeftButtonClicked() const
 {
     return _leftButtonClicked;
 };
@@ -205,7 +205,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseLeftButtonClicked() const
  *
  * @return true if the midle button is pressed, false otherwise.
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseMiddleButtonClicked() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseMiddleButtonClicked() const
 {
     return _middleButtonClicked;
 };
@@ -215,7 +215,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseMiddleButtonClicked() const
  *
  * @return true if the right button is pressed, false otherwise.
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonClicked() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseRightButtonClicked() const
 {
     return _rightButtonClicked;
 };
@@ -225,7 +225,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseRightButtonClicked() const
  *
  * @return true if the extra1 button is pressed, false otherwise.
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra1ButtonClicked() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseExtra1ButtonClicked() const
 {
     return _extra1ButtonClicked;
 };
@@ -235,7 +235,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra1ButtonClicked() const
  *
  * @return true if the extra2 button is pressed, false otherwise.
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra2ButtonClicked() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseExtra2ButtonClicked() const
 {
     return _extra2ButtonClicked;
 };
@@ -246,7 +246,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseExtra2ButtonClicked() const
  * @return true it has scrolled
  * @return false it has not scrolled
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolled() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolled() const
 {
     if (_mouseWheel.delta == 0) {
         return false;
@@ -260,7 +260,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolled() const
  * @return true it has scrolled upwards
  * @return false it has scrolled in another direction
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledUp() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledUp() const
 {
     if (_mouseWheel.delta > 0 && getScrollDirection() == MouseWheel::Vertical) {
         return true;
@@ -274,7 +274,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledUp() const
  * @return true it has scrolled downwards
  * @return false it has scrolled in another direction
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledDown() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledDown() const
 {
     if (_mouseWheel.delta < 0 && getScrollDirection() == MouseWheel::Vertical) {
         return true;
@@ -288,7 +288,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledDown() const
  * @return true it has scrolled to the left
  * @return false it has scrolled in another direction
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledLeft() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledLeft() const
 {
     if (_mouseWheel.delta > 0 && getScrollDirection() == MouseWheel::Horizontal) {
         return true;
@@ -302,7 +302,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledLeft() const
  * @return true it has scrolled to the right
  * @return false it has scrolled in another direction
  */
-const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledRight() const
+const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledRight() const
 {
     if (_mouseWheel.delta < 0 && getScrollDirection() == MouseWheel::Horizontal) {
         return true;
@@ -315,7 +315,7 @@ const bool GUI::ECS::Utilities::MouseInfo::isMouseWheelScrolledRight() const
  *
  * @return const float
  */
-const float GUI::ECS::Utilities::MouseInfo::getScrollIndex() const
+const float GUI::ECS::Systems::MouseInfo::getScrollIndex() const
 {
     return _mouseWheel.delta;
 }
@@ -323,14 +323,14 @@ const float GUI::ECS::Utilities::MouseInfo::getScrollIndex() const
 /**
  *@brief Function in charge of returning the direction in which the user scrolled.
  *
- * @return const GUI::ECS::Utilities::MouseWheel
+ * @return const GUI::ECS::Systems::MouseWheel
  */
-const GUI::ECS::Utilities::MouseWheel GUI::ECS::Utilities::MouseInfo::getScrollDirection() const
+const GUI::ECS::Systems::MouseWheel GUI::ECS::Systems::MouseInfo::getScrollDirection() const
 {
     if (_mouseWheel.wheel == sf::Mouse::Wheel::Vertical) {
-        return GUI::ECS::Utilities::MouseWheel::Vertical;
+        return GUI::ECS::Systems::MouseWheel::Vertical;
     } else {
-        return GUI::ECS::Utilities::MouseWheel::Horizontal;
+        return GUI::ECS::Systems::MouseWheel::Horizontal;
     }
 }
 
@@ -339,7 +339,7 @@ const GUI::ECS::Utilities::MouseWheel GUI::ECS::Utilities::MouseInfo::getScrollD
  *
  * @return int The x-coordinate of the mouse position.
  */
-const int GUI::ECS::Utilities::MouseInfo::getPositionX() const
+const int GUI::ECS::Systems::MouseInfo::getPositionX() const
 {
     return _mousePosition.first;
 };
@@ -349,13 +349,13 @@ const int GUI::ECS::Utilities::MouseInfo::getPositionX() const
  *
  * @return int The y-coordinate of the mouse position.
  */
-const int GUI::ECS::Utilities::MouseInfo::getPositionY() const
+const int GUI::ECS::Systems::MouseInfo::getPositionY() const
 {
     return _mousePosition.second;
 };
 
 
-const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int indent) const
+const std::string GUI::ECS::Systems::MouseInfo::getInfo(const unsigned int indent) const
 {
 
     std::string indentation = "";
@@ -363,14 +363,14 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
         indentation += "\t";
     }
     std::string result = indentation + "Mouse Info:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- Mouse in focus: " + MyRecodes::myToString(_mouseInFocus) + "\n";
-    result += indentation + "- Mouse left button clicked: " + MyRecodes::myToString(_leftButtonClicked) + "\n";
-    result += indentation + "- Mouse middle button clicked: " + MyRecodes::myToString(_middleButtonClicked) + "\n";
-    result += indentation + "- Mouse right button clicked: " + MyRecodes::myToString(_rightButtonClicked) + "\n";
-    result += indentation + "- Mouse extra1 button clicked: " + MyRecodes::myToString(_extra1ButtonClicked) + "\n";
-    result += indentation + "- Mouse extra2 button clicked: " + MyRecodes::myToString(_extra2ButtonClicked) + "\n";
-    result += indentation + "- Mouse position: " + MyRecodes::myToString(_mousePosition) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Mouse in focus: " + Recoded::myToString(_mouseInFocus) + "\n";
+    result += indentation + "- Mouse left button clicked: " + Recoded::myToString(_leftButtonClicked) + "\n";
+    result += indentation + "- Mouse middle button clicked: " + Recoded::myToString(_middleButtonClicked) + "\n";
+    result += indentation + "- Mouse right button clicked: " + Recoded::myToString(_rightButtonClicked) + "\n";
+    result += indentation + "- Mouse extra1 button clicked: " + Recoded::myToString(_extra1ButtonClicked) + "\n";
+    result += indentation + "- Mouse extra2 button clicked: " + Recoded::myToString(_extra2ButtonClicked) + "\n";
+    result += indentation + "- Mouse position: " + Recoded::myToString(_mousePosition) + "\n";
     result += indentation + "- Mouse Wheel Scrolled: {\n";
     result += indentation + "\t- wheel: ";
     if (_mouseWheel.wheel == sf::Mouse::Wheel::Vertical) {
@@ -379,8 +379,8 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
         result += "Horizontal";
     }
     result += "\n";
-    result += indentation + "\t- Delta: " + MyRecodes::myToString(_mouseWheel.delta) + "\n";
-    result += indentation + "\t- Position: " + MyRecodes::myToString({ _mouseWheel.position.x,_mouseWheel.position.y }) + "\n";
+    result += indentation + "\t- Delta: " + Recoded::myToString(_mouseWheel.delta) + "\n";
+    result += indentation + "\t- Position: " + Recoded::myToString({ _mouseWheel.position.x,_mouseWheel.position.y }) + "\n";
     result += indentation + "}\n";
     return result;
 }
@@ -389,7 +389,7 @@ const std::string GUI::ECS::Utilities::MouseInfo::getInfo(const unsigned int ind
 /**
  * @brief Resets the internal state of the MouseInfo object.
  */
-void GUI::ECS::Utilities::MouseInfo::clear()
+void GUI::ECS::Systems::MouseInfo::clear()
 {
     // _mousePosition.x = 0;
     // _mousePosition.y = 0;
@@ -410,9 +410,9 @@ void GUI::ECS::Utilities::MouseInfo::clear()
  *@brief Update the content of the class using the '=' sign overloader.
  *
  * @param copy
- * @return GUI::ECS::Utilities::MouseInfo&
+ * @return GUI::ECS::Systems::MouseInfo&
  */
-GUI::ECS::Utilities::MouseInfo &GUI::ECS::Utilities::MouseInfo::operator=(const GUI::ECS::Utilities::MouseInfo &copy)
+GUI::ECS::Systems::MouseInfo &GUI::ECS::Systems::MouseInfo::operator=(const GUI::ECS::Systems::MouseInfo &copy)
 {
     if (this != &copy) {
         update(copy);
@@ -420,7 +420,7 @@ GUI::ECS::Utilities::MouseInfo &GUI::ECS::Utilities::MouseInfo::operator=(const 
     return *this;
 };
 
-std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::MouseInfo &item)
+std::ostream &GUI::ECS::Systems::operator<<(std::ostream &os, const GUI::ECS::Systems::MouseInfo &item)
 {
     os << item.getInfo();
     return os;

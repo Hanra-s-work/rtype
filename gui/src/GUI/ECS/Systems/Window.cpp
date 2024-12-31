@@ -5,9 +5,9 @@
 ** Window.cpp
 */
 
-#include "GUI/ECS/Utilities/Window.hpp"
+#include "GUI/ECS/Systems/Window.hpp"
 
-GUI::ECS::Utilities::Window::Window(const std::uint32_t entityId, const std::uint32_t windowWidth, const std::uint32_t windowHeight, const std::string &windowName, unsigned int frameRateLimit)
+GUI::ECS::Systems::Window::Window(const std::uint32_t entityId, const std::uint32_t windowWidth, const std::uint32_t windowHeight, const std::string &windowName, unsigned int frameRateLimit)
     : EntityNode(entityId),
     _sfWindow(sf::VideoMode({ windowWidth, windowHeight }), windowName),
     _windowWidth(windowWidth),
@@ -17,39 +17,39 @@ GUI::ECS::Utilities::Window::Window(const std::uint32_t entityId, const std::uin
     _sfWindow.setFramerateLimit(frameRateLimit);
 }
 
-GUI::ECS::Utilities::Window::~Window() {}
+GUI::ECS::Systems::Window::~Window() {}
 
-void GUI::ECS::Utilities::Window::clear(const GUI::ECS::Utilities::Colour &color)
+void GUI::ECS::Systems::Window::clear(const GUI::ECS::Systems::Colour &color)
 {
     std::any systemColour = color.getRenderColour();
     if (!systemColour.has_value()) {
-        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
     try {
         sf::Color result = std::any_cast<sf::Color>(systemColour);
         _sfWindow.clear(result);
     }
     catch (std::bad_any_cast &e) {
-        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
+        throw CustomExceptions::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 
-void GUI::ECS::Utilities::Window::display()
+void GUI::ECS::Systems::Window::display()
 {
     _sfWindow.display();
 }
 
-bool GUI::ECS::Utilities::Window::isOpen() const
+bool GUI::ECS::Systems::Window::isOpen() const
 {
     return _sfWindow.isOpen();
 }
 
-void GUI::ECS::Utilities::Window::close()
+void GUI::ECS::Systems::Window::close()
 {
     _sfWindow.close();
 }
 
-std::any GUI::ECS::Utilities::Window::pollEvent()
+std::any GUI::ECS::Systems::Window::pollEvent()
 {
     std::any response;
     std::optional<sf::Event> node = _sfWindow.pollEvent();
@@ -61,12 +61,12 @@ std::any GUI::ECS::Utilities::Window::pollEvent()
     return response;
 }
 
-void GUI::ECS::Utilities::Window::setFramerateLimit(const unsigned int framerateLimit)
+void GUI::ECS::Systems::Window::setFramerateLimit(const unsigned int framerateLimit)
 {
     _sfWindow.setFramerateLimit(framerateLimit);
 }
 
-void GUI::ECS::Utilities::Window::setFullScreen(const bool fullScreen)
+void GUI::ECS::Systems::Window::setFullScreen(const bool fullScreen)
 {
     _fullScreen = fullScreen;
 
@@ -81,12 +81,12 @@ void GUI::ECS::Utilities::Window::setFullScreen(const bool fullScreen)
     }
 }
 
-const bool GUI::ECS::Utilities::Window::getFullScreen() const
+const bool GUI::ECS::Systems::Window::getFullScreen() const
 {
     return _fullScreen;
 }
 
-const std::string GUI::ECS::Utilities::Window::getInfo(const unsigned int indent) const
+const std::string GUI::ECS::Systems::Window::getInfo(const unsigned int indent) const
 {
 
     std::string indentation = "";
@@ -94,24 +94,24 @@ const std::string GUI::ECS::Utilities::Window::getInfo(const unsigned int indent
         indentation += "\t";
     }
     std::string result = indentation + "Window:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Window Name: '" + _windowName + "'\n";
-    result += indentation + "- Window Width: " + MyRecodes::myToString(_windowWidth) + "\n";
-    result += indentation + "- Window Height: " + MyRecodes::myToString(_windowHeight) + "\n";
-    result += indentation + "- Full Screen: " + MyRecodes::myToString(_fullScreen) + "\n";
-    result += indentation + "- Desktop Mode: ( size: ( width: " + MyRecodes::myToString(_desktopMode.size.x) + ", height: " + MyRecodes::myToString(_desktopMode.size.y) + "), bits per pixel: " + MyRecodes::myToString(_desktopMode.bitsPerPixel) + ")\n";
+    result += indentation + "- Window Width: " + Recoded::myToString(_windowWidth) + "\n";
+    result += indentation + "- Window Height: " + Recoded::myToString(_windowHeight) + "\n";
+    result += indentation + "- Full Screen: " + Recoded::myToString(_fullScreen) + "\n";
+    result += indentation + "- Desktop Mode: ( size: ( width: " + Recoded::myToString(_desktopMode.size.x) + ", height: " + Recoded::myToString(_desktopMode.size.y) + "), bits per pixel: " + Recoded::myToString(_desktopMode.bitsPerPixel) + ")\n";
     return result;
 }
 
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::TextComponent &text)
+void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::TextComponent &text)
 {
     if (!text.isVisible()) {
         return;
     }
     std::any textCapsule = text.render();
     if (!textCapsule.has_value()) {
-        throw MyException::NoRenderableText();
+        throw CustomExceptions::NoRenderableText();
     }
     try {
         sf::Text txt = std::any_cast<sf::Text>(textCapsule);
@@ -120,11 +120,11 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::TextComponent
     catch (std::bad_any_cast &e) {
         std::string response = "<Unknown text, this is not a sf::Text>, any_cast error";
         response += e.what();
-        throw MyException::NoRenderableText(response);
+        throw CustomExceptions::NoRenderableText(response);
     }
 }
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
+void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
 {
     if (!shape.isVisible()) {
         return;
@@ -132,7 +132,7 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponen
     std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> shapeCapsule = shape.render();
     if (!shapeCapsule.has_value()) {
         return;
-        // throw MyException::NoRenderableShape("<std::pair not found in std::any, have you initialised the class with a shape?>");
+        // throw CustomExceptions::NoRenderableShape("<std::pair not found in std::any, have you initialised the class with a shape?>");
     }
     std::pair<GUI::ECS::Components::ActiveShape, std::any> pairNode = shapeCapsule.value();
     GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
@@ -143,7 +143,7 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponen
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {
         if (!shapeData.has_value()) {
-            throw MyException::NoRenderableShape("<There is no sf::RectangleShape located in std::any>");
+            throw CustomExceptions::NoRenderableShape("<There is no sf::RectangleShape located in std::any>");
         }
         try {
             sf::RectangleShape renderableShape = std::any_cast<sf::RectangleShape>(shapeData);
@@ -152,13 +152,13 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponen
         catch (std::bad_any_cast &e) {
             std::string response = "<Unknown shape, this is not a RectangleShape>, any_cast error";
             response += e.what();
-            throw MyException::InvalidShape(response);
+            throw CustomExceptions::InvalidShape(response);
         }
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::CIRCLE) {
         if (!shapeData.has_value()) {
-            throw MyException::NoRenderableShape("<There is no sf::CircleShape located in std::any>");
+            throw CustomExceptions::NoRenderableShape("<There is no sf::CircleShape located in std::any>");
         }
         try {
             sf::CircleShape renderableShape = std::any_cast<sf::CircleShape>(shapeData);
@@ -167,13 +167,13 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponen
         catch (std::bad_any_cast &e) {
             std::string response = "<Unknown shape, this is not a CircleShape>, any_cast error";
             response += e.what();
-            throw MyException::InvalidShape(response);
+            throw CustomExceptions::InvalidShape(response);
         }
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::CONVEX) {
         if (!shapeData.has_value()) {
-            throw MyException::NoRenderableShape("<There is not an sf::ConvexShape located in std::any>");
+            throw CustomExceptions::NoRenderableShape("<There is not an sf::ConvexShape located in std::any>");
         }
         try {
             sf::ConvexShape renderableShape = std::any_cast<sf::ConvexShape>(shapeData);
@@ -182,20 +182,20 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponen
         catch (std::bad_any_cast &e) {
             std::string response = "<Unknown shape, this is not a ConvexShape>, any_cast error";
             response += e.what();
-            throw MyException::InvalidShape(response);
+            throw CustomExceptions::InvalidShape(response);
         }
         return;
     };
 }
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ImageComponent &image)
+void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ImageComponent &image)
 {
     if (!image.isVisible()) {
         return;
     }
     std::any imageCapsule = image.render();
     if (!imageCapsule.has_value()) {
-        throw MyException::NoRenderableImage("<sf::Sprite not found in std::any>");
+        throw CustomExceptions::NoRenderableImage("<sf::Sprite not found in std::any>");
     }
     try {
         sf::Sprite sprite = std::any_cast<sf::Sprite>(imageCapsule);
@@ -204,18 +204,18 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ImageComponen
     catch (std::bad_any_cast &e) {
         std::string response = "<Unknown Image, this is not an sf::Sprite>, any_cast error";
         response += e.what();
-        throw MyException::NoRenderableImage(response);
+        throw CustomExceptions::NoRenderableImage(response);
     }
 }
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
+void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
 {
     if (!sprite.isVisible()) {
         return;
     }
     std::any spriteCapsule = sprite.render();
     if (!spriteCapsule.has_value()) {
-        throw MyException::NoRenderableSprite("<sf::Sprite not found in std::any>");
+        throw CustomExceptions::NoRenderableSprite("<sf::Sprite not found in std::any>");
     }
     try {
         sf::Sprite spr = std::any_cast<sf::Sprite>(spriteCapsule);
@@ -224,11 +224,11 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::SpriteCompone
     catch (std::bad_any_cast &e) {
         std::string response = "<Unknown Sprite, this is not an sf::Sprite>, any_cast error";
         response += e.what();
-        throw MyException::NoRenderableSprite(response);
+        throw CustomExceptions::NoRenderableSprite(response);
     }
 }
 
-void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
+void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
 {
     if (!button.isVisible()) {
         return;
@@ -248,7 +248,7 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonCompone
     }
 }
 
-std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::Window &item)
+std::ostream &GUI::ECS::Systems::operator<<(std::ostream &os, const GUI::ECS::Systems::Window &item)
 {
     os << item.getInfo();
     return os;
