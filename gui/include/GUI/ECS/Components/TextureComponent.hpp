@@ -77,8 +77,10 @@ namespace GUI
 
             /**
              * @brief Outputs the texture's info to a stream.
+             * 
              * @param os The output stream.
              * @param item The texture to output.
+             * 
              * @return The modified output stream.
              */
             std::ostream &operator<<(std::ostream &os, const TextureComponent &item);

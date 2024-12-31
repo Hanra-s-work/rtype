@@ -331,7 +331,7 @@ GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::CollisionCompone
  */
 void GUI::ECS::Components::CollisionComponent::_updateMouseCollisionData()
 {
-    PRECISE_DEBUG << "CollisionComponent: Updating the collision between the mouse and the shape." << std::endl;
+    PRECISE_DEBUG << "Updating the collision between the mouse and the shape." << std::endl;
     _isHovered = false;
     _isClicked = false;
     const std::pair<int, int> &mousePos = _mouse.getMousePosition();
@@ -348,6 +348,7 @@ void GUI::ECS::Components::CollisionComponent::_updateMouseCollisionData()
     if (_isHovered && (_mouse.isMouseLeftButtonClicked() || _mouse.isMouseRightButtonClicked())) {
         _isClicked = true;
     }
+    PRECISE_SUCCESS << "Collision data updated." << std::endl;
 }
 
 [[nodiscard]] const bool GUI::ECS::Components::operator==(GUI::ECS::Components::CollisionComponent left, GUI::ECS::Components::CollisionComponent right)

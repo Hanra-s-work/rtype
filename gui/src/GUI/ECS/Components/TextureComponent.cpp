@@ -78,13 +78,25 @@ void GUI::ECS::Components::TextureComponent::setFilePath(const std::string &file
 
 void GUI::ECS::Components::TextureComponent::setTexture(const std::any &texture)
 {
+    PRECISE_INFO << "Setting the texture" << std::endl;
     if (!texture.has_value()) {
+        PRECISE_WARNING << "There is no texture to be processed" << std::endl;
         return;
     }
+    try {
+        PRECISE_INFO << "Casting texture back to it's initial form" << std::endl;
     sf::Texture text = std::any_cast<sf::Texture>(texture);
-    _texture.update(text);
+    PRECISE_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
+    _texture = text;
+    PRECISE_INFO << "Getting the texture size" << std::endl;
     sf::Vector2u node = _texture.getSize();
+    PRECISE_INFO << "Setting the collision info with the new texture size" << std::endl;
     _collisionInfo.setDimension({ node.x, node.y });
+    PRECISE_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
+    }catch (std::bad_any_cast &e) {
+        PRECISE_CRITICAL<< "The cast failed to retrieve the sf::texture, system error: " << std::string(e.what()) << std::endl;
+        throw MyException::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>, system error: " + std::string(e.what()));
+    }
 }
 
 void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo)
@@ -104,14 +116,23 @@ void GUI::ECS::Components::TextureComponent::setSize(const std::pair<int, int> &
 
 void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy)
 {
+    PRECISE_INFO << "Updating texture component" << std::endl;
+    PRECISE_DEBUG << "Updating Visibility" << std::endl;
     setVisible(copy.getVisible());
+    PRECISE_DEBUG << "Updated Visibility" << std::endl;
+    PRECISE_DEBUG << "Updating Texture" << std::endl;
     setTexture(copy.getTexture());
+    PRECISE_DEBUG << "Updated Texture" << std::endl;
+    PRECISE_DEBUG << "Updating Collision Info" << std::endl;
     setCollisionInfo(copy.getCollisionInfo());
+    PRECISE_DEBUG << "Updated Collision Info" << std::endl;
+    PRECISE_SUCCESS << "Out of updating texture component " << std::endl;
 }
 
 const std::any GUI::ECS::Components::TextureComponent::getTexture() const
 {
-    return std::make_any<sf::Texture>(_texture);
+    PRECISE_INFO << "Creating an any pointer from the sf::Texture" << std::endl;
+    return std::any(sf::Texture(_texture));
 }
 
 const bool GUI::ECS::Components::TextureComponent::getVisible() const

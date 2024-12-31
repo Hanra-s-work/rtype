@@ -180,22 +180,54 @@ const bool GUI::ECS::Components::AnimationComponent::isStopped() const
 
 void GUI::ECS::Components::AnimationComponent::update(const GUI::ECS::Components::AnimationComponent &copy)
 {
+    PRECISE_INFO << "Processing getLoop" << std::endl;
     _loop = copy.getLoop();
+    PRECISE_SUCCESS << "Processed getLoop" << std::endl;
+    PRECISE_INFO << "Processing getCLock" << std::endl;
     _clock = copy.getClock();
+    PRECISE_SUCCESS << "Processed getCLock" << std::endl;
+    PRECISE_INFO << "Processing getFrames" << std::endl;
     _frames = copy.getFrames();
+    PRECISE_SUCCESS << "Processed getFrames" << std::endl;
+    PRECISE_INFO << "Processing getLooped" << std::endl;
     _looped = copy.getLooped();
+    PRECISE_SUCCESS << "Processed getLooped" << std::endl;
+    PRECISE_INFO << "Processing getPaused" << std::endl;
     _paused = copy.getPaused();
+    PRECISE_SUCCESS << "Processed getPaused" << std::endl;
+    PRECISE_INFO << "Processing getFrames" << std::endl;
     _frames = copy.getFrames();
+    PRECISE_SUCCESS << "Processed getFrames" << std::endl;
+    PRECISE_INFO << "Processing getPlaying" << std::endl;
     _playing = copy.getPlaying();
+    PRECISE_SUCCESS << "Processed getPlaying" << std::endl;
+    PRECISE_INFO << "Processing getStopped" << std::endl;
     _stopped = copy.getStopped();
+    PRECISE_SUCCESS << "Processed getStopped" << std::endl;
+    PRECISE_INFO << "Processing getTicked" << std::endl;
     _hasTicked = copy.getTicked();
+    PRECISE_SUCCESS << "Processed getTicked" << std::endl;
+    PRECISE_INFO << "Processing getDelay" << std::endl;
     _frameDelay = copy.getDelay();
+    PRECISE_SUCCESS << "Processed getDelay" << std::endl;
+    PRECISE_INFO << "Processing getFramesCount" << std::endl;
     _totalFrames = copy.getFrameCount();
+    PRECISE_SUCCESS << "Processed getFramesCount" << std::endl;
+    PRECISE_INFO << "Processing getBaseTexture" << std::endl;
     _baseTexture = copy.getBaseTexture();
+    PRECISE_SUCCESS << "Processed getBaseTexture" << std::endl;
+    PRECISE_INFO << "Processing getReadReverse" << std::endl;
     _readReverse = copy.getReadReverse();
+    PRECISE_SUCCESS << "Processed getReadReverse" << std::endl;
+    PRECISE_INFO << "Processing getInitialFrame" << std::endl;
     _frameInitial = copy.getInitialFrame();
+    PRECISE_SUCCESS << "Processed getInitialFrame" << std::endl;
+    PRECISE_INFO << "Processing getCurrentFrame" << std::endl;
     _currentFrame = copy.getCurrentFrame();
+    PRECISE_SUCCESS << "Processed getCurrentFrame" << std::endl;
+    PRECISE_INFO << "Processing getCurrentTexture" << std::endl;
     _currentTexture = copy.getCurrentTexture();
+    PRECISE_SUCCESS << "Processed getCurrentTexture" << std::endl;
 }
 
 const bool GUI::ECS::Components::AnimationComponent::getTicked() const

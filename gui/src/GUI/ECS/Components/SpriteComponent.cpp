@@ -207,6 +207,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation)
     : EntityNode(entityId)
 {
+    PRECISE_INFO << "In sprite constructor taking an entity id, a name and an animation." << std::endl;
     setName(name);
     setAnimation(animation);
     _processSprite();
@@ -215,6 +216,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
     : EntityNode(entityId)
 {
+    PRECISE_INFO << "In sprite constructor taking an entity id, a name and a spritesheet texture." << std::endl;
     setName(name);
     setSpritesheet(spritesheetTexture);
     _processSprite();
@@ -310,7 +312,9 @@ GUI::ECS::Components::SpriteComponent::~SpriteComponent() {};
 
 void GUI::ECS::Components::SpriteComponent::setName(const std::string &name)
 {
+    PRECISE_INFO << "Setting sprite name to '" << name << "'" << std::endl;
     _spriteName = name;
+    PRECISE_SUCCESS << "Sprite name set to '" << name << "'" << std::endl;
 };
 
 void GUI::ECS::Components::SpriteComponent::setApplication(const std::string &application)
@@ -375,19 +379,36 @@ void GUI::ECS::Components::SpriteComponent::setSpritesheet(const GUI::ECS::Compo
 
 void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Components::AnimationComponent &animation)
 {
+    PRECISE_INFO << "Setting sprite animation." << std::endl;
+    PRECISE_INFO << "Updating the _animation node with the child version." << std::endl;
     _animation.update(animation);
+    PRECISE_SUCCESS << "Animation updated" << std::endl;
+    PRECISE_INFO << "Updating the collision node with the child version." << std::endl;
     _collision.setDimension(animation.getFrameDimensions());
+    PRECISE_SUCCESS << "Collision updated" << std::endl;
     _animationSet = true;
     if (!_sfSprite.has_value()) {
+        PRECISE_WARNING << "Sprite entity has no value" << std::endl;
         return;
     }
+    PRECISE_DEBUG << "Getting the texture" << std::endl;
     std::any textureCapsule = _animation.getCurrentTexture().getTexture();
     if (!textureCapsule.has_value()) {
+        PRECISE_WARNING << "Texture capsule is empty" << std::endl;
         return;
     }
-    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-    _sfSprite->setTexture(texture);
-    _spriteSet = true;
+    try {
+        sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+        PRECISE_SUCCESS << "Texture extracted" << std::endl;
+        PRECISE_INFO << "Applying texture to sprite" << std::endl;
+        _sfSprite->setTexture(texture);
+        _spriteSet = true;
+        PRECISE_SUCCESS << "The texture has been applied to the sprite." << std::endl;
+    }
+    catch (std::bad_any_cast &e) {
+        PRECISE_WARNING << "The texture casting failed with the following system error: " << std::string(e.what()) << std::endl;
+        return;
+    }
 
 
 }

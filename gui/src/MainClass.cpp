@@ -385,10 +385,21 @@ std::uint32_t Main::_initialiseSprites()
 
         PRECISE_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
 
+
+        PRECISE_INFO << "Processing Animation component" << std::endl;
         GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
-        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, animationNode);
+        PRECISE_SUCCESS << "Animation component processed" << std::endl;
+        PRECISE_INFO << "Adding animation node to sprite '" << name << "'" << std::endl;
+        GUI::ECS::Components::SpriteComponent spriteEntity(_baseId, name, animationNode);
+        PRECISE_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
+        PRECISE_INFO << "Creating a shared pointer of the sprite" << std::endl;
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(spriteEntity);
+        PRECISE_SUCCESS << "Sprite pointer created" << std::endl;
+        PRECISE_SUCCESS << "Sprite '" << name << "' loaded" << std::endl;
         node->setApplication(application);
+        PRECISE_INFO << "Storing " << name << " into the ecs" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
+        PRECISE_SUCCESS << name << " stored into the ecs entity" << std::endl;
         _baseId++;
 
         PRECISE_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
