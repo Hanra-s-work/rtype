@@ -43,7 +43,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
     _processImageComponent();
 };
 
-GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::string &name, const std::string &application)
+GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
     : EntityNode(entityId)
 {
     _inConstructor = true;
@@ -57,7 +57,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
     _processImageComponent();
 };
 
-GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::string &name, const std::string &application)
+GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
     : EntityNode(entityId)
 {
     _inConstructor = true;
@@ -93,7 +93,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
     _processImageComponent();
 };
 
-GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::string &name, const std::string &application)
+GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
     : EntityNode(entityId)
 {
     _inConstructor = true;
@@ -107,7 +107,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
     _processImageComponent();
 };
 
-GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::string &name, const std::string &application)
+GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
     : EntityNode(entityId)
 {
     _inConstructor = true;
@@ -135,17 +135,17 @@ void GUI::ECS::Components::ImageComponent::setApplication(const std::string &app
     _application = application;
 }
 
-void GUI::ECS::Components::ImageComponent::setNormalColor(const GUI::ECS::Utilities::Colour &color)
+void GUI::ECS::Components::ImageComponent::setNormalColor(const GUI::ECS::Systems::Colour &color)
 {
     _normalColor = color;
 }
 
-void GUI::ECS::Components::ImageComponent::setHoverColor(const GUI::ECS::Utilities::Colour &color)
+void GUI::ECS::Components::ImageComponent::setHoverColor(const GUI::ECS::Systems::Colour &color)
 {
     _hoverColor = color;
 };
 
-void GUI::ECS::Components::ImageComponent::setClickedColor(const GUI::ECS::Utilities::Colour &color)
+void GUI::ECS::Components::ImageComponent::setClickedColor(const GUI::ECS::Systems::Colour &color)
 {
     _clickedColor = color;
 };
@@ -227,17 +227,17 @@ const GUI::ECS::Components::TextureComponent GUI::ECS::Components::ImageComponen
     return _base;
 };
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ImageComponent::getNormalColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ImageComponent::getNormalColor() const
 {
     return _normalColor;
 };
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ImageComponent::getHoverColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ImageComponent::getHoverColor() const
 {
     return _hoverColor;
 };
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ImageComponent::getClickedColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ImageComponent::getClickedColor() const
 {
     return _clickedColor;
 };
@@ -269,15 +269,15 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
         indentation += "\t";
     }
     std::string result = indentation + "Image:\n";
-    result += indentation + "- EntityId: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
-    result += indentation + "- Size altered: " + MyRecodes::myToString(_sizeAltered) + "\n";
-    result += indentation + "- In Constructor: " + MyRecodes::myToString(_inConstructor) + "\n";
-    result += indentation + "- Texture altered: " + MyRecodes::myToString(_textureAltered) + "\n";
-    result += indentation + "- Position altered: " + MyRecodes::myToString(_positionAltered) + "\n";
+    result += indentation + "- EntityId: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: " + Recoded::myToString(_visible) + "\n";
+    result += indentation + "- Size altered: " + Recoded::myToString(_sizeAltered) + "\n";
+    result += indentation + "- In Constructor: " + Recoded::myToString(_inConstructor) + "\n";
+    result += indentation + "- Texture altered: " + Recoded::myToString(_textureAltered) + "\n";
+    result += indentation + "- Position altered: " + Recoded::myToString(_positionAltered) + "\n";
     result += indentation + "- Name: " + _name + "\n";
     result += indentation + "- Application: " + _application + "\n";
-    result += indentation + "- Image Component present?: " + MyRecodes::myToString(_sfImage.has_value()) + "\n";
+    result += indentation + "- Image Component present?: " + Recoded::myToString(_sfImage.has_value()) + "\n";
     result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + "}\n";
     result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + "}\n";
     result += indentation + "- Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
@@ -295,7 +295,7 @@ std::any GUI::ECS::Components::ImageComponent::render() const
     return std::make_any<sf::Sprite>(_sfImage.value());
 };
 
-void GUI::ECS::Components::ImageComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::ImageComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _collision.update(mouse);
     _processImageComponent();
@@ -339,7 +339,7 @@ void GUI::ECS::Components::ImageComponent::_initialiseImage()
                 _sfImage.emplace(texture);
             }
             catch (std::bad_any_cast &e) {
-                throw MyException::NoTexture("<No texture was found when a texture of type sf::Texture was expected>, system error: " + std::string(e.what()));
+                throw CustomExceptions::NoTexture("<No texture was found when a texture of type sf::Texture was expected>, system error: " + std::string(e.what()));
             }
         }
     }
@@ -359,14 +359,14 @@ void GUI::ECS::Components::ImageComponent::_processColour()
         systemColour = _normalColor.getRenderColour();
     }
     if (!systemColour.has_value()) {
-        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
     try {
         sf::Color result = std::any_cast<sf::Color>(systemColour);
         _sfImage->setColor(result);
     }
     catch (std::bad_any_cast &e) {
-        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
+        throw CustomExceptions::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 
@@ -399,7 +399,7 @@ void GUI::ECS::Components::ImageComponent::_processImageComponent()
                     _textureAltered = false;
                 }
                 catch (std::bad_any_cast &e) {
-                    throw MyException::NoTexture("<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: " + std::string(e.what()));
+                    throw CustomExceptions::NoTexture("<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: " + std::string(e.what()));
                 }
             }
         }

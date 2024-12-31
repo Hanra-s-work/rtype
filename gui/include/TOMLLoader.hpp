@@ -21,8 +21,8 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 
  /**
   * @class TOMLLoader
@@ -109,7 +109,7 @@ class TOMLLoader {
      * @tparam T The type of the value to retrieve.
      * @param key The key of the value to retrieve.
      * @return The value of type `T`.
-     * @throw MyException::NoTOMLKey if the key is not found or the value cannot be converted.
+     * @throw CustomExceptions::NoTOMLKey if the key is not found or the value cannot be converted.
      * @warning Do not move the initialisation of this function outside of the header file or compilation issues will arise.
      */
     template <typename T>
@@ -119,7 +119,7 @@ class TOMLLoader {
         if (auto value = _toml[key].value<T>()) {
             return *value;
         }
-        throw MyException::NoTOMLKey(_tomlPath, key);
+        throw CustomExceptions::NoTOMLKey(_tomlPath, key);
     };
 
     /**
@@ -167,7 +167,7 @@ class TOMLLoader {
      * @brief Retrieves a TOML table for a specific key.
      * @param key The key to retrieve.
      * @return The corresponding TOML table.
-     * @throw MyException::NoTOMLKey if the key does not exist or is not a table.
+     * @throw CustomExceptions::NoTOMLKey if the key does not exist or is not a table.
      */
     toml::table getTable(const std::string &key) const;
 
@@ -175,7 +175,7 @@ class TOMLLoader {
      * @brief Retrieves a TOML array for a specific key.
      * @param key The key to retrieve.
      * @return The corresponding TOML array.
-     * @throw MyException::NoTOMLKey if the key does not exist or is not an array.
+     * @throw CustomExceptions::NoTOMLKey if the key does not exist or is not an array.
      */
     toml::array getArray(const std::string &key) const;
 
@@ -238,7 +238,7 @@ class TOMLLoader {
 
     /**
      * @brief Ensures the TOML file is loaded before accessing its data.
-     * @throw MyException::NoTOML if the file is not loaded.
+     * @throw CustomExceptions::NoTOML if the file is not loaded.
      */
     void _ensureLoaded() const;
 

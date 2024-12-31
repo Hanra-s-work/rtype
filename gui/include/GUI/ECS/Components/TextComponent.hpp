@@ -21,10 +21,10 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
+#include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Font.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
+#include "GUI/ECS/Systems/Font.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
@@ -89,7 +89,7 @@ namespace GUI
                  * @param hoverColor The color of the text when hovered.
                  * @param clickedColor The color of the text when clicked.
                  */
-                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructor with full parameter specification.
                  *
@@ -102,14 +102,14 @@ namespace GUI
                  * @param clickedColor The color of the text when clicked.
                  * @param position The position of the text in 2D space.
                  */
-                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::pair<float, float> &position);
+                TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::pair<float, float> &position);
                 /**
                  * @brief Constructor with a font instance.
                  *
                  * @param entityId The ID of the entity this component is associated with.
                  * @param fontInstance An instance of the font.
                  */
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance);
                 /**
                  * @brief Constructor with a font instance and text content.
                  *
@@ -117,7 +117,7 @@ namespace GUI
                  * @param fontInstance An instance of the font.
                  * @param text The text to be displayed.
                  */
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text);
                 /**
                  * @brief Constructor with a font instance, text content, and font size.
                  *
@@ -126,7 +126,7 @@ namespace GUI
                  * @param text The text to be displayed.
                  * @param size The size of the font.
                  */
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text, const unsigned int &size);
                 /**
                  * @brief Constructor with detailed parameters and a font instance.
                  *
@@ -138,7 +138,7 @@ namespace GUI
                  * @param hoverColor The color of the text when hovered.
                  * @param clickedColor The color of the text when clicked.
                  */
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructor with detailed parameters and a font instance, including position.
                  *
@@ -151,7 +151,7 @@ namespace GUI
                  * @param clickedColor The color of the text when clicked.
                  * @param position The position of the text in 2D space.
                  */
-                TextComponent(const std::uint32_t entityId, const GUI::ECS::Utilities::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor, const std::pair<float, float> &position);
+                TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::pair<float, float> &position);
 
                 /**
                  * @brief Destructor for TextComponent.
@@ -159,30 +159,30 @@ namespace GUI
                 ~TextComponent();
 
                 /**
-                 * @brief Set the Font of the text using a loaded Font instance from GUI::ECS::Utilities::Font
+                 * @brief Set the Font of the text using a loaded Font instance from GUI::ECS::Systems::Font
                  *
                  * @param font
                  */
-                void setFont(const GUI::ECS::Utilities::Font &font);
+                void setFont(const GUI::ECS::Systems::Font &font);
 
                 /**
                  * @brief Set the default colour of the text object
                  *
                  * @param color The default colour for the text
                  */
-                void setNormalColor(const GUI::ECS::Utilities::Colour &color);
+                void setNormalColor(const GUI::ECS::Systems::Colour &color);
                 /**
                  * @brief Set the Hover Color of the text object
                  *
                  * @param color The hover colour of the text
                  */
-                void setHoverColor(const GUI::ECS::Utilities::Colour &color);
+                void setHoverColor(const GUI::ECS::Systems::Colour &color);
                 /**
                  * @brief Set the Clicked Color of the text object
                  *
                  * @param color The clicked colour of the text
                  */
-                void setClickedColor(const GUI::ECS::Utilities::Colour &color);
+                void setClickedColor(const GUI::ECS::Systems::Colour &color);
 
                 /**
                  * @brief Set the Text
@@ -204,7 +204,7 @@ namespace GUI
                  * @param fontPath The font path to be loaded.
                  * @param name The name of the font
                  *
-                 * @throws MyException::InvalidFontPath if the font path provided is incorrect
+                 * @throws CustomExceptions::InvalidFontPath if the font path provided is incorrect
                  */
                 void setFontPath(const std::string &fontPath, const std::string &name = "");
 
@@ -242,9 +242,9 @@ namespace GUI
                 /**
                  * @brief Get the Font object contained in the class
                  *
-                 * @return const GUI::ECS::Utilities::Font
+                 * @return const GUI::ECS::Systems::Font
                  */
-                const GUI::ECS::Utilities::Font getFont() const;
+                const GUI::ECS::Systems::Font getFont() const;
 
                 /**
                  * @brief Get the Font Path object
@@ -256,21 +256,21 @@ namespace GUI
                 /**
                  * @brief Get the Normal Color of the text
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Systems::Colour getNormalColor() const;
                 /**
                  * @brief Get the Hover Color of the text
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Systems::Colour getHoverColor() const;
                 /**
                  * @brief Get the Clicked Color of the text
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getClickedColor() const;
+                const GUI::ECS::Systems::Colour getClickedColor() const;
 
                 /**
                  * @brief Get the Text that was set in the class.
@@ -323,7 +323,7 @@ namespace GUI
                  *
                  * @param mouse A mouse instance
                  */
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 /**
                  * @brief The function in charge of updating the current text component using another text component instance.
                  *
@@ -354,7 +354,7 @@ namespace GUI
                 /**
                  * @brief Function in charge of loading the font into a font instance.
                  *
-                 * @throws MyException::NoFont To inform the user that there was no usable font found.
+                 * @throws CustomExceptions::NoFont To inform the user that there was no usable font found.
                  */
                 void _loadFont();
 
@@ -369,10 +369,10 @@ namespace GUI
                 unsigned int _size = 30;                                                         //!< An unsigned int to contain the user assigned size
                 std::optional<sf::Text> _sfTextComponent;                                        //!< An std::optional sf::Text to contain the final text instance that will be rendered
                 CollisionComponent _textPos;                                                     //!< A Collision component class to contain and track collisions
-                GUI::ECS::Utilities::Font _font;                                                 //!< An GUI::ECS::Utilities::Font class to contain the active font
-                GUI::ECS::Utilities::Colour _color = GUI::ECS::Utilities::Colour::Black;         //!< A Colour class that contains the colour for the default state
-                GUI::ECS::Utilities::Colour _hoverColor = GUI::ECS::Utilities::Colour::Black;    //!< A Colour class that contains the colour for the hover state
-                GUI::ECS::Utilities::Colour _clickedColor = GUI::ECS::Utilities::Colour::Black;  //!< A Colour class that contains the colour for the clicked state
+                GUI::ECS::Systems::Font _font;                                                 //!< An GUI::ECS::Systems::Font class to contain the active font
+                GUI::ECS::Systems::Colour _color = GUI::ECS::Systems::Colour::Black;         //!< A Colour class that contains the colour for the default state
+                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Black;    //!< A Colour class that contains the colour for the hover state
+                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Black;  //!< A Colour class that contains the colour for the clicked state
             };
 
             /**

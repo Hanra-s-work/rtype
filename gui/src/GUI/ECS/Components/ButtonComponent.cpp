@@ -74,31 +74,31 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entit
 
 GUI::ECS::Components::ButtonComponent::~ButtonComponent() {};
 
-void GUI::ECS::Components::ButtonComponent::setHoverColor(const GUI::ECS::Utilities::Colour &hoverColor)
+void GUI::ECS::Components::ButtonComponent::setHoverColor(const GUI::ECS::Systems::Colour &hoverColor)
 {
     _componentShape.setHoverColor(hoverColor);
 }
 
-void GUI::ECS::Components::ButtonComponent::setNormalColor(const GUI::ECS::Utilities::Colour &normalColor)
+void GUI::ECS::Components::ButtonComponent::setNormalColor(const GUI::ECS::Systems::Colour &normalColor)
 {
     _componentShape.setNormalColor(normalColor);
 }
 
-void GUI::ECS::Components::ButtonComponent::setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor)
+void GUI::ECS::Components::ButtonComponent::setClickedColor(const GUI::ECS::Systems::Colour &clickedColor)
 {
     _componentShape.setClickedColor(clickedColor);
 }
-void GUI::ECS::Components::ButtonComponent::setTextHoverColor(const GUI::ECS::Utilities::Colour &hoverColor)
+void GUI::ECS::Components::ButtonComponent::setTextHoverColor(const GUI::ECS::Systems::Colour &hoverColor)
 {
     _componentText.setHoverColor(hoverColor);
 }
 
-void GUI::ECS::Components::ButtonComponent::setTextNormalColor(const GUI::ECS::Utilities::Colour &normalColor)
+void GUI::ECS::Components::ButtonComponent::setTextNormalColor(const GUI::ECS::Systems::Colour &normalColor)
 {
     _componentText.setNormalColor(normalColor);
 }
 
-void GUI::ECS::Components::ButtonComponent::setTextClickedColor(const GUI::ECS::Utilities::Colour &clickedColor)
+void GUI::ECS::Components::ButtonComponent::setTextClickedColor(const GUI::ECS::Systems::Colour &clickedColor)
 {
     _componentText.setClickedColor(clickedColor);
 }
@@ -175,31 +175,31 @@ void GUI::ECS::Components::ButtonComponent::toggleVisibility()
     }
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ButtonComponent::getClickedColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ButtonComponent::getClickedColor() const
 {
     return _componentShape.getClickedColor();
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ButtonComponent::getNormalColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ButtonComponent::getNormalColor() const
 {
     return _componentShape.getNormalColor();
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ButtonComponent::getHoverColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ButtonComponent::getHoverColor() const
 {
     return _componentShape.getHoverColor();
 }
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ButtonComponent::getTextClickedColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ButtonComponent::getTextClickedColor() const
 {
     return _componentText.getClickedColor();
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ButtonComponent::getTextNormalColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ButtonComponent::getTextNormalColor() const
 {
     return _componentText.getNormalColor();
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ButtonComponent::getTextHoverColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ButtonComponent::getTextHoverColor() const
 {
     return _componentText.getHoverColor();
 }
@@ -273,7 +273,7 @@ const std::string GUI::ECS::Components::ButtonComponent::getInfo(const unsigned 
         indentation += "\t";
     }
     std::string result = indentation + "Button:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Callback: " + _callbackName + "\n";
     result += indentation + "- Text: {\n" + _componentText.getInfo(indent + 1) + "}\n";
     result += indentation + "- Shape: {\n" + _componentShape.getInfo(indent + 1) + "}\n";
@@ -282,7 +282,7 @@ const std::string GUI::ECS::Components::ButtonComponent::getInfo(const unsigned 
 
 
 
-void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _collision.update(mouse);
     _componentText.update(mouse);
@@ -309,7 +309,7 @@ void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Components::B
         _componentText.update(copy.getTextComponent());
         _componentShape.update(copy.getShapeComponent());
     } else {
-        throw MyException::NoButton();
+        throw CustomExceptions::NoButton();
     }
 }
 

@@ -70,7 +70,7 @@ void GUI::ECS::Components::TextureComponent::setFilePath(const std::string &file
 {
     bool loadStatus = _texture.loadFromFile(filePath);
     if (!loadStatus) {
-        throw MyException::FileNotFound(filePath);
+        throw CustomExceptions::FileNotFound(filePath);
     }
     sf::Vector2u node = _texture.getSize();
     _collisionInfo.setDimension({ node.x, node.y });
@@ -85,17 +85,18 @@ void GUI::ECS::Components::TextureComponent::setTexture(const std::any &texture)
     }
     try {
         PRECISE_INFO << "Casting texture back to it's initial form" << std::endl;
-    sf::Texture text = std::any_cast<sf::Texture>(texture);
-    PRECISE_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
-    _texture = text;
-    PRECISE_INFO << "Getting the texture size" << std::endl;
-    sf::Vector2u node = _texture.getSize();
-    PRECISE_INFO << "Setting the collision info with the new texture size" << std::endl;
-    _collisionInfo.setDimension({ node.x, node.y });
-    PRECISE_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
-    }catch (std::bad_any_cast &e) {
-        PRECISE_CRITICAL<< "The cast failed to retrieve the sf::texture, system error: " << std::string(e.what()) << std::endl;
-        throw MyException::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>, system error: " + std::string(e.what()));
+        sf::Texture text = std::any_cast<sf::Texture>(texture);
+        PRECISE_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
+        _texture = text;
+        PRECISE_INFO << "Getting the texture size" << std::endl;
+        sf::Vector2u node = _texture.getSize();
+        PRECISE_INFO << "Setting the collision info with the new texture size" << std::endl;
+        _collisionInfo.setDimension({ node.x, node.y });
+        PRECISE_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
+    }
+    catch (std::bad_any_cast &e) {
+        PRECISE_CRITICAL << "The cast failed to retrieve the sf::texture, system error: " << std::string(e.what()) << std::endl;
+        throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>, system error: " + std::string(e.what()));
     }
 }
 
@@ -152,8 +153,8 @@ const std::string GUI::ECS::Components::TextureComponent::getInfo(const unsigned
         indentation += "\t";
     }
     std::string result = indentation + "Texture:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: " + Recoded::myToString(_visible) + "\n";
     result += indentation + "- Collision Info: \n" + _collisionInfo.getInfo(indent + 1) + "\n";
     return result;
 }

@@ -17,8 +17,8 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI

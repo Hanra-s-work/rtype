@@ -18,10 +18,10 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
@@ -142,7 +142,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -157,7 +157,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -172,7 +172,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -187,7 +187,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -204,7 +204,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -221,7 +221,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
 
                 /**
                  * @brief Construct a new Sprite Component object and assing a specific entity id
@@ -349,7 +349,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -366,7 +366,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -383,7 +383,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -400,7 +400,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -419,7 +419,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -438,7 +438,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
 
                 /**
                  * @brief Destructor.
@@ -471,19 +471,19 @@ namespace GUI
                  *
                  * @param color The colour of the sprite when it is in it's normal state
                  */
-                void setNormalColor(const GUI::ECS::Utilities::Colour &color);
+                void setNormalColor(const GUI::ECS::Systems::Colour &color);
                 /**
                  * @brief Set the Hover Color of the sprite
                  *
                  * @param color The colour the sprite takes when it is hovered by the user's mouse.
                  */
-                void setHoverColor(const GUI::ECS::Utilities::Colour &color);
+                void setHoverColor(const GUI::ECS::Systems::Colour &color);
                 /**
                  * @brief Set the Clicked Color of the sprite
                  *
                  * @param color The colour the sprite takes when it is clicked by the user's mouse.
                  */
-                void setClickedColor(const GUI::ECS::Utilities::Colour &color);
+                void setClickedColor(const GUI::ECS::Systems::Colour &color);
 
                 /**
                  * @brief Sets the texture of the sprite using a file path.
@@ -523,9 +523,9 @@ namespace GUI
                  *
                  * @param mouse Mouse information.
                  *
-                 * @throws MyException::NoCollision If no collision is set.
+                 * @throws CustomExceptions::NoCollision If no collision is set.
                  */
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
 
                 /**
                  * @brief Updates the animation component that is used by the sprite.
@@ -546,7 +546,7 @@ namespace GUI
                  *
                  * @returns std::optional<std::any> the component to render
                  *
-                 * @throws MyException::NoSprite If no sprite is set.
+                 * @throws CustomExceptions::NoSprite If no sprite is set.
                  */
                 std::any render() const;
 
@@ -681,7 +681,7 @@ namespace GUI
                  *
                  * @return The texture component.
                  *
-                 * @throws MyException::NoSpriteSheet If no spritesheet is set.
+                 * @throws CustomExceptions::NoSpriteSheet If no spritesheet is set.
                  */
                 const GUI::ECS::Components::TextureComponent getSpritesheet() const;
                 /**
@@ -689,7 +689,7 @@ namespace GUI
                  *
                  * @return The collision component.
                  *
-                 * @throws MyException::NoCollision If no collision is set.
+                 * @throws CustomExceptions::NoCollision If no collision is set.
                  */
                 const GUI::ECS::Components::CollisionComponent getCollision() const;
                 /**
@@ -697,7 +697,7 @@ namespace GUI
                  *
                  * @return The animation component.
                  *
-                 * @throws MyException::NoAnimation If no animation is set.
+                 * @throws CustomExceptions::NoAnimation If no animation is set.
                  */
                 const GUI::ECS::Components::AnimationComponent getAnimation() const;
 
@@ -706,19 +706,19 @@ namespace GUI
                  *
                  * @return The colour instance that is stored for the default status.
                  */
-                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Systems::Colour getNormalColor() const;
                 /**
                  * @brief Get the colour of the hover state for the class.
                  *
                  * @return The colour instance that is stored for the hover status.
                  */
-                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Systems::Colour getHoverColor() const;
                 /**
                  * @brief Get the colour of the clicked state for the class.
                  *
                  * @return The colour instance that is stored for the clicked status.
                  */
-                const GUI::ECS::Utilities::Colour getClickedColor() const;
+                const GUI::ECS::Systems::Colour getClickedColor() const;
                 /**
                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -771,9 +771,9 @@ namespace GUI
                 GUI::ECS::Components::AnimationComponent _animation;                                  //!< The animation component class containing the sprite's animations
                 bool _spriteSet = false;                                                              //!< A boolean to inform the class if the sprite instance is set
                 std::optional<sf::Sprite> _sfSprite;                                                  //!< An std::optional of sf::Sprite to allow the class to manage the sprite to render.
-                GUI::ECS::Utilities::Colour _hoverColor = GUI::ECS::Utilities::Colour::Transparent;   //!< An instance holding the hover colour of the sprite
-                GUI::ECS::Utilities::Colour _normalColor = GUI::ECS::Utilities::Colour::Transparent;  //!< An instance holding the default colour of the sprite
-                GUI::ECS::Utilities::Colour _clickedColor = GUI::ECS::Utilities::Colour::Transparent; //!< An instance holding the clicked colour of the sprite
+                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Transparent;   //!< An instance holding the hover colour of the sprite
+                GUI::ECS::Systems::Colour _normalColor = GUI::ECS::Systems::Colour::Transparent;  //!< An instance holding the default colour of the sprite
+                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Transparent; //!< An instance holding the clicked colour of the sprite
             };
 
             /**

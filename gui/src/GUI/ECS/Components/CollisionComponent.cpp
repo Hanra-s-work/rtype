@@ -144,7 +144,7 @@ void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Components
  *
  * @param copy
  */
-void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _mouse.update(mouse);
     _updateMouseCollisionData();
@@ -156,7 +156,7 @@ void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Utilities:
  *
  * @param mouse Mouse information object.
  */
-void GUI::ECS::Components::CollisionComponent::updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::CollisionComponent::updateMouseInfo(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _mouse.update(mouse);
     _updateMouseCollisionData();
@@ -227,9 +227,9 @@ const float GUI::ECS::Components::CollisionComponent::getPositionY() const
  *
  * @return sf::FloatRect instance of the coordinates.
  */
-const MyRecodes::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
+const Recoded::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
 {
-    MyRecodes::FloatRect data({ 0, 0 }, { 0, 0 });
+    Recoded::FloatRect data({ 0, 0 }, { 0, 0 });
     return data;
 }
 
@@ -262,9 +262,9 @@ const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getDimen
 /**
  *@brief This is the function in charge of returning the MouseInfo class instance.
  *
- * @return GUI::ECS::Utilities::MouseInfo The MouseInfo class.
+ * @return GUI::ECS::Systems::MouseInfo The MouseInfo class.
  */
-const GUI::ECS::Utilities::MouseInfo GUI::ECS::Components::CollisionComponent::getMouseInfo() const
+const GUI::ECS::Systems::MouseInfo GUI::ECS::Components::CollisionComponent::getMouseInfo() const
 {
     return _mouse;
 }
@@ -297,11 +297,11 @@ const std::string GUI::ECS::Components::CollisionComponent::getInfo(const unsign
         indentation += "\t";
     }
     std::string result = indentation + "Collision Info:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- Hovered: " + MyRecodes::myToString(_isHovered) + "\n";
-    result += indentation + "- Clicked: " + MyRecodes::myToString(_isClicked) + "\n";
-    result += indentation + "- Position: ( x: " + MyRecodes::myToString(_posX) + ", y: " + MyRecodes::myToString(_posY) + " )\n";
-    result += indentation + "- Dimensions: ( width: " + MyRecodes::myToString(_width) + ", height: " + MyRecodes::myToString(_height) + " )\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Hovered: " + Recoded::myToString(_isHovered) + "\n";
+    result += indentation + "- Clicked: " + Recoded::myToString(_isClicked) + "\n";
+    result += indentation + "- Position: ( x: " + Recoded::myToString(_posX) + ", y: " + Recoded::myToString(_posY) + " )\n";
+    result += indentation + "- Dimensions: ( width: " + Recoded::myToString(_width) + ", height: " + Recoded::myToString(_height) + " )\n";
     result += indentation + "- Mouse Info: {\n" + _mouse.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }

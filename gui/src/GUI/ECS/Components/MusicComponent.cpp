@@ -215,11 +215,11 @@ void GUI::ECS::Components::MusicComponent::setMusic(const std::string &filePath)
 {
     _isInitialised = false;
     if (filePath.empty()) {
-        throw MyException::FileNotFound("'<no path provided>'");
+        throw CustomExceptions::FileNotFound("'<no path provided>'");
     }
     _filePath = filePath;
     if (!_music.openFromFile(_filePath)) {
-        throw MyException::FileNotFound(_filePath);
+        throw CustomExceptions::FileNotFound(_filePath);
     }
     _music.setVolume(_volume);
     _music.setLooping(_isLooping);
@@ -247,7 +247,7 @@ void GUI::ECS::Components::MusicComponent::setApplication(const std::string &app
 void GUI::ECS::Components::MusicComponent::play()
 {
     if (_isInitialised == false) {
-        throw MyException::MusicNotInitialised();
+        throw CustomExceptions::MusicNotInitialised();
     }
     _isPlaying = true;
     _isPaused = false;
@@ -258,7 +258,7 @@ void GUI::ECS::Components::MusicComponent::play()
 void GUI::ECS::Components::MusicComponent::stop()
 {
     if (_isInitialised == false) {
-        throw MyException::MusicNotInitialised();
+        throw CustomExceptions::MusicNotInitialised();
     }
     _isPlaying = false;
     _isPaused = false;
@@ -269,7 +269,7 @@ void GUI::ECS::Components::MusicComponent::stop()
 void GUI::ECS::Components::MusicComponent::pause()
 {
     if (_isInitialised == false) {
-        throw MyException::MusicNotInitialised();
+        throw CustomExceptions::MusicNotInitialised();
     }
     _isPlaying = false;
     _isPaused = true;
@@ -346,16 +346,16 @@ const std::string GUI::ECS::Components::MusicComponent::getInfo(const unsigned i
         indentation += "\t";
     }
     std::string result = indentation + "Music:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Name: " + _name + "\n";
     result += indentation + "- Application: " + _application + "\n";
     result += indentation + "- File Path: " + _filePath + "\n";
-    result += indentation + "- Volume: " + MyRecodes::myToString(_volume) + "\n";
-    result += indentation + "- Looping: " + MyRecodes::myToString(_isLooping) + "\n";
-    result += indentation + "- Playing: " + MyRecodes::myToString(_isPlaying) + "\n";
-    result += indentation + "- Paused: " + MyRecodes::myToString(_isPaused) + "\n";
-    result += indentation + "- Stopped: " + MyRecodes::myToString(_isStopped) + "\n";
-    result += indentation + "- Initialised: " + MyRecodes::myToString(_isInitialised) + "\n";
+    result += indentation + "- Volume: " + Recoded::myToString(_volume) + "\n";
+    result += indentation + "- Looping: " + Recoded::myToString(_isLooping) + "\n";
+    result += indentation + "- Playing: " + Recoded::myToString(_isPlaying) + "\n";
+    result += indentation + "- Paused: " + Recoded::myToString(_isPaused) + "\n";
+    result += indentation + "- Stopped: " + Recoded::myToString(_isStopped) + "\n";
+    result += indentation + "- Initialised: " + Recoded::myToString(_isInitialised) + "\n";
     return result;
 }
 

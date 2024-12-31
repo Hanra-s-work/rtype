@@ -84,7 +84,7 @@ const toml::node_type TOMLLoader::getValueType(const std::string &key) const
 {
     _ensureLoaded();
     if (!hasKey(key)) {
-        throw MyException::NoTOMLKey(_tomlPath, key);
+        throw CustomExceptions::NoTOMLKey(_tomlPath, key);
     }
     return _toml[key].type();
 }
@@ -136,7 +136,7 @@ toml::table TOMLLoader::getTable(const std::string &key) const
     if (auto table = _toml[key].as_table()) {
         return *table;
     }
-    throw MyException::NoTOMLKey(_tomlPath, key);
+    throw CustomExceptions::NoTOMLKey(_tomlPath, key);
 };
 
 toml::array TOMLLoader::getArray(const std::string &key) const
@@ -145,7 +145,7 @@ toml::array TOMLLoader::getArray(const std::string &key) const
     if (auto array = _toml[key].as_array()) {
         return *array;
     }
-    throw MyException::NoTOMLKey(_tomlPath, key);
+    throw CustomExceptions::NoTOMLKey(_tomlPath, key);
 };
 
 void TOMLLoader::update(const TOMLLoader &copy)
@@ -207,7 +207,7 @@ void TOMLLoader::_loadTOML()
         _toml = toml::parse_file(_tomlPath);
     }
     catch (const toml::parse_error &e) {
-        throw MyException::InvalidTOML(_tomlPath, e.what());
+        throw CustomExceptions::InvalidTOML(_tomlPath, e.what());
     }
     std::ostringstream oss;
     oss << _toml;
@@ -218,7 +218,7 @@ void TOMLLoader::_loadTOML()
 void TOMLLoader::_ensureLoaded() const
 {
     if (!_tomlLoaded) {
-        throw MyException::NoTOML(_tomlPath);
+        throw CustomExceptions::NoTOML(_tomlPath);
     }
 };
 

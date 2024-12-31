@@ -76,13 +76,13 @@ Main::Main(
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::InvalidIp(ip);
+        throw CustomExceptions::InvalidIp(ip);
     }
     PRECISE_INFO << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::InvalidPort(std::to_string(port));
+        throw CustomExceptions::InvalidPort(std::to_string(port));
     }
     PRECISE_INFO << "Processing cursor icon" << std::endl;
     std::string windowText = _lowerText(windowCursorIcon);
@@ -91,13 +91,13 @@ Main::Main(
     } else if (_isFilePresent(windowCursorIcon) == true) {
         _windowCursorIcon = windowCursorIcon;
     } else {
-        throw MyException::FileNotFound(windowCursorIcon);
+        throw CustomExceptions::FileNotFound(windowCursorIcon);
     }
     PRECISE_INFO << "Processing frame limit" << std::endl;
     if (_isFrameLimitCorrect(frameLimit)) {
         _windowFrameLimit = frameLimit;
     } else {
-        throw MyException::InvalidFrameLimit(frameLimit);
+        throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
     PRECISE_INFO << "End of processing" << std::endl;
 }
@@ -295,7 +295,7 @@ void Main::_initialiseConnection()
     std::string address = _ip + ":" + std::to_string(_port);
 
     if (SUCCESS != SUCCESS) {
-        throw MyException::ConnectionFailed(address);
+        throw CustomExceptions::ConnectionFailed(address);
     }
 }
 
@@ -327,7 +327,7 @@ std::uint32_t Main::_initialiseSprites()
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
-            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
         PRECISE_INFO << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
@@ -335,12 +335,12 @@ std::uint32_t Main::_initialiseSprites()
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
-            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
         PRECISE_CRITICAL << "The key " << spriteSheetKey << " is missing from the config file, " <<
             "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
-        throw MyException::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
+        throw CustomExceptions::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
     }
 
     PRECISE_INFO << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
@@ -357,16 +357,16 @@ std::uint32_t Main::_initialiseSprites()
         data += "\t" + std::to_string(counter) + " : " + "'" + it + "'\n";
         PRECISE_INFO << "Processing sprite: '" << it << "'" << std::endl;
         if (!sprites.hasKey(it)) {
-            throw MyException::NoTOMLKey(tomlPath, it);
+            throw CustomExceptions::NoTOMLKey(tomlPath, it);
         }
         loadedSprites[it] = tempNode;
         if (sprites.getValueType(it) != toml::node_type::table) {
-            throw MyException::InvalidTOMLKeyType(tomlPath, it, sprites.getTypeAsString(it), expectedStringType);
+            throw CustomExceptions::InvalidTOMLKeyType(tomlPath, it, sprites.getTypeAsString(it), expectedStringType);
         }
         loadedSprites[it].update(sprites.getTable(it));
         if (!_isSpriteConfigurationCorrect(loadedSprites[it])) {
             std::string userConfig = loadedSprites[it].getTOMLString();
-            throw MyException::InvalidSpriteConfiguration(userConfig, it);
+            throw CustomExceptions::InvalidSpriteConfiguration(userConfig, it);
         }
         counter++;
     };
@@ -429,7 +429,7 @@ std::uint32_t Main::_initialiseAudio()
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
-            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(musicKeyAlt)) {
         PRECISE_INFO << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
@@ -437,12 +437,12 @@ std::uint32_t Main::_initialiseAudio()
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
-            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
         PRECISE_CRITICAL << "The key " << musicKey << " is missing from the config file, " <<
             "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
-        throw MyException::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
+        throw CustomExceptions::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
     }
 
     PRECISE_INFO << audio.getRawTOML() << std::endl;
@@ -466,16 +466,16 @@ std::uint32_t Main::_initialiseAudio()
 
     for (std::string &iterator : audios) {
         if (!audio.hasKey(iterator)) {
-            throw MyException::NoTOMLKey(tomlPath, iterator);
+            throw CustomExceptions::NoTOMLKey(tomlPath, iterator);
         }
         loadedAudios[iterator] = tempNode;
         if (audio.getValueType(iterator) != toml::node_type::table) {
-            throw MyException::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
+            throw CustomExceptions::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
         }
         loadedAudios[iterator].update(audio.getTable(iterator));
         if (!_isMusicConfigurationCorrect(loadedAudios[iterator])) {
             std::string userConfig = loadedAudios[iterator].getTOMLString();
-            throw MyException::InvalidMusicConfiguration(userConfig, iterator);
+            throw CustomExceptions::InvalidMusicConfiguration(userConfig, iterator);
         }
     }
 
@@ -522,7 +522,7 @@ std::uint32_t Main::_initialiseFonts()
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
-            throw MyException::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(fontKeyAlt)) {
         PRECISE_INFO << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
@@ -530,12 +530,12 @@ std::uint32_t Main::_initialiseFonts()
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
-            throw MyException::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
         PRECISE_CRITICAL << "The key " << fontKey << " is missing from the config file, " <<
             "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
-        throw MyException::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
+        throw CustomExceptions::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
     }
 
     PRECISE_INFO << font.getRawTOML() << std::endl;
@@ -545,13 +545,13 @@ std::uint32_t Main::_initialiseFonts()
     const std::string defaultFontNode = "default";
 
     if (!font.hasKey(titleFontNode)) {
-        throw MyException::NoTitleFontConfiguration(tomlPath);
+        throw CustomExceptions::NoTitleFontConfiguration(tomlPath);
     }
     if (!font.hasKey(bodyFontNode)) {
-        throw MyException::NoBodyFontConfiguration(tomlPath);
+        throw CustomExceptions::NoBodyFontConfiguration(tomlPath);
     }
     if (!font.hasKey(defaultFontNode)) {
-        throw MyException::NoDefaultFontConfiguration(tomlPath);
+        throw CustomExceptions::NoDefaultFontConfiguration(tomlPath);
     }
 
     TOMLLoader tempNode(font);
@@ -568,17 +568,17 @@ std::uint32_t Main::_initialiseFonts()
     if (!_isFontConfigurationCorrect(loadedFonts["title"])) {
         const std::string userConfig = loadedFonts["title"].getTOMLString();
         const std::string fontName = titleFontNode;
-        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
     }
     if (!_isFontConfigurationCorrect(loadedFonts["body"])) {
         const std::string userConfig = loadedFonts["body"].getTOMLString();
         const std::string fontName = bodyFontNode;
-        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
     }
     if (!_isFontConfigurationCorrect(loadedFonts["default"])) {
         const std::string userConfig = loadedFonts["default"].getTOMLString();
         const std::string fontName = defaultFontNode;
-        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
     }
 
 
@@ -600,8 +600,8 @@ std::uint32_t Main::_initialiseFonts()
         if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
             italic = it->second.getValue<bool>("italic");
         }
-        std::shared_ptr<GUI::ECS::Utilities::Font> node = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, name, path, defaultSize, application, bold, italic);
-        _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(node);
+        std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
+        _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
         _baseId++;
     }
     PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
@@ -621,16 +621,16 @@ void Main::_initialiseRessources()
     _tomlContent.printTOML();
     PRECISE_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
-    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
+    std::shared_ptr<GUI::ECS::Systems::Window> window = std::make_shared<GUI::ECS::Systems::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
     _baseId++;
-    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>(_baseId);
+    std::shared_ptr<GUI::ECS::Systems::EventManager> event = std::make_shared<GUI::ECS::Systems::EventManager>(_baseId);
     _baseId++;
 
     window->setFullScreen(_windowFullscreen);
     window->setFramerateLimit(_windowFrameLimit);
 
-    _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
-    _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
+    _ecsEntities[typeid(GUI::ECS::Systems::Window)].push_back(window);
+    _ecsEntities[typeid(GUI::ECS::Systems::EventManager)].push_back(event);
 
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
@@ -638,33 +638,64 @@ void Main::_initialiseRessources()
     PRECISE_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
-void Main::_updateMouseForAllRendererables(const GUI::ECS::Utilities::MouseInfo &mouse)
+void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     PRECISE_INFO << "Updating mouse information for renderable components." << std::endl;
     std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
     std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
     std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
     std::vector<std::any> shapes = _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)];
+    std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
 
     for (unsigned int index = 0; index < sprites.size(); index++) {
         PRECISE_INFO << "Processing index for sprite : " << std::to_string(index) << std::endl;
-        std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = std::any_cast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(sprites[index]);
-        sprite->update(mouse);
+        try {
+            std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = std::any_cast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(sprites[index]);
+            sprite->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRECISE_ERROR << "Error casting sprite component, system error: " + std::string(e.what()) << std::endl;
+        }
     }
     for (unsigned int index = 0; index < texts.size(); index++) {
         PRECISE_INFO << "Processing index for text : " << std::to_string(index) << std::endl;
-        std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::any_cast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(texts[index]);
-        text->update(mouse);
+        try {
+            std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::any_cast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(texts[index]);
+            text->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRECISE_ERROR << "Error casting text component, system error: " + std::string(e.what()) << std::endl;
+        }
     }
     for (unsigned int index = 0; index < buttons.size(); index++) {
         PRECISE_INFO << "Processing index for button : " << std::to_string(index) << std::endl;
-        std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::any_cast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttons[index]);
-        button->update(mouse);
+        try {
+            std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::any_cast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttons[index]);
+            button->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRECISE_ERROR << "Error casting button component, system error: " + std::string(e.what()) << std::endl;
+        }
     }
     for (unsigned int index = 0; index < shapes.size(); index++) {
         PRECISE_INFO << "Processing index for shape : " << std::to_string(index) << std::endl;
-        std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::any_cast<std::shared_ptr<GUI::ECS::Components::ShapeComponent>>(shapes[index]);
-        shape->update(mouse);
+        try {
+            std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::any_cast<std::shared_ptr<GUI::ECS::Components::ShapeComponent>>(shapes[index]);
+            shape->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRECISE_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
+        }
+    }
+    for (unsigned int index = 0; index < images.size(); index++) {
+        PRECISE_INFO << "Processing index for image : " << std::to_string(index) << std::endl;
+        try {
+            std::shared_ptr<GUI::ECS::Components::ImageComponent> image = std::any_cast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(images[index]);
+            image->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRECISE_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
+        }
     }
     PRECISE_SUCCESS << "Updated mouse information for renderable components." << std::endl;
 }
@@ -678,11 +709,17 @@ void Main::_testContent()
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
 
     for (unsigned int index = 0; index < musics.size(); index++) {
-        std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
-        PRECISE_INFO << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
-        music_ptr->play();
+        try {
+            std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
+            PRECISE_INFO << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
+            music_ptr->play();
+        }
+        catch (std::bad_any_cast &e) {
+            PRECISE_ERROR << "Error casting music component, system error: " + std::string(e.what()) << std::endl;
+        }
     }
 }
+
 
 /**
  *@brief This is the function in charge of running the program's graphic logic.
@@ -692,34 +729,49 @@ void Main::_testContent()
 void Main::_mainLoop()
 {
     // Get the window and event
-    std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
-    std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> window_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][0], false);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
 
-    GUI::ECS::Utilities::Window &window = *window_ptr;
-    GUI::ECS::Utilities::EventManager &event = *event_ptr;
+    if (!window_ptr.has_value()) {
+        throw CustomExceptions::NoWindow("<std::any un-casting failed>");
+    }
+    GUI::ECS::Systems::Window &window = *window_ptr.value();
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    GUI::ECS::Systems::EventManager &event = *event_ptr.value();
 
     // Get the fonts
 
-    std::shared_ptr<GUI::ECS::Utilities::Font> font_title_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][0]);
-    std::shared_ptr<GUI::ECS::Utilities::Font> font_body_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][1]);
-    std::shared_ptr<GUI::ECS::Utilities::Font> font_default_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][2]);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_title_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], false);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_body_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][1], false);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_default_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][2], false);
 
-    GUI::ECS::Utilities::Font &font_title = *font_title_ptr;
-    GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
-    GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
+    if (!font_title_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Title font", "<std::any un-casting failed>");
+    }
+    if (!font_body_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Body font", "<std::any un-casting failed>");
+    }
+    if (!font_default_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Default font", "<std::any un-casting failed>");
+    }
+    GUI::ECS::Systems::Font &font_title = *font_title_ptr.value();
+    GUI::ECS::Systems::Font &font_body = *font_body_ptr.value();
+    GUI::ECS::Systems::Font &font_default = *font_default_ptr.value();
 
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Utilities::Colour::YellowGreen, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 50 });
+    // Create a test text
+
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Systems::Colour::YellowGreen, GUI::ECS::Systems::Colour::Cyan, GUI::ECS::Systems::Colour::Yellow, { 20, 50 });
 
     while (window.isOpen()) {
         event.processEvents(window);
         _updateMouseForAllRendererables(event.getMouseInfo());
-        if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
+        if (event.isKeyPressed(GUI::ECS::Systems::Key::CapsLock)) {
             _testContent();
         }
         text.update(event.getMouseInfo());
-        // PRECISE_INFO << "Text Component: \n" << text << std::endl;
-        // PRECISE_INFO << "Event: \n" << event << std::endl;
-        PRECISE_INFO << "Mouse position: " << MyRecodes::myToString(event.getMousePosition()) << std::endl;
+        PRECISE_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
         window.display();
         window.clear();
@@ -745,7 +797,7 @@ void Main::run()
  *
  * @param ip : std::string
  *
- * @throws MyException::IncorrectIp(ip) : This error is thrown
+ * @throws CustomExceptions::IncorrectIp(ip) : This error is thrown
  * if the ip format is wrong.
  */
 void Main::setIp(const std::string &ip)
@@ -753,7 +805,7 @@ void Main::setIp(const std::string &ip)
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::InvalidIp(ip);
+        throw CustomExceptions::InvalidIp(ip);
     }
 }
 
@@ -761,7 +813,7 @@ void Main::setIp(const std::string &ip)
  *@brief Set the port on which the GUI is going to connect to.
  *
  * @param port
- * @throws MyException::InvalidPort(port) This error is thrown
+ * @throws CustomExceptions::InvalidPort(port) This error is thrown
  * if the port format is incorrect
  */
 void Main::setPort(const unsigned int port)
@@ -769,7 +821,7 @@ void Main::setPort(const unsigned int port)
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::InvalidPort(std::to_string(port));
+        throw CustomExceptions::InvalidPort(std::to_string(port));
     }
 }
 
@@ -840,7 +892,7 @@ void Main::setWindowPosition(unsigned int x, unsigned int y)
  * (if the user wishes to change the default icon)
  *
  * @param cursorImage
- * @throws MyException::FileNotFound(cursorImage) This error is thrown
+ * @throws CustomExceptions::FileNotFound(cursorImage) This error is thrown
  * if the path to the file is invalid or the file cannot be opened.
  */
 void Main::setWindowCursorIcon(const std::string cursorImage)
@@ -850,7 +902,7 @@ void Main::setWindowCursorIcon(const std::string cursorImage)
     } else if (_isFilePresent(cursorImage) == true) {
         _windowCursorIcon = cursorImage;
     } else {
-        throw MyException::FileNotFound(cursorImage);
+        throw CustomExceptions::FileNotFound(cursorImage);
     }
 }
 
@@ -926,7 +978,7 @@ void Main::setWindowSize(unsigned int width, unsigned int height)
 void Main::setFrameLimit(unsigned int frameLimit)
 {
     if (_isFrameLimitCorrect(frameLimit) == false) {
-        throw MyException::InvalidFrameLimit(frameLimit);
+        throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
     _windowFrameLimit = frameLimit;
 }

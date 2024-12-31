@@ -60,29 +60,29 @@ std::vector<std::string> extract_argument(char *arg)
  * @param args The current argument
  * @param binName The name of the program binary.
  *
- * @throws MyException::HelpFound(); This is an information that allows the program to know that the help flag was passed.
- * @throws MyException::VersionFound(); This is an information that allows the program to know that the version flag was passed.
- * @throws MyException::InvalidPort(args[1]); This is an error informing the user that the port value they passed is invalid.
- * @throws MyException::NoFlagParameter(args[0]); This is an error informing the user that a parameter was expected for the flag but was not found.
- * @throws MyException::UnknownArgument(args[0]); This is an error informing the user that the flag they passed is unknown.
- * @throws MyException::InvalidFrameLimit(args[1]); This is an error informing the user that the frame limit that was passed is invalid.
- * @throws MyException::InvalidWindowWidth(args[1]); This is an error informing the user that the value for the window's width is invalid.
- * @throws MyException::InvalidWindowHeight(args[1]); This is an error informing the user the the value for the window's height is invalid.
+ * @throws CustomExceptions::HelpFound(); This is an information that allows the program to know that the help flag was passed.
+ * @throws CustomExceptions::VersionFound(); This is an information that allows the program to know that the version flag was passed.
+ * @throws CustomExceptions::InvalidPort(args[1]); This is an error informing the user that the port value they passed is invalid.
+ * @throws CustomExceptions::NoFlagParameter(args[0]); This is an error informing the user that a parameter was expected for the flag but was not found.
+ * @throws CustomExceptions::UnknownArgument(args[0]); This is an error informing the user that the flag they passed is unknown.
+ * @throws CustomExceptions::InvalidFrameLimit(args[1]); This is an error informing the user that the frame limit that was passed is invalid.
+ * @throws CustomExceptions::InvalidWindowWidth(args[1]); This is an error informing the user that the value for the window's width is invalid.
+ * @throws CustomExceptions::InvalidWindowHeight(args[1]); This is an error informing the user the the value for the window's height is invalid.
  */
 void process_given_argument(Main &main, const std::vector<std::string> &args, std::string const &binName)
 {
     if (args[0] == "help" || args[0] == "h" || args[0] == "?") {
         DisplayHelp(binName);
-        throw MyException::HelpFound();
+        throw CustomExceptions::HelpFound();
     } else if (args[0] == "version" || args[0] == "v") {
         DisplayVersion(false);
-        throw MyException::VersionFound();
+        throw CustomExceptions::VersionFound();
     } else if (args[0] == "ip" || args[0] == "i") {
         PRECISE_SUCCESS << "Ip is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             PRECISE_CRITICAL << "Error: Ip value is required" << std::endl;
             std::cerr << "Error: Ip value is required" << std::endl;
-            throw MyException::NoFlagParameter(args[0]);
+            throw CustomExceptions::NoFlagParameter(args[0]);
         }
         main.setIp(args[1]);
     } else if (args[0] == "port" || args[0] == "p") {
@@ -91,7 +91,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         if (args[1].empty()) {
             PRECISE_CRITICAL << "Error: Port number is required" << std::endl;
             std::cerr << "Error: Port number is required" << std::endl;
-            throw MyException::NoFlagParameter(args[0]);
+            throw CustomExceptions::NoFlagParameter(args[0]);
         }
         try {
             port = static_cast<unsigned int>(std::stoul(args[1]));
@@ -99,12 +99,12 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         catch (const std::invalid_argument &e) {
             PRECISE_CRITICAL << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::InvalidPort(args[1]);
+            throw CustomExceptions::InvalidPort(args[1]);
         }
         catch (const std::out_of_range &e) {
             PRECISE_CRITICAL << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::InvalidPort(args[1]);
+            throw CustomExceptions::InvalidPort(args[1]);
         }
         main.setPort(port);
     } else if (args[0] == "debug" || args[0] == "d") {
@@ -118,7 +118,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         PRECISE_INFO << "Window width is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Window width is required." << std::endl;
-            throw MyException::NoFlagParameter(args[0]);
+            throw CustomExceptions::NoFlagParameter(args[0]);
         }
         try {
             windowWidth = static_cast<unsigned int>(std::stoul(args[1]));
@@ -126,12 +126,12 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         catch (const std::invalid_argument &e) {
             PRECISE_CRITICAL << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::InvalidWindowWidth(args[1]);
+            throw CustomExceptions::InvalidWindowWidth(args[1]);
         }
         catch (const std::out_of_range &e) {
             PRECISE_CRITICAL << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::InvalidWindowWidth(args[1]);
+            throw CustomExceptions::InvalidWindowWidth(args[1]);
         }
         main.setWindowWidth(windowWidth);
     } else if (args[0] == "window-height" || args[0] == "wh" || args[0] == "windowheight") {
@@ -139,18 +139,18 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         PRECISE_INFO << "Window Height is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Window Height is required." << std::endl;
-            throw MyException::NoFlagParameter(args[0]);
+            throw CustomExceptions::NoFlagParameter(args[0]);
         }
         try {
             windowHeight = static_cast<unsigned int>(std::stoul(args[1]));
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::InvalidWindowHeight(args[1]);
+            throw CustomExceptions::InvalidWindowHeight(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::InvalidWindowHeight(args[1]);
+            throw CustomExceptions::InvalidWindowHeight(args[1]);
         }
         main.setWindowHeight(windowHeight);
     } else if (args[0] == "frame-rate-limit" || args[0] == "frl" || args[0] == "frameratelimit") {
@@ -158,29 +158,29 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         PRECISE_INFO << "Frame limit is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Frame Rate is required." << std::endl;
-            throw MyException::NoFlagParameter(args[0]);
+            throw CustomExceptions::NoFlagParameter(args[0]);
         }
         try {
             frameLimit = static_cast<unsigned int>(std::stoul(args[1]));
         }
         catch (const std::invalid_argument &e) {
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
-            throw MyException::InvalidFrameLimit(args[1]);
+            throw CustomExceptions::InvalidFrameLimit(args[1]);
         }
         catch (const std::out_of_range &e) {
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
-            throw MyException::InvalidFrameLimit(args[1]);
+            throw CustomExceptions::InvalidFrameLimit(args[1]);
         }
         main.setFrameLimit(frameLimit);
     } else if (args[0] == "config-file" || args[0] == "cf" || args[0] == "configfile") {
         PRECISE_INFO << "Config file is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: TOML config file is required." << std::endl;
-            throw MyException::NoFlagParameter(args[0]);
+            throw CustomExceptions::NoFlagParameter(args[0]);
         }
         main.setConfigFile(args[1]);
     } else {
-        throw MyException::UnknownArgument(args[0]);
+        throw CustomExceptions::UnknownArgument(args[0]);
     }
 }
 
@@ -231,12 +231,12 @@ int RealMain(int argc, char **argv)
         try {
             process_arguments(MyMain, argc, argv);
         }
-        catch (const MyException::HelpFound &e) {
+        catch (const CustomExceptions::HelpFound &e) {
             status = SUCCESS;
             help_found = true;
             PRECISE_SUCCESS << "Help was found: '" << e.what() << "'." << std::endl;
         }
-        catch (const MyException::VersionFound &e) {
+        catch (const CustomExceptions::VersionFound &e) {
             status = SUCCESS;
             version_found = true;
             PRECISE_SUCCESS << "Version was found: '" << e.what() << "'." << std::endl;

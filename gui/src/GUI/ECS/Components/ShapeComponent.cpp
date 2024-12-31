@@ -9,9 +9,9 @@
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityID)
     : EntityNode(entityID),
-    _hoverColor(GUI::ECS::Utilities::Colour::White),
-    _normalColor(GUI::ECS::Utilities::Colour::White),
-    _clickedColor(GUI::ECS::Utilities::Colour::White),
+    _hoverColor(GUI::ECS::Systems::Colour::White),
+    _normalColor(GUI::ECS::Systems::Colour::White),
+    _clickedColor(GUI::ECS::Systems::Colour::White),
     _shape(ActiveShape::NONE),
     _visible(true),
     _collision()
@@ -20,17 +20,17 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityI
 
 GUI::ECS::Components::ShapeComponent::~ShapeComponent() {};
 
-void GUI::ECS::Components::ShapeComponent::setHoverColor(const GUI::ECS::Utilities::Colour &hoverColor)
+void GUI::ECS::Components::ShapeComponent::setHoverColor(const GUI::ECS::Systems::Colour &hoverColor)
 {
     _hoverColor = hoverColor;
 }
 
-void GUI::ECS::Components::ShapeComponent::setNormalColor(const GUI::ECS::Utilities::Colour &normalColor)
+void GUI::ECS::Components::ShapeComponent::setNormalColor(const GUI::ECS::Systems::Colour &normalColor)
 {
     _normalColor = normalColor;
 }
 
-void GUI::ECS::Components::ShapeComponent::setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor)
+void GUI::ECS::Components::ShapeComponent::setClickedColor(const GUI::ECS::Systems::Colour &clickedColor)
 {
     _clickedColor = clickedColor;
 }
@@ -53,7 +53,7 @@ void GUI::ECS::Components::ShapeComponent::setShape(const ActiveShape &type, con
     } else if (type == ActiveShape::CONVEX) {
         _assignShape(shape, _sfShapeConvex);
     } else if (type != ActiveShape::NONE) {
-        throw MyException::InvalidShape("<Unknown shape type>");
+        throw CustomExceptions::InvalidShape("<Unknown shape type>");
     }
 }
 
@@ -155,17 +155,17 @@ const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Component
     return std::pair<ActiveShape, std::any>(_shape, std::make_any<std::string>(""));
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getHoverColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ShapeComponent::getHoverColor() const
 {
     return _hoverColor;
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getNormalColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ShapeComponent::getNormalColor() const
 {
     return _normalColor;
 }
 
-const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getClickedColor() const
+const GUI::ECS::Systems::Colour GUI::ECS::Components::ShapeComponent::getClickedColor() const
 {
     return _clickedColor;
 }
@@ -195,8 +195,8 @@ const std::string GUI::ECS::Components::ShapeComponent::getInfo(const unsigned i
         indentation += "\t";
     }
     std::string result = indentation + "Shape:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- Visible: " + MyRecodes::myToString(_visible) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: " + Recoded::myToString(_visible) + "\n";
     result += indentation + "- shape type: ";
     if (_shape == ActiveShape::CIRCLE) {
         result += "Circle";
@@ -208,9 +208,9 @@ const std::string GUI::ECS::Components::ShapeComponent::getInfo(const unsigned i
         result += "Rectangle";
     }
     result += "\n";
-    result += indentation + "- Shape rectangle set?: " + MyRecodes::myToString(_sfShapeRectangle.has_value()) + "\n";
-    result += indentation + "- Shape circle set?: " + MyRecodes::myToString(_sfShapeCircle.has_value()) + "\n";
-    result += indentation + "- Shape convex set?: " + MyRecodes::myToString(_sfShapeConvex.has_value()) + "\n";
+    result += indentation + "- Shape rectangle set?: " + Recoded::myToString(_sfShapeRectangle.has_value()) + "\n";
+    result += indentation + "- Shape circle set?: " + Recoded::myToString(_sfShapeCircle.has_value()) + "\n";
+    result += indentation + "- Shape convex set?: " + Recoded::myToString(_sfShapeConvex.has_value()) + "\n";
     result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
     result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
     result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
@@ -223,7 +223,7 @@ const bool GUI::ECS::Components::ShapeComponent::getVisible() const
     return _visible;
 }
 
-void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _collision.update(mouse);
     _processColor();
@@ -239,7 +239,7 @@ void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Components::Sh
         _collision.update(copy.getCollisionComponent());
         _processColor();
     } else {
-        throw MyException::InvalidShape("No existing shape");
+        throw CustomExceptions::InvalidShape("No existing shape");
     }
 }
 
@@ -306,7 +306,7 @@ void GUI::ECS::Components::ShapeComponent::_processColor()
         systemColour = _normalColor.getRenderColour();
     }
     if (!systemColour.has_value()) {
-        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
     try {
         sf::Color result = std::any_cast<sf::Color>(systemColour);
@@ -321,7 +321,7 @@ void GUI::ECS::Components::ShapeComponent::_processColor()
         }
     }
     catch (std::bad_any_cast &e) {
-        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
+        throw CustomExceptions::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
     }
 }
 
@@ -365,7 +365,7 @@ void GUI::ECS::Components::ShapeComponent::_assignShape(const std::any &shape, s
         shapeStorage.emplace(instance);
     }
     catch (const std::bad_any_cast &e) {
-        throw MyException::InvalidShape("<Unknown shape type>, any_cast error: " + std::string(e.what()));
+        throw CustomExceptions::InvalidShape("<Unknown shape type>, any_cast error: " + std::string(e.what()));
     }
 }
 

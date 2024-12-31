@@ -20,9 +20,9 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
+#include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Components/TextComponent.hpp"
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 #include "GUI/ECS/Components/SpriteComponent.hpp"
@@ -130,37 +130,37 @@ namespace GUI
                  *
                  * @param hoverColor
                  */
-                void setHoverColor(const GUI::ECS::Utilities::Colour &hoverColor);
+                void setHoverColor(const GUI::ECS::Systems::Colour &hoverColor);
                 /**
                  *@brief Set the Normal Color of the button for the child objects
                  *
                  * @param normalColor
                  */
-                void setNormalColor(const GUI::ECS::Utilities::Colour &normalColor);
+                void setNormalColor(const GUI::ECS::Systems::Colour &normalColor);
                 /**
                  *@brief Set the Clicked Color of the button for the child objects
                  *
                  * @param clickedColor
                  */
-                void setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor);
+                void setClickedColor(const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  *@brief Set the Text Hover Color
                  *
                  * @param hoverColor
                  */
-                void setTextHoverColor(const GUI::ECS::Utilities::Colour &hoverColor);
+                void setTextHoverColor(const GUI::ECS::Systems::Colour &hoverColor);
                 /**
                  *@brief Set the Text Normal Color
                  *
                  * @param normalColor
                  */
-                void setTextNormalColor(const GUI::ECS::Utilities::Colour &normalColor);
+                void setTextNormalColor(const GUI::ECS::Systems::Colour &normalColor);
                 /**
                  *@brief Set the Text Clicked Color
                  *
                  * @param clickedColor
                  */
-                void setTextClickedColor(const GUI::ECS::Utilities::Colour &clickedColor);
+                void setTextClickedColor(const GUI::ECS::Systems::Colour &clickedColor);
 
                 /**
                  *@brief Set the Position of all objects contained in the button
@@ -239,40 +239,40 @@ namespace GUI
                 /**
                  *@brief Get the Clicked Color
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getClickedColor() const;
+                const GUI::ECS::Systems::Colour getClickedColor() const;
                 /**
                  *@brief Get the Normal Color
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Systems::Colour getNormalColor() const;
                 /**
                  * @brief Get the Hover Color
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Systems::Colour getHoverColor() const;
 
                 /**
                  * @brief Get the Text Clicked Color
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getTextClickedColor() const;
+                const GUI::ECS::Systems::Colour getTextClickedColor() const;
                 /**
                  * @brief Get the Text Normal Color
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getTextNormalColor() const;
+                const GUI::ECS::Systems::Colour getTextNormalColor() const;
                 /**
                  * @brief Get the Text Hover Color
                  *
-                 * @return const GUI::ECS::Utilities::Colour
+                 * @return const GUI::ECS::Systems::Colour
                  */
-                const GUI::ECS::Utilities::Colour getTextHoverColor() const;
+                const GUI::ECS::Systems::Colour getTextHoverColor() const;
 
                 /**
                  * @brief Get the Text Size
@@ -369,7 +369,7 @@ namespace GUI
                  *
                  * @param mouse
                  */
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 /**
                  *@brief Update the textComponent instance located in the button.
                  *

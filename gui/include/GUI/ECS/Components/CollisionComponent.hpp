@@ -19,10 +19,10 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Systems/MouseInfo.hpp"
 
 namespace GUI
 {
@@ -53,10 +53,10 @@ namespace GUI
                 void setMousePosition(const std::pair<int, int> &position);
 
                 void update(const std::pair<int, int> &mousePosition);
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::CollisionComponent &copy);
 
-                void updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void updateMouseInfo(const GUI::ECS::Systems::MouseInfo &mouse);
 
                 const bool isClicked() const;
                 const bool isHovered() const;
@@ -68,13 +68,13 @@ namespace GUI
                 const float getPositionX() const;
                 const float getPositionY() const;
 
-                const MyRecodes::FloatRect getGeometry() const;
+                const Recoded::FloatRect getGeometry() const;
 
                 const std::pair<float, float> getPosition() const;
 
                 const std::pair<float, float> getDimension() const;
 
-                const GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+                const GUI::ECS::Systems::MouseInfo getMouseInfo() const;
                 /**
                  *@brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -95,7 +95,7 @@ namespace GUI
                 float _posY = 0;
                 float _width = 0;
                 float _height = 0;
-                GUI::ECS::Utilities::MouseInfo _mouse;
+                GUI::ECS::Systems::MouseInfo _mouse;
             };
 
             /**

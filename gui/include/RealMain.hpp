@@ -29,16 +29,16 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
+#include "Utilities.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
-#include "ExceptionHandling.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
-#include "GUI/ECS/Utilities/Window.hpp"
-#include "GUI/ECS/Utilities/EventManager.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/Window.hpp"
+#include "GUI/ECS/Systems/EventManager.hpp"
 
  /**
   *@brief The Main class is the main class of the program.
@@ -132,37 +132,12 @@ class Main {
   void _initialiseConnection();
   void _initialiseRessources();
 
-  void _updateMouseForAllRendererables(const GUI::ECS::Utilities::MouseInfo &mouse);
+  void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
 
   void _testContent();
 
   void _closeConnection();
 
-  /**
-   * @brief A function in charge of casting the content of std::any back to it's original state.
-   *
-   * @tparam T
-   *
-   * @param classNode The entity to process
-   * @param raiseOnError If uncasting failed, raise an error? (Default: true)
-   *
-   * @return T The un-casted member.
-   */
-  template<typename T>
-  std::optional<T> _unCast(const std::any &classNode, const bool raiseOnError = true)
-  {
-    try {
-      return std::optional(std::any_cast<T>(classNode));
-    }
-    catch (std::bad_any_cast &e) {
-      if (raiseOnError) {
-        throw MyException::InvalidType(std::string(e.what()));
-      } else {
-        PRECISE_WARNING << "Any cast failed, system error: " + std::string(e.what()) << std::endl;
-        return std::nullopt;
-      }
-    }
-  };
 
   // Private members
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;

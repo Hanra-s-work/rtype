@@ -25,11 +25,11 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
-#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/MouseInfo.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
@@ -51,9 +51,9 @@ namespace GUI
                 ShapeComponent(const std::uint32_t entityId = 0);
                 ~ShapeComponent();
 
-                void setHoverColor(const GUI::ECS::Utilities::Colour &hoverColor);
-                void setNormalColor(const GUI::ECS::Utilities::Colour &normalColor);
-                void setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor);
+                void setHoverColor(const GUI::ECS::Systems::Colour &hoverColor);
+                void setNormalColor(const GUI::ECS::Systems::Colour &normalColor);
+                void setClickedColor(const GUI::ECS::Systems::Colour &clickedColor);
 
                 void setShape(const ActiveShape &type);
                 void setShape(const ActiveShape &type, const std::any &shape);
@@ -73,9 +73,9 @@ namespace GUI
                 const ActiveShape getShapeType() const;
                 const std::pair<ActiveShape, std::any> getActiveShape() const;
 
-                const GUI::ECS::Utilities::Colour getHoverColor() const;
-                const GUI::ECS::Utilities::Colour getNormalColor() const;
-                const GUI::ECS::Utilities::Colour getClickedColor() const;
+                const GUI::ECS::Systems::Colour getHoverColor() const;
+                const GUI::ECS::Systems::Colour getNormalColor() const;
+                const GUI::ECS::Systems::Colour getClickedColor() const;
 
                 const std::pair<float, float> getPosition() const;
                 const std::pair<float, float> getDimension() const;
@@ -93,7 +93,7 @@ namespace GUI
 
                 const bool getVisible() const;
 
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 void update(const ShapeComponent &copy);
 
                 void clearShapes();
@@ -116,9 +116,9 @@ namespace GUI
                 std::optional<sf::ConvexShape> _sfShapeConvex;
                 std::optional<sf::RectangleShape> _sfShapeRectangle;
 
-                GUI::ECS::Utilities::Colour _hoverColor;
-                GUI::ECS::Utilities::Colour _normalColor;
-                GUI::ECS::Utilities::Colour _clickedColor;
+                GUI::ECS::Systems::Colour _hoverColor;
+                GUI::ECS::Systems::Colour _normalColor;
+                GUI::ECS::Systems::Colour _clickedColor;
 
                 GUI::ECS::Components::CollisionComponent _collision;
             };

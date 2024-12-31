@@ -69,7 +69,7 @@ void GUI::ECS::Components::AnimationComponent::setReadReverse(bool reverse)
 void GUI::ECS::Components::AnimationComponent::setDelay(float frameDuration)
 {
     if (frameDuration < 0) {
-        throw MyException::InvalidDuration(std::to_string(frameDuration), "0", "");
+        throw CustomExceptions::InvalidDuration(std::to_string(frameDuration), "0", "");
     }
     _frameDelay = frameDuration;
 }
@@ -77,7 +77,7 @@ void GUI::ECS::Components::AnimationComponent::setDelay(float frameDuration)
 void GUI::ECS::Components::AnimationComponent::setInitialFrame(std::uint32_t frameIndex)
 {
     if (frameIndex > _totalFrames || frameIndex < 0) {
-        throw MyException::InvalidIndex(std::to_string(frameIndex), "0", std::to_string(_totalFrames));
+        throw CustomExceptions::InvalidIndex(std::to_string(frameIndex), "0", std::to_string(_totalFrames));
     }
     _frameInitial = frameIndex;
 }
@@ -283,7 +283,7 @@ const std::uint32_t GUI::ECS::Components::AnimationComponent::getInitialFrame() 
 const std::pair<float, float> GUI::ECS::Components::AnimationComponent::getFrameDimensions() const
 {
     if (_frames.size() <= 0) {
-        throw MyException::NoAnimationFrames();
+        throw CustomExceptions::NoAnimationFrames();
     }
     return _frames[0].getCollisionInfo().getDimension();
 }
@@ -315,22 +315,22 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
         indentation += "\t";
     }
     std::string result = indentation + "AnimationComponent:\n";
-    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
-    result += indentation + "- Looped: " + MyRecodes::myToString(_looped) + "\n";
-    result += indentation + "- Loop: " + MyRecodes::myToString(_loop) + "\n";
-    result += indentation + "- Paused: " + MyRecodes::myToString(_paused) + "\n";
-    result += indentation + "- Playing: " + MyRecodes::myToString(_playing) + "\n";
-    result += indentation + "- Stopped: " + MyRecodes::myToString(_stopped) + "\n";
-    result += indentation + "- Has Ticked: " + MyRecodes::myToString(_hasTicked) + "\n";
-    result += indentation + "- Read Reverse: " + MyRecodes::myToString(_readReverse) + "\n";
-    result += indentation + "- Frame Delay: " + MyRecodes::myToString(_frameDelay) + "\n";
-    result += indentation + "- Frame Initial: " + MyRecodes::myToString(_frameInitial) + "\n";
-    result += indentation + "- Current Frame: " + MyRecodes::myToString(_currentFrame) + "\n";
-    result += indentation + "- Total Frames: " + MyRecodes::myToString(_totalFrames) + "\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Looped: " + Recoded::myToString(_looped) + "\n";
+    result += indentation + "- Loop: " + Recoded::myToString(_loop) + "\n";
+    result += indentation + "- Paused: " + Recoded::myToString(_paused) + "\n";
+    result += indentation + "- Playing: " + Recoded::myToString(_playing) + "\n";
+    result += indentation + "- Stopped: " + Recoded::myToString(_stopped) + "\n";
+    result += indentation + "- Has Ticked: " + Recoded::myToString(_hasTicked) + "\n";
+    result += indentation + "- Read Reverse: " + Recoded::myToString(_readReverse) + "\n";
+    result += indentation + "- Frame Delay: " + Recoded::myToString(_frameDelay) + "\n";
+    result += indentation + "- Frame Initial: " + Recoded::myToString(_frameInitial) + "\n";
+    result += indentation + "- Current Frame: " + Recoded::myToString(_currentFrame) + "\n";
+    result += indentation + "- Total Frames: " + Recoded::myToString(_totalFrames) + "\n";
     result += indentation + "- Base texture: {\n" + _baseTexture.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Frames: {\n";
     for (unsigned int i = 0; i < _frames.size(); i++) {
-        result += indentation + "\t" + MyRecodes::myToString(i) + ": {\n";
+        result += indentation + "\t" + Recoded::myToString(i) + ": {\n";
         result += _frames[i].getInfo(indent + 2);
         result += indentation + "\t}\n";
     }
@@ -340,7 +340,7 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
     return result;
 }
 
-const GUI::ECS::Utilities::Clock GUI::ECS::Components::AnimationComponent::getClock() const
+const GUI::ECS::Systems::Clock GUI::ECS::Components::AnimationComponent::getClock() const
 {
     return _clock;
 }
@@ -358,12 +358,12 @@ void GUI::ECS::Components::AnimationComponent::_tick()
     std::uint32_t nextFrame = _currentFrame + 1;
 
     if (_frames.empty()) {
-        throw MyException::InvalidIndex("<There are no frames>", "<Have you thought of adding frames to the class?>", "<If not use the setAnimation function>");
+        throw CustomExceptions::InvalidIndex("<There are no frames>", "<Have you thought of adding frames to the class?>", "<If not use the setAnimation function>");
     }
 
     if (nextFrame > _totalFrames && _loop) {
         if (_frameInitial > _totalFrames) {
-            throw MyException::InvalidIndex(std::to_string(_frameInitial), "0", std::to_string(_totalFrames));
+            throw CustomExceptions::InvalidIndex(std::to_string(_frameInitial), "0", std::to_string(_totalFrames));
         }
         _currentFrame = _frameInitial;
     } else if (nextFrame > _totalFrames && !_loop) {
@@ -381,7 +381,7 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     GUI::ECS::Components::CollisionComponent spritesheetSize;
     std::any textureCapsule = _baseTexture.getTexture();
     if (!textureCapsule.has_value()) {
-        throw MyException::NoTexture("Base texture for the spritesheet animation");
+        throw CustomExceptions::NoTexture("Base texture for the spritesheet animation");
     }
     PRECISE_DEBUG << "Getting the texture" << std::endl;
     try {
@@ -391,7 +391,7 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
         spritesheetSize.setDimension({ tmp.x, tmp.y });
     }
     catch (std::bad_any_cast &e) {
-        throw MyException::NoTexture("Base texture for the spritesheet animation, <std::any , bad cast error>, system error: " + std::string(e.what()));
+        throw CustomExceptions::NoTexture("Base texture for the spritesheet animation, <std::any , bad cast error>, system error: " + std::string(e.what()));
     }
 
 }

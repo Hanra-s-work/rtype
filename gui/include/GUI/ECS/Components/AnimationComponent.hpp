@@ -20,10 +20,10 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Clock.hpp"
+#include "GUI/ECS/Systems/Clock.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 
 namespace GUI
@@ -375,7 +375,7 @@ namespace GUI
                  *
                  * @return const std::pair<float, float>
                  *
-                * @throws MyException::NoAnimationFrames if there are no frames to read the content from.
+                * @throws CustomExceptions::NoAnimationFrames if there are no frames to read the content from.
                  */
                 const std::pair<float, float> getFrameDimensions() const;
                 /**
@@ -404,13 +404,13 @@ namespace GUI
                 /**
                  * @brief Get the Clock object
                  *
-                 * @return const GUI::ECS::Utilities::Clock
+                 * @return const GUI::ECS::Systems::Clock
                  *
                  * @note This function is intended for the update function,
                  * you can call it but I'm not sure the clock instance will be
                  * of any use without the animation component class to go with it
                  */
-                const GUI::ECS::Utilities::Clock getClock() const;
+                const GUI::ECS::Systems::Clock getClock() const;
 
                 AnimationComponent &operator =(const GUI::ECS::Components::AnimationComponent &copy);
 
@@ -418,7 +418,7 @@ namespace GUI
                 /**
                  * @brief Function in charge of changing the frame when it is time.
                  *
-                 * @throws MyException::InvalidIndex is there are no frames or if the initial frame is greater than the total number of frames.
+                 * @throws CustomExceptions::InvalidIndex is there are no frames or if the initial frame is greater than the total number of frames.
                  */
                 void _tick();
                 /**
@@ -444,7 +444,7 @@ namespace GUI
                 GUI::ECS::Components::TextureComponent _baseTexture;           //!< A Texture component to store the base texture that is used to derive all the animations
                 std::vector<GUI::ECS::Components::TextureComponent> _frames;   //!< An std::vector of Texture components to store all the derived frames of the animation
                 GUI::ECS::Components::TextureComponent _currentTexture;        //!< A Texture component to store the frame that is to be displayed
-                GUI::ECS::Utilities::Clock _clock;                             //!< A clock component that allows the Animation component to track time and know when to change frames
+                GUI::ECS::Systems::Clock _clock;                             //!< A clock component that allows the Animation component to track time and know when to change frames
             };
 
             /**

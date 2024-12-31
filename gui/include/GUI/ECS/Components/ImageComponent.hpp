@@ -20,9 +20,9 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
+#include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
@@ -85,7 +85,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor = GUI::ECS::Utilities::Colour::Transparent, const GUI::ECS::Utilities::Colour &clickedColor = GUI::ECS::Utilities::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
                 /**
                  * @brief Constructor with full parameter specification.
                  *
@@ -99,7 +99,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Utilities::Colour &normalColor = GUI::ECS::Utilities::Colour::Transparent, const GUI::ECS::Utilities::Colour &hoverColor = GUI::ECS::Utilities::Colour::Transparent, const GUI::ECS::Utilities::Colour &clickedColor = GUI::ECS::Utilities::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
 
                 /**
                  * @brief Constructor with an entity ID and an image path.
@@ -132,7 +132,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor = GUI::ECS::Utilities::Colour::Transparent, const GUI::ECS::Utilities::Colour &clickedColor = GUI::ECS::Utilities::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
                 /**
                  * @brief Constructor with full parameter specification.
                  *
@@ -146,7 +146,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Utilities::Colour &normalColor = GUI::ECS::Utilities::Colour::Transparent, const GUI::ECS::Utilities::Colour &hoverColor = GUI::ECS::Utilities::Colour::Transparent, const GUI::ECS::Utilities::Colour &clickedColor = GUI::ECS::Utilities::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
 
                 /**
                  * @brief Destructor for ImageComponent.
@@ -172,19 +172,19 @@ namespace GUI
                  *
                  * @param color The normal color.
                  */
-                void setNormalColor(const GUI::ECS::Utilities::Colour &color);
+                void setNormalColor(const GUI::ECS::Systems::Colour &color);
                 /**
                  * @brief Sets the hover color of the image.
                  *
                  * @param color The hover color.
                  */
-                void setHoverColor(const GUI::ECS::Utilities::Colour &color);
+                void setHoverColor(const GUI::ECS::Systems::Colour &color);
                 /**
                  * @brief Sets the clicked color of the image.
                  *
                  * @param color The clicked color.
                  */
-                void setClickedColor(const GUI::ECS::Utilities::Colour &color);
+                void setClickedColor(const GUI::ECS::Systems::Colour &color);
 
                 /**
                  * @brief Assigns a texture to the image component.
@@ -263,19 +263,19 @@ namespace GUI
                  *
                  * @return The normal color.
                  */
-                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Systems::Colour getNormalColor() const;
                 /**
                  * @brief Retrieves the hover color of the image.
                  *
                  * @return The hover color.
                  */
-                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Systems::Colour getHoverColor() const;
                 /**
                  * @brief Retrieves the clicked color of the image.
                  *
                  * @return The clicked color.
                  */
-                const GUI::ECS::Utilities::Colour getClickedColor() const;
+                const GUI::ECS::Systems::Colour getClickedColor() const;
 
                 /**
                  * @brief Get the Size of the text
@@ -331,7 +331,7 @@ namespace GUI
                  *
                  * @param mouse The mouse information.
                  */
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
 
                 /**
                  * @brief Updates this ImageComponent with values from another instance.
@@ -379,9 +379,9 @@ namespace GUI
                 std::optional<sf::Sprite> _sfImage;                                     //!< An std::optional sf::Sprite to contain the final Sprite instance that will be rendered
                 CollisionComponent _collision;                                                         //!< A Collision component class to contain and track collisions
                 GUI::ECS::Components::TextureComponent _base;                                    //!< An GUI::ECS::Components::TextureComponent class to contain the active texture
-                GUI::ECS::Utilities::Colour _normalColor = GUI::ECS::Utilities::Colour::Black;         //!< A Colour class that contains the colour for the default state
-                GUI::ECS::Utilities::Colour _hoverColor = GUI::ECS::Utilities::Colour::Black;    //!< A Colour class that contains the colour for the hover state
-                GUI::ECS::Utilities::Colour _clickedColor = GUI::ECS::Utilities::Colour::Black;  //!< A Colour class that contains the colour for the clicked state
+                GUI::ECS::Systems::Colour _normalColor = GUI::ECS::Systems::Colour::Black;         //!< A Colour class that contains the colour for the default state
+                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Black;    //!< A Colour class that contains the colour for the hover state
+                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Black;  //!< A Colour class that contains the colour for the clicked state
             };
 
             /**

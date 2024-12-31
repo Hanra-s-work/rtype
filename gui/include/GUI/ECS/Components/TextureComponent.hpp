@@ -19,10 +19,10 @@
 
 #include "Log.hpp"
 #include "LogMacros.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Systems/MouseInfo.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
@@ -77,10 +77,10 @@ namespace GUI
 
             /**
              * @brief Outputs the texture's info to a stream.
-             * 
+             *
              * @param os The output stream.
              * @param item The texture to output.
-             * 
+             *
              * @return The modified output stream.
              */
             std::ostream &operator<<(std::ostream &os, const TextureComponent &item);
