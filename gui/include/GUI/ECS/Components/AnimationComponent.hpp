@@ -47,11 +47,11 @@ namespace GUI
                 AnimationComponent(const std::uint32_t entityId);
                 /**
                  * @brief Construct a new Animation Component object with:
-                 * @li The loaded textures ready to be played
+                 * @li The loaded IntRect's ready to be played
                  *
-                 * @param textures The loaded textures ready to be played
+                 * @param rects The loaded IntRects ready to be played
                  */
-                AnimationComponent(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                AnimationComponent(const std::vector<Recoded::IntRect> &rects);
                 /**
                  * @brief Construct a new Animation Component object with:
                  * @li The path to the spritesheet
@@ -85,12 +85,12 @@ namespace GUI
                 /**
                  * @brief Construct a new Animation Component object with:
                  * @li The id of the entity
-                 * @li The loaded textures ready to be played
+                 * @li The loaded IntRects ready to be played
                  *
                  * @param entityId Id of the component
-                 * @param textures The textures ready to be played
+                 * @param rects The IntRects ready to be played
                  */
-                AnimationComponent(const std::uint32_t entityId, const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                AnimationComponent(const std::uint32_t entityId, const std::vector<Recoded::IntRect> &rects);
                 /**
                  * @brief Construct a new Animation Component object with:
                  * @li The id of the entity
@@ -160,9 +160,9 @@ namespace GUI
                 /**
                  * @brief Set the Animation object
                  *
-                 * @param textures
+                 * @param rects
                  */
-                void setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures);
+                void setAnimation(const std::vector<Recoded::IntRect> &rects);
                 /**
                  * @brief Set the Animation object
                  *
@@ -363,7 +363,13 @@ namespace GUI
                  *
                  * @return const std::uint32_t
                  */
-                const std::uint32_t getCurrentFrame() const;
+                const std::uint32_t getCurrentFrameIndex() const;
+                /**
+                 * @brief Get the index of the frame that is currently in use.
+                 *
+                 * @return const Recoded::IntRect
+                 */
+                const Recoded::IntRect getCurrentFrame() const;
                 /**
                  * @brief Get the Base Texture object
                  *
@@ -371,25 +377,25 @@ namespace GUI
                  */
                 const GUI::ECS::Components::TextureComponent getBaseTexture() const;
                 /**
-                 * @brief Get the dimension of the first frame under an std::pair<float, float> instance.
+                 * @brief Get the dimension of the first frame under an std::pair<int, int> instance.
                  *
-                 * @return const std::pair<float, float>
+                 * @return const std::pair<int, int>
                  *
                 * @throws CustomExceptions::NoAnimationFrames if there are no frames to read the content from.
                  */
-                const std::pair<float, float> getFrameDimensions() const;
+                const std::pair<int, int> getFrameDimensions() const;
                 /**
-                 * @brief Get the texture that is currently in use.
+                 * @brief Get the Rectangle that is currently in use.
                  *
-                 * @return const GUI::ECS::Components::TextureComponent
+                 * @return const Recoded::IntRect
                  */
-                const GUI::ECS::Components::TextureComponent getCurrentTexture() const;
+                const Recoded::IntRect getCurrentRectangle() const;
                 /**
                  * @brief Get all the frames loaded in the animation component
                  *
-                 * @return const std::vector<GUI::ECS::Components::TextureComponent>
+                 * @return const std::vector<Recoded::IntRect>
                  */
-                const std::vector<GUI::ECS::Components::TextureComponent> getFrames() const;
+                const std::vector<Recoded::IntRect> getFrames() const;
                 /**
                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -416,11 +422,38 @@ namespace GUI
 
                 protected:
                 /**
-                 * @brief Function in charge of changing the frame when it is time.
+                 * @brief Main function to process the ticking of the animation.
                  *
-                 * @throws CustomExceptions::InvalidIndex is there are no frames or if the initial frame is greater than the total number of frames.
+                 * This function is responsible for advancing the current frame of the animation. It first checks if the animation is paused,
+                 * if there are frames to render, and if the initial frame is valid. It then calls either `_tickRegular()` or `_tickReverse()`
+                 * based on the direction of the animation (forward or reverse).
+                 *
+                 * If the animation is paused, no frame is updated. If there are no frames or if the initial frame is invalid, appropriate
+                 * exceptions are thrown. This function decides whether to proceed with regular or reverse ticking of the frames.
+                 *
+                 * @throws CustomExceptions::InvalidIndex If there are no frames, or if the frame index exceeds the valid range.
                  */
                 void _tick();
+                /**
+                 * @brief Advances the animation by one frame in reverse.
+                 *
+                 * This function is responsible for decrementing the current frame index in reverse order. If the next frame is out of bounds
+                 * (i.e., the index becomes negative), the frame index is reset either to the last frame or the initial frame depending on
+                 * whether looping is enabled. The current frame is then updated.
+                 *
+                 * @throws CustomExceptions::InvalidIndex If the initial frame is invalid or greater than the total number of frames.
+                 */
+                void _tickReverse();
+                /**
+                 * @brief Advances the animation by one frame in regular (forward) order.
+                 *
+                 * This function is responsible for incrementing the current frame index in forward order. If the next frame exceeds the total
+                 * number of frames, the index is reset either to the first frame or the initial frame, depending on whether looping is enabled.
+                 * The current frame is then updated.
+                 *
+                 * @throws CustomExceptions::InvalidIndex If the initial frame is invalid or greater than the total number of frames.
+                 */
+                void _tickRegular();
                 /**
                  * @brief Function in charge of generating the animation frames based on the provided information.
                  *
@@ -430,6 +463,8 @@ namespace GUI
                  * @param startTop Start from the top
                  */
                 void _processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                const short int _getIndexUpdater(const bool startBegining = true) const;
+                const bool _continueLoop(const bool startBegining, const unsigned int position, const unsigned int maxValue) const;
                 bool _looped = false;                                          //!< A boolean instance in charge of informing the user that the program has looped (valid for the first 2 frames after the loop has occurred)
                 bool _loop = false;                                            //!< A boolean instance in charge of informing the program to play the animation as a loop
                 bool _paused = false;                                          //!< A boolean instance in charge of informing the program to not play the animation but retain the current position
@@ -439,12 +474,12 @@ namespace GUI
                 bool _readReverse = false;                                     //!< A boolean instance in charge of informing the program to read the animation backwards
                 std::uint32_t _frameDelay;                                     //!< An unsigned integer to store the delay to wait between each frame
                 std::uint32_t _frameInitial;                                   //!< An unsigned integer to store the index of the initial frame (the default frame)
-                std::uint32_t _currentFrame;                                   //!< An unsigned integer to store the index of the frame that is currently active
+                std::uint32_t _currentFrameIndex;                              //!< An unsigned integer to store the index of the frame that is currently active
                 std::uint32_t _totalFrames;                                    //!< An unsigned integer to store the total amount of frames in the animation
-                GUI::ECS::Components::TextureComponent _baseTexture;           //!< A Texture component to store the base texture that is used to derive all the animations
-                std::vector<GUI::ECS::Components::TextureComponent> _frames;   //!< An std::vector of Texture components to store all the derived frames of the animation
-                GUI::ECS::Components::TextureComponent _currentTexture;        //!< A Texture component to store the frame that is to be displayed
-                GUI::ECS::Systems::Clock _clock;                             //!< A clock component that allows the Animation component to track time and know when to change frames
+                GUI::ECS::Components::TextureComponent _baseTexture;           //!< A Texture component to store the base texture that is used to derive all the animations rectangles
+                std::vector<Recoded::IntRect> _frames;                         //!< An std::vector of Rectangle components to store all the derived frames of the animation
+                Recoded::IntRect _currentRectangle;                            //!< A Rectangle component to store the frame that is to be displayed
+                GUI::ECS::Systems::Clock _clock;                               //!< A clock component that allows the Animation component to track time and know when to change frames
             };
 
             /**

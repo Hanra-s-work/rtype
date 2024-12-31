@@ -16,7 +16,7 @@ GUI::ECS::Components::AnimationComponent::AnimationComponent() : EntityNode(0) {
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
 
-GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::vector<GUI::ECS::Components::TextureComponent> &textures)
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::vector<Recoded::IntRect> &textures)
     : EntityNode(0)
 {
     setAnimation(textures);
@@ -34,10 +34,10 @@ GUI::ECS::Components::AnimationComponent::AnimationComponent(const GUI::ECS::Com
     setAnimation(spritesheet, frameWidth, frameHeight, startLeft, startTop);
 };
 
-GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::vector<GUI::ECS::Components::TextureComponent> &textures)
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::vector<Recoded::IntRect> &rects)
     : EntityNode(entityId)
 {
-    setAnimation(textures);
+    setAnimation(rects);
 };
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
@@ -82,10 +82,10 @@ void GUI::ECS::Components::AnimationComponent::setInitialFrame(std::uint32_t fra
     _frameInitial = frameIndex;
 }
 
-void GUI::ECS::Components::AnimationComponent::setAnimation(const std::vector<GUI::ECS::Components::TextureComponent> &textures)
+void GUI::ECS::Components::AnimationComponent::setAnimation(const std::vector<Recoded::IntRect> &rects)
 {
-    _frames = textures;
-    _totalFrames = textures.size();
+    _frames = rects;
+    _totalFrames = rects.size();
 }
 
 void GUI::ECS::Components::AnimationComponent::setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
@@ -222,12 +222,12 @@ void GUI::ECS::Components::AnimationComponent::update(const GUI::ECS::Components
     PRECISE_INFO << "Processing getInitialFrame" << std::endl;
     _frameInitial = copy.getInitialFrame();
     PRECISE_SUCCESS << "Processed getInitialFrame" << std::endl;
+    PRECISE_INFO << "Processing getCurrentFrameIndex" << std::endl;
+    _currentFrameIndex = copy.getCurrentFrameIndex();
+    PRECISE_SUCCESS << "Processed getCurrentFrameIndex" << std::endl;
     PRECISE_INFO << "Processing getCurrentFrame" << std::endl;
-    _currentFrame = copy.getCurrentFrame();
+    _currentRectangle = copy.getCurrentFrame();
     PRECISE_SUCCESS << "Processed getCurrentFrame" << std::endl;
-    PRECISE_INFO << "Processing getCurrentTexture" << std::endl;
-    _currentTexture = copy.getCurrentTexture();
-    PRECISE_SUCCESS << "Processed getCurrentTexture" << std::endl;
 }
 
 const bool GUI::ECS::Components::AnimationComponent::getTicked() const
@@ -280,17 +280,27 @@ const std::uint32_t GUI::ECS::Components::AnimationComponent::getInitialFrame() 
     return _frameInitial;
 }
 
-const std::pair<float, float> GUI::ECS::Components::AnimationComponent::getFrameDimensions() const
+const std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrameIndex() const
 {
+    PRECISE_INFO << "Getting the current frame index" << std::endl;
     if (_frames.size() <= 0) {
+        PRECISE_CRITICAL << "No frames available" << std::endl;
         throw CustomExceptions::NoAnimationFrames();
     }
-    return _frames[0].getCollisionInfo().getDimension();
+    return _currentFrameIndex;
 }
 
-const std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrame() const
+const Recoded::IntRect GUI::ECS::Components::AnimationComponent::getCurrentFrame() const
 {
-    return _currentFrame;
+    PRECISE_INFO << "Getting the current frame" << std::endl;
+    std::uint32_t frame = getCurrentFrameIndex();
+    std::uint32_t frameSize = _frames.size();
+    if (frame >= frameSize || frame <= frameSize) {
+        PRECISE_CRITICAL << "Frame index out of bounds" << std::endl;
+        throw CustomExceptions::InvalidIndex(std::to_string(frame), "0", std::to_string(frameSize));
+    }
+    PRECISE_SUCCESS << "Getting the current frame frame list." << std::endl;
+    return _frames[frame];
 }
 
 const GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getBaseTexture() const
@@ -298,12 +308,23 @@ const GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComp
     return _baseTexture;
 }
 
-const GUI::ECS::Components::TextureComponent GUI::ECS::Components::AnimationComponent::getCurrentTexture() const
+const std::pair<int, int> GUI::ECS::Components::AnimationComponent::getFrameDimensions() const
 {
-    return _currentTexture;
+    PRECISE_INFO << "Getting the frame dimension" << std::endl;
+    if (_frames.size() <= 0) {
+        PRECISE_CRITICAL << "No frames available" << std::endl;
+        throw CustomExceptions::NoAnimationFrames();
+    }
+    PRECISE_SUCCESS << "Getting the frame dimensions from the first frame." << std::endl;
+    return _frames[0].size;
 }
 
-const std::vector<GUI::ECS::Components::TextureComponent> GUI::ECS::Components::AnimationComponent::getFrames() const
+const Recoded::IntRect GUI::ECS::Components::AnimationComponent::getCurrentRectangle() const
+{
+    return getCurrentRectangle();
+}
+
+const std::vector<Recoded::IntRect> GUI::ECS::Components::AnimationComponent::getFrames() const
 {
     return _frames;
 }
@@ -325,17 +346,15 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
     result += indentation + "- Read Reverse: " + Recoded::myToString(_readReverse) + "\n";
     result += indentation + "- Frame Delay: " + Recoded::myToString(_frameDelay) + "\n";
     result += indentation + "- Frame Initial: " + Recoded::myToString(_frameInitial) + "\n";
-    result += indentation + "- Current Frame: " + Recoded::myToString(_currentFrame) + "\n";
+    result += indentation + "- Current Frame: " + Recoded::myToString(_currentFrameIndex) + "\n";
     result += indentation + "- Total Frames: " + Recoded::myToString(_totalFrames) + "\n";
     result += indentation + "- Base texture: {\n" + _baseTexture.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Frames: {\n";
     for (unsigned int i = 0; i < _frames.size(); i++) {
-        result += indentation + "\t" + Recoded::myToString(i) + ": {\n";
-        result += _frames[i].getInfo(indent + 2);
-        result += indentation + "\t}\n";
+        result += indentation + "\t- " + Recoded::myToString(i) + ": " + Recoded::myToString(_frames[i]) + "\n";
     }
     result += indentation + "}\n";
-    result += indentation + "Current Texture: {\n" + _currentTexture.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "Current Rectangle: " + Recoded::myToString(_currentRectangle) + "\n";
     result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + "}\n";
     return result;
 }
@@ -355,47 +374,203 @@ GUI::ECS::Components::AnimationComponent &GUI::ECS::Components::AnimationCompone
 
 void GUI::ECS::Components::AnimationComponent::_tick()
 {
-    std::uint32_t nextFrame = _currentFrame + 1;
+    if (_paused) {
+        PRECISE_INFO << "The animation ticking is paused." << std::endl;
+        return;
+    }
 
     if (_frames.empty()) {
+        PRECISE_CRITICAL << "There are no frames to render." << std::endl;
         throw CustomExceptions::InvalidIndex("<There are no frames>", "<Have you thought of adding frames to the class?>", "<If not use the setAnimation function>");
     }
 
-    if (nextFrame > _totalFrames && _loop) {
-        if (_frameInitial > _totalFrames) {
-            throw CustomExceptions::InvalidIndex(std::to_string(_frameInitial), "0", std::to_string(_totalFrames));
-        }
-        _currentFrame = _frameInitial;
-    } else if (nextFrame > _totalFrames && !_loop) {
-        _currentFrame = 0;
-    } else {
-        _currentFrame = nextFrame;
+    if (_frameInitial > _totalFrames) {
+        PRECISE_CRITICAL << "The default frame is greater than "
+            << " the total amount of frames, frame initial: "
+            << std::to_string(_frameInitial)
+            << "minimum frames: 0"
+            << "maximum frames:" << std::to_string(_totalFrames)
+            << std::endl;
+        throw CustomExceptions::InvalidIndex(std::to_string(_frameInitial), "0", std::to_string(_totalFrames));
     }
-    _currentTexture = _frames[_currentFrame];
+
+    if (!_readReverse) {
+        _tickRegular();
+    } else {
+        _tickReverse();
+    }
 }
+
+void GUI::ECS::Components::AnimationComponent::_tickReverse()
+{
+
+    std::uint32_t nextFrame = _currentFrameIndex - 1;
+
+
+    if (nextFrame == std::numeric_limits<std::uint32_t>::max() && _readReverse) {
+        PRECISE_INFO << "The next frame if negative, resetting counter to the maximum available frames." << std::endl;
+        if (_loop) {
+            PRECISE_INFO << "Looping is enabled, the sprite will thus return to the last frame." << std::endl;
+            nextFrame = _totalFrames - 1;
+        } else {
+            if (_frameInitial > _totalFrames) {
+                PRECISE_CRITICAL << "The default frame is greater than "
+                    << " the total amount of frames, frame initial: "
+                    << std::to_string(_frameInitial)
+                    << "minimum frames: 0"
+                    << "maximum frames:" << std::to_string(_totalFrames)
+                    << std::endl;
+                throw CustomExceptions::InvalidIndex(std::to_string(_frameInitial), "0", std::to_string(_totalFrames));
+            }
+            _currentFrameIndex = _frameInitial;
+        }
+    } else {
+        _currentFrameIndex = nextFrame;
+    }
+    _currentRectangle = _frames[_currentFrameIndex];
+
+};
+
+void GUI::ECS::Components::AnimationComponent::_tickRegular()
+{
+    std::uint32_t nextFrame = _currentFrameIndex + 1;
+
+
+    if (nextFrame >= _totalFrames && !_readReverse) {
+        PRECISE_INFO << "The next frame if negative, resetting counter to the maximum available frames." << std::endl;
+        if (_loop) {
+            PRECISE_INFO << "Looping is enabled, the sprite will thus return to the last frame." << std::endl;
+            nextFrame = 0;
+        } else {
+            if (_frameInitial > _totalFrames) {
+                PRECISE_CRITICAL << "The default frame is greater than "
+                    << " the total amount of frames, frame initial: "
+                    << std::to_string(_frameInitial)
+                    << "minimum frames: 0"
+                    << "maximum frames:" << std::to_string(_totalFrames)
+                    << std::endl;
+                throw CustomExceptions::InvalidIndex(std::to_string(_frameInitial), "0", std::to_string(_totalFrames));
+            }
+            _currentFrameIndex = _frameInitial;
+        }
+    } else {
+        _currentFrameIndex = nextFrame;
+    }
+    _currentRectangle = _frames[_currentFrameIndex];
+};
 
 void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
 {
-    PRECISE_DEBUG << "Implement spritesheet animation cutting." << std::endl;
+    PRECISE_DEBUG << "User provided values: frameWidth: "
+        << Recoded::myToString(frameWidth)
+        << ", frameHeight: " << Recoded::myToString(frameHeight)
+        << ", starLeft: " << Recoded::myToString(startLeft)
+        << ", startTop: " << Recoded::myToString(startTop)
+        << std::endl;
 
     GUI::ECS::Components::CollisionComponent spritesheetSize;
     std::any textureCapsule = _baseTexture.getTexture();
     if (!textureCapsule.has_value()) {
+        PRECISE_CRITICAL << "Texture is not set." << std::endl;
         throw CustomExceptions::NoTexture("Base texture for the spritesheet animation");
     }
     PRECISE_DEBUG << "Getting the texture" << std::endl;
-    try {
-        sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-        PRECISE_DEBUG << "Getting the texture size" << std::endl;
-        sf::Vector2u tmp = texture.getSize();
-        spritesheetSize.setDimension({ tmp.x, tmp.y });
+    std::optional<sf::Texture> OptionalTexture = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(textureCapsule, true, "Base texture for the spritesheet animation, <std::any , bad cast error>, system error: ");
+    if (!OptionalTexture.has_value()) {
+        PRECISE_ERROR << "The decasting has failed, skipping the rest of the function" << std::endl;
+        return;
     }
-    catch (std::bad_any_cast &e) {
-        throw CustomExceptions::NoTexture("Base texture for the spritesheet animation, <std::any , bad cast error>, system error: " + std::string(e.what()));
+    sf::Texture texture = OptionalTexture.value();
+    PRECISE_DEBUG << "Getting the texture size" << std::endl;
+    sf::Vector2u textureDim = texture.getSize();
+    PRECISE_DEBUG << "Texture size gathered ( width: " << textureDim.x
+        << " height: " << textureDim.y << ")" << std::endl;
+    spritesheetSize.setDimension({ textureDim.x, textureDim.y });
+    PRECISE_INFO << "Checking if the texture width and height can contain"
+        << " the required frameWidth (" << frameWidth
+        << ") and fameHeight (" << frameHeight << ")"
+        << std::endl;
+    if (frameWidth <= 0) {
+        PRECISE_ERROR << "Frame width must be greater than zero." << std::endl;
+        throw CustomExceptions::InvalidWidth(std::to_string(frameWidth), "1", std::to_string(spritesheetSize.getWidth()));
+    }
+    if (frameHeight <= 0) {
+        PRECISE_ERROR << "Frame height must be greater than zero." << std::endl;
+        throw CustomExceptions::InvalidHeight(std::to_string(frameHeight), "1", std::to_string(spritesheetSize.getHeight()));
+    }
+    if (frameWidth > spritesheetSize.getWidth()) {
+        PRECISE_CRITICAL << "The frame width is greater than the texture width, "
+            << "frame width: " << frameWidth
+            << "texture width: " << spritesheetSize.getWidth()
+            << std::endl;
+        throw CustomExceptions::InvalidWidth(Recoded::myToString(frameWidth), "0", Recoded::myToString(textureDim.x));
+    }
+    if (frameHeight > spritesheetSize.getHeight()) {
+        PRECISE_CRITICAL << "The frame height is greater than the texture height, "
+            << "frame height: " << frameHeight
+            << "texture height: " << spritesheetSize.getHeight()
+            << std::endl;
+        throw CustomExceptions::InvalidHeight(Recoded::myToString(frameHeight), "0", Recoded::myToString(textureDim.y));
+    }
+    PRECISE_INFO << "Cutting the texture into frames" << std::endl;
+    const int columns = spritesheetSize.getWidth() / frameWidth;
+    const int rows = spritesheetSize.getHeight() / frameHeight;
+
+    const short int columUpdater = _getIndexUpdater(startLeft);
+    const short int rowUpdater = _getIndexUpdater(startTop);
+
+    unsigned int posx = 0;
+    unsigned int posy = 0;
+
+    if (startTop) {
+        PRECISE_INFO << "The texture is set to be cut from the top." << std::endl;
+        posy = 0;
+    } else {
+        PRECISE_INFO << "The texture is set to be cut from the bottom." << std::endl;
+        posy = rows - 1;
     }
 
+    _totalFrames = (columns * rows);
+    PRECISE_INFO << "There are : " << _totalFrames << " in total" << std::endl;
+    std::pair<int, int> pos{ posy, posx };
+    for (; _continueLoop(startTop, posy, rows); posy += rowUpdater) {
+        posx = (columns - 1);
+        if (startLeft) {
+            posx = 0;
+        }
+        for (posx = 0; _continueLoop(startLeft, posx, columns); posx += columUpdater) {
+            PRECISE_DEBUG << "Processing frame: " << Recoded::myToString<unsigned int>({ posx, posy }) << std::endl;
+            std::pair<int, int> position = {
+                (posx * frameWidth),
+                (posy * frameHeight)
+            };
+            std::pair<int, int> dimension = {
+                ((posx * frameWidth) + frameWidth),
+                ((posy * frameHeight) + frameHeight)
+            };
+            Recoded::IntRect viewField(position, dimension);
+            _frames.push_back(viewField);
+            PRECISE_DEBUG << "Adding a new frame : " << Recoded::myToString(viewField) << std::endl;
+        }
+    }
+    PRECISE_SUCCESS << "The frames have been processed." << std::endl;
 }
 
+const short int GUI::ECS::Components::AnimationComponent::_getIndexUpdater(const bool startBegining) const
+{
+    if (startBegining) {
+        return 1;
+    }
+    return (-1);
+}
+
+const bool GUI::ECS::Components::AnimationComponent::_continueLoop(const bool startBegining, const unsigned int position, const unsigned int maxValue) const
+{
+    if (startBegining) {
+        return (position < maxValue);
+    }
+    return (position > 0);
+}
 
 std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::AnimationComponent &item)
 {
