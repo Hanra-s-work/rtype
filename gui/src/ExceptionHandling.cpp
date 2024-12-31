@@ -341,10 +341,30 @@ namespace MyException
         return _buffer;
     }
 
-    MusicNotInitialised::MusicNotInitialised()
+    InvalidType::InvalidType(const std::string &extraDetails)
+    {
+        _msg = "Error: The content present in std::any does not match ";
+        _msg += "the provided type(or is just missing).";
+        if (extraDetails.empty() == false) {
+            _msg += "\n(" + extraDetails + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    InvalidType::~InvalidType() {};
+
+    const char *InvalidType::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    MusicNotInitialised::MusicNotInitialised(const std::string &exceptionDetail)
     {
         _msg = "Error: There is no music to play, please set one by calling ";
         _msg += "the setMusicPath function from the class.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -462,9 +482,12 @@ namespace MyException
         return _buffer;
     }
 
-    NoWindow::NoWindow()
+    NoWindow::NoWindow(const std::string &exceptionDetail)
     {
-        _msg = "Error: There is no window to on which to render component.\n";
+        _msg = "Error: There is no window on which to render component.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -475,11 +498,30 @@ namespace MyException
         return _buffer;
     }
 
-    NoSpriteSheet::NoSpriteSheet()
+    NoEventManager::NoEventManager(const std::string &exceptionDetail)
+    {
+        _msg = "Error: There is no event manager that can be used to track user inputs.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoEventManager::~NoEventManager() {};
+
+    const char *NoEventManager::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoSpriteSheet::NoSpriteSheet(const std::string &exceptionDetail)
     {
         _msg = "Error: There is no spritesheet set.\n";
         _msg += "The spritesheet class cannot be called if there is ";
         _msg += "no spritesheet to display.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -490,9 +532,12 @@ namespace MyException
         return _buffer;
     }
 
-    NoCollision::NoCollision()
+    NoCollision::NoCollision(const std::string &exceptionDetail)
     {
-        _msg = "Error: There is no collision set to be called.\n";
+        _msg = "Error: There is no collision set to be called.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -503,9 +548,12 @@ namespace MyException
         return _buffer;
     }
 
-    NoAnimation::NoAnimation()
+    NoAnimation::NoAnimation(const std::string &exceptionDetail)
     {
         _msg = "Error: There is no animation set to be used.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -516,9 +564,12 @@ namespace MyException
         return _buffer;
     }
 
-    NoAnimationFrames::NoAnimationFrames()
+    NoAnimationFrames::NoAnimationFrames(const std::string &exceptionDetail)
     {
         _msg = "Error: There are no frames in the animation.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -529,9 +580,12 @@ namespace MyException
         return _buffer;
     }
 
-    NoSprite::NoSprite()
+    NoSprite::NoSprite(const std::string &exceptionDetail)
     {
         _msg = "Error: There is no sprite set to be used.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -542,9 +596,12 @@ namespace MyException
         return _buffer;
     }
 
-    NoButton::NoButton()
+    NoButton::NoButton(const std::string &exceptionDetail)
     {
         _msg = "Error: There is no ButtonComponent set to be used.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
@@ -555,13 +612,16 @@ namespace MyException
         return _buffer;
     }
 
-    NoFont::NoFont(const std::string &fontName)
+    NoFont::NoFont(const std::string &fontName, const std::string &exceptionDetail)
     {
         _msg = "Error: There is no font ";
         if (!fontName.empty()) {
             _msg += "called " + fontName + " ";
         }
         _msg += "set to be used.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
         _buffer = _msg.c_str();
     };
 
