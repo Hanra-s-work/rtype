@@ -138,6 +138,32 @@ class Main {
 
   void _closeConnection();
 
+  /**
+   * @brief A function in charge of casting the content of std::any back to it's original state.
+   *
+   * @tparam T
+   *
+   * @param classNode The entity to process
+   * @param raiseOnError If uncasting failed, raise an error? (Default: true)
+   *
+   * @return T The un-casted member.
+   */
+  template<typename T>
+  std::optional<T> _unCast(const std::any &classNode, const bool raiseOnError = true)
+  {
+    try {
+      return std::optional(std::any_cast<T>(classNode));
+    }
+    catch (std::bad_any_cast &e) {
+      if (raiseOnError) {
+        throw MyException::InvalidType(std::string(e.what()));
+      } else {
+        PRECISE_WARNING << "Any cast failed, system error: " + std::string(e.what()) << std::endl;
+        return std::nullopt;
+      }
+    }
+  };
+
   // Private members
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
   std::string _ip;
