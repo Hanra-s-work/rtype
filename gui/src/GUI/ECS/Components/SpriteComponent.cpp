@@ -392,23 +392,21 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
         return;
     }
     PRECISE_DEBUG << "Getting the texture" << std::endl;
-    std::any textureCapsule = _animation.getCurrentTexture().getTexture();
+    std::any textureCapsule = _animation.getBaseTexture().getTexture();
     if (!textureCapsule.has_value()) {
         PRECISE_WARNING << "Texture capsule is empty" << std::endl;
         return;
     }
-    try {
-        sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-        PRECISE_SUCCESS << "Texture extracted" << std::endl;
-        PRECISE_INFO << "Applying texture to sprite" << std::endl;
-        _sfSprite->setTexture(texture);
-        _spriteSet = true;
-        PRECISE_SUCCESS << "The texture has been applied to the sprite." << std::endl;
-    }
-    catch (std::bad_any_cast &e) {
-        PRECISE_WARNING << "The texture casting failed with the following system error: " << std::string(e.what()) << std::endl;
+    std::optional<sf::Texture> texture = Utilities::unCast<sf::Texture>(textureCapsule, false, "The texture casting failed with the following system error: ");
+    if (!texture.has_value()) {
+        PRECISE_WARNING << "Texture is empty" << std::endl;
         return;
     }
+    PRECISE_SUCCESS << "Texture extracted" << std::endl;
+    PRECISE_INFO << "Applying texture to sprite" << std::endl;
+    _sfSprite->setTexture(texture.value());
+    _spriteSet = true;
+    PRECISE_SUCCESS << "The texture has been applied to the sprite." << std::endl;
 
 
 }
@@ -544,17 +542,21 @@ void GUI::ECS::Components::SpriteComponent::checkTick()
     if (!_animation.hasTicked()) {
         return;
     }
-    GUI::ECS::Components::TextureComponent textureComponent = _animation.getCurrentTexture();
-    std::any textureCapsule = textureComponent.getTexture();
-    if (!textureCapsule.has_value()) {
-        return;
-    }
-    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-
+    Recoded::IntRect RectComponent = _animation.getCurrentRectangle();
     if (!_sfSprite.has_value()) {
         _initialiseSprite();
     }
-    _sfSprite->setTexture(texture, false);
+    sf::IntRect transporter = {
+        {
+            RectComponent.position.first,
+            RectComponent.position.second
+        },
+        {
+            RectComponent.size.first,
+            RectComponent.size.second
+        }
+    };
+    _sfSprite->setTextureRect(transporter);
     _spriteSet = true;
 }
 
