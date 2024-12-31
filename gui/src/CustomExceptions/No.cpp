@@ -193,9 +193,9 @@ namespace CustomExceptions
 
     NoText::NoText(const std::string &errorReason)
     {
-        _msg = "Error: There is no text component";
+        _msg = "Error: There is no text component.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
@@ -209,9 +209,9 @@ namespace CustomExceptions
 
     NoTexture::NoTexture(const std::string &errorReason)
     {
-        _msg = "Error: There is no text component";
+        _msg = "Error: There is no texture component.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
@@ -227,7 +227,7 @@ namespace CustomExceptions
     {
         _msg = "Error: There is no text instance that can be rendered.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
@@ -243,7 +243,7 @@ namespace CustomExceptions
     {
         _msg = "Error: There is no shape instance that can be rendered.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
@@ -259,7 +259,7 @@ namespace CustomExceptions
     {
         _msg = "Error: There is no image instance that can be rendered.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
@@ -275,7 +275,7 @@ namespace CustomExceptions
     {
         _msg = "Error: There is no sprite instance that can be rendered.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
@@ -291,7 +291,7 @@ namespace CustomExceptions
     {
         _msg = "Error: There is no button instance that can be rendered.";
         if (!errorReason.empty()) {
-            _msg += errorReason;
+            _msg += "\n(" + errorReason + ")";
         }
         _buffer = _msg.c_str();
     };
