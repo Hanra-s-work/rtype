@@ -21,7 +21,8 @@
 #include <optional>
 #include <algorithm>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 
 namespace MyRecodes
 {

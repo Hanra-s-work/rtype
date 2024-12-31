@@ -15,8 +15,8 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib)
 set(SOURCES
 
     # Files at the source of the program
+    src/Log.cpp
     src/Main.cpp
-    src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
     src/TOMLLoader.cpp
@@ -34,8 +34,8 @@ set(SOURCES
     # ECS Components
     src/GUI/ECS/Components/TextComponent.cpp
     src/GUI/ECS/Components/MusicComponent.cpp
-    src/GUI/ECS/Components/ShapeComponent.cpp
     src/GUI/ECS/Components/ImageComponent.cpp
+    src/GUI/ECS/Components/ShapeComponent.cpp
     src/GUI/ECS/Components/SpriteComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
     src/GUI/ECS/Components/TextureComponent.cpp

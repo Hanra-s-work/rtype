@@ -14,18 +14,22 @@
 
 #include <any>
 #include <memory>
+#include <string>
 #include <utility>
-#include <SFML/Graphics.hpp>
+#include <ostream>
+#include <optional>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Colour.hpp"
 #include "GUI/ECS/Utilities/MouseInfo.hpp"
-#include "GUI/ECS/Utilities/EventManager.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
@@ -51,23 +55,23 @@ namespace GUI
                 void setNormalColor(const GUI::ECS::Utilities::Colour &normalColor);
                 void setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor);
 
-                void setShape(const GUI::ECS::Components::ActiveShape &shape);
-                void setShape(const GUI::ECS::Components::ActiveShape &type, const std::any &shape);
-                void setShape(const std::pair<GUI::ECS::Components::ActiveShape, std::any> &shape);
+                void setShape(const ActiveShape &type);
+                void setShape(const ActiveShape &type, const std::any &shape);
+                void setShape(const std::pair<ActiveShape, std::any> &shape);
 
                 void setVisible(const bool visible);
 
                 void setPosition(const std::pair<float, float> position);
                 void setDimension(const std::pair<float, float> dimension);
-                void setCollision(const GUI::ECS::Components::CollisionComponent &collision);
+                void setCollision(const CollisionComponent &collision);
 
                 void toggleVisibility();
 
                 const bool isVisible() const;
                 const bool isShapeInitialised() const;
 
-                const GUI::ECS::Components::ActiveShape getShapeType() const;
-                const std::pair<GUI::ECS::Components::ActiveShape, std::any> getActiveShape() const;
+                const ActiveShape getShapeType() const;
+                const std::pair<ActiveShape, std::any> getActiveShape() const;
 
                 const GUI::ECS::Utilities::Colour getHoverColor() const;
                 const GUI::ECS::Utilities::Colour getNormalColor() const;
@@ -75,8 +79,8 @@ namespace GUI
 
                 const std::pair<float, float> getPosition() const;
                 const std::pair<float, float> getDimension() const;
-                const std::pair<GUI::ECS::Components::ActiveShape, std::any> getShape() const;
-                const GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
+                const std::pair<ActiveShape, std::any> getShape() const;
+                const CollisionComponent getCollisionComponent() const;
                 /**
                  *@brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -90,26 +94,32 @@ namespace GUI
                 const bool getVisible() const;
 
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
-                void update(const GUI::ECS::Components::ShapeComponent &copy);
+                void update(const ShapeComponent &copy);
 
                 void clearShapes();
 
-                std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> render() const;
+                std::optional<std::pair<ActiveShape, std::any>> render() const;
 
-                ShapeComponent &operator=(const GUI::ECS::Components::ShapeComponent &copy);
+                ShapeComponent &operator=(const ShapeComponent &copy);
 
                 private:
                 void _processColor();
                 void _processCollisions();
 
-                bool _visible = true;
-                ActiveShape _shape = ActiveShape::NONE;
+                template <typename T>
+                void _assignShape(const std::any &shape, std::optional<T> &shapeStorage);
+
+                bool _visible;
+                ActiveShape _shape;
+
                 std::optional<sf::CircleShape> _sfShapeCircle;
                 std::optional<sf::ConvexShape> _sfShapeConvex;
                 std::optional<sf::RectangleShape> _sfShapeRectangle;
+
                 GUI::ECS::Utilities::Colour _hoverColor;
                 GUI::ECS::Utilities::Colour _normalColor;
                 GUI::ECS::Utilities::Colour _clickedColor;
+
                 GUI::ECS::Components::CollisionComponent _collision;
             };
 

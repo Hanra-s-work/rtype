@@ -19,7 +19,8 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Color.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Font.hpp"

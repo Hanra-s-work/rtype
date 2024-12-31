@@ -344,16 +344,23 @@ void GUI::ECS::Components::AnimationComponent::_tick()
 
 void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop)
 {
-    Debug::getInstance() << "Implement spritesheet animation cutting." << std::endl;
+    PRECISE_DEBUG << "Implement spritesheet animation cutting." << std::endl;
 
     GUI::ECS::Components::CollisionComponent spritesheetSize;
     std::any textureCapsule = _baseTexture.getTexture();
     if (!textureCapsule.has_value()) {
         throw MyException::NoTexture("Base texture for the spritesheet animation");
     }
-    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-    sf::Vector2u tmp = texture.getSize();
-    spritesheetSize.setDimension({ tmp.x, tmp.y });
+    PRECISE_DEBUG << "Getting the texture" << std::endl;
+    try {
+        sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
+        PRECISE_DEBUG << "Getting the texture size" << std::endl;
+        sf::Vector2u tmp = texture.getSize();
+        spritesheetSize.setDimension({ tmp.x, tmp.y });
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoTexture("Base texture for the spritesheet animation, <std::any , bad cast error>, system error: " + std::string(e.what()));
+    }
 
 }
 

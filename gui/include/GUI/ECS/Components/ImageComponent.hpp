@@ -18,7 +18,8 @@
 #include <optional>
 #include <SFML/Graphics/Sprite.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Colour.hpp"
@@ -389,7 +390,7 @@ namespace GUI
              * @param item The text to output.
              * @return The modified output stream.
              */
-            std::ostream &operator<<(std::ostream &os, const ImageComponent &item);
+            std::ostream &operator<<(std::ostream &os, const GUI::ECS::Components::ImageComponent &item);
 
         }
     }

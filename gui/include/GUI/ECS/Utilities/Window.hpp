@@ -12,7 +12,8 @@
 #include <cstring>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components.hpp"
@@ -28,6 +29,7 @@ namespace GUI
             class ShapeComponent;
             class ButtonComponent;
             class SpriteComponent;
+            class ImageComponent;
         }
         namespace Utilities
         {
@@ -63,14 +65,11 @@ namespace GUI
                 void draw(const GUI::ECS::Components::SpriteComponent &sprite);
                 void draw(const GUI::ECS::Components::ButtonComponent &button);
 
-                std::any &getWindow();
 
                 private:
                 bool _fullScreen;
                 std::string _windowName;
                 sf::RenderWindow _sfWindow;
-                std::shared_ptr<sf::RenderWindow> _sfSharedWindow;
-                std::any _sfAnySharedWindow;
                 std::uint32_t _windowWidth;
                 std::uint32_t _windowHeight;
                 sf::VideoMode _desktopMode = sf::VideoMode::getDesktopMode();

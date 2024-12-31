@@ -17,9 +17,9 @@
 #include <typeindex>
 #include <functional>
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Utilities/Colour.hpp"
@@ -413,7 +413,7 @@ namespace GUI
                 std::string _callbackName = "";                                 //!< A string containing the name of the callback function
                 std::function<void()> _callback;                                //!< A function instance containing the callback function
                 GUI::ECS::Components::TextComponent _componentText;             //!< The text component instance in charge of displaying text.
-                GUI::ECS::Components::ShapeComponent _componentShape;           //!< The shape component instance in charge of displaying the shape below the text.
+                GUI::ECS::Components::ShapeComponent _componentShape;           //!< The shape component instance in charge of displaying the shape behind the text.
                 std::uint32_t _textSize = 40;                                   //!< An unsigned int 32 in charge of storing the size of the text component.
                 GUI::ECS::Components::CollisionComponent _collision;            //!< The collision component in charge of tracking at a higher level the position of the components.
 

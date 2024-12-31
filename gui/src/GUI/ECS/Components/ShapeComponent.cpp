@@ -8,7 +8,13 @@
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityID)
-    : EntityNode(entityID), _hoverColor(GUI::ECS::Utilities::Colour::White), _normalColor(GUI::ECS::Utilities::Colour::White), _clickedColor(GUI::ECS::Utilities::Colour::White), _collision()
+    : EntityNode(entityID),
+    _hoverColor(GUI::ECS::Utilities::Colour::White),
+    _normalColor(GUI::ECS::Utilities::Colour::White),
+    _clickedColor(GUI::ECS::Utilities::Colour::White),
+    _shape(ActiveShape::NONE),
+    _visible(true),
+    _collision()
 {
 };
 
@@ -29,57 +35,29 @@ void GUI::ECS::Components::ShapeComponent::setClickedColor(const GUI::ECS::Utili
     _clickedColor = clickedColor;
 }
 
-void GUI::ECS::Components::ShapeComponent::setShape(const GUI::ECS::Components::ActiveShape &shape)
+void GUI::ECS::Components::ShapeComponent::setShape(const ActiveShape &shape)
 {
     clearShapes();
     _shape = shape;
 }
 
-void GUI::ECS::Components::ShapeComponent::setShape(const GUI::ECS::Components::ActiveShape &type, const std::any &shape)
+void GUI::ECS::Components::ShapeComponent::setShape(const ActiveShape &type, const std::any &shape)
 {
     clearShapes();
     _shape = type;
-    if (type == GUI::ECS::Components::ActiveShape::NONE) {
-        return;
+
+    if (type == ActiveShape::RECTANGLE) {
+        _assignShape(shape, _sfShapeRectangle);
+    } else if (type == ActiveShape::CIRCLE) {
+        _assignShape(shape, _sfShapeCircle);
+    } else if (type == ActiveShape::CONVEX) {
+        _assignShape(shape, _sfShapeConvex);
+    } else if (type != ActiveShape::NONE) {
+        throw MyException::InvalidShape("<Unknown shape type>");
     }
-    if (type == GUI::ECS::Components::ActiveShape::RECTANGLE) {
-        try {
-            sf::RectangleShape instance = std::any_cast<sf::RectangleShape>(shape);
-            _sfShapeRectangle.emplace(instance);
-        }
-        catch (std::bad_any_cast &e) {
-            std::string response = "<Unknown shape, this is not a RectangleShape>, any_cast error";
-            response += e.what();
-            throw MyException::InvalidShape(response);
-        }
-        return;
-    }
-    if (type == GUI::ECS::Components::ActiveShape::CIRCLE) {
-        try {
-            sf::CircleShape instance = std::any_cast<sf::CircleShape>(shape);
-            _sfShapeCircle.emplace(instance);
-        }
-        catch (std::bad_any_cast &e) {
-            std::string response = "<Unknown shape, this is not a CircleShape>, any_cast error";
-            response += e.what();
-            throw MyException::InvalidShape(response);
-        }return;
-    }
-    if (type == GUI::ECS::Components::ActiveShape::CONVEX) {
-        try {
-            sf::ConvexShape instance = std::any_cast<sf::ConvexShape>(shape);
-            _sfShapeConvex.emplace(instance);
-        }
-        catch (std::bad_any_cast &e) {
-            std::string response = "<Unknown shape, this is not a ConvexShape>, any_cast error";
-            response += e.what();
-            throw MyException::InvalidShape(response);
-        }return;
-    }
-    throw MyException::InvalidShape("<Unknown shape type>");
 }
 
-void GUI::ECS::Components::ShapeComponent::setShape(const std::pair<GUI::ECS::Components::ActiveShape, std::any> &shape)
+void GUI::ECS::Components::ShapeComponent::setShape(const std::pair<ActiveShape, std::any> &shape)
 {
     setShape(shape.first, shape.second);
 }
@@ -103,7 +81,7 @@ void GUI::ECS::Components::ShapeComponent::setDimension(const std::pair<float, f
 void GUI::ECS::Components::ShapeComponent::setCollision(const GUI::ECS::Components::CollisionComponent &collision)
 {
     _collision.update(collision);
-    if (_shape != GUI::ECS::Components::ActiveShape::NONE) {
+    if (_shape != ActiveShape::NONE) {
         _processCollisions();
         _processColor();
     }
@@ -141,39 +119,40 @@ const GUI::ECS::Components::ActiveShape GUI::ECS::Components::ShapeComponent::ge
 
 const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Components::ShapeComponent::getActiveShape() const
 {
-    if (_shape == GUI::ECS::Components::ActiveShape::NONE) {
-        return std::pair<GUI::ECS::Components::ActiveShape, std::any>(_shape, std::make_any<std::string>(""));
+    if (_shape == ActiveShape::NONE) {
+        return std::pair<ActiveShape, std::any>(_shape, std::make_any<std::string>(""));
     }
-    if (_shape == GUI::ECS::Components::ActiveShape::RECTANGLE) {
+    if (_shape == ActiveShape::RECTANGLE) {
         if (!_sfShapeRectangle.has_value()) {
             sf::RectangleShape tt({ 0,0 });
-            return std::pair<GUI::ECS::Components::ActiveShape, std::any>(_shape, std::make_any<sf::RectangleShape>(tt));
+            return std::pair<ActiveShape, std::any>(_shape, std::make_any<sf::RectangleShape>(tt));
         }
-        return std::pair<GUI::ECS::Components::ActiveShape, std::any>(
+        return std::pair<ActiveShape, std::any>(
             _shape,
             std::make_any<sf::RectangleShape>(_sfShapeRectangle.value())
         );
     }
-    if (_shape == GUI::ECS::Components::ActiveShape::CIRCLE) {
+    if (_shape == ActiveShape::CIRCLE) {
         if (!_sfShapeCircle.has_value()) {
             sf::CircleShape tt(0, 30);
-            return std::pair<GUI::ECS::Components::ActiveShape, std::any>(_shape, std::make_any<sf::CircleShape>(tt));
+            return std::pair<ActiveShape, std::any>(_shape, std::make_any<sf::CircleShape>(tt));
         }
-        return std::pair<GUI::ECS::Components::ActiveShape, std::any>(
+        return std::pair<ActiveShape, std::any>(
             _shape,
             std::make_any<sf::CircleShape>(_sfShapeCircle.value())
         );
     }
-    if (_shape == GUI::ECS::Components::ActiveShape::CONVEX) {
+    if (_shape == ActiveShape::CONVEX) {
         if (!_sfShapeConvex.has_value()) {
             sf::ConvexShape tt(0);
-            return std::pair<GUI::ECS::Components::ActiveShape, std::any>(_shape, std::make_any<sf::ConvexShape>(tt));
+            return std::pair<ActiveShape, std::any>(_shape, std::make_any<sf::ConvexShape>(tt));
         }
-        return std::pair<GUI::ECS::Components::ActiveShape, std::any>(
+        return std::pair<ActiveShape, std::any>(
             _shape,
             std::make_any<sf::ConvexShape>(_sfShapeConvex.value())
         );
     }
+    return std::pair<ActiveShape, std::any>(_shape, std::make_any<std::string>(""));
 }
 
 const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getHoverColor() const
@@ -266,8 +245,9 @@ void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Components::Sh
 
 void GUI::ECS::Components::ShapeComponent::clearShapes()
 {
-    Debug::getInstance() << "Clearing all shape instances" << std::endl;
-    _shape = GUI::ECS::Components::ActiveShape::NONE;
+    PRECISE_DEBUG << "Clearing all shape instances" << std::endl;
+    _shape = ActiveShape::NONE;
+
     _sfShapeCircle.reset();
     _sfShapeConvex.reset();
     _sfShapeRectangle.reset();
@@ -347,7 +327,7 @@ void GUI::ECS::Components::ShapeComponent::_processColor()
 
 void GUI::ECS::Components::ShapeComponent::_processCollisions()
 {
-    if (_shape == GUI::ECS::Components::ActiveShape::NONE) {
+    if (_shape == ActiveShape::NONE) {
         return;
     }
 
@@ -356,17 +336,17 @@ void GUI::ECS::Components::ShapeComponent::_processCollisions()
     sf::Vector2f size = { _collision.getWidth(), _collision.getHeight() };
 
     sf::FloatRect collisionHitBox = { pos, size };
-    if (_shape == GUI::ECS::Components::ActiveShape::CIRCLE && _sfShapeCircle.has_value()) {
+    if (_shape == ActiveShape::CIRCLE && _sfShapeCircle.has_value()) {
         _sfShapeCircle->setPosition(pos);
         collisionHitBox = _sfShapeCircle->getGlobalBounds();
         hitboxUpdated = true;
     }
-    if (_shape == GUI::ECS::Components::ActiveShape::CONVEX && _sfShapeConvex.has_value()) {
+    if (_shape == ActiveShape::CONVEX && _sfShapeConvex.has_value()) {
         _sfShapeConvex->setPosition(pos);
         collisionHitBox = _sfShapeConvex->getGlobalBounds();
         hitboxUpdated = true;
     }
-    if (_shape == GUI::ECS::Components::ActiveShape::RECTANGLE && _sfShapeRectangle.has_value()) {
+    if (_shape == ActiveShape::RECTANGLE && _sfShapeRectangle.has_value()) {
         _sfShapeRectangle->setPosition(pos);
         collisionHitBox = _sfShapeRectangle->getGlobalBounds();
         hitboxUpdated = true;
@@ -375,6 +355,20 @@ void GUI::ECS::Components::ShapeComponent::_processCollisions()
         _collision.setDimension({ collisionHitBox.size.x, collisionHitBox.size.y });
     }
 }
+
+
+template <typename T>
+void GUI::ECS::Components::ShapeComponent::_assignShape(const std::any &shape, std::optional<T> &shapeStorage)
+{
+    try {
+        T instance = std::any_cast<T>(shape);
+        shapeStorage.emplace(instance);
+    }
+    catch (const std::bad_any_cast &e) {
+        throw MyException::InvalidShape("<Unknown shape type>, any_cast error: " + std::string(e.what()));
+    }
+}
+
 
 std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::ShapeComponent &item)
 {

@@ -10,15 +10,7 @@
  * @brief Entry point for processing command-line arguments and running the main application logic.
  */
 
-#include <tuple>
-#include <vector>
-#include <string>
-#include <iostream>
-#include <exception>
-#include <stdexcept>
 #include "RealMain.hpp"
-#include "Constants.hpp"
-#include "ExceptionHandling.hpp"
 
  /**
  * @brief Extracts the flag and value from a command-line argument.
@@ -32,7 +24,7 @@
  */
 std::vector<std::string> extract_argument(char *arg)
 {
-    Debug::getInstance() << "Extracting arguments" << std::endl;
+    PRECISE_INFO << "Extracting arguments" << std::endl;
     std::string arg_str(arg);
     size_t pos = arg_str.find('=');
     std::string flag = "";
@@ -86,16 +78,18 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         DisplayVersion(false);
         throw MyException::VersionFound();
     } else if (args[0] == "ip" || args[0] == "i") {
-        Debug::getInstance() << "Ip is provided: '" << args[1] << "'" << std::endl;
+        PRECISE_SUCCESS << "Ip is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
+            PRECISE_CRITICAL << "Error: Ip value is required" << std::endl;
             std::cerr << "Error: Ip value is required" << std::endl;
             throw MyException::NoFlagParameter(args[0]);
         }
         main.setIp(args[1]);
     } else if (args[0] == "port" || args[0] == "p") {
-        Debug::getInstance() << "Port is provided: '" << args[1] << "'" << std::endl;
+        PRECISE_SUCCESS << "Port is provided: '" << args[1] << "'" << std::endl;
         unsigned int port = 0;
         if (args[1].empty()) {
+            PRECISE_CRITICAL << "Error: Port number is required" << std::endl;
             std::cerr << "Error: Port number is required" << std::endl;
             throw MyException::NoFlagParameter(args[0]);
         }
@@ -103,23 +97,25 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
             port = static_cast<unsigned int>(std::stoul(args[1]));
         }
         catch (const std::invalid_argument &e) {
+            PRECISE_CRITICAL << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
             throw MyException::InvalidPort(args[1]);
         }
         catch (const std::out_of_range &e) {
+            PRECISE_CRITICAL << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             throw MyException::InvalidPort(args[1]);
         }
         main.setPort(port);
     } else if (args[0] == "debug" || args[0] == "d") {
         main.setDebug(true);
-        Debug::getInstance() << "Debug is True" << std::endl;
+        PRECISE_INFO << "Debug is True" << std::endl;
     } else if (args[0] == "full-screen" || args[0] == "fs" || args[0] == "fullscreen") {
-        Debug::getInstance() << "Full screen is activated" << std::endl;
+        PRECISE_INFO << "Full screen is activated" << std::endl;
         main.setWindowFullscreen(true);
     } else if (args[0] == "window-width" || args[0] == "ww" || args[0] == "windowwidth") {
         unsigned int windowWidth = 0;
-        Debug::getInstance() << "Window width is provided: '" << args[1] << "'" << std::endl;
+        PRECISE_INFO << "Window width is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Window width is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
@@ -128,17 +124,19 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
             windowWidth = static_cast<unsigned int>(std::stoul(args[1]));
         }
         catch (const std::invalid_argument &e) {
+            PRECISE_CRITICAL << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
             std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
             throw MyException::InvalidWindowWidth(args[1]);
         }
         catch (const std::out_of_range &e) {
+            PRECISE_CRITICAL << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             std::cerr << "Out of range: '" << args[1] << "' is too large for an unsigned int." << std::endl;
             throw MyException::InvalidWindowWidth(args[1]);
         }
         main.setWindowWidth(windowWidth);
     } else if (args[0] == "window-height" || args[0] == "wh" || args[0] == "windowheight") {
         unsigned int windowHeight = 0;
-        Debug::getInstance() << "Window Height is provided: '" << args[1] << "'" << std::endl;
+        PRECISE_INFO << "Window Height is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Window Height is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
@@ -157,7 +155,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         main.setWindowHeight(windowHeight);
     } else if (args[0] == "frame-rate-limit" || args[0] == "frl" || args[0] == "frameratelimit") {
         unsigned int frameLimit = 0;
-        Debug::getInstance() << "Frame limit is provided: '" << args[1] << "'" << std::endl;
+        PRECISE_INFO << "Frame limit is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: Frame Rate is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
@@ -175,7 +173,7 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
         }
         main.setFrameLimit(frameLimit);
     } else if (args[0] == "config-file" || args[0] == "cf" || args[0] == "configfile") {
-        Debug::getInstance() << "Config file is provided: '" << args[1] << "'" << std::endl;
+        PRECISE_INFO << "Config file is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
             std::cerr << "Error: TOML config file is required." << std::endl;
             throw MyException::NoFlagParameter(args[0]);
@@ -199,11 +197,11 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
 void process_arguments(Main &main, int argc, char **argv)
 {
     unsigned int index = 1;
-    Debug::getInstance() << "Dumping arguments" << std::endl;
+    PRECISE_INFO << "Dumping arguments" << std::endl;
     std::string binName(argv[0]);
     while (index < argc) {
         std::vector<std::string> arg = extract_argument(argv[index]);
-        Debug::getInstance() << "Flag: '" << arg[0] << "', Value: '" << arg[1] << "'." << std::endl;
+        PRECISE_INFO << "Flag: '" << arg[0] << "', Value: '" << arg[1] << "'." << std::endl;
         process_given_argument(main, arg, binName);
         index++;
     }
@@ -236,20 +234,22 @@ int RealMain(int argc, char **argv)
         catch (const MyException::HelpFound &e) {
             status = SUCCESS;
             help_found = true;
-            Debug::getInstance() << "Help was found: '" << e.what() << "'." << std::endl;
+            PRECISE_SUCCESS << "Help was found: '" << e.what() << "'." << std::endl;
         }
         catch (const MyException::VersionFound &e) {
             status = SUCCESS;
             version_found = true;
-            Debug::getInstance() << "Version was found: '" << e.what() << "'." << std::endl;
+            PRECISE_SUCCESS << "Version was found: '" << e.what() << "'." << std::endl;
         }
         catch (const std::exception &e) {
             status = ERROR;
+            PRECISE_CRITICAL << "An error occurred: '" << e.what() << "'." << std::endl;
             std::cerr << "An error occurred: '" << e.what() << "'." << std::endl;
         }
     }
 
     if (help_found || version_found || status == ERROR) {
+        PRECISE_INFO << "The program exited with status: " << status << std::endl;
         return status;
     }
 
@@ -258,7 +258,7 @@ int RealMain(int argc, char **argv)
     }
     catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
-        Debug::getInstance() << "Failed to load the config file, aboring program." << std::endl;
+        PRECISE_CRITICAL << "Failed to load the config file, aboring program." << std::endl;
         return ERROR;
     }
 
@@ -269,6 +269,6 @@ int RealMain(int argc, char **argv)
         std::cerr << e.what() << std::endl;
         status = ERROR;
     }
-    Debug::getInstance() << "Exit status : '" << status << "'." << std::endl;
+    PRECISE_INFO << "Exit status : '" << status << "'." << std::endl;
     return status;
 }

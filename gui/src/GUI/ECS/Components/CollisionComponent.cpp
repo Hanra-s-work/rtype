@@ -277,7 +277,7 @@ const GUI::ECS::Utilities::MouseInfo GUI::ECS::Components::CollisionComponent::g
  */
 const bool GUI::ECS::Components::CollisionComponent::isColliding(const CollisionComponent &itemTwo) const
 {
-    Debug::getInstance() << "CollisionComponent: Checking if 2 shapes are colliding" << std::endl;
+    PRECISE_INFO << "CollisionComponent: Checking if 2 shapes are colliding" << std::endl;
     const bool rightEdge = _posX + _width <= itemTwo._posX;
     const bool leftEdge = _posX >= itemTwo._posX + itemTwo._width;
     const bool bottomEdge = _posY + _height <= itemTwo._posY;
@@ -331,7 +331,7 @@ GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::CollisionCompone
  */
 void GUI::ECS::Components::CollisionComponent::_updateMouseCollisionData()
 {
-    Debug::getInstance() << "CollisionComponent: Updating the collision between the mouse and the shape." << std::endl;
+    PRECISE_DEBUG << "CollisionComponent: Updating the collision between the mouse and the shape." << std::endl;
     _isHovered = false;
     _isClicked = false;
     const std::pair<int, int> &mousePos = _mouse.getMousePosition();

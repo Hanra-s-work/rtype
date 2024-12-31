@@ -101,7 +101,7 @@ class Log {
         if (_debugEnabled) {
             std::lock_guard<std::mutex> lock(_mtx);
             if (os == static_cast<std::ostream & (*)(std::ostream &)>(std::endl)) {
-                std::cout << getCurrentDateTime() << " DEBUG: " << _buffer.str() << std::endl;
+                std::cout << getCurrentDateTime() << _buffer.str() << std::endl;
                 _buffer.str("");
                 _buffer.clear();
             } else {

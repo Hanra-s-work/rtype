@@ -33,7 +33,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
 {
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, bool loop)
@@ -42,7 +42,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setLoopMusic(loop);
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, float volume)
@@ -51,7 +51,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setVolume(volume);
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, float volume, bool loop)
@@ -61,7 +61,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setLoopMusic(loop);
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, const std::string &application)
@@ -70,7 +70,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, const std::string &application, bool loop)
@@ -80,7 +80,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, const std::string &application, float volume)
@@ -90,7 +90,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath, const std::string &name, const std::string &application, float volume, bool loop)
@@ -101,7 +101,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::string &filePath
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name)
@@ -109,7 +109,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
 {
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name, bool loop)
@@ -118,7 +118,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setLoopMusic(loop);
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume)
@@ -127,7 +127,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setVolume(volume);
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name, float volume, bool loop)
@@ -137,7 +137,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setLoopMusic(loop);
     setMusicName(name);
     setMusic(filePath);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application)
@@ -146,7 +146,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, bool loop)
@@ -156,7 +156,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId, const std::string &filePath, const std::string &name, const std::string &application, float volume)
@@ -166,7 +166,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 
@@ -179,7 +179,7 @@ GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityI
     setMusicName(name);
     setMusic(filePath);
     setApplication(application);
-    Debug::getInstance() << "Music " << name << " is loaded and ready to be played." << std::endl;
+    PRECISE_DEBUG << "Music " << name << " is loaded and ready to be played." << std::endl;
 };
 
 GUI::ECS::Components::MusicComponent::~MusicComponent() {};

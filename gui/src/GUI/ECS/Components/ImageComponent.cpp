@@ -262,7 +262,7 @@ const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ImageCompon
     return _collision;
 }
 
-const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned int indent = 0) const
+const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned int indent) const
 {
     std::string indentation = "";
     for (unsigned int i = 0; i < indent; ++i) {
@@ -289,7 +289,7 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
 std::any GUI::ECS::Components::ImageComponent::render() const
 {
     if (!_visible || !_sfImage.has_value()) {
-        Debug::getInstance() << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        PRECISE_INFO << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
         return std::nullopt;
     }
     return std::make_any<sf::Sprite>(_sfImage.value());
@@ -378,19 +378,19 @@ void GUI::ECS::Components::ImageComponent::_processImageComponent()
     _processColour();
     if (_sfImage.has_value()) {
         if (_sizeAltered) {
-            Debug::getInstance() << "The size has been altered, updating size." << std::endl;
-            std::pair<int, int> dimension = _collision.getDimension();
+            PRECISE_DEBUG << "The size has been altered, updating size." << std::endl;
+            std::pair<float, float> dimension = _collision.getDimension();
             _sfImage->setScale({ dimension.first, dimension.second });
             _sizeAltered = false;
         }
         if (_positionAltered) {
-            Debug::getInstance() << "The position has been altered, updating position." << std::endl;
-            std::pair<int, int> position = _collision.getPosition();
+            PRECISE_DEBUG << "The position has been altered, updating position." << std::endl;
+            std::pair<float, float> position = _collision.getPosition();
             _sfImage->setPosition({ position.first, position.second });
             _positionAltered = false;
         }
         if (_textureAltered) {
-            Debug::getInstance() << "The texture has been altered, updating image." << std::endl;
+            PRECISE_DEBUG << "The texture has been altered, updating image." << std::endl;
             std::any textureCapsule = _base.getTexture();
             if (textureCapsule.has_value()) {
                 try {

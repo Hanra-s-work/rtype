@@ -13,6 +13,7 @@
 #pragma once
 #include <any>
 #include <map>
+#include <tuple>
 #include <memory>
 #include <string>
 #include <cctype> 
@@ -21,10 +22,13 @@
 #include <iostream>
 #include <algorithm>
 #include <typeindex>
+#include <exception>
+#include <stdexcept>
 #include <unordered_map>
 #include <toml++/toml.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"

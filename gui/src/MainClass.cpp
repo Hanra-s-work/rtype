@@ -71,20 +71,20 @@ Main::Main(
     _spriteHeight(spriteHeight)
 {
     _debug = debug;
-    Debug::getInstance().setDebugEnabled(debug);
-    Debug::getInstance() << "Processing ip" << std::endl;
+    Log::getInstance().setLogEnabled(debug);
+    PRECISE_INFO << "Processing ip" << std::endl;
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
         throw MyException::InvalidIp(ip);
     }
-    Debug::getInstance() << "Processing port" << std::endl;
+    PRECISE_INFO << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
         throw MyException::InvalidPort(std::to_string(port));
     }
-    Debug::getInstance() << "Processing cursor icon" << std::endl;
+    PRECISE_INFO << "Processing cursor icon" << std::endl;
     std::string windowText = _lowerText(windowCursorIcon);
     if (windowText.empty() || windowText == "null" || windowText == "none") {
         _windowCursorIcon = "";
@@ -93,13 +93,13 @@ Main::Main(
     } else {
         throw MyException::FileNotFound(windowCursorIcon);
     }
-    Debug::getInstance() << "Processing frame limit" << std::endl;
+    PRECISE_INFO << "Processing frame limit" << std::endl;
     if (_isFrameLimitCorrect(frameLimit)) {
         _windowFrameLimit = frameLimit;
     } else {
         throw MyException::InvalidFrameLimit(frameLimit);
     }
-    Debug::getInstance() << "End of processing" << std::endl;
+    PRECISE_INFO << "End of processing" << std::endl;
 }
 
 /**
@@ -322,32 +322,32 @@ std::uint32_t Main::_initialiseSprites()
     std::unordered_map<std::string, TOMLLoader> loadedSprites;
 
     if (_tomlContent.hasKey(spriteSheetKey)) {
-        Debug::getInstance() << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
+        PRECISE_INFO << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
+        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
             throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
-        Debug::getInstance() << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
+        PRECISE_INFO << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
+        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
             throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        Debug::getInstance() << "The key " << spriteSheetKey << " is missing from the config file, " <<
+        PRECISE_CRITICAL << "The key " << spriteSheetKey << " is missing from the config file, " <<
             "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
         throw MyException::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
     }
 
-    Debug::getInstance() << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
+    PRECISE_INFO << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
 
     TOMLLoader tempNode(sprites);
 
-    Debug::getInstance() << "Getting the sprite configuration chunks" << std::endl;
+    PRECISE_INFO << "Getting the sprite configuration chunks" << std::endl;
 
     unsigned int counter = 1;
     std::string data = "Processed Sprites: \n";
@@ -355,7 +355,7 @@ std::uint32_t Main::_initialiseSprites()
 
     for (std::string &it : sprites.getKeys()) {
         data += "\t" + std::to_string(counter) + " : " + "'" + it + "'\n";
-        Debug::getInstance() << "Processing sprite: '" << it << "'" << std::endl;
+        PRECISE_INFO << "Processing sprite: '" << it << "'" << std::endl;
         if (!sprites.hasKey(it)) {
             throw MyException::NoTOMLKey(tomlPath, it);
         }
@@ -370,9 +370,9 @@ std::uint32_t Main::_initialiseSprites()
         }
         counter++;
     };
-    Debug::getInstance() << data << std::endl;
+    PRECISE_SUCCESS << data << std::endl;
 
-    Debug::getInstance() << "Initialising the sprites" << std::endl;
+    PRECISE_INFO << "Initialising the sprites" << std::endl;
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedSprites.begin(); it != loadedSprites.end(); ++it) {
         std::string application = it->first;
@@ -383,17 +383,19 @@ std::uint32_t Main::_initialiseSprites()
         bool start_left = it->second.getValue<bool>("start_left");
         bool start_top = it->second.getValue<bool>("start_top");
 
-        Debug::getInstance() << "Loading sprite '" << name << "' ..." << std::endl;
+        PRECISE_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
 
         GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, animationNode);
         node->setApplication(application);
         _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
         _baseId++;
+
+        PRECISE_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
     }
 
-    Debug::getInstance() << "The sprites are loaded." << std::endl;
-    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRECISE_SUCCESS << "The sprites are loaded." << std::endl;
+    PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -411,28 +413,28 @@ std::uint32_t Main::_initialiseAudio()
     std::unordered_map<std::string, TOMLLoader> loadedAudios;
 
     if (_tomlContent.hasKey(musicKey)) {
-        Debug::getInstance() << "Fetching the content for '" << musicKey << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
+        PRECISE_INFO << "Fetching the content for '" << musicKey << "'." << std::endl;
+        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
             throw MyException::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(musicKeyAlt)) {
-        Debug::getInstance() << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
+        PRECISE_INFO << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
+        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
             throw MyException::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        Debug::getInstance() << "The key " << musicKey << " is missing from the config file, " <<
+        PRECISE_CRITICAL << "The key " << musicKey << " is missing from the config file, " <<
             "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
         throw MyException::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
     }
 
-    Debug::getInstance() << audio.getRawTOML() << std::endl;
+    PRECISE_INFO << audio.getRawTOML() << std::endl;
 
 
     TOMLLoader tempNode(audio);
@@ -449,7 +451,7 @@ std::uint32_t Main::_initialiseAudio()
 
     const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
 
-    Debug::getInstance() << "Getting the music configuration chunks" << std::endl;
+    PRECISE_INFO << "Getting the music configuration chunks" << std::endl;
 
     for (std::string &iterator : audios) {
         if (!audio.hasKey(iterator)) {
@@ -466,7 +468,7 @@ std::uint32_t Main::_initialiseAudio()
         }
     }
 
-    Debug::getInstance() << "Initialising the musics" << std::endl;
+    PRECISE_INFO << "Initialising the musics" << std::endl;
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedAudios.begin(); it != loadedAudios.end(); ++it) {
         std::string application = it->first;
@@ -486,8 +488,8 @@ std::uint32_t Main::_initialiseAudio()
         _baseId++;
     }
 
-    Debug::getInstance() << "The musics are loaded." << std::endl;
-    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRECISE_SUCCESS << "The musics are loaded." << std::endl;
+    PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -504,28 +506,28 @@ std::uint32_t Main::_initialiseFonts()
     std::unordered_map<std::string, TOMLLoader> loadedFonts;
 
     if (_tomlContent.hasKey(fontKey)) {
-        Debug::getInstance() << "Fetching the content for '" << fontKey << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
+        PRECISE_INFO << "Fetching the content for '" << fontKey << "'." << std::endl;
+        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
             throw MyException::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(fontKeyAlt)) {
-        Debug::getInstance() << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
+        PRECISE_INFO << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
+        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
             throw MyException::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        Debug::getInstance() << "The key " << fontKey << " is missing from the config file, " <<
+        PRECISE_CRITICAL << "The key " << fontKey << " is missing from the config file, " <<
             "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
         throw MyException::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
     }
 
-    Debug::getInstance() << font.getRawTOML() << std::endl;
+    PRECISE_INFO << font.getRawTOML() << std::endl;
 
     const std::string titleFontNode = "title";
     const std::string bodyFontNode = "body";
@@ -571,7 +573,7 @@ std::uint32_t Main::_initialiseFonts()
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
         std::string application = it->first;
-        Debug::getInstance() << "Font application = '" + application << std::endl;
+        PRECISE_INFO << "Font application = '" + application << std::endl;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
         int defaultSize = 50;
@@ -591,7 +593,7 @@ std::uint32_t Main::_initialiseFonts()
         _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(node);
         _baseId++;
     }
-    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -604,9 +606,9 @@ void Main::_initialiseRessources()
     std::uint32_t _baseId = 0;
     _ecsEntities.clear();
 
-    Debug::getInstance() << "========================== Displaying loaded toml data. ==========================" << std::endl;
+    PRECISE_INFO << "========================== Displaying loaded toml data. ==========================" << std::endl;
     _tomlContent.printTOML();
-    Debug::getInstance() << "========================== Displayed loaded toml data.  ==========================" << std::endl;
+    PRECISE_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
     std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
     _baseId++;
@@ -622,38 +624,38 @@ void Main::_initialiseRessources()
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
     _baseId = _initialiseFonts();
-    Debug::getInstance() << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
+    PRECISE_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
 void Main::_updateMouseForAllRendererables(const GUI::ECS::Utilities::MouseInfo &mouse)
 {
-    Debug::getInstance() << "Updating mouse information for renderable components." << std::endl;
+    PRECISE_INFO << "Updating mouse information for renderable components." << std::endl;
     std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
     std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
     std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
     std::vector<std::any> shapes = _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)];
 
     for (unsigned int index = 0; index < sprites.size(); index++) {
-        Debug::getInstance() << "Processing index for sprite : " << std::to_string(index) << std::endl;
+        PRECISE_INFO << "Processing index for sprite : " << std::to_string(index) << std::endl;
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = std::any_cast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(sprites[index]);
         sprite->update(mouse);
     }
     for (unsigned int index = 0; index < texts.size(); index++) {
-        Debug::getInstance() << "Processing index for text : " << std::to_string(index) << std::endl;
+        PRECISE_INFO << "Processing index for text : " << std::to_string(index) << std::endl;
         std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::any_cast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(texts[index]);
         text->update(mouse);
     }
     for (unsigned int index = 0; index < buttons.size(); index++) {
-        Debug::getInstance() << "Processing index for button : " << std::to_string(index) << std::endl;
+        PRECISE_INFO << "Processing index for button : " << std::to_string(index) << std::endl;
         std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::any_cast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttons[index]);
         button->update(mouse);
     }
     for (unsigned int index = 0; index < shapes.size(); index++) {
-        Debug::getInstance() << "Processing index for shape : " << std::to_string(index) << std::endl;
+        PRECISE_INFO << "Processing index for shape : " << std::to_string(index) << std::endl;
         std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::any_cast<std::shared_ptr<GUI::ECS::Components::ShapeComponent>>(shapes[index]);
         shape->update(mouse);
     }
-    Debug::getInstance() << "Updated mouse information for renderable components." << std::endl;
+    PRECISE_SUCCESS << "Updated mouse information for renderable components." << std::endl;
 }
 
 /**
@@ -666,7 +668,7 @@ void Main::_testContent()
 
     for (unsigned int index = 0; index < musics.size(); index++) {
         std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
-        Debug::getInstance() << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
+        PRECISE_INFO << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
         music_ptr->play();
     }
 }
@@ -704,9 +706,9 @@ void Main::_mainLoop()
             _testContent();
         }
         text.update(event.getMouseInfo());
-        // Debug::getInstance() << "Text Component: \n" << text << std::endl;
-        // Debug::getInstance() << "Event: \n" << event << std::endl;
-        Debug::getInstance() << "Mouse position: " << MyRecodes::myToString(event.getMousePosition()) << std::endl;
+        // PRECISE_INFO << "Text Component: \n" << text << std::endl;
+        // PRECISE_INFO << "Event: \n" << event << std::endl;
+        PRECISE_INFO << "Mouse position: " << MyRecodes::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
         window.display();
         window.clear();
@@ -937,7 +939,7 @@ void Main::setConfigFile(const std::string &configFile)
 void Main::setDebug(bool debug)
 {
     _debug = debug;
-    Debug::getInstance().setDebugEnabled(debug);
+    Log::getInstance().setLogEnabled(debug);
 }
 
 /**

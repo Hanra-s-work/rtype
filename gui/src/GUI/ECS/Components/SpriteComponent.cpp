@@ -432,7 +432,7 @@ void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Components::S
 std::any GUI::ECS::Components::SpriteComponent::render() const
 {
     if (!_visible || !_sfSprite.has_value()) {
-        Debug::getInstance() << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        PRECISE_DEBUG << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
         return std::nullopt;
     }
     return std::make_any<sf::Sprite>(_sfSprite.value());

@@ -19,7 +19,8 @@
 #include <unordered_map>
 #include <toml++/toml.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 

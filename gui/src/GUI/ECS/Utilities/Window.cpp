@@ -15,15 +15,23 @@ GUI::ECS::Utilities::Window::Window(const std::uint32_t entityId, const std::uin
     _windowName(windowName)
 {
     _sfWindow.setFramerateLimit(frameRateLimit);
-    _sfSharedWindow = std::make_shared<sf::RenderWindow>(_sfWindow);
-    _sfAnySharedWindow = std::make_any<std::shared_ptr<sf::RenderWindow>>(std::shared_ptr<sf::RenderWindow>(_sfSharedWindow));
 }
 
 GUI::ECS::Utilities::Window::~Window() {}
 
 void GUI::ECS::Utilities::Window::clear(const GUI::ECS::Utilities::Colour &color)
 {
-    _sfWindow.clear(color.toSFMLColour());
+    std::any systemColour = color.getRenderColour();
+    if (!systemColour.has_value()) {
+        throw MyException::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+    }
+    try {
+        sf::Color result = std::any_cast<sf::Color>(systemColour);
+        _sfWindow.clear(result);
+    }
+    catch (std::bad_any_cast &e) {
+        throw MyException::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
+    }
 }
 
 void GUI::ECS::Utilities::Window::display()
@@ -39,11 +47,6 @@ bool GUI::ECS::Utilities::Window::isOpen() const
 void GUI::ECS::Utilities::Window::close()
 {
     _sfWindow.close();
-}
-
-std::any &GUI::ECS::Utilities::Window::getWindow()
-{
-    return _sfAnySharedWindow;
 }
 
 std::any GUI::ECS::Utilities::Window::pollEvent()
@@ -135,7 +138,7 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ShapeComponen
     GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
     std::any shapeData = pairNode.second;
     if (shapeType == GUI::ECS::Components::ActiveShape::NONE) {
-        Debug::getInstance() << "There is no shape to render, skipping" << std::endl;
+        PRECISE_WARNING << "There is no shape to render, skipping" << std::endl;
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {
@@ -232,16 +235,16 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonCompone
     }
     std::unordered_map<std::type_index, std::any> buttonCapsule = button.render();
 
-    std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
-    if (textCapsule.has_value()) {
-        GUI::ECS::Components::TextComponent text = std::any_cast<GUI::ECS::Components::TextComponent>(textCapsule);
-        draw(text);
-    }
-
     std::any shapeCapsule = buttonCapsule[typeid(GUI::ECS::Components::ShapeComponent)];
     if (shapeCapsule.has_value()) {
         GUI::ECS::Components::ShapeComponent shape = std::any_cast<GUI::ECS::Components::ShapeComponent>(shapeCapsule);
         draw(shape);
+    }
+
+    std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
+    if (textCapsule.has_value()) {
+        GUI::ECS::Components::TextComponent text = std::any_cast<GUI::ECS::Components::TextComponent>(textCapsule);
+        draw(text);
     }
 }
 

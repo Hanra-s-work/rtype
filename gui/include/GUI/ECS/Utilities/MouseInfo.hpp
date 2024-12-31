@@ -17,7 +17,8 @@
 #include <optional>
 #include <SFML/Window/Event.hpp>
 
-#include "Debug.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
 #include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
