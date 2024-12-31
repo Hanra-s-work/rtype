@@ -43,6 +43,7 @@ namespace Utilities
     template<typename T, typename Exception = CustomExceptions::InvalidType>
     std::optional<T> unCast(const std::any &classNode, const bool raiseOnError = true, const std::string customErrorMessage = "")
     {
+        PRECISE_DEBUG << "custom error message: '" << customErrorMessage << "'" << std::endl;
         try {
             return std::optional(std::any_cast<T>(classNode));
         }
