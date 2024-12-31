@@ -18,6 +18,8 @@
 #include <utility>
 #include <string>
 
+#include "Recoded/Rect.hpp"
+
 namespace Recoded
 {
     /**
@@ -75,4 +77,37 @@ namespace Recoded
     {
         return "( x: " + myToString(value.first) + ", y: " + myToString(value.second) + ")";
     };
+
+    /**
+     * @brief Converts a `Rect<T>` object to its string representation.
+     *
+     * This function formats a `Rect<T>` as
+     * `( x: <x>, y: <y>, width: <width>, height: <height> )`,
+     * where `<x>`, `<y>`, `<width>`, and `<height>` are the string representations
+     * of the rectangle's properties. The string representations of the properties
+     * are generated using `myToString`.
+     *
+     * Example:
+     * ```
+     * Rect<int> rect = {{10, 20}, {100, 50}};
+     * std::cout << myToString(rect);
+     * // Output: ( x: 10, y: 20, width: 100, height: 50 )
+     * ```
+     *
+     * @tparam T The type of the rectangle's properties (e.g., `int`, `float`).
+     *
+     * @param rectangle The `Rect<T>` object to convert to a string.
+     *
+     * @return A string representation of the rectangle in the format
+     *         `( x: <x>, y: <y>, width: <width>, height: <height> )`.
+     */
+    template <typename T>
+    const std::string myToString(const Rect<T> &rectangle)
+    {
+        return "( x: " + myToString(rectangle.position.first)
+            + ", y: " + myToString(rectangle.position.second)
+            + ", width: " + myToString(rectangle.size.first)
+            + ", height: " + myToString(rectangle.size.second)
+            + ")";
+    }
 }
