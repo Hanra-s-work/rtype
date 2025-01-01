@@ -120,12 +120,12 @@
      */
     #ifndef _LOG_LEVELS
         #define _LOG_LEVELS
-        #define LOG_DEBUG    Logging::Log::getInstance() << _DEBUG_STR                                                                                                                                    //!< Debug log level.
-        #define LOG_SUCCESS  Logging::Log::getInstance() << _SUCCESS_STR                                                                                                                                  //!< Success log level.
-        #define LOG_INFO     Logging::Log::getInstance() << _INFO_STR                                                                                                                                     //!< Info log level.
-        #define LOG_WARNING  Logging::Log::getInstance() << _WARNING_STR                                                                                                                                  //!< Warning log level.
-        #define LOG_ERROR    Logging::Log::getInstance() << _ERROR_STR                                                                                                                                    //!< Error log level.
-        #define LOG_CRITICAL Logging::Log::getInstance() << _CRITICAL_STR                                                                                                                                 //!< Critical log level.
+        #define LOG_DEBUG    Logging::Log::getInstance(true)  << _DEBUG_STR                                                                                                                                    //!< Debug log level.
+        #define LOG_SUCCESS  Logging::Log::getInstance(false) << _SUCCESS_STR                                                                                                                                  //!< Success log level.
+        #define LOG_INFO     Logging::Log::getInstance(false) << _INFO_STR                                                                                                                                     //!< Info log level.
+        #define LOG_WARNING  Logging::Log::getInstance(false) << _WARNING_STR                                                                                                                                  //!< Warning log level.
+        #define LOG_ERROR    Logging::Log::getInstance(false) << _ERROR_STR                                                                                                                                    //!< Error log level.
+        #define LOG_CRITICAL Logging::Log::getInstance(false) << _CRITICAL_STR                                                                                                                                 //!< Critical log level.
     #endif
     /** @note } */
 
@@ -138,12 +138,12 @@
      */
     #ifndef _PRECISE_LOG
         #define _PRECISE_LOG
-            #define PRECISE_DEBUG    Logging::Log::getInstance() << _DEBUG_STR    << _MY_FILE_GETTER                                                                                                      //!< Debug log with precise details.
-            #define PRECISE_SUCCESS  Logging::Log::getInstance() << _SUCCESS_STR  << _MY_FILE_GETTER                                                                                                      //!< Success log with precise details.
-            #define PRECISE_INFO     Logging::Log::getInstance() << _INFO_STR     << _MY_FILE_GETTER                                                                                                      //!< Info log with precise details.
-            #define PRECISE_WARNING  Logging::Log::getInstance() << _WARNING_STR  << _MY_FILE_GETTER                                                                                                      //!< Warning log with precise details.
-            #define PRECISE_ERROR    Logging::Log::getInstance() << _ERROR_STR    << _MY_FILE_GETTER                                                                                                      //!< Error log with precise details.
-            #define PRECISE_CRITICAL Logging::Log::getInstance() << _CRITICAL_STR << _MY_FILE_GETTER                                                                                                      //!< Critical log with precise details.
+            #define PRECISE_DEBUG    Logging::Log::getInstance(true) << _DEBUG_STR    << _MY_FILE_GETTER                                                                                                      //!< Debug log with precise details.
+            #define PRECISE_SUCCESS  Logging::Log::getInstance(false) << _SUCCESS_STR  << _MY_FILE_GETTER                                                                                                      //!< Success log with precise details.
+            #define PRECISE_INFO     Logging::Log::getInstance(false) << _INFO_STR     << _MY_FILE_GETTER                                                                                                      //!< Info log with precise details.
+            #define PRECISE_WARNING  Logging::Log::getInstance(false) << _WARNING_STR  << _MY_FILE_GETTER                                                                                                      //!< Warning log with precise details.
+            #define PRECISE_ERROR    Logging::Log::getInstance(false) << _ERROR_STR    << _MY_FILE_GETTER                                                                                                      //!< Error log with precise details.
+            #define PRECISE_CRITICAL Logging::Log::getInstance(false) << _CRITICAL_STR << _MY_FILE_GETTER                                                                                                      //!< Critical log with precise details.
     #endif
     /** @note } */
 
@@ -156,12 +156,12 @@
      */
     #ifndef _COLOUR_LOG
         #define _COLOUR_LOG
-        #define COLOUR_DEBUG    Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << DEBUG_COL    << _DEBUG_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Debug log with colour.
-        #define COLOUR_SUCCESS  Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << SUCCESS_COL  << _SUCCESS_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Success log with colour.
-        #define COLOUR_INFO     Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << INFO_COL     << _INFO_STR     << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Info log with colour.
-        #define COLOUR_WARNING  Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << WARNING_COL  << _WARNING_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Warning log with colour.
-        #define COLOUR_ERROR    Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << ERROR_COL    << _ERROR_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Error log with colour.
-        #define COLOUR_CRITICAL Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << CRITICAL_COL << _CRITICAL_STR << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Critical log with colour.
+        #define COLOUR_DEBUG    Logging::Log::getInstance(true) << RESET_COL << BACKGROUND_COL << DEBUG_COL    << _DEBUG_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Debug log with colour.
+        #define COLOUR_SUCCESS  Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << SUCCESS_COL  << _SUCCESS_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Success log with colour.
+        #define COLOUR_INFO     Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << INFO_COL     << _INFO_STR     << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Info log with colour.
+        #define COLOUR_WARNING  Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << WARNING_COL  << _WARNING_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Warning log with colour.
+        #define COLOUR_ERROR    Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << ERROR_COL    << _ERROR_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Error log with colour.
+        #define COLOUR_CRITICAL Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << CRITICAL_COL << _CRITICAL_STR << RESET_COL << BACKGROUND_COL << DEFAULT_FG                                  //!< Critical log with colour.
     #endif
     /** @note } */
 
@@ -174,12 +174,12 @@
      */
     #ifndef _PRETTY_LOG
         #define _PRETTY_LOG
-        #define PRETTY_DEBUG    Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << DEBUG_COL    << _DEBUG_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Debug log with details and colour.
-        #define PRETTY_SUCCESS  Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << SUCCESS_COL  << _SUCCESS_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Success log with details and colour.
-        #define PRETTY_INFO     Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << INFO_COL     << _INFO_STR     << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Info log with details and colour.
-        #define PRETTY_WARNING  Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << WARNING_COL  << _WARNING_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Warning log with details and colour.
-        #define PRETTY_ERROR    Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << ERROR_COL    << _ERROR_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Error log with details and colour.
-        #define PRETTY_CRITICAL Logging::Log::getInstance() << RESET_COL << BACKGROUND_COL << CRITICAL_COL << _CRITICAL_STR << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Critical log with details and colour.
+        #define PRETTY_DEBUG    Logging::Log::getInstance(true) << RESET_COL << BACKGROUND_COL << DEBUG_COL    << _DEBUG_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Debug log with details and colour.
+        #define PRETTY_SUCCESS  Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << SUCCESS_COL  << _SUCCESS_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Success log with details and colour.
+        #define PRETTY_INFO     Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << INFO_COL     << _INFO_STR     << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Info log with details and colour.
+        #define PRETTY_WARNING  Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << WARNING_COL  << _WARNING_STR  << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Warning log with details and colour.
+        #define PRETTY_ERROR    Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << ERROR_COL    << _ERROR_STR    << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Error log with details and colour.
+        #define PRETTY_CRITICAL Logging::Log::getInstance(false) << RESET_COL << BACKGROUND_COL << CRITICAL_COL << _CRITICAL_STR << RESET_COL << BACKGROUND_COL << DEFAULT_FG  << _MY_COLOURED_FILE_GETTER      //!< Critical log with details and colour.
     #endif
     /** @note } */
 

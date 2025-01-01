@@ -12,9 +12,10 @@
 
 #include "Log.hpp"
 
-Logging::Log &Logging::Log::getInstance()
+Logging::Log &Logging::Log::getInstance(const bool debug)
 {
     static Logging::Log instance;
+    instance.setStringAsDebug(debug);
     return instance;
 }
 
@@ -27,20 +28,36 @@ std::string Logging::Log::getLogLocation(const char *file, int line, const char 
 
 void Logging::Log::setLogEnabled(bool enabled)
 {
+    _logEnabled = enabled;
+}
+
+void Logging::Log::setDebugEnabled(bool enabled)
+{
     _debugEnabled = enabled;
 }
 
 void Logging::Log::log(const std::string &message)
 {
-    if (_debugEnabled) {
-        std::lock_guard<std::mutex> lock(_mtx);
-        std::cout << getCurrentDateTime() << message << std::endl;
+    if (!_logEnabled) {
+        return;
     }
+
+    if (_stringDebug && !_debugEnabled) {
+        return;
+    }
+
+    std::lock_guard<std::mutex> lock(_mtxLog);
+    std::cout << getCurrentDateTime() << message << std::endl;
 }
 
 void Logging::Log::log(const char *message)
 {
     log(std::string(message));
+}
+
+void Logging::Log::setStringAsDebug(const bool stringDebug)
+{
+    _stringDebug = stringDebug;
 }
 
 std::string Logging::Log::getCurrentDateTime()
