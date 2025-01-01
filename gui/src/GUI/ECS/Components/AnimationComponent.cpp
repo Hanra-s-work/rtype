@@ -293,9 +293,13 @@ const std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrameInd
 const Recoded::IntRect GUI::ECS::Components::AnimationComponent::getCurrentFrame() const
 {
     PRECISE_INFO << "Getting the current frame" << std::endl;
+    if (_frames.size() <= 0) {
+        PRECISE_CRITICAL << "No frames available" << std::endl;
+        throw CustomExceptions::NoAnimationFrames();
+    }
     std::uint32_t frame = getCurrentFrameIndex();
     std::uint32_t frameSize = _frames.size();
-    if (frame >= frameSize || frame <= frameSize) {
+    if (frame >= frameSize || frame < 0) {
         PRECISE_CRITICAL << "Frame index out of bounds" << std::endl;
         throw CustomExceptions::InvalidIndex(std::to_string(frame), "0", std::to_string(frameSize));
     }
