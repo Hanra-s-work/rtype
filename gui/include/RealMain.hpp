@@ -65,9 +65,10 @@ class Main {
    * @param spriteHeight The height of the sprite (default: 20).
    * @param frameLimit The frame rate limit for the application (default: 60).
    * @param configFilePath Path to the configuration file (default: "client_config.toml").
+   * @param log Inform the program if it needs to output logs or not (default: false).
    * @param debug Whether debug mode is enabled (default: false).
    */
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string configFilePath = "client_config.toml", bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false);
   ~Main();
 
   void run();
@@ -90,7 +91,8 @@ class Main {
   void setWindowSize(unsigned int width, unsigned int height);
   void setFrameLimit(unsigned int frameLimit);
   void setConfigFile(const std::string &configFile);
-  void setDebug(bool debug);
+  void setLog(const bool debug);
+  void setDebug(const bool debug);
 
   // Getters
   const std::string getIp();
@@ -106,7 +108,8 @@ class Main {
   bool getWindowCursorSpriteReadFromLeft();
   unsigned int getWindowCursorSpriteWidth();
   unsigned int getWindowCursorSpriteHeight();
-  bool getDebug() const;
+  const bool getLog() const;
+  const bool getDebug() const;
   unsigned int getFrameLimit() const;
   std::string getConfigFile() const;
   std::tuple<unsigned int, unsigned int> getWindowPosition();
@@ -154,6 +157,7 @@ class Main {
   bool _imageIsSprite;
   bool _spriteStartTop;
   bool _spriteStartLeft;
+  bool _log;
   bool _debug;
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;

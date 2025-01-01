@@ -34,6 +34,7 @@
   * @param spriteHeight The height of the sprite (default: 20).
   * @param frameLimit The frame rate limit for the application (default: 60).
   * @param configFilePath Path to the configuration file (default: "client_config.toml").
+   * @param log Inform the program if it needs to output logs or not (default: false).
   * @param debug Whether debug mode is enabled (default: false).
   */
 Main::Main(
@@ -53,8 +54,9 @@ Main::Main(
     unsigned int spriteWidth,
     unsigned int spriteHeight,
     unsigned int frameLimit,
-    const std::string configFilePath,
-    bool debug
+    const std::string &configFilePath,
+    const bool log,
+    const bool debug
 ) :
     _windowWidth(windowWidth),
     _windowHeight(windowHeight),
@@ -70,8 +72,12 @@ Main::Main(
     _configFilePath(configFilePath),
     _spriteHeight(spriteHeight)
 {
+    _log = log;
+    Logging::Log::getInstance().setLogEnabled(log);
+    PRETTY_INFO << "Logging is enabled" << std::endl;
     _debug = debug;
-    Logging::Log::getInstance().setLogEnabled(debug);
+    Logging::Log::getInstance().setDebugEnabled(debug);
+    PRETTY_DEBUG << "The debug section of the log is enabled" << std::endl;
     PRETTY_INFO << "Processing ip" << std::endl;
     if (_isIpInRange(ip) == true) {
         _ip = ip;
@@ -1004,14 +1010,25 @@ void Main::setConfigFile(const std::string &configFile)
 }
 
 /**
+ *@brief Toggle the logging mode for the program.
+ *
+ * @param log
+ */
+void Main::setLog(const bool log)
+{
+    _log = log;
+    Logging::Log::getInstance().setLogEnabled(log);
+}
+
+/**
  *@brief Toggle the debug mode for the program.
  *
  * @param debug
  */
-void Main::setDebug(bool debug)
+void Main::setDebug(const bool debug)
 {
     _debug = debug;
-    Logging::Log::getInstance().setLogEnabled(debug);
+    Logging::Log::getInstance().setDebugEnabled(debug);
 }
 
 /**
@@ -1152,12 +1169,23 @@ unsigned int Main::getWindowCursorSpriteHeight()
 }
 
 /**
+ *@brief The function in charge of returning the status of the logging variable.
+ *
+ * @return true
+ * @return false
+ */
+const bool Main::getLog() const
+{
+    return _log;
+}
+
+/**
  *@brief The function in charge of returning the status of the debug variable.
  *
  * @return true
  * @return false
  */
-bool Main::getDebug() const
+const bool Main::getDebug() const
 {
     return _debug;
 }
