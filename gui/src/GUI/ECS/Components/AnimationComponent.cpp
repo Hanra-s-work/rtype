@@ -557,13 +557,50 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     }
 
     PRETTY_INFO << "There are : " << _totalFrames << " in total" << std::endl;
+    PRETTY_DEBUG << "Loop info (begin): startTop: " << Recoded::myToString(startTop)
+        << ", posy: " << Recoded::myToString(posy)
+        << ", rows: " << Recoded::myToString(rows)
+        << ", startLeft: " << Recoded::myToString(startLeft)
+        << ", rowUpdater: " << Recoded::myToString(rowUpdater)
+        << ", posx: " << Recoded::myToString(posx)
+        << ", columns: " << Recoded::myToString(columns)
+        << ", columUpdater: " << Recoded::myToString(columUpdater)
+        << ", frameCounter: " << Recoded::myToString(frameCounter)
+        << ", _continueLoop(startTop, posy, rows): " << Recoded::myToString(_continueLoop(startTop, posy, rows))
+        << ", _continueLoop(startLeft, posx, columns): " << Recoded::myToString(_continueLoop(startLeft, posx, columns))
+        << std::endl;
     std::pair<int, int> pos{ posy, posx };
     for (; _continueLoop(startTop, posy, rows); posy += rowUpdater) {
         posx = (columns - 1);
         if (startLeft) {
+            PRETTY_INFO << "The texture is set to be cut from the left." << std::endl;
             posx = 0;
         }
-        for (posx = 0; _continueLoop(startLeft, posx, columns); posx += columUpdater) {
+        PRETTY_DEBUG << "Loop info (o1): startTop: " << Recoded::myToString(startTop)
+            << ", posy: " << Recoded::myToString(posy)
+            << ", rows: " << Recoded::myToString(rows)
+            << ", startLeft: " << Recoded::myToString(startLeft)
+            << ", rowUpdater: " << Recoded::myToString(rowUpdater)
+            << ", posx: " << Recoded::myToString(posx)
+            << ", columns: " << Recoded::myToString(columns)
+            << ", columUpdater: " << Recoded::myToString(columUpdater)
+            << ", frameCounter: " << Recoded::myToString(frameCounter)
+            << ", _continueLoop(startTop, posy, rows): " << Recoded::myToString(_continueLoop(startTop, posy, rows))
+            << ", _continueLoop(startLeft, posx, columns): " << Recoded::myToString(_continueLoop(startLeft, posx, columns))
+            << std::endl;
+        for (; _continueLoop(startLeft, posx, columns); posx += columUpdater) {
+            PRETTY_DEBUG << "Loop info (o2): startTop: " << Recoded::myToString(startTop)
+                << ", posy: " << Recoded::myToString(posy)
+                << ", rows: " << Recoded::myToString(rows)
+                << ", startLeft: " << Recoded::myToString(startLeft)
+                << ", rowUpdater: " << Recoded::myToString(rowUpdater)
+                << ", posx: " << Recoded::myToString(posx)
+                << ", columns: " << Recoded::myToString(columns)
+                << ", columUpdater: " << Recoded::myToString(columUpdater)
+                << ", frameCounter: " << Recoded::myToString(frameCounter)
+                << ", _continueLoop(startTop, posy, rows): " << Recoded::myToString(_continueLoop(startTop, posy, rows))
+                << ", _continueLoop(startLeft, posx, columns): " << Recoded::myToString(_continueLoop(startLeft, posx, columns))
+                << std::endl;
             PRETTY_DEBUG << "Processing frame: "
                 << Recoded::myToString<unsigned int>({ posx, posy })
                 << ", index: " << Recoded::myToString(frameCounter)
@@ -586,6 +623,18 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
             frameCounter++;
         }
     }
+    PRETTY_DEBUG << "Loop info (end): startTop: " << Recoded::myToString(startTop)
+        << ", posy: " << Recoded::myToString(posy)
+        << ", rows: " << Recoded::myToString(rows)
+        << ", startLeft: " << Recoded::myToString(startLeft)
+        << ", rowUpdater: " << Recoded::myToString(rowUpdater)
+        << ", posx: " << Recoded::myToString(posx)
+        << ", columns: " << Recoded::myToString(columns)
+        << ", columUpdater: " << Recoded::myToString(columUpdater)
+        << ", frameCounter: " << Recoded::myToString(frameCounter)
+        << ", _continueLoop(startTop, posy, rows): " << Recoded::myToString(_continueLoop(startTop, posy, rows))
+        << ", _continueLoop(startLeft, posx, columns): " << Recoded::myToString(_continueLoop(startLeft, posx, columns))
+        << std::endl;
     PRETTY_SUCCESS << "The frames have been processed." << std::endl;
 }
 
