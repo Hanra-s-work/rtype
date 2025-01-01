@@ -270,7 +270,7 @@ namespace CustomExceptions
     {
         _msg = "Error: The index you provided is invalid.\n";
         if (!min.empty() && !max.empty()) {
-            _msg += "The index must in the range '" + min + "' to '" + max + "'.\n";
+            _msg += "The index must in the range of '" + min + "' to '" + max + "'.\n";
         } else if (!min.empty() && max.empty()) {
             _msg += "The index must be greater than or equal to '" + min + "'.\n";
         } else if (min.empty() && !max.empty()) {
