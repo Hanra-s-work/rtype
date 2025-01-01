@@ -108,8 +108,8 @@ volume = 100
 # sprite_height = <height> # (0-> 1000) set the height of the sprite view field, in pixels
 # start_left = true # (or false) set the starting position of the sprite view field to start from the left (or not)
 # start_top = true # (or false) set the starting position of the sprite view field to start from the top (or not)
-# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame.
-end_frame = -1 #end of all the frames
+# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame. (default value: 0)
+# end_frame = -1 # (or the index of the frame) set the last frame to be taken from the spritesheet (-1 means all frames present), (default value: -1)
 
 # The spritesheets to manage
 
@@ -377,11 +377,11 @@ end_frame = 21
 name = "r-typesheet19_bullet"
 path = "assets/img/r-typesheet19.gif"
 sprite_width = 10
-sprite_height = 29
+sprite_height = 8
 start_left = true
-start_top = true
-initial_frame = 80
-end_frame = 80
+start_top = false
+initial_frame = 11
+end_frame = 11
 
 [spritesheets.sprite20] # badly cut due to the sprite not being in a matrix like manner
 name = "r-typesheet20"
@@ -437,11 +437,11 @@ end_frame = -1 #end of all the frames
 name = "r-typesheet25"
 path = "assets/img/r-typesheet25.gif"
 sprite_width = 33
-sprite_height = 34
+sprite_height = 33
 start_left = true
 start_top = true
 initial_frame = 0
-end_frame = 15
+end_frame = -1
 
 [spritesheets.sprite26]
 name = "r-typesheet26"
@@ -780,12 +780,12 @@ end_frame = 1031
 [spritesheets.sprite37_ship_broken]
 name = "r-typesheet37_ship_broken"
 path = "assets/img/r-typesheet37.gif"
-sprite_width = 594
+sprite_width = 591
 sprite_height = 178
 start_left = true
 start_top = false
-initial_frame = 7
-end_frame = 7
+initial_frame = 0
+end_frame = 0
 
 [spritesheets.sprite37_nuclear_cloud] # Sprites will be a bit cut off due to bad alignement on the spritesheet
 name = "r-typesheet37_nuclear_cloud"
