@@ -12,25 +12,25 @@
 
 #include "Log.hpp"
 
-Log &Log::getInstance()
+Logging::Log &Logging::Log::getInstance()
 {
-    static Log instance;
+    static Logging::Log instance;
     return instance;
 }
 
-std::string Log::getLogLocation(const char *file, int line, const char *func)
+std::string Logging::Log::getLogLocation(const char *file, int line, const char *func)
 {
     std::ostringstream oss;
     oss << file << ":" << line << " " << func << "()";
     return oss.str();
 }
 
-void Log::setLogEnabled(bool enabled)
+void Logging::Log::setLogEnabled(bool enabled)
 {
     _debugEnabled = enabled;
 }
 
-void Log::log(const std::string &message)
+void Logging::Log::log(const std::string &message)
 {
     if (_debugEnabled) {
         std::lock_guard<std::mutex> lock(_mtx);
@@ -38,12 +38,12 @@ void Log::log(const std::string &message)
     }
 }
 
-void Log::log(const char *message)
+void Logging::Log::log(const char *message)
 {
     log(std::string(message));
 }
 
-std::string Log::getCurrentDateTime()
+std::string Logging::Log::getCurrentDateTime()
 {
     auto now = std::chrono::system_clock::now();
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
