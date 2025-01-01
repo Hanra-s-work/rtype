@@ -245,7 +245,7 @@ void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Components::Sh
 
 void GUI::ECS::Components::ShapeComponent::clearShapes()
 {
-    PRECISE_DEBUG << "Clearing all shape instances" << std::endl;
+    PRETTY_DEBUG << "Clearing all shape instances" << std::endl;
     _shape = ActiveShape::NONE;
 
     _sfShapeCircle.reset();

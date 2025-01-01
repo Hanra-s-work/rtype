@@ -325,7 +325,7 @@ const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned in
 std::any GUI::ECS::Components::TextComponent::render() const
 {
     if (!_visible || !_sfTextComponent.has_value()) {
-        PRECISE_INFO << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        PRETTY_INFO << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
         return std::nullopt;
     }
     return std::make_any<sf::Text>(_sfTextComponent.value());
@@ -358,9 +358,9 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::Tex
 void GUI::ECS::Components::TextComponent::_initialiseText()
 {
     if (!_sfTextComponent.has_value()) {
-        PRECISE_INFO << "No known instance of sf::Text, creating." << std::endl;
+        PRETTY_INFO << "No known instance of sf::Text, creating." << std::endl;
         if (_font.getFontPath().empty()) {
-            PRECISE_WARNING << "No font, skipping update." << std::endl;
+            PRETTY_WARNING << "No font, skipping update." << std::endl;
             return;
         }
 
@@ -390,7 +390,7 @@ void GUI::ECS::Components::TextComponent::_loadFont()
         throw CustomExceptions::NoFont(msg);
     }
     if (!_sfTextComponent.has_value()) {
-        PRECISE_INFO << "Text not initialised, initialising..." << std::endl;
+        PRETTY_INFO << "Text not initialised, initialising..." << std::endl;
         _initialiseText();
     }
     std::any systemFont = _font.getFontInstance();
@@ -408,46 +408,46 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
 {
-    PRECISE_INFO << "Checking initiailisation" << std::endl;
+    PRETTY_INFO << "Checking initiailisation" << std::endl;
     _initialiseText();
     if (_sfTextComponent.has_value()) {
         if (_fontChanged) {
-            PRECISE_DEBUG << "Going to update the font." << std::endl;
+            PRETTY_DEBUG << "Going to update the font." << std::endl;
             _loadFont();
             _fontChanged = false;
             _fontAltered = true;
         }
         if (_textAltered) {
-            PRECISE_DEBUG << "Going to update the text." << std::endl;
+            PRETTY_DEBUG << "Going to update the text." << std::endl;
             _sfTextComponent->setString(_text);
             _textAltered = false;
             _fontAltered = true;
-            PRECISE_DEBUG << "Text Updated" << std::endl;
+            PRETTY_DEBUG << "Text Updated" << std::endl;
         }
         if (_sizeAltered) {
-            PRECISE_DEBUG << "Going to update the font size" << std::endl;
+            PRETTY_DEBUG << "Going to update the font size" << std::endl;
             _sfTextComponent->setCharacterSize(_size);
             _sizeAltered = false;
             _fontAltered = true;
         }
         if (_positionAltered) {
-            PRECISE_DEBUG << "Going to check the position" << std::endl;
+            PRETTY_DEBUG << "Going to check the position" << std::endl;
             std::pair<float, float> pos = _textPos.getPosition();
             _sfTextComponent->setPosition({ pos.first, pos.second });
             _positionAltered = false;
             _fontAltered = true;
         }
         if (_fontAltered) {
-            PRECISE_DEBUG << "Going to update the font" << std::endl;
-            PRECISE_DEBUG << "Text component has a value" << std::endl;
+            PRETTY_DEBUG << "Going to update the font" << std::endl;
+            PRETTY_DEBUG << "Text component has a value" << std::endl;
             sf::FloatRect textBounds = _sfTextComponent->getGlobalBounds();
             _textPos.setDimension({ textBounds.size.x, textBounds.size.y });
             _fontAltered = false;
         }
     } else {
-        PRECISE_WARNING << "No text component value to be managed" << std::endl;
+        PRETTY_WARNING << "No text component value to be managed" << std::endl;
     }
-    PRECISE_INFO << "Font loaded, updating text colour" << std::endl;
+    PRETTY_INFO << "Font loaded, updating text colour" << std::endl;
     std::any systemColour;
     if (_textPos.isClicked()) {
         systemColour = _clickedColor.getRenderColour();

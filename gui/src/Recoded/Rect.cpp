@@ -42,13 +42,13 @@ std::optional<Recoded::Rect<T>> Recoded::Rect<T>::findIntersection(const Rect<T>
     T y_intersection_max = std::min(position.second + size.second, rect.position.second + rect.size.second);
 
     if (x_intersection_min < x_intersection_max && y_intersection_min < y_intersection_max) {
-        PRECISE_INFO << "Intersection found, returning new rect instance." << std::endl;
+        PRETTY_INFO << "Intersection found, returning new rect instance." << std::endl;
         return Rect<T>(
             std::pair<T, T>(x_intersection_min, y_intersection_min),
             std::pair<T, T>(x_intersection_max - x_intersection_min, y_intersection_max - y_intersection_min)
         );
     } else {
-        PRECISE_WARNING << "No Intersections were found." << std::endl;
+        PRETTY_WARNING << "No Intersections were found." << std::endl;
         return std::nullopt;
     }
 }

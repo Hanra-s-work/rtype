@@ -43,7 +43,7 @@ namespace Utilities
     template<typename T, typename Exception = CustomExceptions::InvalidType>
     std::optional<T> unCast(const std::any &classNode, const bool raiseOnError = true, const std::string customErrorMessage = "")
     {
-        PRECISE_DEBUG << "custom error message: '" << customErrorMessage << "'" << std::endl;
+        PRETTY_DEBUG << "custom error message: '" << customErrorMessage << "'" << std::endl;
         try {
             return std::optional(std::any_cast<T>(classNode));
         }
@@ -51,7 +51,7 @@ namespace Utilities
             if (raiseOnError) {
                 throw Exception(customErrorMessage + std::string(e.what()));
             } else {
-                PRECISE_WARNING << "Any cast failed, Custom error message: '"
+                PRETTY_WARNING << "Any cast failed, Custom error message: '"
                     << customErrorMessage
                     << "', system error: " << std::string(e.what())
                     << std::endl;

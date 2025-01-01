@@ -71,20 +71,20 @@ Main::Main(
     _spriteHeight(spriteHeight)
 {
     _debug = debug;
-    Log::getInstance().setLogEnabled(debug);
-    PRECISE_INFO << "Processing ip" << std::endl;
+    Logging::Log::getInstance().setLogEnabled(debug);
+    PRETTY_INFO << "Processing ip" << std::endl;
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
         throw CustomExceptions::InvalidIp(ip);
     }
-    PRECISE_INFO << "Processing port" << std::endl;
+    PRETTY_INFO << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
         throw CustomExceptions::InvalidPort(std::to_string(port));
     }
-    PRECISE_INFO << "Processing cursor icon" << std::endl;
+    PRETTY_INFO << "Processing cursor icon" << std::endl;
     std::string windowText = _lowerText(windowCursorIcon);
     if (windowText.empty() || windowText == "null" || windowText == "none") {
         _windowCursorIcon = "";
@@ -93,13 +93,13 @@ Main::Main(
     } else {
         throw CustomExceptions::FileNotFound(windowCursorIcon);
     }
-    PRECISE_INFO << "Processing frame limit" << std::endl;
+    PRETTY_INFO << "Processing frame limit" << std::endl;
     if (_isFrameLimitCorrect(frameLimit)) {
         _windowFrameLimit = frameLimit;
     } else {
         throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
-    PRECISE_INFO << "End of processing" << std::endl;
+    PRETTY_INFO << "End of processing" << std::endl;
 }
 
 /**
@@ -322,32 +322,32 @@ std::uint32_t Main::_initialiseSprites()
     std::unordered_map<std::string, TOMLLoader> loadedSprites;
 
     if (_tomlContent.hasKey(spriteSheetKey)) {
-        PRECISE_INFO << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
-        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
             throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
-        PRECISE_INFO << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
-        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
             throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        PRECISE_CRITICAL << "The key " << spriteSheetKey << " is missing from the config file, " <<
+        PRETTY_CRITICAL << "The key " << spriteSheetKey << " is missing from the config file, " <<
             "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
         throw CustomExceptions::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
     }
 
-    PRECISE_INFO << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
+    PRETTY_INFO << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
 
     TOMLLoader tempNode(sprites);
 
-    PRECISE_INFO << "Getting the sprite configuration chunks" << std::endl;
+    PRETTY_INFO << "Getting the sprite configuration chunks" << std::endl;
 
     unsigned int counter = 1;
     std::string data = "Processed Sprites: \n";
@@ -355,7 +355,7 @@ std::uint32_t Main::_initialiseSprites()
 
     for (std::string &it : sprites.getKeys()) {
         data += "\t" + std::to_string(counter) + " : " + "'" + it + "'\n";
-        PRECISE_INFO << "Processing sprite: '" << it << "'" << std::endl;
+        PRETTY_INFO << "Processing sprite: '" << it << "'" << std::endl;
         if (!sprites.hasKey(it)) {
             throw CustomExceptions::NoTOMLKey(tomlPath, it);
         }
@@ -370,43 +370,52 @@ std::uint32_t Main::_initialiseSprites()
         }
         counter++;
     };
-    PRECISE_SUCCESS << data << std::endl;
+    PRETTY_SUCCESS << data << std::endl;
 
-    PRECISE_INFO << "Initialising the sprites" << std::endl;
+    PRETTY_INFO << "Initialising the sprites" << std::endl;
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedSprites.begin(); it != loadedSprites.end(); ++it) {
         std::string application = it->first;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
-        int sprite_width = it->second.getValue<int>("sprite_width");
-        int sprite_height = it->second.getValue<int>("sprite_height");
-        bool start_left = it->second.getValue<bool>("start_left");
-        bool start_top = it->second.getValue<bool>("start_top");
+        int spriteWidth = it->second.getValue<int>("sprite_width");
+        int spriteHeight = it->second.getValue<int>("sprite_height");
+        bool startLeft = it->second.getValue<bool>("start_left");
+        bool startTop = it->second.getValue<bool>("start_top");
+        int initialFrame = 0;
+        int endFrame = (-1);
 
-        PRECISE_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
+        if (it->second.hasKey("initial_frame")) {
+            initialFrame = it->second.getValue<int>("initial_frame");
+        }
+        if (it->second.hasKey("end_frame")) {
+            endFrame = it->second.getValue<int>("end_frame");
+        }
+
+        PRETTY_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
 
 
-        PRECISE_INFO << "Processing Animation component" << std::endl;
-        GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
-        PRECISE_SUCCESS << "Animation component processed" << std::endl;
-        PRECISE_INFO << "Adding animation node to sprite '" << name << "'" << std::endl;
+        PRETTY_INFO << "Processing Animation component" << std::endl;
+        GUI::ECS::Components::AnimationComponent animationNode(path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
+        PRETTY_SUCCESS << "Animation component processed" << std::endl;
+        PRETTY_INFO << "Adding animation node to sprite '" << name << "'" << std::endl;
         GUI::ECS::Components::SpriteComponent spriteEntity(_baseId, name, animationNode);
-        PRECISE_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
-        PRECISE_INFO << "Creating a shared pointer of the sprite" << std::endl;
+        PRETTY_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
+        PRETTY_INFO << "Creating a shared pointer of the sprite" << std::endl;
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(spriteEntity);
-        PRECISE_SUCCESS << "Sprite pointer created" << std::endl;
-        PRECISE_SUCCESS << "Sprite '" << name << "' loaded" << std::endl;
+        PRETTY_SUCCESS << "Sprite pointer created" << std::endl;
+        PRETTY_SUCCESS << "Sprite '" << name << "' loaded" << std::endl;
         node->setApplication(application);
-        PRECISE_INFO << "Storing " << name << " into the ecs" << std::endl;
+        PRETTY_INFO << "Storing " << name << " into the ecs" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
-        PRECISE_SUCCESS << name << " stored into the ecs entity" << std::endl;
+        PRETTY_SUCCESS << name << " stored into the ecs entity" << std::endl;
         _baseId++;
 
-        PRECISE_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
+        PRETTY_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
     }
 
-    PRECISE_SUCCESS << "The sprites are loaded." << std::endl;
-    PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_SUCCESS << "The sprites are loaded." << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -424,28 +433,28 @@ std::uint32_t Main::_initialiseAudio()
     std::unordered_map<std::string, TOMLLoader> loadedAudios;
 
     if (_tomlContent.hasKey(musicKey)) {
-        PRECISE_INFO << "Fetching the content for '" << musicKey << "'." << std::endl;
-        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << musicKey << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
             throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(musicKeyAlt)) {
-        PRECISE_INFO << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
-        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
             throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        PRECISE_CRITICAL << "The key " << musicKey << " is missing from the config file, " <<
+        PRETTY_CRITICAL << "The key " << musicKey << " is missing from the config file, " <<
             "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
         throw CustomExceptions::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
     }
 
-    PRECISE_INFO << audio.getRawTOML() << std::endl;
+    PRETTY_INFO << audio.getRawTOML() << std::endl;
 
 
     TOMLLoader tempNode(audio);
@@ -462,7 +471,7 @@ std::uint32_t Main::_initialiseAudio()
 
     const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
 
-    PRECISE_INFO << "Getting the music configuration chunks" << std::endl;
+    PRETTY_INFO << "Getting the music configuration chunks" << std::endl;
 
     for (std::string &iterator : audios) {
         if (!audio.hasKey(iterator)) {
@@ -479,7 +488,7 @@ std::uint32_t Main::_initialiseAudio()
         }
     }
 
-    PRECISE_INFO << "Initialising the musics" << std::endl;
+    PRETTY_INFO << "Initialising the musics" << std::endl;
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedAudios.begin(); it != loadedAudios.end(); ++it) {
         std::string application = it->first;
@@ -499,8 +508,8 @@ std::uint32_t Main::_initialiseAudio()
         _baseId++;
     }
 
-    PRECISE_SUCCESS << "The musics are loaded." << std::endl;
-    PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_SUCCESS << "The musics are loaded." << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -517,28 +526,28 @@ std::uint32_t Main::_initialiseFonts()
     std::unordered_map<std::string, TOMLLoader> loadedFonts;
 
     if (_tomlContent.hasKey(fontKey)) {
-        PRECISE_INFO << "Fetching the content for '" << fontKey << "'." << std::endl;
-        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << fontKey << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
             throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(fontKeyAlt)) {
-        PRECISE_INFO << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
-        PRECISE_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
             throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        PRECISE_CRITICAL << "The key " << fontKey << " is missing from the config file, " <<
+        PRETTY_CRITICAL << "The key " << fontKey << " is missing from the config file, " <<
             "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
         throw CustomExceptions::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
     }
 
-    PRECISE_INFO << font.getRawTOML() << std::endl;
+    PRETTY_INFO << font.getRawTOML() << std::endl;
 
     const std::string titleFontNode = "title";
     const std::string bodyFontNode = "body";
@@ -584,7 +593,7 @@ std::uint32_t Main::_initialiseFonts()
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
         std::string application = it->first;
-        PRECISE_INFO << "Font application = '" + application << std::endl;
+        PRETTY_INFO << "Font application = '" + application << std::endl;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
         int defaultSize = 50;
@@ -604,7 +613,7 @@ std::uint32_t Main::_initialiseFonts()
         _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
         _baseId++;
     }
-    PRECISE_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -617,9 +626,9 @@ void Main::_initialiseRessources()
     std::uint32_t _baseId = 0;
     _ecsEntities.clear();
 
-    PRECISE_INFO << "========================== Displaying loaded toml data. ==========================" << std::endl;
+    PRETTY_INFO << "========================== Displaying loaded toml data. ==========================" << std::endl;
     _tomlContent.printTOML();
-    PRECISE_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
+    PRETTY_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
     std::shared_ptr<GUI::ECS::Systems::Window> window = std::make_shared<GUI::ECS::Systems::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
     _baseId++;
@@ -635,12 +644,12 @@ void Main::_initialiseRessources()
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
     _baseId = _initialiseFonts();
-    PRECISE_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
 void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse)
 {
-    PRECISE_INFO << "Updating mouse information for renderable components." << std::endl;
+    PRETTY_INFO << "Updating mouse information for renderable components." << std::endl;
     std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
     std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
     std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
@@ -648,56 +657,56 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
     std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
 
     for (unsigned int index = 0; index < sprites.size(); index++) {
-        PRECISE_INFO << "Processing index for sprite : " << std::to_string(index) << std::endl;
+        PRETTY_INFO << "Processing index for sprite : " << std::to_string(index) << std::endl;
         try {
             std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = std::any_cast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(sprites[index]);
             sprite->update(mouse);
         }
         catch (std::bad_any_cast &e) {
-            PRECISE_ERROR << "Error casting sprite component, system error: " + std::string(e.what()) << std::endl;
+            PRETTY_ERROR << "Error casting sprite component, system error: " + std::string(e.what()) << std::endl;
         }
     }
     for (unsigned int index = 0; index < texts.size(); index++) {
-        PRECISE_INFO << "Processing index for text : " << std::to_string(index) << std::endl;
+        PRETTY_INFO << "Processing index for text : " << std::to_string(index) << std::endl;
         try {
             std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::any_cast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(texts[index]);
             text->update(mouse);
         }
         catch (std::bad_any_cast &e) {
-            PRECISE_ERROR << "Error casting text component, system error: " + std::string(e.what()) << std::endl;
+            PRETTY_ERROR << "Error casting text component, system error: " + std::string(e.what()) << std::endl;
         }
     }
     for (unsigned int index = 0; index < buttons.size(); index++) {
-        PRECISE_INFO << "Processing index for button : " << std::to_string(index) << std::endl;
+        PRETTY_INFO << "Processing index for button : " << std::to_string(index) << std::endl;
         try {
             std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::any_cast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttons[index]);
             button->update(mouse);
         }
         catch (std::bad_any_cast &e) {
-            PRECISE_ERROR << "Error casting button component, system error: " + std::string(e.what()) << std::endl;
+            PRETTY_ERROR << "Error casting button component, system error: " + std::string(e.what()) << std::endl;
         }
     }
     for (unsigned int index = 0; index < shapes.size(); index++) {
-        PRECISE_INFO << "Processing index for shape : " << std::to_string(index) << std::endl;
+        PRETTY_INFO << "Processing index for shape : " << std::to_string(index) << std::endl;
         try {
             std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::any_cast<std::shared_ptr<GUI::ECS::Components::ShapeComponent>>(shapes[index]);
             shape->update(mouse);
         }
         catch (std::bad_any_cast &e) {
-            PRECISE_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
+            PRETTY_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
         }
     }
     for (unsigned int index = 0; index < images.size(); index++) {
-        PRECISE_INFO << "Processing index for image : " << std::to_string(index) << std::endl;
+        PRETTY_INFO << "Processing index for image : " << std::to_string(index) << std::endl;
         try {
             std::shared_ptr<GUI::ECS::Components::ImageComponent> image = std::any_cast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(images[index]);
             image->update(mouse);
         }
         catch (std::bad_any_cast &e) {
-            PRECISE_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
+            PRETTY_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
         }
     }
-    PRECISE_SUCCESS << "Updated mouse information for renderable components." << std::endl;
+    PRETTY_SUCCESS << "Updated mouse information for renderable components." << std::endl;
 }
 
 /**
@@ -711,11 +720,11 @@ void Main::_testContent()
     for (unsigned int index = 0; index < musics.size(); index++) {
         try {
             std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
-            PRECISE_INFO << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
+            PRETTY_INFO << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
             music_ptr->play();
         }
         catch (std::bad_any_cast &e) {
-            PRECISE_ERROR << "Error casting music component, system error: " + std::string(e.what()) << std::endl;
+            PRETTY_ERROR << "Error casting music component, system error: " + std::string(e.what()) << std::endl;
         }
     }
 }
@@ -771,7 +780,7 @@ void Main::_mainLoop()
             _testContent();
         }
         text.update(event.getMouseInfo());
-        PRECISE_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
+        PRETTY_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
         window.display();
         window.clear();
@@ -1002,7 +1011,7 @@ void Main::setConfigFile(const std::string &configFile)
 void Main::setDebug(bool debug)
 {
     _debug = debug;
-    Log::getInstance().setLogEnabled(debug);
+    Logging::Log::getInstance().setLogEnabled(debug);
 }
 
 /**

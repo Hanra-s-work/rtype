@@ -66,7 +66,7 @@ namespace GUI
                  * @param startLeft
                  * @param startTop
                  */
-                AnimationComponent(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
                 /**
                  * @brief Construct a new Animation Component object with:
                  * @li The loaded raw spritesheet
@@ -81,7 +81,7 @@ namespace GUI
                  * @param startLeft Start parsing the animation from the left
                  * @param startTop Start parsing the animation from the top
                  */
-                AnimationComponent(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
                 /**
                  * @brief Construct a new Animation Component object with:
                  * @li The id of the entity
@@ -107,7 +107,7 @@ namespace GUI
                  * @param startLeft Start parsing the animation from the left
                  * @param startTop Start parsing the animation from the top
                  */
-                AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
                 /**
                  * @brief Construct a new Animation Component object with:
                  * @li The id of the entity
@@ -124,7 +124,7 @@ namespace GUI
                  * @param startLeft Start parsing the animation from the left
                  * @param startTop Start parsing the animation from the top
                  */
-                AnimationComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                AnimationComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
 
                 /**
                  * @brief Destroy the Animation Component object
@@ -172,7 +172,7 @@ namespace GUI
                  * @param startLeft
                  * @param startTop
                  */
-                void setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                void setAnimation(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
                 /**
                  * @brief Set the Animation object
                  *
@@ -182,7 +182,7 @@ namespace GUI
                  * @param startLeft
                  * @param startTop
                  */
-                void setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                void setAnimation(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
 
                 /**
                  * @brief Check if it is time to change the frame of the animation.
@@ -462,7 +462,7 @@ namespace GUI
                  * @param startLeft Start from the left
                  * @param startTop Start from the top
                  */
-                void _processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop);
+                void _processAnimation(const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame = 0, const int endFrame = (-1));
                 const short int _getIndexUpdater(const bool startBegining = true) const;
                 const bool _continueLoop(const bool startBegining, const unsigned int position, const unsigned int maxValue) const;
                 bool _looped = false;                                          //!< A boolean instance in charge of informing the user that the program has looped (valid for the first 2 frames after the loop has occurred)

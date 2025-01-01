@@ -13,7 +13,7 @@ GUI::ECS::Systems::Font::Font(const Font &other)
     : EntityNode(other.getEntityNodeId())
 {
     update(other);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path)
@@ -21,7 +21,7 @@ GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path)
 {
     setFontPath(path);
     setFontName(name);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, const unsigned int size)
@@ -30,7 +30,7 @@ GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, 
     setFontPath(path);
     setFontName(name);
     setFontDefaultSize(size);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, const unsigned int size, const std::string &application)
@@ -40,7 +40,7 @@ GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, 
     setFontName(name);
     setFontDefaultSize(size);
     setFontApplication(application);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, const unsigned int size, const std::string &application, const bool bold)
@@ -51,7 +51,7 @@ GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, 
     setFontName(name);
     setFontDefaultSize(size);
     setFontApplication(application);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, const unsigned int size, const std::string &application, const bool bold, const bool italic)
@@ -63,7 +63,7 @@ GUI::ECS::Systems::Font::Font(const std::string &name, const std::string &path, 
     setFontName(name);
     setFontDefaultSize(size);
     setFontApplication(application);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &name, const std::string &path)
@@ -71,7 +71,7 @@ GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &n
 {
     setFontPath(path);
     setFontName(name);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &name, const std::string &path, const unsigned int size)
@@ -80,7 +80,7 @@ GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &n
     setFontPath(path);
     setFontName(name);
     setFontDefaultSize(size);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &name, const std::string &path, const unsigned int size, const std::string &application)
@@ -90,7 +90,7 @@ GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &n
     setFontName(name);
     setFontDefaultSize(size);
     setFontApplication(application);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &name, const std::string &path, const unsigned int size, const std::string &application, const bool bold)
@@ -101,7 +101,7 @@ GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &n
     setFontName(name);
     setFontDefaultSize(size);
     setFontApplication(application);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &name, const std::string &path, const unsigned int size, const std::string &application, const bool bold, const bool italic)
@@ -113,7 +113,7 @@ GUI::ECS::Systems::Font::Font(const std::uint32_t entityId, const std::string &n
     setFontName(name);
     setFontDefaultSize(size);
     setFontApplication(application);
-    PRECISE_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
+    PRETTY_INFO << "The font " << _fontName << " is loaded and ready to use." << std::endl;
 };
 
 GUI::ECS::Systems::Font::~Font() {}
@@ -137,7 +137,7 @@ void GUI::ECS::Systems::Font::setFontPath(const std::string &path)
 {
     _fontInstanceSet = false;
     if (!_fontInstance.openFromFile(path)) {
-        PRECISE_CRITICAL << "Error: Failed to load font from " << _fontPath << std::endl;
+        PRETTY_CRITICAL << "Error: Failed to load font from " << _fontPath << std::endl;
         throw CustomExceptions::InvalidFontPath(path);
     };
     _fontPath = path;
@@ -187,7 +187,7 @@ const unsigned int GUI::ECS::Systems::Font::getDefaultSize() const
 const std::any GUI::ECS::Systems::Font::getFontInstance() const
 {
     if (!_fontInstanceSet) {
-        PRECISE_CRITICAL << "Error: Font instance not set." << std::endl;
+        PRETTY_CRITICAL << "Error: Font instance not set." << std::endl;
         throw CustomExceptions::NoFont(_fontName);
     }
     return std::any(sf::Font(_fontInstance));
@@ -216,7 +216,7 @@ void GUI::ECS::Systems::Font::update(const GUI::ECS::Systems::Font &copy)
 {
     std::any systemFont = copy.getFontInstance();
     if (!systemFont.has_value()) {
-        PRECISE_CRITICAL << "No font found." << std::endl;
+        PRETTY_CRITICAL << "No font found." << std::endl;
         throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>");
     }
     try {
@@ -225,7 +225,7 @@ void GUI::ECS::Systems::Font::update(const GUI::ECS::Systems::Font &copy)
         _fontInstanceSet = true;
     }
     catch (std::bad_any_cast &e) {
-        PRECISE_CRITICAL << "No font found." << std::endl;
+        PRETTY_CRITICAL << "No font found." << std::endl;
         throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
     }
     _fontPath = copy.getFontPath();

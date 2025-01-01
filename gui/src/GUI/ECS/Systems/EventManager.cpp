@@ -125,13 +125,13 @@ void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &w
     while (eventCapsule.has_value()) {
         sf::Event event = std::any_cast<sf::Event>(eventCapsule);
         if (event.is<sf::Event::Closed>()) {
-            PRECISE_INFO << "The window's cross has been clicked." << std::endl;
+            PRETTY_INFO << "The window's cross has been clicked." << std::endl;
             windowItem.close();
         } else if (const auto *keyPressed = event.getIf<sf::Event::KeyPressed>()) {
             sf::Keyboard::Scancode code = keyPressed->scancode;
-            PRECISE_DEBUG << "A key was pressed, it's code is: '" << _mapper.stringKey(code) << "'." << std::endl;
+            PRETTY_DEBUG << "A key was pressed, it's code is: '" << _mapper.stringKey(code) << "'." << std::endl;
             if (code == sf::Keyboard::Scancode::Escape) {
-                PRECISE_INFO << "The escape key was pressed." << std::endl;
+                PRETTY_INFO << "The escape key was pressed." << std::endl;
                 windowItem.close();
             } else {
                 _keys.push_back(_mapper.mapKey(code));
@@ -141,12 +141,12 @@ void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &w
             event.is<sf::Event::MouseWheelScrolled>() || event.is<sf::Event::TouchBegan>() ||
             event.is<sf::Event::TouchEnded>() || event.is<sf::Event::TouchMoved>()
             ) {
-            PRECISE_DEBUG << "Begin processing the mouse Event." << std::endl;
+            PRETTY_DEBUG << "Begin processing the mouse Event." << std::endl;
             _mouse.update(eventCapsule);
-            PRECISE_DEBUG << "End processing the mouse Event." << std::endl;
+            PRETTY_DEBUG << "End processing the mouse Event." << std::endl;
         } else {
             counter += 1;
-            // PRECISE_WARNING << "Event type not supported by this program." << std::endl;
+            // PRETTY_WARNING << "Event type not supported by this program." << std::endl;
         }
         eventCapsule = windowItem.pollEvent();
     }

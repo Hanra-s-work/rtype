@@ -37,71 +37,71 @@ GUI::ECS::Systems::MouseInfo::~MouseInfo() {};
 void GUI::ECS::Systems::MouseInfo::update(const std::any &eventCapsule)
 {
     if (!eventCapsule.has_value()) {
-        PRECISE_WARNING << "There is no event to process, skipping code." << std::endl;
+        PRETTY_WARNING << "There is no event to process, skipping code." << std::endl;
         return;
     }
     sf::Event event = std::any_cast<sf::Event>(eventCapsule);
     if (event.is<sf::Event::MouseButtonPressed>()) {
-        PRECISE_INFO << "MouseInfo, mouse button pressed." << std::endl;
+        PRETTY_INFO << "MouseInfo, mouse button pressed." << std::endl;
         const sf::Event::MouseButtonPressed *node = event.getIf<sf::Event::MouseButtonPressed>();
         if (node->button == sf::Mouse::Button::Left) {
-            PRECISE_SUCCESS << "MouseInfo: Left mouse button clicked." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Left mouse button clicked." << std::endl;
             _leftButtonClicked = true;
         } else if (node->button == sf::Mouse::Button::Right) {
-            PRECISE_SUCCESS << "MouseInfo: Right mouse button clicked." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Right mouse button clicked." << std::endl;
             _rightButtonClicked = true;
         } else if (node->button == sf::Mouse::Button::Middle) {
-            PRECISE_SUCCESS << "MouseInfo: Middle mouse button clicked." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Middle mouse button clicked." << std::endl;
             _middleButtonClicked = true;
         } else if (node->button == sf::Mouse::Button::Extra1) {
-            PRECISE_SUCCESS << "MouseInfo: Extra1 mouse button clicked." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Extra1 mouse button clicked." << std::endl;
             _extra1ButtonClicked = true;
         } else if (node->button == sf::Mouse::Button::Extra2) {
-            PRECISE_SUCCESS << "MouseInfo: Extra2 mouse button clicked." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Extra2 mouse button clicked." << std::endl;
             _extra2ButtonClicked = true;
         } else {
-            PRECISE_WARNING << "MouseInfo: Unknown mouse button clicked." << std::endl;
+            PRETTY_WARNING << "MouseInfo: Unknown mouse button clicked." << std::endl;
         }
-        PRECISE_INFO << "MouseInfo, out of the button being pressed." << std::endl;
+        PRETTY_INFO << "MouseInfo, out of the button being pressed." << std::endl;
     } else if (event.is<sf::Event::MouseButtonReleased>()) {
-        PRECISE_INFO << "MouseInfo, mouse button released." << std::endl;
+        PRETTY_INFO << "MouseInfo, mouse button released." << std::endl;
         const sf::Event::MouseButtonPressed *node = event.getIf<sf::Event::MouseButtonPressed>();
         if (node->button == sf::Mouse::Button::Left) {
-            PRECISE_SUCCESS << "MouseInfo: Left mouse button released." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Left mouse button released." << std::endl;
             _leftButtonClicked = false;
         } else if (node->button == sf::Mouse::Button::Right) {
-            PRECISE_SUCCESS << "MouseInfo: Right mouse button released." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Right mouse button released." << std::endl;
             _rightButtonClicked = false;
         } else if (node->button == sf::Mouse::Button::Middle) {
-            PRECISE_SUCCESS << "MouseInfo: Middle mouse button released." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Middle mouse button released." << std::endl;
             _middleButtonClicked = false;
         } else if (node->button == sf::Mouse::Button::Extra1) {
-            PRECISE_SUCCESS << "MouseInfo: Extra1 mouse button released." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Extra1 mouse button released." << std::endl;
             _extra1ButtonClicked = false;
         } else if (node->button == sf::Mouse::Button::Extra2) {
-            PRECISE_SUCCESS << "MouseInfo: Extra2 mouse button released." << std::endl;
+            PRETTY_SUCCESS << "MouseInfo: Extra2 mouse button released." << std::endl;
             _extra2ButtonClicked = false;
         } else {
-            PRECISE_WARNING << "MouseInfo: Unknown mouse button released." << std::endl;
+            PRETTY_WARNING << "MouseInfo: Unknown mouse button released." << std::endl;
         }
-        PRECISE_INFO << "MouseInfo, out of the button being released." << std::endl;
+        PRETTY_INFO << "MouseInfo, out of the button being released." << std::endl;
     } else if (event.is<sf::Event::MouseEntered>()) {
-        PRECISE_INFO << "MouseInfo: the mouse is in focus" << std::endl;
+        PRETTY_INFO << "MouseInfo: the mouse is in focus" << std::endl;
         _mouseInFocus = true;
     } else if (event.is<sf::Event::MouseLeft>()) {
-        PRECISE_INFO << "MouseInfo: the mouse is not in focus" << std::endl;
+        PRETTY_INFO << "MouseInfo: the mouse is not in focus" << std::endl;
         _mouseInFocus = false;
     } else if (event.is<sf::Event::MouseMoved>()) {
         const sf::Event::MouseMoved *data = event.getIf<sf::Event::MouseMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
-        PRECISE_INFO << "MouseInfo: The mouse was moved, it's position is ("
+        PRETTY_INFO << "MouseInfo: The mouse was moved, it's position is ("
             << posx << ", " << posy << ")" << std::endl;
         _mousePosition.first = posx;
         _mousePosition.second = posy;
     } else if (event.is<sf::Event::MouseWheelScrolled>()) {
         const sf::Event::MouseWheelScrolled *data = event.getIf<sf::Event::MouseWheelScrolled>();
-        PRECISE_INFO << "MouseInfo: Update the position of the wheel." << std::endl;
+        PRETTY_INFO << "MouseInfo: Update the position of the wheel." << std::endl;
         _mouseWheel.delta = data->delta;
         _mouseWheel.wheel = data->wheel;
         _mouseWheel.position = data->position;
@@ -109,14 +109,14 @@ void GUI::ECS::Systems::MouseInfo::update(const std::any &eventCapsule)
         const sf::Event::TouchMoved *data = event.getIf<sf::Event::TouchMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
-        PRECISE_INFO << "MouseInfo: Touch position (" << posx << ", " << posy << ")" << std::endl;
+        PRETTY_INFO << "MouseInfo: Touch position (" << posx << ", " << posy << ")" << std::endl;
         _mousePosition.first = posx;
         _mousePosition.second = posy;
     } else if (event.is<sf::Event::TouchBegan>()) {
         const sf::Event::TouchMoved *data = event.getIf<sf::Event::TouchMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
-        PRECISE_INFO << "MouseInfo: Touch (translated as a left click) began at ("
+        PRETTY_INFO << "MouseInfo: Touch (translated as a left click) began at ("
             << posx << ", " << posy << ")" << std::endl;
         _leftButtonClicked = true;
         _mousePosition.first = posx;
@@ -125,13 +125,13 @@ void GUI::ECS::Systems::MouseInfo::update(const std::any &eventCapsule)
         const sf::Event::TouchMoved *data = event.getIf<sf::Event::TouchMoved>();
         int posx = data->position.x;
         int posy = data->position.y;
-        PRECISE_INFO << "MouseInfo: Touch (translated as a left click) began at ("
+        PRETTY_INFO << "MouseInfo: Touch (translated as a left click) began at ("
             << posx << ", " << posy << ")" << std::endl;
         _leftButtonClicked = false;
         _mousePosition.first = posx;
         _mousePosition.second = posy;
     } else {
-        PRECISE_WARNING << "MouseInfo: Unknown event type" << std::endl;
+        PRETTY_WARNING << "MouseInfo: Unknown event type" << std::endl;
     }
 };
 
@@ -166,7 +166,7 @@ void GUI::ECS::Systems::MouseInfo::update(const MouseInfo &entity)
 void GUI::ECS::Systems::MouseInfo::update(const std::pair<int, int> &mousePosition)
 {
     _mousePosition = mousePosition;
-    PRECISE_SUCCESS << "MouseInfo: Mouse position updated" << std::endl;
+    PRETTY_SUCCESS << "MouseInfo: Mouse position updated" << std::endl;
 };
 
 

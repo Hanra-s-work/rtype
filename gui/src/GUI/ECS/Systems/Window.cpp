@@ -138,7 +138,7 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent 
     GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
     std::any shapeData = pairNode.second;
     if (shapeType == GUI::ECS::Components::ActiveShape::NONE) {
-        PRECISE_WARNING << "There is no shape to render, skipping" << std::endl;
+        PRETTY_WARNING << "There is no shape to render, skipping" << std::endl;
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {

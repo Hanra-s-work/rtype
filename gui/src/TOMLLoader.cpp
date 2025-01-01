@@ -179,7 +179,7 @@ void TOMLLoader::update(const toml::array &copy, const std::string &key)
 void TOMLLoader::printTOML() const
 {
     _ensureLoaded();
-    PRECISE_INFO << "TOML Contents:\n" + _tomlString << std::endl;
+    PRETTY_INFO << "TOML Contents:\n" + _tomlString << std::endl;
 };
 
 TOMLLoader &TOMLLoader::operator=(const TOMLLoader &copy)

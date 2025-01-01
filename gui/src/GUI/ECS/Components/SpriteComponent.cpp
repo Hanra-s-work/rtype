@@ -207,7 +207,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation)
     : EntityNode(entityId)
 {
-    PRECISE_INFO << "In sprite constructor taking an entity id, a name and an animation." << std::endl;
+    PRETTY_INFO << "In sprite constructor taking an entity id, a name and an animation." << std::endl;
     setName(name);
     setAnimation(animation);
     _processSprite();
@@ -216,7 +216,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
 GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
     : EntityNode(entityId)
 {
-    PRECISE_INFO << "In sprite constructor taking an entity id, a name and a spritesheet texture." << std::endl;
+    PRETTY_INFO << "In sprite constructor taking an entity id, a name and a spritesheet texture." << std::endl;
     setName(name);
     setSpritesheet(spritesheetTexture);
     _processSprite();
@@ -312,9 +312,9 @@ GUI::ECS::Components::SpriteComponent::~SpriteComponent() {};
 
 void GUI::ECS::Components::SpriteComponent::setName(const std::string &name)
 {
-    PRECISE_INFO << "Setting sprite name to '" << name << "'" << std::endl;
+    PRETTY_INFO << "Setting sprite name to '" << name << "'" << std::endl;
     _spriteName = name;
-    PRECISE_SUCCESS << "Sprite name set to '" << name << "'" << std::endl;
+    PRETTY_SUCCESS << "Sprite name set to '" << name << "'" << std::endl;
 };
 
 void GUI::ECS::Components::SpriteComponent::setApplication(const std::string &application)
@@ -379,34 +379,34 @@ void GUI::ECS::Components::SpriteComponent::setSpritesheet(const GUI::ECS::Compo
 
 void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Components::AnimationComponent &animation)
 {
-    PRECISE_INFO << "Setting sprite animation." << std::endl;
-    PRECISE_INFO << "Updating the _animation node with the child version." << std::endl;
+    PRETTY_INFO << "Setting sprite animation." << std::endl;
+    PRETTY_INFO << "Updating the _animation node with the child version." << std::endl;
     _animation.update(animation);
-    PRECISE_SUCCESS << "Animation updated" << std::endl;
-    PRECISE_INFO << "Updating the collision node with the child version." << std::endl;
+    PRETTY_SUCCESS << "Animation updated" << std::endl;
+    PRETTY_INFO << "Updating the collision node with the child version." << std::endl;
     _collision.setDimension(animation.getFrameDimensions());
-    PRECISE_SUCCESS << "Collision updated" << std::endl;
+    PRETTY_SUCCESS << "Collision updated" << std::endl;
     _animationSet = true;
     if (!_sfSprite.has_value()) {
-        PRECISE_WARNING << "Sprite entity has no value" << std::endl;
+        PRETTY_WARNING << "Sprite entity has no value" << std::endl;
         return;
     }
-    PRECISE_DEBUG << "Getting the texture" << std::endl;
+    PRETTY_DEBUG << "Getting the texture" << std::endl;
     std::any textureCapsule = _animation.getBaseTexture().getTexture();
     if (!textureCapsule.has_value()) {
-        PRECISE_WARNING << "Texture capsule is empty" << std::endl;
+        PRETTY_WARNING << "Texture capsule is empty" << std::endl;
         return;
     }
     std::optional<sf::Texture> texture = Utilities::unCast<sf::Texture>(textureCapsule, false, "The texture casting failed with the following system error: ");
     if (!texture.has_value()) {
-        PRECISE_WARNING << "Texture is empty" << std::endl;
+        PRETTY_WARNING << "Texture is empty" << std::endl;
         return;
     }
-    PRECISE_SUCCESS << "Texture extracted" << std::endl;
-    PRECISE_INFO << "Applying texture to sprite" << std::endl;
+    PRETTY_SUCCESS << "Texture extracted" << std::endl;
+    PRETTY_INFO << "Applying texture to sprite" << std::endl;
     _sfSprite->setTexture(texture.value());
     _spriteSet = true;
-    PRECISE_SUCCESS << "The texture has been applied to the sprite." << std::endl;
+    PRETTY_SUCCESS << "The texture has been applied to the sprite." << std::endl;
 
 
 }
@@ -451,7 +451,7 @@ void GUI::ECS::Components::SpriteComponent::update(const GUI::ECS::Components::S
 std::any GUI::ECS::Components::SpriteComponent::render() const
 {
     if (!_visible || !_sfSprite.has_value()) {
-        PRECISE_DEBUG << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        PRETTY_DEBUG << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
         return std::nullopt;
     }
     return std::make_any<sf::Sprite>(_sfSprite.value());

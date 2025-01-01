@@ -97,6 +97,8 @@ namespace CustomExceptions
         _msg += "sprite_height = <height>                                                                                     : (0 to 1000) set the height of the sprite view field, in pixels.\n";
         _msg += "start_left = true                                                                                            : (or false) set the starting position of the sprite view field to start from the left (or not).\n";
         _msg += "start_top = true                                                                                             : (or false) set the starting position of the sprite view field to start from the top (or not).\n";
+        _msg += "initial_frame = 0                                                                                            : set the frame that will be used as the first one, here the number represents the index of the frame.\n";
+        _msg += "end_frame = -1                                                                                               : (or the index of the frame) set the last frame to be taken from the spritesheet(-1 means all frames present), (default value: -1).\n";
         _buffer = _msg.c_str();
     };
 

@@ -289,7 +289,7 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
 std::any GUI::ECS::Components::ImageComponent::render() const
 {
     if (!_visible || !_sfImage.has_value()) {
-        PRECISE_INFO << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
+        PRETTY_INFO << "Instance is hidden or no sfImage instance found, not rendering" << std::endl;
         return std::nullopt;
     }
     return std::make_any<sf::Sprite>(_sfImage.value());
@@ -378,19 +378,19 @@ void GUI::ECS::Components::ImageComponent::_processImageComponent()
     _processColour();
     if (_sfImage.has_value()) {
         if (_sizeAltered) {
-            PRECISE_DEBUG << "The size has been altered, updating size." << std::endl;
+            PRETTY_DEBUG << "The size has been altered, updating size." << std::endl;
             std::pair<float, float> dimension = _collision.getDimension();
             _sfImage->setScale({ dimension.first, dimension.second });
             _sizeAltered = false;
         }
         if (_positionAltered) {
-            PRECISE_DEBUG << "The position has been altered, updating position." << std::endl;
+            PRETTY_DEBUG << "The position has been altered, updating position." << std::endl;
             std::pair<float, float> position = _collision.getPosition();
             _sfImage->setPosition({ position.first, position.second });
             _positionAltered = false;
         }
         if (_textureAltered) {
-            PRECISE_DEBUG << "The texture has been altered, updating image." << std::endl;
+            PRETTY_DEBUG << "The texture has been altered, updating image." << std::endl;
             std::any textureCapsule = _base.getTexture();
             if (textureCapsule.has_value()) {
                 try {
