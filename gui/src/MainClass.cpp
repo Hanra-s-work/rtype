@@ -360,6 +360,7 @@ std::uint32_t Main::_initialiseSprites()
     const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
 
     for (std::string &it : sprites.getKeys()) {
+        _updateLoadingText("Processing '" + it + "'...");
         data += "\t" + std::to_string(counter) + " : " + "'" + it + "'\n";
         PRETTY_INFO << "Processing sprite: '" << it << "'" << std::endl;
         if (!sprites.hasKey(it)) {
@@ -375,6 +376,7 @@ std::uint32_t Main::_initialiseSprites()
             throw CustomExceptions::InvalidSpriteConfiguration(userConfig, it);
         }
         counter++;
+        _updateLoadingText("Processing '" + it + "'...[OK]");
     };
     PRETTY_SUCCESS << data << std::endl;
 
@@ -398,6 +400,7 @@ std::uint32_t Main::_initialiseSprites()
             endFrame = it->second.getValue<int>("end_frame");
         }
 
+        _updateLoadingText("Loading sprite '" + name + "'...");
         PRETTY_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
 
 
@@ -418,6 +421,7 @@ std::uint32_t Main::_initialiseSprites()
         _baseId++;
 
         PRETTY_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
+        _updateLoadingText("Loading sprite '" + name + "'...[OK]");
     }
 
     PRETTY_SUCCESS << "The sprites are loaded." << std::endl;
@@ -480,6 +484,7 @@ std::uint32_t Main::_initialiseAudio()
     PRETTY_INFO << "Getting the music configuration chunks" << std::endl;
 
     for (std::string &iterator : audios) {
+        _updateLoadingText("Processing music '" + iterator + "'...");
         if (!audio.hasKey(iterator)) {
             throw CustomExceptions::NoTOMLKey(tomlPath, iterator);
         }
@@ -492,6 +497,7 @@ std::uint32_t Main::_initialiseAudio()
             std::string userConfig = loadedAudios[iterator].getTOMLString();
             throw CustomExceptions::InvalidMusicConfiguration(userConfig, iterator);
         }
+        _updateLoadingText("Processing music '" + iterator + "'...[OK]");
     }
 
     PRETTY_INFO << "Initialising the musics" << std::endl;
@@ -503,6 +509,8 @@ std::uint32_t Main::_initialiseAudio()
         int volume = 100;
         bool loop = false;
 
+        _updateLoadingText("Loading music '" + name + "'...");
+
         if (_isKeyPresentAndOfCorrectType(it->second, "volume", toml::node_type::integer)) {
             volume = it->second.getValue<int>("volume");
         }
@@ -512,6 +520,7 @@ std::uint32_t Main::_initialiseAudio()
         std::shared_ptr<GUI::ECS::Components::MusicComponent> node = std::make_shared<GUI::ECS::Components::MusicComponent>(_baseId, path, name, application, volume, loop);
         _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)].push_back(node);
         _baseId++;
+        _updateLoadingText("Loading music '" + name + "'...[OK]");
     }
 
     PRETTY_SUCCESS << "The musics are loaded." << std::endl;
@@ -651,6 +660,10 @@ void Main::_initialiseRessources()
     _ecsEntities[typeid(GUI::ECS::Systems::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Systems::EventManager)].push_back(event);
 
+    _mainWindowIndex = _ecsEntities[typeid(GUI::ECS::Systems::Window)].size() - 1;
+
+    _mainEventIndex = _ecsEntities[typeid(GUI::ECS::Systems::EventManager)].size() - 1;
+
     _baseId = _initialiseFonts();
 
     PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
@@ -660,15 +673,72 @@ void Main::_initialiseRessources()
     }
 
     GUI::ECS::Systems::Font firstFont = *firstFontCapsule.value();
-    std::shared_ptr<GUI::ECS::Components::TextComponent> loading = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, firstFont, "Loading...", 40, GUI::ECS::Systems::Colour::Aqua, GUI::ECS::Systems::Colour::White, GUI::ECS::Systems::Colour::Chartreuse1);
+    std::shared_ptr<GUI::ECS::Components::TextComponent> loading = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, firstFont, "Loading...", 20, GUI::ECS::Systems::Colour::Aqua, GUI::ECS::Systems::Colour::Aquamarine, GUI::ECS::Systems::Colour::Chartreuse1);
     _baseId++;
     _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(loading);
     window->draw(*loading);
     window->display();
+    _loadingIndex = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size() - 1;
 
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
     PRETTY_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
+}
+
+void Main::_updateLoadingText(const std::string &detail)
+{
+    PRETTY_DEBUG << "Updating loading display" << std::endl;
+    std::vector<std::any> windows = _ecsEntities[typeid(GUI::ECS::Systems::Window)];
+    std::vector<std::any> eventManagers = _ecsEntities[typeid(GUI::ECS::Systems::EventManager)];
+    std::vector<std::any> textComponents = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+
+    if (_mainWindowIndex > windows.size()) {
+        PRETTY_ERROR << "Index out of bounds." << std::endl;
+        throw CustomExceptions::NoWindow("The window index you tried to access does not exist, the index was: " + Recoded::myToString(_mainWindowIndex));
+    }
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> windowCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(windows[_mainWindowIndex], true, "The type of the window is unknown, system error: ");
+    if (!windowCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no window to access" << std::endl;
+        throw CustomExceptions::NoWindow("The window index you tried to access does not exist, the index was: " + Recoded::myToString(_mainWindowIndex));
+    }
+    std::shared_ptr<GUI::ECS::Systems::Window> window = windowCapsule.value();
+
+    if (_mainEventIndex > eventManagers.size()) {
+        PRETTY_ERROR << "Index out of bounds." << std::endl;
+        throw CustomExceptions::NoEventManager("The event manager index you tried to access does not exist, the index was: " + Recoded::myToString(_mainEventIndex));
+    }
+    std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> eventManagerCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>, CustomExceptions::NoEventManager>(eventManagers[_mainEventIndex], true, "The type of the event manager is unknown, system error: ");
+    if (!eventManagerCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no event manager to access" << std::endl;
+        throw CustomExceptions::NoEventManager("The event manager index you tried to access does not exist, the index was: " + Recoded::myToString(_mainEventIndex));
+    }
+    std::shared_ptr<GUI::ECS::Systems::EventManager> event = eventManagerCapsule.value();
+
+    if (_loadingIndex > textComponents.size()) {
+        PRETTY_ERROR << "Index out of bounds." << std::endl;
+        throw CustomExceptions::NoText("The text component index you tried to access does not exist, the index was: " + Recoded::myToString(_loadingIndex));
+    }
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>, CustomExceptions::NoText>(textComponents[_loadingIndex], true, "The type of the text component is unknown, system error: ");
+    if (!textCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no text to access" << std::endl;
+        throw CustomExceptions::NoText("The text index you tried to access does not exist, the index was: " + Recoded::myToString(_loadingIndex));
+    }
+    std::shared_ptr<GUI::ECS::Components::TextComponent> text = textCapsule.value();
+
+    if (!window->isOpen()) {
+        throw CustomExceptions::NoWindow("There is no window to draw on!");
+    }
+    event->processEvents(*window);
+    if (!window->isOpen()) {
+        throw CustomExceptions::NoWindow("There is no window to draw on!");
+    }
+
+    text->update(event->getMouseInfo());
+    text->setText(detail);
+    window->clear();
+    window->draw(*text);
+    window->display();
+    PRETTY_SUCCESS << "Loading text updated" << std::endl;
 }
 
 void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse)

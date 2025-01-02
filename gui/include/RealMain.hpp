@@ -135,6 +135,8 @@ class Main {
   void _initialiseConnection();
   void _initialiseRessources();
 
+  void _updateLoadingText(const std::string &detail = "Loading...");
+
   void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
 
   void _testContent();
@@ -164,6 +166,9 @@ class Main {
   unsigned int _windowFrameLimit;
   std::uint32_t _baseId = 0;
   std::string _configFilePath = "client_config.toml";
+  unsigned int _loadingIndex = 0;
+  unsigned int _mainWindowIndex = 0;
+  unsigned int _mainEventIndex = 0;
   TOMLLoader _tomlContent;
 };
 
