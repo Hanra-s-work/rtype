@@ -823,6 +823,10 @@ void Main::_testContent()
     }
 }
 
+void helloWorld()
+{
+    std::cout << "Hello World" << std::endl;
+}
 
 /**
  *@brief This is the function in charge of running the program's graphic logic.
@@ -866,6 +870,13 @@ void Main::_mainLoop()
     // Create a test text
 
     GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Systems::Colour::YellowGreen, GUI::ECS::Systems::Colour::Cyan, GUI::ECS::Systems::Colour::Yellow, { 20, 50 });
+    _baseId++;
+    GUI::ECS::Components::ShapeComponent rectangle(_baseId, { {200, 80}, {80,50} });
+    _baseId++;
+    GUI::ECS::Components::ButtonComponent button(_baseId, rectangle, text, helloWorld);
+    button.setPosition({ 200,200 });
+    button.setTextSize(20);
+    _baseId++;
 
     while (window.isOpen()) {
         event.processEvents(window);
@@ -874,8 +885,10 @@ void Main::_mainLoop()
             _testContent();
         }
         text.update(event.getMouseInfo());
+        button.update(event.getMouseInfo());
         PRETTY_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
+        window.draw(button);
         window.display();
         window.clear();
     }

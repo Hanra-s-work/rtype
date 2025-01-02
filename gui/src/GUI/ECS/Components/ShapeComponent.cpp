@@ -16,7 +16,128 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityI
     _visible(true),
     _collision()
 {
+    _inConstructor = false;
 };
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::size_t pointCount, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(0)
+{
+    _inConstructor = true;
+    setShape(pointCount);
+    setPosition(position);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::size_t pointCount, const float radius, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(0)
+{
+    _inConstructor = true;
+    setShape(pointCount, radius);
+    setPosition(position);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::pair<float, float> &size, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(0)
+{
+    _inConstructor = true;
+    setShape(size);
+    setPosition(position);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const Recoded::FloatRect &rect, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(0)
+{
+    _inConstructor = true;
+    setShape(rect);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const std::size_t pointCount, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(entityId)
+{
+    _inConstructor = true;
+    setShape(pointCount);
+    setPosition(position);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const std::size_t pointCount, const float radius, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(entityId)
+{
+    _inConstructor = true;
+    setShape(pointCount, radius);
+    setPosition(position);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const std::pair<float, float> &size, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(entityId)
+{
+    _inConstructor = true;
+    setShape(size);
+    setPosition(position);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
+GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const Recoded::FloatRect &rect, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
+    : EntityNode(entityId)
+{
+    _inConstructor = true;
+    setShape(rect);
+    setNormalColor(normalColour);
+    setHoverColor(hoverColour);
+    setClickedColor(clickedColour);
+    setVisible(visible);
+    _inConstructor = false;
+    _processColor();
+    _processCollisions();
+};
+
 
 GUI::ECS::Components::ShapeComponent::~ShapeComponent() {};
 
@@ -33,6 +154,57 @@ void GUI::ECS::Components::ShapeComponent::setNormalColor(const GUI::ECS::System
 void GUI::ECS::Components::ShapeComponent::setClickedColor(const GUI::ECS::Systems::Colour &clickedColor)
 {
     _clickedColor = clickedColor;
+}
+
+void GUI::ECS::Components::ShapeComponent::setShape(const std::size_t pointCount)
+{
+    clearShapes();
+    _sfShapeConvex.emplace(pointCount);
+    _shape = ActiveShape::CONVEX;
+    if (!_inConstructor) {
+        _processCollisions();
+    }
+    PRETTY_DEBUG << "Convex shape is set, pointCount: " << Recoded::myToString(pointCount) << std::endl;
+}
+
+void GUI::ECS::Components::ShapeComponent::setShape(const std::size_t pointCount, const float radius)
+{
+    clearShapes();
+    _sfShapeCircle.emplace(radius, pointCount);
+    _shape = ActiveShape::CIRCLE;
+    if (!_inConstructor) {
+        _processCollisions();
+    }
+    PRETTY_DEBUG << "Circle shape is set, pointCount: " << Recoded::myToString(pointCount) << " radius: " << Recoded::myToString(radius) << std::endl;
+}
+
+void GUI::ECS::Components::ShapeComponent::setShape(const std::pair<float, float> &size)
+{
+    clearShapes();
+    sf::Vector2f dim = { size.first, size.second };
+    _sfShapeRectangle.emplace(dim);
+    _collision.setDimension(size);
+    _shape = ActiveShape::RECTANGLE;
+    if (!_inConstructor) {
+        _processCollisions();
+    }
+    PRETTY_DEBUG << "Rectange shape is set, size: " << Recoded::myToString(size) << std::endl;
+}
+
+void GUI::ECS::Components::ShapeComponent::setShape(const Recoded::FloatRect &rect)
+{
+    clearShapes();
+    sf::Vector2f dim = { rect.size.first, rect.size.second };
+    sf::Vector2f pos = { rect.position.first, rect.position.second };
+    _sfShapeRectangle.emplace(dim);
+    _sfShapeRectangle->setPosition(pos);
+    _collision.setDimension(rect.size);
+    _collision.setPosition(rect.position);
+    _shape = ActiveShape::RECTANGLE;
+    if (!_inConstructor) {
+        _processCollisions();
+    }
+    PRETTY_DEBUG << "Rectange shape is set, rect: " << Recoded::myToString(rect) << std::endl;
 }
 
 void GUI::ECS::Components::ShapeComponent::setShape(const ActiveShape &shape)
@@ -70,7 +242,9 @@ void GUI::ECS::Components::ShapeComponent::setVisible(const bool visible)
 void GUI::ECS::Components::ShapeComponent::setPosition(const std::pair<float, float> position)
 {
     _collision.setPosition(position);
-    _processCollisions();
+    if (!_inConstructor) {
+        _processCollisions();
+    }
 }
 
 void GUI::ECS::Components::ShapeComponent::setDimension(const std::pair<float, float> dimension)
@@ -81,7 +255,7 @@ void GUI::ECS::Components::ShapeComponent::setDimension(const std::pair<float, f
 void GUI::ECS::Components::ShapeComponent::setCollision(const GUI::ECS::Components::CollisionComponent &collision)
 {
     _collision.update(collision);
-    if (_shape != ActiveShape::NONE) {
+    if (_shape != ActiveShape::NONE && !_inConstructor) {
         _processCollisions();
         _processColor();
     }
@@ -180,6 +354,10 @@ const std::pair<float, float> GUI::ECS::Components::ShapeComponent::getDimension
     return _collision.getDimension();
 }
 
+const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Components::ShapeComponent::getShape() const
+{
+    return getActiveShape();
+}
 
 const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ShapeComponent::getCollisionComponent() const
 {
@@ -226,16 +404,18 @@ const bool GUI::ECS::Components::ShapeComponent::getVisible() const
 void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _collision.update(mouse);
-    _processColor();
+    if (!_inConstructor) {
+        _processColor();
+    }
 }
 
 void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Components::ShapeComponent &copy)
 {
     if (this != &copy) {
+        setShape(copy.getActiveShape());
         setHoverColor(copy.getHoverColor());
         setNormalColor(copy.getNormalColor());
         setClickedColor(copy.getClickedColor());
-        setShape(copy.getActiveShape());
         _collision.update(copy.getCollisionComponent());
         _processColor();
     } else {
@@ -251,6 +431,7 @@ void GUI::ECS::Components::ShapeComponent::clearShapes()
     _sfShapeCircle.reset();
     _sfShapeConvex.reset();
     _sfShapeRectangle.reset();
+    PRETTY_DEBUG << "All Shapes are cleared" << std::endl;
 }
 
 std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> GUI::ECS::Components::ShapeComponent::render() const
@@ -259,26 +440,24 @@ std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> GUI::ECS::
         return std::nullopt;
     }
     if (_shape == ActiveShape::RECTANGLE && _sfShapeRectangle.has_value()) {
-        return std::make_optional(
-            std::make_pair(
+        return std::optional(
+            std::pair(
                 ActiveShape::RECTANGLE,
-                std::make_any<sf::RectangleShape>(
-                    _sfShapeRectangle.value()
-                )
+                std::make_any<sf::RectangleShape>(_sfShapeRectangle.value())
             )
         );
     }
     if (_shape == ActiveShape::CIRCLE && _sfShapeCircle.has_value()) {
-        return std::make_optional(
-            std::make_pair(
+        return std::optional(
+            std::pair(
                 ActiveShape::CIRCLE,
                 std::make_any<sf::CircleShape>(_sfShapeCircle.value())
             )
         );
     }
     if (_shape == ActiveShape::CONVEX && _sfShapeConvex.has_value()) {
-        return std::make_optional(
-            std::make_pair(
+        return std::optional(
+            std::pair(
                 ActiveShape::CONVEX,
                 std::make_any<sf::ConvexShape>(_sfShapeConvex.value())
             )
@@ -308,20 +487,21 @@ void GUI::ECS::Components::ShapeComponent::_processColor()
     if (!systemColour.has_value()) {
         throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
-    try {
-        sf::Color result = std::any_cast<sf::Color>(systemColour);
-        if (_sfShapeCircle.has_value()) {
-            _sfShapeCircle->setFillColor(result);
-        }
-        if (_sfShapeConvex.has_value()) {
-            _sfShapeConvex->setFillColor(result);
-        }
-        if (_sfShapeRectangle.has_value()) {
-            _sfShapeRectangle->setFillColor(result);
-        }
+    const std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
+    std::optional<sf::Color> colourCapsule = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
+    if (!colourCapsule.has_value()) {
+        PRETTY_CRITICAL << errMsg << std::endl;
+        throw CustomExceptions::NoColour(errMsg);
     }
-    catch (std::bad_any_cast &e) {
-        throw CustomExceptions::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
+    const sf::Color colour = colourCapsule.value();
+    if (_sfShapeCircle.has_value()) {
+        _sfShapeCircle->setFillColor(colour);
+    }
+    if (_sfShapeConvex.has_value()) {
+        _sfShapeConvex->setFillColor(colour);
+    }
+    if (_sfShapeRectangle.has_value()) {
+        _sfShapeRectangle->setFillColor(colour);
     }
 }
 
@@ -360,13 +540,15 @@ void GUI::ECS::Components::ShapeComponent::_processCollisions()
 template <typename T>
 void GUI::ECS::Components::ShapeComponent::_assignShape(const std::any &shape, std::optional<T> &shapeStorage)
 {
-    try {
-        T instance = std::any_cast<T>(shape);
-        shapeStorage.emplace(instance);
+    const std::string errMsg = "<Unknown shape type>, any_cast error: ";
+    std::optional<T> instanceCapsule = Utilities::unCast<T, CustomExceptions::InvalidShape>(shape, true, errMsg);
+    if (!instanceCapsule.has_value()) {
+        PRETTY_CRITICAL << "The shape that was attempted to be uncast failed." << std::endl;
+        throw CustomExceptions::InvalidShape(errMsg);
     }
-    catch (const std::bad_any_cast &e) {
-        throw CustomExceptions::InvalidShape("<Unknown shape type>, any_cast error: " + std::string(e.what()));
-    }
+    clearShapes();
+    T instance = instanceCapsule.value();
+    shapeStorage.emplace(instance);
 }
 
 
