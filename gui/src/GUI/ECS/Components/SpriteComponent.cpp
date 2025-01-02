@@ -387,6 +387,7 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
     _collision.setDimension(animation.getFrameDimensions());
     PRETTY_SUCCESS << "Collision updated" << std::endl;
     _animationSet = true;
+    _collisionSet = true;
     if (!_sfSprite.has_value()) {
         PRETTY_WARNING << "Sprite entity has no value" << std::endl;
         return;
