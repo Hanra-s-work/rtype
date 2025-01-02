@@ -364,22 +364,45 @@ void GUI::ECS::Components::TextComponent::_initialiseText()
             return;
         }
 
+        PRETTY_DEBUG << "Fetching the font" << std::endl;
         std::any systemFont = _font.getFontInstance();
-        if (systemFont.has_value()) {
+        PRETTY_DEBUG << "Font package received, checking that it is not empty." << std::endl;
+        if (!systemFont.has_value()) {
+            PRETTY_CRITICAL << "No font found in the provided system font." << std::endl;
             throw CustomExceptions::NoFont("<There is no sf::Font instance to apply>");
         }
-        try {
-            sf::Font font = std::any_cast<sf::Font>(systemFont);
-            if (_sfTextComponent.has_value()) {
-                _sfTextComponent->setFont(font);
-            } else {
-                sf::Text node(font, _text, _size);
-                _sfTextComponent.emplace(node);
-            }
+        PRETTY_DEBUG << "Font instance has content, unpacking" << std::endl;
+        std::string errorMsg = "<There is no sf::Font instance to manipulate>, system error: ";
+        std::optional<std::shared_ptr<sf::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<sf::Font>, CustomExceptions::NoFont>(systemFont, true, errorMsg);
+        PRETTY_DEBUG << "Font unpacked successfully into an std::optional, checking std::optional." << std::endl;
+        if (!fontCapsule.has_value()) {
+            PRETTY_CRITICAL << "Failed to cast sf::Font from system font, anycast failed." << std::endl;
+            throw CustomExceptions::NoFont(errorMsg);
         }
-        catch (std::bad_any_cast &e) {
-            throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
+        PRETTY_DEBUG << "std::optional has content, unpacking" << std::endl;
+        const std::shared_ptr<sf::Font> font = fontCapsule.value();
+        PRETTY_DEBUG << "std::optional unpacked successfully into an sf::Font" << std::endl;
+        PRETTY_SUCCESS << "Font unpacked successfully" << std::endl;
+        if (_sfTextComponent.has_value()) {
+            PRETTY_DEBUG << "An instance of sf::Text already exists, updating it's font." << std::endl;
+            _sfTextComponent->setFont(*font);
+        } else {
+            PRETTY_DEBUG << "No instance of sf::Text, creating a new one." << std::endl;
+            sf::Text node(*font, _text, _size);
+            _sfTextComponent = node;
+            _textAltered = false;
         }
+        PRETTY_DEBUG << "Checking that the font is still present" << std::endl;
+        const sf::Font fontTest = _sfTextComponent->getFont();
+        const sf::Texture fontTexture = fontTest.getTexture(30);
+        if (fontTexture.getSize().x > 0 && fontTexture.getSize().y > 0) {
+            PRETTY_SUCCESS << "Font loaded and has a valid texture!" << std::endl;
+        } else {
+            PRETTY_CRITICAL << "Font loaded, but no valid texture found!" << std::endl;
+        }
+        PRETTY_DEBUG << "Text component updated." << std::endl;
+        _fontChanged = false;
+
     }
 }
 
@@ -387,23 +410,42 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 {
     if (!_font.isLoaded()) {
         std::string msg = "Font name : '" + _font.getFontName() + "' (not found) in '" + _font.getFontPath() + "'";
+        PRETTY_CRITICAL << msg << std::endl;
         throw CustomExceptions::NoFont(msg);
     }
     if (!_sfTextComponent.has_value()) {
         PRETTY_INFO << "Text not initialised, initialising..." << std::endl;
         _initialiseText();
     }
+    PRETTY_DEBUG << "Fetching the font" << std::endl;
     std::any systemFont = _font.getFontInstance();
-    if (systemFont.has_value()) {
+    PRETTY_DEBUG << "Font package received, checking that it is not empty." << std::endl;
+    if (!systemFont.has_value()) {
+        PRETTY_CRITICAL << "No font found in the provided system font." << std::endl;
         throw CustomExceptions::NoFont("<There is no sf::Font instance to apply>");
     }
-    try {
-        sf::Font font = std::any_cast<sf::Font>(systemFont);
-        _sfTextComponent->setFont(font);
+    PRETTY_DEBUG << "Font instance has content, unpacking" << std::endl;
+    std::string errorMsg = "<There is no sf::Font instance to manipulate>, system error: ";
+    std::optional<std::shared_ptr<sf::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<sf::Font>, CustomExceptions::NoFont>(systemFont, true, errorMsg);
+    PRETTY_DEBUG << "Font unpacked successfully into an std::optional, checking std::optional." << std::endl;
+    if (!fontCapsule.has_value()) {
+        PRETTY_CRITICAL << "Failed to cast sf::Font from system font, anycast failed." << std::endl;
+        throw CustomExceptions::NoFont(errorMsg);
     }
-    catch (std::bad_any_cast &e) {
-        throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
+    PRETTY_DEBUG << "std::optional has content, unpacking" << std::endl;
+    const std::shared_ptr<sf::Font> font = fontCapsule.value();
+    PRETTY_DEBUG << "std::optional unpacked successfully into an sf::Font, applying font to sf::Text" << std::endl;
+    _sfTextComponent->setFont(*font);
+    PRETTY_DEBUG << "Font applied to sf::Text, text component updated." << std::endl;
+    PRETTY_DEBUG << "Checking that the font is still present" << std::endl;
+    const sf::Font fontTest = _sfTextComponent->getFont();
+    const sf::Texture fontTexture = fontTest.getTexture(30);
+    if (fontTexture.getSize().x > 0 && fontTexture.getSize().y > 0) {
+        PRETTY_SUCCESS << "Font loaded and has a valid texture!" << std::endl;
+    } else {
+        PRETTY_CRITICAL << "Font loaded, but no valid texture found!" << std::endl;
     }
+
 }
 
 void GUI::ECS::Components::TextComponent::_processTextComponent()
@@ -440,8 +482,17 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
         if (_fontAltered) {
             PRETTY_DEBUG << "Going to update the font" << std::endl;
             PRETTY_DEBUG << "Text component has a value" << std::endl;
-            sf::FloatRect textBounds = _sfTextComponent->getGlobalBounds();
+            const sf::Font font = _sfTextComponent->getFont();
+            const sf::Texture fontTexture = font.getTexture(30);
+            if (fontTexture.getSize().x > 0 && fontTexture.getSize().y > 0) {
+                PRETTY_SUCCESS << "Font loaded and has a valid texture!" << std::endl;
+            } else {
+                PRETTY_CRITICAL << "Font loaded, but no valid texture found!" << std::endl;
+            }
+            sf::FloatRect textBounds = _sfTextComponent->getLocalBounds();
+            PRETTY_DEBUG << "Text bounds gathered." << std::endl;
             _textPos.setDimension({ textBounds.size.x, textBounds.size.y });
+            PRETTY_DEBUG << "Text position updated." << std::endl;
             _fontAltered = false;
         }
     } else {
@@ -457,15 +508,20 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
         systemColour = _color.getRenderColour();
     }
     if (!systemColour.has_value()) {
+        PRETTY_CRITICAL << "No color value to be managed" << std::endl;
         throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
-    try {
-        sf::Color result = std::any_cast<sf::Color>(systemColour);
-        _sfTextComponent->setFillColor(result);
+    std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
+    std::optional<sf::Color> colourCapsule = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
+    PRETTY_DEBUG << "Colour capsule gathered, checking integrity" << std::endl;
+    if (!colourCapsule.has_value()) {
+        PRETTY_CRITICAL << "Colour capsule is empty" << std::endl;
+        throw CustomExceptions::NoColour(errMsg);
     }
-    catch (std::bad_any_cast &e) {
-        throw CustomExceptions::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
-    }
+    PRETTY_DEBUG << "Colour capsule is valid, updating text colour" << std::endl;
+    sf::Color result = colourCapsule.value();
+    _sfTextComponent->setFillColor(result);
+    PRECISE_SUCCESS << "Text colour updated" << std::endl;
 }
 
 GUI::ECS::Components::TextComponent &GUI::ECS::Components::TextComponent::operator =(const GUI::ECS::Components::TextComponent &copy)

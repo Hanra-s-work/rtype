@@ -76,7 +76,7 @@ namespace GUI
                 std::string _fontName = "";
                 std::string _fontPath = "";
                 bool _fontInstanceSet = false;
-                sf::Font _fontInstance;
+                std::shared_ptr<sf::Font> _fontInstance;
                 std::string _fontApplication = "";
                 unsigned int _fontDefaultSize = 30;
             };

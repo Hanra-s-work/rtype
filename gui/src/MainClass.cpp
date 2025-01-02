@@ -599,7 +599,7 @@ std::uint32_t Main::_initialiseFonts()
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
         std::string application = it->first;
-        PRETTY_INFO << "Font application = '" + application << std::endl;
+        PRETTY_INFO << "Font application = '" + application + "'" << std::endl;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
         int defaultSize = 50;
@@ -615,8 +615,12 @@ std::uint32_t Main::_initialiseFonts()
         if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
             italic = it->second.getValue<bool>("italic");
         }
+        PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
         std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
+        PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
+        PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
+        PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
         _baseId++;
     }
     PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
@@ -647,9 +651,23 @@ void Main::_initialiseRessources()
     _ecsEntities[typeid(GUI::ECS::Systems::Window)].push_back(window);
     _ecsEntities[typeid(GUI::ECS::Systems::EventManager)].push_back(event);
 
+    _baseId = _initialiseFonts();
+
+    PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], true);
+    if (!firstFontCapsule.has_value()) {
+        throw CustomExceptions::NoFont();
+    }
+
+    GUI::ECS::Systems::Font firstFont = *firstFontCapsule.value();
+    std::shared_ptr<GUI::ECS::Components::TextComponent> loading = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, firstFont, "Loading...", 40, GUI::ECS::Systems::Colour::Aqua, GUI::ECS::Systems::Colour::White, GUI::ECS::Systems::Colour::Chartreuse1);
+    _baseId++;
+    _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(loading);
+    window->draw(*loading);
+    window->display();
+
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
-    _baseId = _initialiseFonts();
     PRETTY_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
@@ -800,8 +818,8 @@ void Main::_mainLoop()
  */
 void Main::run()
 {
-    _initialiseConnection();
     _initialiseRessources();
+    _initialiseConnection();
     _mainLoop();
     _closeConnection();
 }

@@ -136,11 +136,20 @@ void GUI::ECS::Systems::Font::setFontName(const std::string &name)
 void GUI::ECS::Systems::Font::setFontPath(const std::string &path)
 {
     _fontInstanceSet = false;
-    if (!_fontInstance.openFromFile(path)) {
+    PRETTY_DEBUG << "Creating a font instance" << std::endl;
+    std::shared_ptr<sf::Font> node = std::make_shared<sf::Font>();
+    PRETTY_DEBUG << "Font instance created" << std::endl;
+    const bool response = node->openFromFile(path);
+    PRETTY_DEBUG << "Font loading" << std::endl;
+    if (!response) {
         PRETTY_CRITICAL << "Error: Failed to load font from " << _fontPath << std::endl;
         throw CustomExceptions::InvalidFontPath(path);
     };
+    PRETTY_DEBUG << "Font loaded" << std::endl;
     _fontPath = path;
+    PRECISE_DEBUG << "Font path updated" << std::endl;
+    _fontInstance = node;
+    PRECISE_DEBUG << "Font instance updated" << std::endl;
     _fontInstanceSet = true;
 }
 
@@ -190,7 +199,13 @@ const std::any GUI::ECS::Systems::Font::getFontInstance() const
         PRETTY_CRITICAL << "Error: Font instance not set." << std::endl;
         throw CustomExceptions::NoFont(_fontName);
     }
-    return std::any(sf::Font(_fontInstance));
+    std::any node = std::make_any<std::shared_ptr<sf::Font>>(_fontInstance);
+    if (!node.has_value()) {
+        PRETTY_CRITICAL << "There is no font in the node" << std::endl;
+    } else {
+        PRETTY_SUCCESS << "There is a font in the node" << std::endl;
+    }
+    return node;
 }
 
 const std::string GUI::ECS::Systems::Font::getInfo(const unsigned int indent) const
@@ -219,15 +234,14 @@ void GUI::ECS::Systems::Font::update(const GUI::ECS::Systems::Font &copy)
         PRETTY_CRITICAL << "No font found." << std::endl;
         throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>");
     }
-    try {
-        sf::Font font = std::any_cast<sf::Font>(systemFont);
-        _fontInstance = font;
-        _fontInstanceSet = true;
+    const std::string errMsg = "<There is no sf::Font instance to manipulate>, system error: ";
+    std::optional<std::shared_ptr<sf::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<sf::Font>, CustomExceptions::NoFont>(systemFont, true, errMsg);
+    if (!fontCapsule.has_value()) {
+        throw CustomExceptions::NoFont(errMsg);
     }
-    catch (std::bad_any_cast &e) {
-        PRETTY_CRITICAL << "No font found." << std::endl;
-        throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>, system error: " + std::string(e.what()));
-    }
+    const std::shared_ptr<sf::Font> font = fontCapsule.value();
+    _fontInstance = font;
+    _fontInstanceSet = true;
     _fontPath = copy.getFontPath();
     _fontName = copy.getFontName();
     _fontApplication = copy.getApplication();
