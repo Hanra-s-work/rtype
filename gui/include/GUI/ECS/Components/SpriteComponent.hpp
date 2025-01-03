@@ -16,8 +16,10 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Colour.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
@@ -41,12 +43,12 @@ namespace GUI
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation);
                 SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
-                SpriteComponent(const std::string &name, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
 
                 SpriteComponent(const std::uint32_t entityId);
                 SpriteComponent(const std::uint32_t entityId, const std::string &name);
@@ -59,21 +61,21 @@ namespace GUI
                 SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
                 SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation);
                 SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const sf::Color &normalColor, const sf::Color &hoverColor, const sf::Color &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Utilities::Colour &normalColor, const GUI::ECS::Utilities::Colour &hoverColor, const GUI::ECS::Utilities::Colour &clickedColor);
 
                 ~SpriteComponent();
 
                 void setName(const std::string &name);
                 void setCollision(const GUI::ECS::Components::CollisionComponent &copy);
 
-                void setNormalColor(const sf::Color &color);
-                void setHoverColor(const sf::Color &color);
-                void setClickedColor(const sf::Color &color);
+                void setNormalColor(const GUI::ECS::Utilities::Colour &color);
+                void setHoverColor(const GUI::ECS::Utilities::Colour &color);
+                void setClickedColor(const GUI::ECS::Utilities::Colour &color);
 
                 void setSpritesheet(const std::string &spritesheetPath);
                 void setSpritesheet(const GUI::ECS::Components::TextureComponent &spritesheetTexture);
@@ -92,14 +94,23 @@ namespace GUI
 
                 void checkTick();
 
-                std::string getName() const;
-                GUI::ECS::Components::TextureComponent getSpritesheet() const;
-                GUI::ECS::Components::CollisionComponent getCollision() const;
-                GUI::ECS::Components::AnimationComponent getAnimation() const;
+                const std::string getName() const;
+                const GUI::ECS::Components::TextureComponent getSpritesheet() const;
+                const GUI::ECS::Components::CollisionComponent getCollision() const;
+                const GUI::ECS::Components::AnimationComponent getAnimation() const;
 
-                sf::Color getNormalColor() const;
-                sf::Color getHoverColor() const;
-                sf::Color getClickedColor() const;
+                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Utilities::Colour getClickedColor() const;
+                /**
+                 *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 SpriteComponent &operator =(const GUI::ECS::Components::SpriteComponent &copy);
 
@@ -118,10 +129,18 @@ namespace GUI
                 GUI::ECS::Components::AnimationComponent _animation;
                 bool _spriteSet = false;
                 std::optional<sf::Sprite> _sfSprite;
-                sf::Color _hoverColor = sf::Color::White;
-                sf::Color _normalColor = sf::Color::Transparent;
-                sf::Color _clickedColor = sf::Color::Yellow;
+                GUI::ECS::Utilities::Colour _hoverColor = GUI::ECS::Utilities::Colour::White;
+                GUI::ECS::Utilities::Colour _normalColor = GUI::ECS::Utilities::Colour::Transparent;
+                GUI::ECS::Utilities::Colour _clickedColor = GUI::ECS::Utilities::Colour::Yellow;
             };
+
+            /**
+             * @brief Outputs the sprite's info to a stream.
+             * @param os The output stream.
+             * @param item The sprite to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const SpriteComponent &item);
         }
     }
 }

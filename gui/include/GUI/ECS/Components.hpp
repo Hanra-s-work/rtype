@@ -30,7 +30,7 @@ namespace GUI
             class AnimationComponent;
             class ButtonComponent;
             class CollisionComponent;
-            class MusicComponents;
+            class MusicComponent;
             class ShapeComponent;
             class SpriteComponent;
             class TextComponent;

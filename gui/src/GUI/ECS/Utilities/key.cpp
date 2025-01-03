@@ -442,3 +442,37 @@ const std::string GUI::ECS::Utilities::KeyMapper::stringKey(const GUI::ECS::Util
     }
     return "Unknown";
 }
+
+const std::string GUI::ECS::Utilities::KeyMapper::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "KeyMapper:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Sfml Key to Custom Key Mapping: {\n";
+    for (const auto &it : _sfmlKeyToCustom) {
+        result += indentation + "\t- " + stringKey(it.first) + " -> " + stringKey(it.second) + "\n";
+    }
+    result += indentation + "}\n";
+    result += indentation + "- Sfml Scan Code to Custom Key Mapping: {\n";
+    for (const auto &it : _sfmlScanCodeToCustom) {
+        result += indentation + "\t- " + stringKey(it.first) + " -> " + stringKey(it.second) + "\n";
+    }
+    result += indentation + "}\n";
+    result += indentation + "- Key code Equivalence: {\n";
+    for (const auto &it : _keyCodeEquivalence) {
+        result += indentation + "\t- " + stringKey(it.first) + " -> " + it.second + "\n";
+    }
+    result += indentation + "}\n";
+    return result;
+}
+
+std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::KeyMapper &item)
+{
+    os << item.getInfo();
+    return os;
+}
+

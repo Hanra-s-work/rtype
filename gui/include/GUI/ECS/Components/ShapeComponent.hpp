@@ -18,8 +18,10 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "ExceptionHandling.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/ECS/Utilities/Colour.hpp"
 #include "GUI/ECS/Utilities/MouseInfo.hpp"
 #include "GUI/ECS/Utilities/EventManager.hpp"
 #include "GUI/ECS/Components/CollisionComponent.hpp"
@@ -35,9 +37,9 @@ namespace GUI
                 ShapeComponent(const std::uint32_t entityId = 0);
                 ~ShapeComponent();
 
-                void setHoverColor(const sf::Color &hoverColor);
-                void setNormalColor(const sf::Color &normalColor);
-                void setClickedColor(const sf::Color &clickedColor);
+                void setHoverColor(const GUI::ECS::Utilities::Colour &hoverColor);
+                void setNormalColor(const GUI::ECS::Utilities::Colour &normalColor);
+                void setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor);
 
                 void setShape(sf::Shape &&shape);
                 void setShape(const sf::Shape &shape);
@@ -47,14 +49,23 @@ namespace GUI
                 void setDimension(const sf::Vector2f dimension);
                 void setCollision(const GUI::ECS::Components::CollisionComponent &collision);
 
-                sf::Color getHoverColor() const;
-                sf::Color getNormalColor() const;
-                sf::Color getClickedColor() const;
+                const GUI::ECS::Utilities::Colour getHoverColor() const;
+                const GUI::ECS::Utilities::Colour getNormalColor() const;
+                const GUI::ECS::Utilities::Colour getClickedColor() const;
 
-                sf::Vector2f getPosition() const;
-                sf::Vector2f getDimension() const;
+                const sf::Vector2f getPosition() const;
+                const sf::Vector2f getDimension() const;
                 const sf::Shape &getShape() const;
-                GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
+                const GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
+                /**
+                 *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 void update(const GUI::ECS::Utilities::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::ShapeComponent &copy);
@@ -69,11 +80,19 @@ namespace GUI
                 void _processColor();
 
                 std::unique_ptr<sf::Shape> _sfShape;
-                sf::Color _hoverColor;
-                sf::Color _normalColor;
-                sf::Color _clickedColor;
+                GUI::ECS::Utilities::Colour _hoverColor;
+                GUI::ECS::Utilities::Colour _normalColor;
+                GUI::ECS::Utilities::Colour _clickedColor;
                 GUI::ECS::Components::CollisionComponent _collision;
             };
+
+            /**
+             * @brief Outputs the shape's info to a stream.
+             * @param os The output stream.
+             * @param item The shape to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const ShapeComponent &item);
         }
     }
 }

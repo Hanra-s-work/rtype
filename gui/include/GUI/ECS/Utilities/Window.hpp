@@ -11,6 +11,8 @@
 #include <cstring>
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include "Debug.hpp"
+#include "MyRecodes.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components.hpp"
 
@@ -40,12 +42,25 @@ namespace GUI
                 std::optional<sf::Event> pollEvent();
                 void setFramerateLimit(const unsigned int framerateLimit);
                 void setFullScreen(const bool fullScreen);
-                bool getFullScreen() const;
 
+                /**
+                  *@brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
+
+                const bool getFullScreen() const;
+
+                void draw(const sf::Text &text);
+                void draw(const sf::Sprite &sprite);
                 void draw(const GUI::ECS::Components::TextComponent &text);
                 void draw(const GUI::ECS::Components::ShapeComponent &shape);
                 void draw(const GUI::ECS::Components::ButtonComponent &button);
-                void draw(const GUI::ECS::Components::SpriteComponent &texture);
+                void draw(const GUI::ECS::Components::SpriteComponent &sprite);
 
                 sf::RenderWindow &getWindow();
 
@@ -57,6 +72,14 @@ namespace GUI
                 std::uint32_t _windowHeight;
                 sf::VideoMode _desktopMode = sf::VideoMode::getDesktopMode();
             };
+
+            /**
+             * @brief Outputs the window's info to a stream.
+             * @param os The output stream.
+             * @param item The window to output.
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const Window &item);
         }
     }
 }

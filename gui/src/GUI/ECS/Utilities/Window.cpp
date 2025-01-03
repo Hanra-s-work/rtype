@@ -69,9 +69,26 @@ void GUI::ECS::Utilities::Window::setFullScreen(const bool fullScreen)
     }
 }
 
-bool GUI::ECS::Utilities::Window::getFullScreen() const
+const bool GUI::ECS::Utilities::Window::getFullScreen() const
 {
     return _fullScreen;
+}
+
+const std::string GUI::ECS::Utilities::Window::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Window:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Window Name: '" + _windowName + "'\n";
+    result += indentation + "- Window Width: " + MyRecodes::myToString(_windowWidth) + "\n";
+    result += indentation + "- Window Height: " + MyRecodes::myToString(_windowHeight) + "\n";
+    result += indentation + "- Full Screen: " + MyRecodes::myToString(_fullScreen) + "\n";
+    result += indentation + "- Desktop Mode: ( size: ( width: " + MyRecodes::myToString(_desktopMode.size.x) + ", height: " + MyRecodes::myToString(_desktopMode.size.y) + "), bits per pixel: " + MyRecodes::myToString(_desktopMode.bitsPerPixel) + ")\n";
+    return result;
 }
 
 
@@ -93,4 +110,20 @@ void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::ButtonCompone
 void GUI::ECS::Utilities::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
 {
     sprite.render(_sfWindow);
+}
+
+void GUI::ECS::Utilities::Window::draw(const sf::Text &text)
+{
+    _sfWindow.draw(text);
+}
+
+void GUI::ECS::Utilities::Window::draw(const sf::Sprite &sprite)
+{
+    _sfWindow.draw(sprite);
+}
+
+std::ostream &GUI::ECS::Utilities::operator<<(std::ostream &os, const GUI::ECS::Utilities::Window &item)
+{
+    os << item.getInfo();
+    return os;
 }

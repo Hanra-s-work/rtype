@@ -8,23 +8,23 @@
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityID)
-    : EntityNode(entityID), _sfShape(nullptr), _hoverColor(sf::Color::White), _normalColor(sf::Color::White), _clickedColor(sf::Color::White), _collision()
+    : EntityNode(entityID), _sfShape(nullptr), _hoverColor(GUI::ECS::Utilities::Colour::White), _normalColor(GUI::ECS::Utilities::Colour::White), _clickedColor(GUI::ECS::Utilities::Colour::White), _collision()
 {
 };
 
 GUI::ECS::Components::ShapeComponent::~ShapeComponent() {};
 
-void GUI::ECS::Components::ShapeComponent::setHoverColor(const sf::Color &hoverColor)
+void GUI::ECS::Components::ShapeComponent::setHoverColor(const GUI::ECS::Utilities::Colour &hoverColor)
 {
     _hoverColor = hoverColor;
 }
 
-void GUI::ECS::Components::ShapeComponent::setNormalColor(const sf::Color &normalColor)
+void GUI::ECS::Components::ShapeComponent::setNormalColor(const GUI::ECS::Utilities::Colour &normalColor)
 {
     _normalColor = normalColor;
 }
 
-void GUI::ECS::Components::ShapeComponent::setClickedColor(const sf::Color &clickedColor)
+void GUI::ECS::Components::ShapeComponent::setClickedColor(const GUI::ECS::Utilities::Colour &clickedColor)
 {
     _clickedColor = clickedColor;
 }
@@ -59,27 +59,27 @@ void GUI::ECS::Components::ShapeComponent::setCollision(const GUI::ECS::Componen
     _collision.update(collision);
 }
 
-sf::Color GUI::ECS::Components::ShapeComponent::getHoverColor() const
+const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getHoverColor() const
 {
     return _hoverColor;
 }
 
-sf::Color GUI::ECS::Components::ShapeComponent::getNormalColor() const
+const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getNormalColor() const
 {
     return _normalColor;
 }
 
-sf::Color GUI::ECS::Components::ShapeComponent::getClickedColor() const
+const GUI::ECS::Utilities::Colour GUI::ECS::Components::ShapeComponent::getClickedColor() const
 {
     return _clickedColor;
 }
 
-sf::Vector2f GUI::ECS::Components::ShapeComponent::getPosition() const
+const sf::Vector2f GUI::ECS::Components::ShapeComponent::getPosition() const
 {
     return _collision.getPosition();
 }
 
-sf::Vector2f GUI::ECS::Components::ShapeComponent::getDimension() const
+const sf::Vector2f GUI::ECS::Components::ShapeComponent::getDimension() const
 {
     return _collision.getDimension();
 }
@@ -92,10 +92,29 @@ const sf::Shape &GUI::ECS::Components::ShapeComponent::getShape() const
     return *_sfShape;
 }
 
-GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ShapeComponent::getCollisionComponent() const
+const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ShapeComponent::getCollisionComponent() const
 {
     return _collision;
 }
+
+
+const std::string GUI::ECS::Components::ShapeComponent::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Shape:\n";
+    result += indentation + "- Entity Id: " + MyRecodes::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + "}\n";
+    return result;
+}
+
+
 
 void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
 {
@@ -164,10 +183,16 @@ std::unique_ptr<sf::Shape> GUI::ECS::Components::ShapeComponent::cloneShape(cons
 void GUI::ECS::Components::ShapeComponent::_processColor()
 {
     if (_collision.isClicked()) {
-        _sfShape->setFillColor(_clickedColor);
+        _sfShape->setFillColor(_clickedColor.getColourSFML());
     } else if (_collision.isHovered()) {
-        _sfShape->setFillColor(_hoverColor);
+        _sfShape->setFillColor(_hoverColor.getColourSFML());
     } else {
-        _sfShape->setFillColor(_normalColor);
+        _sfShape->setFillColor(_normalColor.getColourSFML());
     }
+}
+
+std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::ShapeComponent &item)
+{
+    os << item.getInfo();
+    return os;
 }
