@@ -13,6 +13,7 @@
 #pragma once
 
 #include <any>
+#include <memory>
 #include <optional>
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -511,6 +512,13 @@ namespace GUI
                  * @param visible A boolean instance.
                  */
                 void setVisible(const bool visible);
+
+                /**
+                 * @brief Set the Position of the sprite
+                 *
+                 * @param pos
+                 */
+                void setPosition(const std::pair<int, int> &pos);
 
                 /**
                  * @brief Change the visibility of the sprite, if visible becomes invisible and vise versa

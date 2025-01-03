@@ -38,10 +38,10 @@ namespace GUI
                 TextureComponent(const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
                 TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
 
-                TextureComponent(const std::uint32_t entityId);
-                TextureComponent(const std::uint32_t entityId, const TextureComponent &other);
-                TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
-                TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                explicit TextureComponent(const std::uint32_t entityId);
+                explicit TextureComponent(const std::uint32_t entityId, const TextureComponent &other);
+                explicit TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                explicit TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
 
                 ~TextureComponent();
 
@@ -71,7 +71,7 @@ namespace GUI
 
                 private:
                 bool _visible = true;
-                sf::Texture _texture;
+                std::optional<sf::Texture> _texture;
                 GUI::ECS::Components::CollisionComponent _collisionInfo;
             };
 

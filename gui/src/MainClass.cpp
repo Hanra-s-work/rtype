@@ -405,10 +405,14 @@ std::uint32_t Main::_initialiseSprites()
 
 
         PRETTY_INFO << "Processing Animation component" << std::endl;
-        GUI::ECS::Components::AnimationComponent animationNode(path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
+        GUI::ECS::Components::AnimationComponent animationNode(_baseId, path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
+        std::shared_ptr<GUI::ECS::Components::AnimationComponent> animationPointer = std::make_shared<GUI::ECS::Components::AnimationComponent>(animationNode);
+        _ecsEntities[typeid(GUI::ECS::Components::AnimationComponent)].push_back(animationPointer);
+        _baseId++;
         PRETTY_SUCCESS << "Animation component processed" << std::endl;
         PRETTY_INFO << "Adding animation node to sprite '" << name << "'" << std::endl;
-        GUI::ECS::Components::SpriteComponent spriteEntity(_baseId, name, animationNode);
+        GUI::ECS::Components::SpriteComponent spriteEntity(_baseId, name);
+        spriteEntity.setAnimation(animationNode);
         PRETTY_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
         PRETTY_INFO << "Creating a shared pointer of the sprite" << std::endl;
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(spriteEntity);
@@ -867,16 +871,30 @@ void Main::_mainLoop()
     GUI::ECS::Systems::Font &font_body = *font_body_ptr.value();
     GUI::ECS::Systems::Font &font_default = *font_default_ptr.value();
 
+    std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
+
     // Create a test text
 
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Systems::Colour::YellowGreen, GUI::ECS::Systems::Colour::Cyan, GUI::ECS::Systems::Colour::Yellow, { 20, 50 });
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Systems::Colour::Pink, GUI::ECS::Systems::Colour::Cyan, GUI::ECS::Systems::Colour::Yellow, { 20, 50 });
     _baseId++;
+
+    // Create a test button
+
     GUI::ECS::Components::ShapeComponent rectangle(_baseId, { {200, 80}, {80,50} });
     _baseId++;
     GUI::ECS::Components::ButtonComponent button(_baseId, rectangle, text, helloWorld);
     button.setPosition({ 200,200 });
     button.setTextSize(20);
     _baseId++;
+
+    // Create an image 
+    GUI::ECS::Components::CollisionComponent col(0, 0, 0, 0, 0);
+    GUI::ECS::Components::TextureComponent MyTexture(_baseId, std::string("./assets/img/r-typesheet3.gif"), col);
+    GUI::ECS::Components::ImageComponent Image(_baseId, MyTexture, "testName", "application name");
+
+    PRETTY_INFO << "Updating loading text to 'All the ressources have been loaded'." << std::endl;
+    _updateLoadingText("All the ressources have been loaded.");
+    PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     while (window.isOpen()) {
         event.processEvents(window);
@@ -889,6 +907,26 @@ void Main::_mainLoop()
         PRETTY_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
         window.draw(button);
+        window.draw(Image);
+        // int index = 0;
+        // for (std::any spriteItem : sprites) {
+        //     PRETTY_INFO << "Displaying sprite " << index << std::endl;
+        //     std::optional<std::shared_ptr<GUI::ECS::Components::SpriteComponent>> spriteCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(spriteItem, false);
+        //     if (!spriteCapsule.has_value()) {
+        //         PRETTY_WARNING << "No sprite entity" << std::endl;
+        //     } else {
+        //         PRETTY_SUCCESS << "Sprite entity found" << std::endl;
+        //         std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = spriteCapsule.value();
+        //         PRETTY_INFO << "Sprite component decapsulated" << std::endl;
+        //         sprite->checkTick();
+        //         PRETTY_INFO << "Ticked the sprite animation" << std::endl;
+        //         sprite->setPosition({ index, index });
+        //         PRETTY_INFO << "Moved the sprite to position " << Recoded::myToString<int>({ index, index }) << std::endl;
+        //         // window.draw(*sprite);
+        //         PRETTY_SUCCESS << "Sprite added to the render" << std::endl;
+        //         index++;
+        //     }
+        // }
         window.display();
         window.clear();
     }

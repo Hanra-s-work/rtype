@@ -68,11 +68,12 @@ void GUI::ECS::Components::TextureComponent::setVisible(const bool visible)
 
 void GUI::ECS::Components::TextureComponent::setFilePath(const std::string &filePath)
 {
-    bool loadStatus = _texture.loadFromFile(filePath);
+    bool loadStatus = _texture.emplace().loadFromFile(filePath);
     if (!loadStatus) {
+        PRETTY_CRITICAL << "Texture material not found in filepath: '" << filePath << "'." << std::endl;
         throw CustomExceptions::FileNotFound(filePath);
     }
-    sf::Vector2u node = _texture.getSize();
+    sf::Vector2u node = _texture.value().getSize();
     _collisionInfo.setDimension({ node.x, node.y });
 }
 
@@ -83,21 +84,20 @@ void GUI::ECS::Components::TextureComponent::setTexture(const std::any &texture)
         PRETTY_WARNING << "There is no texture to be processed" << std::endl;
         return;
     }
-    try {
-        PRETTY_INFO << "Casting texture back to it's initial form" << std::endl;
-        sf::Texture text = std::any_cast<sf::Texture>(texture);
-        PRETTY_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
-        _texture = text;
-        PRETTY_INFO << "Getting the texture size" << std::endl;
-        sf::Vector2u node = _texture.getSize();
-        PRETTY_INFO << "Setting the collision info with the new texture size" << std::endl;
-        _collisionInfo.setDimension({ node.x, node.y });
-        PRETTY_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
+    std::optional<sf::Texture> textCapsule = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(texture, true, "<There is no sf::Texture to be extracted from the std::any cast.>, system error: ");
+    if (!textCapsule.has_value()) {
+        PRETTY_ERROR << "There is no sf::Texture to be processed" << std::endl;
+        throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>");
     }
-    catch (std::bad_any_cast &e) {
-        PRETTY_CRITICAL << "The cast failed to retrieve the sf::texture, system error: " << std::string(e.what()) << std::endl;
-        throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>, system error: " + std::string(e.what()));
-    }
+    PRETTY_INFO << "Casting texture back to it's initial form" << std::endl;
+    sf::Texture text = textCapsule.value();
+    PRETTY_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
+    _texture.emplace(text);
+    PRETTY_INFO << "Getting the texture size" << std::endl;
+    sf::Vector2u node = _texture.value().getSize();
+    PRETTY_INFO << "Setting the collision info with the new texture size" << std::endl;
+    _collisionInfo.setDimension({ node.x, node.y });
+    PRETTY_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
 }
 
 void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo)
@@ -133,7 +133,11 @@ void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy
 const std::any GUI::ECS::Components::TextureComponent::getTexture() const
 {
     PRETTY_INFO << "Creating an any pointer from the sf::Texture" << std::endl;
-    return std::any(sf::Texture(_texture));
+    if (!_texture.has_value()) {
+        PRETTY_CRITICAL << "The texture is not set, texture collisions '" << _collisionInfo << "'" << std::endl;
+        throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::optional>");
+    }
+    return std::any(_texture.value());
 }
 
 const bool GUI::ECS::Components::TextureComponent::getVisible() const

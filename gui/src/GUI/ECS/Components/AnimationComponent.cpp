@@ -325,7 +325,7 @@ const std::pair<int, int> GUI::ECS::Components::AnimationComponent::getFrameDime
 
 const Recoded::IntRect GUI::ECS::Components::AnimationComponent::getCurrentRectangle() const
 {
-    return getCurrentRectangle();
+    return getCurrentFrame();
 }
 
 const std::vector<Recoded::IntRect> GUI::ECS::Components::AnimationComponent::getFrames() const

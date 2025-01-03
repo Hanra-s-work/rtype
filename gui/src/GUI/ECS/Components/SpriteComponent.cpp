@@ -383,22 +383,27 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
     PRETTY_INFO << "Updating the _animation node with the child version." << std::endl;
     _animation.update(animation);
     PRETTY_SUCCESS << "Animation updated" << std::endl;
-    PRETTY_INFO << "Updating the collision node with the child version." << std::endl;
+    PRETTY_INFO << "Updating the collision node with the child version. '" << _spriteName << "'" << std::endl;
     _collision.setDimension(animation.getFrameDimensions());
-    PRETTY_SUCCESS << "Collision updated" << std::endl;
+    PRETTY_SUCCESS << "Collision updated for sprite '" << _spriteName << "'" << std::endl;    
     _animationSet = true;
     _collisionSet = true;
     if (!_sfSprite.has_value()) {
-        PRETTY_WARNING << "Sprite entity has no value" << std::endl;
+        PRETTY_WARNING << "Sprite entity has no value, sprite name '" << _spriteName << "'" << std::endl;
         return;
     }
-    PRETTY_DEBUG << "Getting the texture" << std::endl;
-    std::any textureCapsule = _animation.getBaseTexture().getTexture();
+    PRETTY_DEBUG << "Getting the texture for '" << _spriteName << "'" << std::endl;
+    PRETTY_INFO << "Applying sf::texture to the texture component" << std::endl;
+    _spritesheet = _animation.getBaseTexture();
+    PRETTY_SUCCESS << "Texture applied" << std::endl;
+    _spriteSet = true;
+    PRETTY_SUCCESS << "The texture has been applied to the sprite." << std::endl;
+    std::any textureCapsule = _spritesheet.getTexture();
     if (!textureCapsule.has_value()) {
         PRETTY_WARNING << "Texture capsule is empty" << std::endl;
         return;
     }
-    std::optional<sf::Texture> texture = Utilities::unCast<sf::Texture>(textureCapsule, false, "The texture casting failed with the following system error: ");
+    std::optional<sf::Texture> texture = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(textureCapsule, false, "The texture casting failed with the following system error: ");
     if (!texture.has_value()) {
         PRETTY_WARNING << "Texture is empty" << std::endl;
         return;
@@ -406,15 +411,19 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
     PRETTY_SUCCESS << "Texture extracted" << std::endl;
     PRETTY_INFO << "Applying texture to sprite" << std::endl;
     _sfSprite->setTexture(texture.value());
-    _spriteSet = true;
-    PRETTY_SUCCESS << "The texture has been applied to the sprite." << std::endl;
-
-
+    PRETTY_SUCCESS << "Texture applied" << std::endl;
 }
 
 void GUI::ECS::Components::SpriteComponent::setVisible(const bool visible)
 {
     _visible = visible;
+}
+
+void GUI::ECS::Components::SpriteComponent::setPosition(const std::pair<int, int> &pos)
+{
+    _collision.setPosition(pos);
+    _processCollision();
+
 }
 
 void GUI::ECS::Components::SpriteComponent::toggleVisibility()
@@ -535,18 +544,28 @@ const bool GUI::ECS::Components::SpriteComponent::hasLooped() const
 
 void GUI::ECS::Components::SpriteComponent::checkTick()
 {
+    PRETTY_DEBUG << "Checking sprite tick" << std::endl;
     _spriteSet = false;
     if (!_animationSet) {
+        PRETTY_ERROR << "There are no animations set, skipping tick" << std::endl;
         return;
     }
+    PRETTY_INFO << "Running animation.checkTick()" << std::endl;
     _animation.checkTick();
+    PRETTY_INFO << "Animation checkTick ran, checking if frames need to be updated." << std::endl;
     if (!_animation.hasTicked()) {
+        PRETTY_WARNING << "No tick has occurred yet, nothing to do, exiting function" << std::endl;
         return;
     }
+    PRETTY_DEBUG << "Animation has ticked, Getting the updated rectangle." << std::endl;
     Recoded::IntRect RectComponent = _animation.getCurrentRectangle();
+    PRETTY_DEBUG << "Got the updated rectangle, updating sprite." << std::endl;
     if (!_sfSprite.has_value()) {
+        PRETTY_WARNING << "There is no sprite value, initialising sprite." << std::endl;
         _initialiseSprite();
+        PRETTY_SUCCESS << "Sprite initialised." << std::endl;
     }
+    PRETTY_DEBUG << "Converting internal rectangle to sf::IntRect." << std::endl;
     sf::IntRect transporter = {
         {
             RectComponent.position.first,
@@ -557,7 +576,9 @@ void GUI::ECS::Components::SpriteComponent::checkTick()
             RectComponent.size.second
         }
     };
+    PRETTY_DEBUG << "sf::IntRect initialised." << std::endl;
     _sfSprite->setTextureRect(transporter);
+    PRETTY_DEBUG << "Texture rect set." << std::endl;
     _spriteSet = true;
 }
 

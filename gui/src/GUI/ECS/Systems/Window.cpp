@@ -197,15 +197,15 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ImageComponent 
     if (!imageCapsule.has_value()) {
         throw CustomExceptions::NoRenderableImage("<sf::Sprite not found in std::any>");
     }
-    try {
-        sf::Sprite sprite = std::any_cast<sf::Sprite>(imageCapsule);
-        _sfWindow.draw(sprite);
+    std::optional<sf::Sprite> spriteCapsule = Utilities::unCast<sf::Sprite, CustomExceptions::NoRenderableImage>(imageCapsule, true, "<Unknown Image, this is not an sf::Sprite>, any_cast error");
+    if (!spriteCapsule.has_value()) {
+        throw CustomExceptions::NoRenderableImage("<Unknown Image, this is not an sf::Sprite>, any_cast error");
     }
-    catch (std::bad_any_cast &e) {
-        std::string response = "<Unknown Image, this is not an sf::Sprite>, any_cast error";
-        response += e.what();
-        throw CustomExceptions::NoRenderableImage(response);
-    }
+    PRETTY_DEBUG << "Uncasting sprite" << std::endl;
+    sf::Sprite sprite = spriteCapsule.value();
+    PRETTY_DEBUG << "Sprite Un-casted" << std::endl;
+    _sfWindow.draw(sprite);
+    PRETTY_DEBUG << "Sprite drawn" << std::endl;
 }
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
@@ -213,19 +213,19 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::SpriteComponent
     if (!sprite.isVisible()) {
         return;
     }
-    std::any spriteCapsule = sprite.render();
+    std::any spriteNode = sprite.render();
+    if (!spriteNode.has_value()) {
+        throw CustomExceptions::NoRenderableImage("<sf::Sprite not found in std::any>");
+    }
+    std::optional<sf::Sprite> spriteCapsule = Utilities::unCast<sf::Sprite, CustomExceptions::NoRenderableImage>(spriteNode, true, "<Unknown Image, this is not an sf::Sprite>, any_cast error");
     if (!spriteCapsule.has_value()) {
-        throw CustomExceptions::NoRenderableSprite("<sf::Sprite not found in std::any>");
+        throw CustomExceptions::NoRenderableImage("<Unknown Sprite, this is not an sf::Sprite>, any_cast error");
     }
-    try {
-        sf::Sprite spr = std::any_cast<sf::Sprite>(spriteCapsule);
-        _sfWindow.draw(spr);
-    }
-    catch (std::bad_any_cast &e) {
-        std::string response = "<Unknown Sprite, this is not an sf::Sprite>, any_cast error";
-        response += e.what();
-        throw CustomExceptions::NoRenderableSprite(response);
-    }
+    PRETTY_DEBUG << "Uncasting sprite" << std::endl;
+    sf::Sprite spr = spriteCapsule.value();
+    PRETTY_DEBUG << "Sprite Un-casted" << std::endl;
+    _sfWindow.draw(spr);
+    PRETTY_DEBUG << "Sprite drawn" << std::endl;
 }
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
