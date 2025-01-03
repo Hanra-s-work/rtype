@@ -606,20 +606,20 @@ jobs:
       #     make_latest: true
       #     token: ${{ secrets.GITHUB_TOKEN }}
 
-  clean_created_cache:
-    name: Clear the cache generated during the build time
-    permissions: write-all
-    runs-on: ubuntu-latest*
-    if: github.ref == 'refs/heads/main'
-    needs: [publish_html ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Delete Created cache
-        env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
-        run: |
-          gh cache list
-          gh cache delete --all
+  # clean_created_cache:
+  #   name: Clear the cache generated during the build time
+  #   permissions: write-all
+  #   runs-on: ubuntu-latest*
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: [publish_html ]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Delete Created cache
+  #       env:
+  #         GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         gh cache list
+  #         gh cache delete --all
