@@ -5,6 +5,11 @@
 ** Found.hpp
 */
 
+/**
+ * @file Found.hpp
+ *
+ * @brief File in charge of storing the exceptions (that are not errors) informing the program of found content.
+ */
 
 #pragma once
 #include <string>

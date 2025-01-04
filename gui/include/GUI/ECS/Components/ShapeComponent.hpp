@@ -235,26 +235,26 @@ namespace GUI
                 void setShape(const std::pair<ActiveShape, std::any> &shape);
 
                 /**
-                 *@brief Set the visible toggle informing the program if it should (or not) render the component.
+                 * @brief Set the visible toggle informing the program if it should (or not) render the component.
                  *
                  * @param visible
                  */
                 void setVisible(const bool visible);
 
                 /**
-                 *@brief Set the position of the component
+                 * @brief Set the position of the component
                  *
                  * @param position an std::pair<float, float> representing the position of the component
                  */
                 void setPosition(const std::pair<float, float> position);
                 /**
-                 *@brief Set the Dimension object
+                 * @brief Set the Dimension object
                  *
                  * @param dimension an std::pair<float, float> representing the dimensions of the component
                  */
                 void setDimension(const std::pair<float, float> dimension);
                 /**
-                 *@brief Set the internal collision class using another Collision component
+                 * @brief Set the internal collision class using another Collision component
                  *
                  * @param collision The collision component to query the data from.
                  */
@@ -266,14 +266,14 @@ namespace GUI
                 void toggleVisibility();
 
                 /**
-                 *@brief Get the visibility status of the component.
+                 * @brief Get the visibility status of the component.
                  *
                  * @return true the component is visible
                  * @return false the component is hidden
                  */
                 const bool isVisible() const;
                 /**
-                 *@brief Know if there is a shape initialised or not
+                 * @brief Know if there is a shape initialised or not
                  *
                  * @return true the shape is initialised
                  * @return false the shape is not initialised
@@ -281,57 +281,57 @@ namespace GUI
                 const bool isShapeInitialised() const;
 
                 /**
-                 *@brief Get the Shape Type shape, none is returned if none are initialised.
+                 * @brief Get the Shape Type shape, none is returned if none are initialised.
                  *
                  * @return const ActiveShape
                  */
                 const ActiveShape getShapeType() const;
                 /**
-                 *@brief Get the Active Shape and it's type all contained in an std::pair
+                 * @brief Get the Active Shape and it's type all contained in an std::pair
                  *
                  * @return const std::pair<ActiveShape, std::any>
                  */
                 const std::pair<ActiveShape, std::any> getActiveShape() const;
 
                 /**
-                 *@brief Get the Hover Color of the shape
+                 * @brief Get the Hover Color of the shape
                  *
                  * @return const GUI::ECS::Systems::Colour
                  */
                 const GUI::ECS::Systems::Colour getHoverColor() const;
                 /**
-                 *@brief Get the Normal Color of the shape
+                 * @brief Get the Normal Color of the shape
                  *
                  * @return const GUI::ECS::Systems::Colour
                  */
                 const GUI::ECS::Systems::Colour getNormalColor() const;
                 /**
-                 *@brief Get the Clicked Color shape
+                 * @brief Get the Clicked Color shape
                  *
                  * @return const GUI::ECS::Systems::Colour
                  */
                 const GUI::ECS::Systems::Colour getClickedColor() const;
 
                 /**
-                 *@brief Get the Position of the shape
+                 * @brief Get the Position of the shape
                  *
                  * @return const std::pair<float, float>
                  */
                 const std::pair<float, float> getPosition() const;
                 /**
-                 *@brief Get the Dimension of the shape
+                 * @brief Get the Dimension of the shape
                  *
                  * @return const std::pair<float, float>
                  */
                 const std::pair<float, float> getDimension() const;
                 /**
-                 *@brief Get the Shape and it's type all packaged in an std::pair
+                 * @brief Get the Shape and it's type all packaged in an std::pair
                  *
                  * @return const std::pair<ActiveShape, std::any>
                  */
                 const std::pair<ActiveShape, std::any> getShape() const;
                 /**
-                 *@brief Get the Collision Component of the object
+                 * @brief Get the Collision Component of the object
                  *
                  * @return const CollisionComponent
                  *
@@ -350,7 +350,7 @@ namespace GUI
                 const std::string getInfo(const unsigned int indent = 0) const;
 
                 /**
-                 *@brief Get the info about if the shape is visible or not
+                 * @brief Get the info about if the shape is visible or not
                  *
                  * @return true the object is visible
                  * @return false the object is hidden
@@ -360,26 +360,26 @@ namespace GUI
                 const bool getVisible() const;
 
                 /**
-                 *@brief Update the mouse information of the component (this is used for mouse collision calculations)
+                 * @brief Update the mouse information of the component (this is used for mouse collision calculations)
                  *
                  * @param mouse
                  */
                 void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 /**
-                 *@brief Update the ShapeComponent using another shape component.
+                 * @brief Update the ShapeComponent using another shape component.
                  *
                  * @param copy
                  */
                 void update(const ShapeComponent &copy);
 
                 /**
-                 *@brief Remove all and any initialised shapes in the class, this will reset the type to NONE.
+                 * @brief Remove all and any initialised shapes in the class, this will reset the type to NONE.
                  *
                  */
                 void clearShapes();
 
                 /**
-                 *@brief Get an optional std::pair of the object so that it can be displayed on screen
+                 * @brief Get an optional std::pair of the object so that it can be displayed on screen
                  *
                  * @return std::optional<std::pair<ActiveShape, std::any>>
                  *
@@ -388,7 +388,7 @@ namespace GUI
                 std::optional<std::pair<ActiveShape, std::any>> render() const;
 
                 /**
-                 *@brief '=' operator in charge of allowing the user to seamlessly assing the content of one ShapeComponent to another.
+                 * @brief '=' operator in charge of allowing the user to seamlessly assing the content of one ShapeComponent to another.
                  *
                  * @param copy
                  *
@@ -398,18 +398,18 @@ namespace GUI
 
                 private:
                 /**
-                 *@brief Function in charge of updating the shape's colour based on the mouse information.
+                 * @brief Function in charge of updating the shape's colour based on the mouse information.
                  *
                  */
                 void _processColor();
                 /**
-                 *@brief Function in charge of updating the collision information based on the initialised object.
+                 * @brief Function in charge of updating the collision information based on the initialised object.
                  *
                  */
                 void _processCollisions();
 
                 /**
-                 *@brief A template in charge of assigning a provided shape to the correct std::optional shape container.
+                 * @brief A template in charge of assigning a provided shape to the correct std::optional shape container.
                  *
                  * @tparam T The template representing the shape type
                  *

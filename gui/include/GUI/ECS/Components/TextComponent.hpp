@@ -232,7 +232,7 @@ namespace GUI
                 void toggleVisibility();
 
                 /**
-                 *@brief Check if the text is set to be rendered or not.
+                 * @brief Check if the text is set to be rendered or not.
                  *
                  * @return true The text is set to be rendered
                  * @return false The text is not set to be rendered

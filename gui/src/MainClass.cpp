@@ -109,13 +109,13 @@ Main::Main(
 }
 
 /**
- *@brief Destroy the Main:: Main object
+ * @brief Destroy the Main:: Main object
  *
  */
 Main::~Main() {}
 
 /**
- *@brief Function in charge of converting a string of characters
+ * @brief Function in charge of converting a string of characters
  * to their lowercase version.
  *
  * @param text The string to process
@@ -183,7 +183,7 @@ const bool Main::_isPortCorrect(const unsigned int port) const
 }
 
 /**
- *@brief Check if the provided file path is present and can be opened.
+ * @brief Check if the provided file path is present and can be opened.
  *
  * @param filepath
  * @return true The path is present
@@ -195,7 +195,7 @@ const bool Main::_isFilePresent(const std::string &filepath) const
 }
 
 /**
- *@brief The function in charge of checking if the provided frame limit is correct.
+ * @brief The function in charge of checking if the provided frame limit is correct.
  *
  * @param frameLimit
  * @return true
@@ -210,7 +210,7 @@ const bool Main::_isFrameLimitCorrect(const unsigned int frameLimit) const
 }
 
 /**
- *@brief Check if a font configuration is correct.
+ * @brief Check if a font configuration is correct.
  *
  * @param node
  * @return true
@@ -229,7 +229,7 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
 }
 
 /**
- *@brief Check if a music configuration is correct.
+ * @brief Check if a music configuration is correct.
  *
  * @param node
  * @return true
@@ -249,7 +249,7 @@ const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
 }
 
 /**
- *@brief Check if a sprite configuration is correct.
+ * @brief Check if a sprite configuration is correct.
  *
  * @param node
  * @return true
@@ -272,7 +272,7 @@ const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
 
 
 /**
- *@brief This is a generic function that will check if a given key is present and that the type of the value is correct.
+ * @brief This is a generic function that will check if a given key is present and that the type of the value is correct.
  *
  * @param node
  * @param key
@@ -292,7 +292,7 @@ const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std
 }
 
 /**
- *@brief The function in charge of initialising the connection to the server.
+ * @brief The function in charge of initialising the connection to the server.
  *
  * @return int
  */
@@ -306,7 +306,7 @@ void Main::_initialiseConnection()
 }
 
 /**
- *@brief Close the connection with the server.
+ * @brief Close the connection with the server.
  *
  */
 void Main::_closeConnection()
@@ -316,7 +316,7 @@ void Main::_closeConnection()
 
 
 /**
- *@brief This is the function in charge of loading the Sprites and Spritesheets into the program.
+ * @brief This is the function in charge of loading the Sprites and Spritesheets into the program.
  *
  */
 std::uint32_t Main::_initialiseSprites()
@@ -434,7 +434,7 @@ std::uint32_t Main::_initialiseSprites()
 }
 
 /**
- *@brief This is the function in charge of loading the ²s into the program.
+ * @brief This is the function in charge of loading the ²s into the program.
  *
  */
 std::uint32_t Main::_initialiseAudio()
@@ -533,7 +533,7 @@ std::uint32_t Main::_initialiseAudio()
 }
 
 /**
- *@brief This is the function in charge of loading the fonts into the program.
+ * @brief This is the function in charge of loading the fonts into the program.
  *
  */
 std::uint32_t Main::_initialiseFonts()
@@ -641,7 +641,7 @@ std::uint32_t Main::_initialiseFonts()
 }
 
 /**
- *@brief This is the function in charge of initialise the default ressources for the class.
+ * @brief This is the function in charge of initialise the default ressources for the class.
  *
  */
 void Main::_initialiseRessources()
@@ -833,7 +833,16 @@ void helloWorld()
 }
 
 /**
- *@brief This is the function in charge of running the program's graphic logic.
+ * @brief Function in charge of displaying the main menu to the user before launching them into the game.
+ *
+ */
+void Main::_mainMenu()
+{
+
+};
+
+/**
+ * @brief This is the function in charge of running the program's graphic logic.
  *
  * @return int The status of the overall execution of that section of the program.
  */
@@ -933,7 +942,7 @@ void Main::_mainLoop()
 }
 
 /**
- *@brief This is the function used to start the program's main section.
+ * @brief This is the function used to start the program's main section.
  *
  * @return int The status of the execution of that section of the program.
  */
@@ -964,7 +973,7 @@ void Main::setIp(const std::string &ip)
 }
 
 /**
- *@brief Set the port on which the GUI is going to connect to.
+ * @brief Set the port on which the GUI is going to connect to.
  *
  * @param port
  * @throws CustomExceptions::InvalidPort(port) This error is thrown
@@ -980,7 +989,7 @@ void Main::setPort(const unsigned int port)
 }
 
 /**
- *@brief Set the width of the window.
+ * @brief Set the width of the window.
  *
  * @param width
  */
@@ -990,7 +999,7 @@ void Main::setWindowWidth(unsigned int width)
 }
 
 /**
- *@brief Set the height of the window.
+ * @brief Set the height of the window.
  *
  * @param height
  */
@@ -1000,7 +1009,7 @@ void Main::setWindowHeight(unsigned int height)
 }
 
 /**
- *@brief Set if the cursor is visible when in the window.
+ * @brief Set if the cursor is visible when in the window.
  *
  * @param cursorVisible
  */
@@ -1010,7 +1019,7 @@ void Main::setWindowCursor(bool cursorVisible)
 }
 
 /**
- *@brief Start the window in full screen mode.
+ * @brief Start the window in full screen mode.
  *
  * @param fullscreen
  */
@@ -1020,7 +1029,7 @@ void Main::setWindowFullscreen(bool fullscreen)
 }
 
 /**
- *@brief Set the title of the window.
+ * @brief Set the title of the window.
  *
  * @param title
  */
@@ -1030,7 +1039,7 @@ void Main::setWindowTitle(const std::string &title)
 }
 
 /**
- *@brief Set the position of the window.
+ * @brief Set the position of the window.
  *
  * @param x The x position of the window.
  * @param y The y position of the window.
@@ -1042,7 +1051,7 @@ void Main::setWindowPosition(unsigned int x, unsigned int y)
 }
 
 /**
- *@brief Set the icon of the cursor
+ * @brief Set the icon of the cursor
  * (if the user wishes to change the default icon)
  *
  * @param cursorImage
@@ -1061,7 +1070,7 @@ void Main::setWindowCursorIcon(const std::string cursorImage)
 }
 
 /**
- *@brief Set if the image passed is of type sprite or not.
+ * @brief Set if the image passed is of type sprite or not.
  *
  * @param imageIsSprite
  */
@@ -1071,7 +1080,7 @@ void Main::setWindowCursorSprite(bool imageIsSprite)
 }
 
 /**
- *@brief Set the height for the sprite's overlay texture,
+ * @brief Set the height for the sprite's overlay texture,
  * which is used to draw the sprite's texture during animation.
  *
  * @param spriteWidth
@@ -1082,7 +1091,7 @@ void Main::setWindowCursorSpriteWidth(unsigned int spriteWidth)
 }
 
 /**
- *@brief Inform if the animation should start from the top.
+ * @brief Inform if the animation should start from the top.
  *
  * @param spriteStartTop
  */
@@ -1092,7 +1101,7 @@ void Main::setWindowCursorSpriteReadFromTop(bool spriteStartTop)
 }
 
 /**
- *@brief Inform if the animation should start from the left.
+ * @brief Inform if the animation should start from the left.
  *
  * @param spriteStartLeft
  */
@@ -1102,7 +1111,7 @@ void Main::setWindowCursorSpriteReadFromLeft(bool spriteStartLeft)
 }
 
 /**
- *@brief Set the height for the sprite's overlay texture,
+ * @brief Set the height for the sprite's overlay texture,
  * which is used to draw the sprite's texture during animation.
  *
  * @param spriteHeight
@@ -1113,7 +1122,7 @@ void Main::setWindowCursorSpriteHeight(unsigned int spriteHeight)
 }
 
 /**
- *@brief The window width and height that will be created.
+ * @brief The window width and height that will be created.
  *
  * @param width
  * @param height
@@ -1125,7 +1134,7 @@ void Main::setWindowSize(unsigned int width, unsigned int height)
 }
 
 /**
- *@brief The function in charge of setting the frame Limit
+ * @brief The function in charge of setting the frame Limit
  *
  * @param frameLimit
  */
@@ -1138,7 +1147,7 @@ void Main::setFrameLimit(unsigned int frameLimit)
 }
 
 /**
- *@brief This is the function in charge of seting the config filepath.
+ * @brief This is the function in charge of seting the config filepath.
  *
  * @param configFile
  */
@@ -1149,7 +1158,7 @@ void Main::setConfigFile(const std::string &configFile)
 }
 
 /**
- *@brief Toggle the logging mode for the program.
+ * @brief Toggle the logging mode for the program.
  *
  * @param log
  */
@@ -1160,7 +1169,7 @@ void Main::setLog(const bool log)
 }
 
 /**
- *@brief Toggle the debug mode for the program.
+ * @brief Toggle the debug mode for the program.
  *
  * @param debug
  */
@@ -1171,7 +1180,7 @@ void Main::setDebug(const bool debug)
 }
 
 /**
- *@brief Get the value of the ip that was set.
+ * @brief Get the value of the ip that was set.
  *
  * @return const std::string
  */
@@ -1181,7 +1190,7 @@ const std::string Main::getIp()
 }
 
 /**
- *@brief Get the value of the port.
+ * @brief Get the value of the port.
  *
  * @return const unsigned int
  */
@@ -1191,7 +1200,7 @@ const unsigned int Main::getPort()
 }
 
 /**
- *@brief Get the value of the window width.
+ * @brief Get the value of the window width.
  *
  * @return unsigned int
  */
@@ -1201,7 +1210,7 @@ unsigned int  Main::getWindowWidth()
 }
 
 /**
- *@brief Get the value of the window height.
+ * @brief Get the value of the window height.
  *
  * @return unsigned int
  */
@@ -1211,7 +1220,7 @@ unsigned int Main::getWindowHeight()
 }
 
 /**
- *@brief Get the status of the window cursor.
+ * @brief Get the status of the window cursor.
  *
  * @return true
  * @return false
@@ -1222,7 +1231,7 @@ bool Main::getWindowCursor()
 }
 
 /**
- *@brief Get the status of the window (if it is in fullscreen)
+ * @brief Get the status of the window (if it is in fullscreen)
  *
  * @return true
  * @return false
@@ -1233,7 +1242,7 @@ bool Main::getWindowFullscreen()
 }
 
 /**
- *@brief Get the title of the window.
+ * @brief Get the title of the window.
  *
  * @return const std::string&
  */
@@ -1255,7 +1264,7 @@ const std::string &Main::getWindowCursorIcon()
 }
 
 /**
- *@brief Get the status if the cursor is of type image or spritesheet
+ * @brief Get the status if the cursor is of type image or spritesheet
  *
  * @return true
  * @return false
@@ -1266,7 +1275,7 @@ bool Main::getWindowCursorSprite()
 }
 
 /**
- *@brief Get if the program is supposed to read from the top or not.
+ * @brief Get if the program is supposed to read from the top or not.
  *
  * @return true
  * @return false
@@ -1277,7 +1286,7 @@ bool Main::getWindowCursorSpriteReadFromTop()
 }
 
 /**
- *@brief Get if the program is supposed to read from the left or the rigth.
+ * @brief Get if the program is supposed to read from the left or the rigth.
  *
  * @return true
  * @return false
@@ -1288,7 +1297,7 @@ bool Main::getWindowCursorSpriteReadFromLeft()
 }
 
 /**
- *@brief Get the width of the sprite texture.
+ * @brief Get the width of the sprite texture.
  *
  * @return unsigned int
  */
@@ -1298,7 +1307,7 @@ unsigned int Main::getWindowCursorSpriteWidth()
 }
 
 /**
- *@brief Get the height of the sprite texture.
+ * @brief Get the height of the sprite texture.
  *
  * @return unsigned int
  */
@@ -1308,7 +1317,7 @@ unsigned int Main::getWindowCursorSpriteHeight()
 }
 
 /**
- *@brief The function in charge of returning the status of the logging variable.
+ * @brief The function in charge of returning the status of the logging variable.
  *
  * @return true
  * @return false
@@ -1319,7 +1328,7 @@ const bool Main::getLog() const
 }
 
 /**
- *@brief The function in charge of returning the status of the debug variable.
+ * @brief The function in charge of returning the status of the debug variable.
  *
  * @return true
  * @return false
@@ -1331,7 +1340,7 @@ const bool Main::getDebug() const
 
 
 /**
- *@brief Function in charge of returning the current frame limit.
+ * @brief Function in charge of returning the current frame limit.
  *
  * @return unsigned int
  */
@@ -1342,7 +1351,7 @@ unsigned int Main::getFrameLimit() const
 
 
 /**
- *@brief Function in charge of returning the path to the config file.
+ * @brief Function in charge of returning the path to the config file.
  *
  * @return std::string
  */
@@ -1380,7 +1389,7 @@ std::tuple<unsigned int, unsigned int> Main::getWindowSize()
 }
 
 /**
- *@brief Load a toml file into the program if it is present.
+ * @brief Load a toml file into the program if it is present.
  *
  */
 void Main::_loadToml()

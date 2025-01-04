@@ -77,7 +77,7 @@ void GUI::ECS::Components::CollisionComponent::setPositionY(const float &posY)
 }
 
 /**
- *@brief Set the position of the object.
+ * @brief Set the position of the object.
  *
  * @param position an std::pair<int, int> of the object's position.
  */
@@ -89,7 +89,7 @@ void GUI::ECS::Components::CollisionComponent::setPosition(const std::pair<int, 
 }
 
 /**
- *@brief Set the dimension of the object.
+ * @brief Set the dimension of the object.
  *
  * @param dimension an std::pair<float, float> of the of the object's dimension.
  */
@@ -114,7 +114,7 @@ void GUI::ECS::Components::CollisionComponent::setMousePosition(const std::pair<
 
 
 /**
- *@brief Update the mouse info object used for mouse tracking.
+ * @brief Update the mouse info object used for mouse tracking.
  *
  * @param copy
  */
@@ -124,7 +124,7 @@ void GUI::ECS::Components::CollisionComponent::update(const std::pair<int, int> 
     _updateMouseCollisionData();
 }
 /**
- *@brief Update the info object used in the CollisionComponent class.
+ * @brief Update the info object used in the CollisionComponent class.
  *
  * @param copy
  */
@@ -140,7 +140,7 @@ void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Components
 }
 
 /**
- *@brief Update the mouse info object used for mouse tracking.
+ * @brief Update the mouse info object used for mouse tracking.
  *
  * @param copy
  */
@@ -247,7 +247,7 @@ const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getPosit
 }
 
 /**
- *@brief Get the dimension of the item in the form of an sf::Vector2i
+ * @brief Get the dimension of the item in the form of an sf::Vector2i
  *
  * @return std::pair<float, float> of the dimension of the element.
  */
@@ -260,7 +260,7 @@ const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getDimen
 }
 
 /**
- *@brief This is the function in charge of returning the MouseInfo class instance.
+ * @brief This is the function in charge of returning the MouseInfo class instance.
  *
  * @return GUI::ECS::Systems::MouseInfo The MouseInfo class.
  */
@@ -313,7 +313,7 @@ std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS:
 }
 
 /**
- *@brief This is the overload in charge of allowing the user to update their variables using the = sign.
+ * @brief This is the overload in charge of allowing the user to update their variables using the = sign.
  *
  * @param copy
  * @return GUI::ECS::Components::CollisionComponent&

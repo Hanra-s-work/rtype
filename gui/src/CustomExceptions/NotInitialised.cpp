@@ -5,6 +5,11 @@
 ** NotInitialised.cpp
 */
 
+/**
+ * @file NotInitialised.cpp
+ *
+ * @brief File in charge of containing the code for the NoInitialised classes
+ */
 
 #include "CustomExceptions/NotInitialised.hpp"
 

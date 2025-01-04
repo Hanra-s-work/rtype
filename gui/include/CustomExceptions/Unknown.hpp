@@ -5,6 +5,12 @@
 ** Unknown.hpp
 */
 
+/**
+ * @file Unknown.hpp
+ *
+ * @brief File in charge of informing the user that the program received an unknown element.
+ */
+
 #pragma once
 #include <string>
 #include <exception>

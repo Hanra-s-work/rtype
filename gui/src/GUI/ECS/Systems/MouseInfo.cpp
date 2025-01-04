@@ -136,7 +136,7 @@ void GUI::ECS::Systems::MouseInfo::update(const std::any &eventCapsule)
 };
 
 /**
- *@brief Update the values of the class with the content of another class.
+ * @brief Update the values of the class with the content of another class.
  *
  * @param entity
  */
@@ -241,7 +241,7 @@ const bool GUI::ECS::Systems::MouseInfo::isMouseExtra2ButtonClicked() const
 };
 
 /**
- *@brief Check if the mouse has scrolled
+ * @brief Check if the mouse has scrolled
  *
  * @return true it has scrolled
  * @return false it has not scrolled
@@ -255,7 +255,7 @@ const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolled() const
 }
 
 /**
- *@brief Check if the mouse has scrolled upwards
+ * @brief Check if the mouse has scrolled upwards
  *
  * @return true it has scrolled upwards
  * @return false it has scrolled in another direction
@@ -269,7 +269,7 @@ const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledUp() const
 }
 
 /**
- *@brief Check if the mouse has scrolled downwards
+ * @brief Check if the mouse has scrolled downwards
  *
  * @return true it has scrolled downwards
  * @return false it has scrolled in another direction
@@ -283,7 +283,7 @@ const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledDown() const
 }
 
 /**
- *@brief Check if the mouse has scrolled to the left
+ * @brief Check if the mouse has scrolled to the left
  *
  * @return true it has scrolled to the left
  * @return false it has scrolled in another direction
@@ -297,7 +297,7 @@ const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledLeft() const
 }
 
 /**
- *@brief Check if the mouse has scrolled to the right
+ * @brief Check if the mouse has scrolled to the right
  *
  * @return true it has scrolled to the right
  * @return false it has scrolled in another direction
@@ -311,7 +311,7 @@ const bool GUI::ECS::Systems::MouseInfo::isMouseWheelScrolledRight() const
 }
 
 /**
- *@brief Function in charge of returning the scroll index of the mouse.
+ * @brief Function in charge of returning the scroll index of the mouse.
  *
  * @return const float
  */
@@ -321,7 +321,7 @@ const float GUI::ECS::Systems::MouseInfo::getScrollIndex() const
 }
 
 /**
- *@brief Function in charge of returning the direction in which the user scrolled.
+ * @brief Function in charge of returning the direction in which the user scrolled.
  *
  * @return const GUI::ECS::Systems::MouseWheel
  */
@@ -407,7 +407,7 @@ void GUI::ECS::Systems::MouseInfo::clear()
 };
 
 /**
- *@brief Update the content of the class using the '=' sign overloader.
+ * @brief Update the content of the class using the '=' sign overloader.
  *
  * @param copy
  * @return GUI::ECS::Systems::MouseInfo&

@@ -5,6 +5,12 @@
 ** NotFound.hpp
 */
 
+/**
+ * @file NotFound.hpp
+ *
+ * @brief File in charge of informing the user that the content they tried to access was not found.
+ */
+
 #pragma once
 #include <string>
 #include <exception>

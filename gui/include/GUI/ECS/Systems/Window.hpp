@@ -48,7 +48,7 @@ namespace GUI
                 void setFullScreen(const bool fullScreen);
 
                 /**
-                  *@brief This is a function meant for debugging purposes
+                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *

@@ -14,7 +14,7 @@
 #include "Constants.hpp"
 
  /**
-  *@brief Display the Usage section of the help prompt.
+  * @brief Display the Usage section of the help prompt.
   *
   * @param binName
   */
@@ -31,7 +31,7 @@ static void displayUsageSummary(const std::string binName)
 }
 
 /**
- *@brief Display the Options section of the help prompt.
+ * @brief Display the Options section of the help prompt.
  *
  */
 static void displayDetailedUsage()
@@ -62,7 +62,7 @@ static void displayDetailedUsage()
 }
 
 /**
- *@brief Display the Author section of the help prompt.
+ * @brief Display the Author section of the help prompt.
  *
  */
 static void displayAuthors()
@@ -92,7 +92,7 @@ void DisplayVersion(bool helpMode = false)
 }
 
 /**
- *@brief The main function of the help display.
+ * @brief The main function of the help display.
  *
  * @param binName Name of the executable binary.
  */

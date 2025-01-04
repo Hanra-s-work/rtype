@@ -54,7 +54,7 @@ namespace GUI
                 const unsigned int getDefaultSize() const;
                 const std::any getFontInstance() const;
                 /**
-                  *@brief This is a function meant for debugging purposes
+                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *

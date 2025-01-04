@@ -5,6 +5,12 @@
 ** Failed.hpp
 */
 
+/**
+ * @file Failed.hpp
+ *
+ * @brief File in charge of storing the exceptions concerning failed attempts
+ */
+
 #pragma once
 #include <string>
 #include <exception>

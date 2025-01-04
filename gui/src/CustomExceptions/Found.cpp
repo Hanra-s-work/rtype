@@ -5,6 +5,11 @@
 ** Found.cpp
 */
 
+/**
+ * @file Found.cpp
+ *
+ * @brief File in charge of informing the user that an element was found, this is the content for the classes involved.
+ */
 
 #include "CustomExceptions/Found.hpp"
 

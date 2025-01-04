@@ -5,6 +5,12 @@
 ** NotInitialised.hpp
 */
 
+/**
+ * @file NotInitialised.hpp
+ *
+ * @brief File in charge of informing the user that the content they tried to access was not initialised.
+ */
+
 #pragma once
 #include <string>
 #include <exception>

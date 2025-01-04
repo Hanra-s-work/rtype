@@ -41,7 +41,7 @@
 #include "GUI/ECS/Systems/EventManager.hpp"
 
  /**
-  *@brief The Main class is the main class of the program.
+  * @brief The Main class is the main class of the program.
   *
   */
 class Main {
@@ -139,6 +139,8 @@ class Main {
 
   void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
 
+  void _mainMenu();
+
   void _testContent();
 
   void _closeConnection();
@@ -170,6 +172,8 @@ class Main {
   unsigned int _mainWindowIndex = 0;
   unsigned int _mainEventIndex = 0;
   TOMLLoader _tomlContent;
+  bool _mainMenuMusicStarted = false;
+  bool _mainMenuEntered = false;
 };
 
 int RealMain(int argc, char **argv);

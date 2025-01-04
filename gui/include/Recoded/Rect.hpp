@@ -99,7 +99,7 @@ namespace Recoded
     };
 
     /**
-     *@brief Overload that allows the user to check if 2 rect instances are identical
+     * @brief Overload that allows the user to check if 2 rect instances are identical
      *
      * @tparam T The typename
      *
@@ -163,13 +163,13 @@ namespace Recoded
     typedef Rect<unsigned long long int> ULLIntRect;
 
     /**
-     *@brief the Rect element cast as a float
+     * @brief the Rect element cast as a float
      *
      */
     typedef Rect<float> FloatRect;
 
     /**
-     *@brief The Rect element cast as a double
+     * @brief The Rect element cast as a double
      *
      */
     typedef Rect<double> DoubleRect;

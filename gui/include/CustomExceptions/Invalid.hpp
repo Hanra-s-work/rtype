@@ -5,6 +5,12 @@
 ** Invalid.hpp
 */
 
+/**
+ * @file Invalid.hpp
+ *
+ * @brief File in charge of informing the user that they have tried to access an invalid component
+ */
+
 #pragma once
 
 #include <string>

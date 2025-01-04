@@ -5,6 +5,12 @@
 ** No.hpp
 */
 
+/**
+ * @file No.hpp
+ *
+ * @brief File in charge of informing the user that there isn't the element they tried to access.
+ */
+
 #pragma once
 #include <string>
 #include <exception>

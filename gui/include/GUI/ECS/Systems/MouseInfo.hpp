@@ -29,7 +29,7 @@ namespace GUI
         namespace Systems
         {
             /**
-             *@brief An enum class to allow the user to know which direction the mouse has scrolled.
+             * @brief An enum class to allow the user to know which direction the mouse has scrolled.
              *
              */
             enum class MouseWheel
@@ -67,7 +67,7 @@ namespace GUI
                 const int getPositionX() const;
                 const int getPositionY() const;
                 /**
-                  *@brief This is a function meant for debugging purposes
+                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *

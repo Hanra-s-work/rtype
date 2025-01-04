@@ -54,7 +54,7 @@ std::vector<std::string> extract_argument(char *arg)
 }
 
 /**
- *@brief Process the single argument that is provided.
+ * @brief Process the single argument that is provided.
  *
  * @param main The main class, initialised.
  * @param args The current argument

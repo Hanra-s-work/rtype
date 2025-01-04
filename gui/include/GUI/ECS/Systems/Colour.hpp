@@ -131,7 +131,7 @@ namespace GUI
                 Colour(const std::uint32_t entityId, const std::uint8_t red, const std::uint8_t green, const std::uint8_t blue, const std::uint8_t alpha, const std::string &name);
 
                 /**
-                 *@brief Set the Name of the colour in the class
+                 * @brief Set the Name of the colour in the class
                  *
                  * @param name The name of the colour (this is a way to make the class mor human readable)
                  */
@@ -264,7 +264,7 @@ namespace GUI
                  */
                 const std::any getRenderColour() const;
                 /**
-                 *@brief Get the Name of the colour contained in the class
+                 * @brief Get the Name of the colour contained in the class
                  *
                  * @return const std::string
                  */

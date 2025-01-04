@@ -180,7 +180,7 @@ namespace Logging
     };
 
     /**
-     *@brief Check if the output is being redirected to a file.
+     * @brief Check if the output is being redirected to a file.
      *
      * @return true if the output is being redirected to a file
      * @return false if the output is not being redirect to a file

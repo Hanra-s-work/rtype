@@ -13,7 +13,7 @@
 #include "RealMain.hpp"
 
  /**
-  *@brief This is the main function, it is the one that g++ uses to start building the program.
+  * @brief This is the main function, it is the one that g++ uses to start building the program.
   *
   * @param argc
   * @param argv
@@ -21,5 +21,5 @@
   */
 int main(int argc, char **argv)
 {
-    return RealMain(argc, argv);
+  return RealMain(argc, argv);
 }

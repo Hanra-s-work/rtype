@@ -5,6 +5,12 @@
 ** No.cpp
 */
 
+/**
+ * @file No.cpp
+ *
+ * @brief File in charge of containing the code for the classes 'No'
+ */
+
 #include "CustomExceptions/No.hpp"
 
 namespace CustomExceptions

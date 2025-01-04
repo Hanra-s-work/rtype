@@ -749,7 +749,7 @@ namespace GUI
 
                 private:
                 /**
-                 *@brief Function in charge of initialising the sprite instance
+                 * @brief Function in charge of initialising the sprite instance
                  *
                  */
                 void _initialiseSprite();

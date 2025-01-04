@@ -15,4 +15,3 @@
 #include "GUI/ECS/Components.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems.hpp"
-#include "GUI/ECS/Utilities.hpp"

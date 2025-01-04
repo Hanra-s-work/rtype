@@ -5,6 +5,11 @@
 ** Failed.cpp
 */
 
+/**
+ * @file Failed.cpp
+ *
+ * @brief File in charge of containing the code in charge of filling the exception classes Failed
+ */
 
 #include "CustomExceptions/Failed.hpp"
 

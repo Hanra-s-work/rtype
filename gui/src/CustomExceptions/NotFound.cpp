@@ -5,6 +5,11 @@
 ** NotFound.cpp
 */
 
+/**
+ * @file NotFound.cpp
+ *
+ * @brief File in charge of containing the code that will fill the classes NotFound
+ */
 
 #include "CustomExceptions/NotFound.hpp"
 

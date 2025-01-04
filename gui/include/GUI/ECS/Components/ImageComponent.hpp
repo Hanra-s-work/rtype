@@ -161,7 +161,7 @@ namespace GUI
                 void setName(const std::string &name);
 
                 /**
-                 *@brief Set the Application (the context) of the image
+                 * @brief Set the Application (the context) of the image
                  *
                  * @param application
                  */
@@ -230,7 +230,7 @@ namespace GUI
                 void toggleVisibility();
 
                 /**
-                 *@brief Get the visibility state of the Image
+                 * @brief Get the visibility state of the Image
                  *
                  * @return true The image is visible
                  * @return false The image is hidden
@@ -245,7 +245,7 @@ namespace GUI
                 const std::string getName() const;
 
                 /**
-                 *@brief Get the Application of the image
+                 * @brief Get the Application of the image
                  *
                  * @return const std::string
                  */
@@ -300,7 +300,7 @@ namespace GUI
                 const bool getVisible() const;
 
                 /**
-                 *@brief Get the Collision object
+                 * @brief Get the Collision object
                  *
                  * @return const GUI::ECS::Components::CollisionComponent
                  *

@@ -5,6 +5,11 @@
 ** Invalid.cpp
 */
 
+/**
+ * @file Invalid.cpp
+ *
+ * @brief File in charge of providing the code required to fill the classes Invalid
+ */
 
 #include "CustomExceptions/Invalid.hpp"
 

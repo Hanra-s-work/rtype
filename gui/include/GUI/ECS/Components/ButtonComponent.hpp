@@ -126,44 +126,44 @@ namespace GUI
                 ~ButtonComponent();
 
                 /**
-                 *@brief Set the Hover Color of the button for the child components
+                 * @brief Set the Hover Color of the button for the child components
                  *
                  * @param hoverColor
                  */
                 void setHoverColor(const GUI::ECS::Systems::Colour &hoverColor);
                 /**
-                 *@brief Set the Normal Color of the button for the child objects
+                 * @brief Set the Normal Color of the button for the child objects
                  *
                  * @param normalColor
                  */
                 void setNormalColor(const GUI::ECS::Systems::Colour &normalColor);
                 /**
-                 *@brief Set the Clicked Color of the button for the child objects
+                 * @brief Set the Clicked Color of the button for the child objects
                  *
                  * @param clickedColor
                  */
                 void setClickedColor(const GUI::ECS::Systems::Colour &clickedColor);
                 /**
-                 *@brief Set the Text Hover Color
+                 * @brief Set the Text Hover Color
                  *
                  * @param hoverColor
                  */
                 void setTextHoverColor(const GUI::ECS::Systems::Colour &hoverColor);
                 /**
-                 *@brief Set the Text Normal Color
+                 * @brief Set the Text Normal Color
                  *
                  * @param normalColor
                  */
                 void setTextNormalColor(const GUI::ECS::Systems::Colour &normalColor);
                 /**
-                 *@brief Set the Text Clicked Color
+                 * @brief Set the Text Clicked Color
                  *
                  * @param clickedColor
                  */
                 void setTextClickedColor(const GUI::ECS::Systems::Colour &clickedColor);
 
                 /**
-                 *@brief Set the Position of all objects contained in the button
+                 * @brief Set the Position of all objects contained in the button
                  *
                  * @param position
                  */
@@ -176,19 +176,19 @@ namespace GUI
                  */
                 void setDimension(const std::pair<float, float> &dimension, const std::uint32_t textSize = 40);
                 /**
-                 *@brief Set the Text Position
+                 * @brief Set the Text Position
                  *
                  * @param position
                  */
                 void setTextPosition(const std::pair<float, float> &position);
                 /**
-                 *@brief Set the Text Size
+                 * @brief Set the Text Size
                  *
                  * @param textSize
                  */
                 void setTextSize(const std::uint32_t textSize);
                 /**
-                 *@brief Set the Shape Position
+                 * @brief Set the Shape Position
                  *
                  * @param position
                  */
@@ -208,7 +208,7 @@ namespace GUI
                 void setCollision(const GUI::ECS::Components::CollisionComponent &collision, const std::uint32_t textSize = 40);
 
                 /**
-                 *@brief Set the Callback function for the the button is clicked
+                 * @brief Set the Callback function for the the button is clicked
                  *
                  * @param callback The function
                  * @param callbackName The name of the function (for debugging purposes)
@@ -216,7 +216,7 @@ namespace GUI
                 void setCallback(std::function<void()> callback, const std::string &callbackName = "Callback Function");
 
                 /**
-                 *@brief Get the callback function
+                 * @brief Get the callback function
                  *
                  * @return std::function<void()>
                  */
@@ -231,19 +231,19 @@ namespace GUI
                 const bool isVisible() const;
 
                 /**
-                 *@brief Toggle the visibility of the component
+                 * @brief Toggle the visibility of the component
                  *
                  */
                 void toggleVisibility();
 
                 /**
-                 *@brief Get the Clicked Color
+                 * @brief Get the Clicked Color
                  *
                  * @return const GUI::ECS::Systems::Colour
                  */
                 const GUI::ECS::Systems::Colour getClickedColor() const;
                 /**
-                 *@brief Get the Normal Color
+                 * @brief Get the Normal Color
                  *
                  * @return const GUI::ECS::Systems::Colour
                  */
@@ -311,27 +311,27 @@ namespace GUI
                  */
                 const std::pair<float, float> getShapeDimension() const;
                 /**
-                 *@brief Get the button collision object
+                 * @brief Get the button collision object
                  *
                  * @return const GUI::ECS::Components::CollisionComponent
                  */
                 const GUI::ECS::Components::CollisionComponent getCollision() const;
 
                 /**
-                 *@brief Get the Callback Name of the callback function
+                 * @brief Get the Callback Name of the callback function
                  *
                  * @return const std::string
                  */
                 const std::string getCallbackName() const;
                 /**
-                 *@brief Get the Callback object
+                 * @brief Get the Callback object
                  *
                  * @return const std::function<void()>
                  */
                 const std::function<void()> getCallback() const;
 
                 /**
-                 *@brief Get the information about if the Button is visible or hidden
+                 * @brief Get the information about if the Button is visible or hidden
                  *
                  * @return true The button is visible
                  * @return false The button is hidden
@@ -354,7 +354,7 @@ namespace GUI
                  */
                 const GUI::ECS::Components::ShapeComponent &getShapeComponent() const;
                 /**
-                 *@brief This is a function meant for debugging purposes
+                 * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *
@@ -371,7 +371,7 @@ namespace GUI
                  */
                 void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 /**
-                 *@brief Update the textComponent instance located in the button.
+                 * @brief Update the textComponent instance located in the button.
                  *
                  * @param copy
                  */
@@ -400,7 +400,7 @@ namespace GUI
                 std::unordered_map<std::type_index, std::any> render() const;
 
                 /**
-                 *@brief A operator to allow seemless updating/asining from one
+                 * @brief A operator to allow seemless updating/asining from one
                  * button class to another.
                  *
                  * @param copy
