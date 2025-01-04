@@ -13,6 +13,8 @@
  */
 
 #pragma once
+#include <any>
+#include <optional>
 #include <unordered_map>
 #include <SFML/Window/Event.hpp>
 
@@ -178,14 +180,34 @@ namespace GUI
             class KeyMapper : public GUI::ECS::EntityNode {
                 public:
                 KeyMapper(const std::uint32_t EntityId = 0);
-                const Key mapKey(const sf::Keyboard::Key &sfmlKey) const;
-                const Key mapKey(const sf::Keyboard::Scancode &sfmlKeyCode) const;
+                /**
+                 * @brief This is the function in charge of returning the
+                 * internal key code equivalent for an sf::Keyboard::Scancode
+                 * or sf::Keyboard::Key passed as an std::any
+                 *
+                 * @param sfmlKey
+                 * @return const Key
+                 */
+                const Key mapKey(const std::any &sfmlKey) const;
 
-                const std::string stringKey(const sf::Keyboard::Key &keyCode) const;
-                const std::string stringKey(const sf::Keyboard::Scancode &keyCode) const;
+                /**
+                 * @brief This is the function that wan take either
+                 * an sf::Keyboard::Key or a sf::Keyboard::Scancode and
+                 * return the string equivalent.
+                 *
+                * @param keyCode
+                * @return const std::string
+                */
+                const std::string stringKey(const std::any &keyCode) const;
+                /**
+                 * @brief This is an overload to allow the program to know the equivalent keycode but as a string
+                 *
+                 * @param keyCode The internal key code
+                 * @return const std::string the string equivalent for human readability
+                 */
                 const std::string stringKey(const GUI::ECS::Systems::Key &keyCode) const;
                 /**
-                  *@brief This is a function meant for debugging purposes
+                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *
