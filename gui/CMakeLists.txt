@@ -51,7 +51,7 @@ set(SOURCES
     src/GUI/ECS/Components/AnimationComponent.cpp
 
     # ECS Systems
-    src/GUI/ECS/Systems/key.cpp
+    src/GUI/ECS/Systems/Key.cpp
     src/GUI/ECS/Systems/Font.cpp
     src/GUI/ECS/Systems/Clock.cpp
     src/GUI/ECS/Systems/Colour.cpp
