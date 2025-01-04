@@ -216,6 +216,13 @@ namespace GUI
                 void setCallback(std::function<void()> callback, const std::string &callbackName = "Callback Function");
 
                 /**
+                 * @brief Set the visibility of the element
+                 *
+                 * @param visible A boolean instance informing if (true) to be visible, (false) hidden.
+                 */
+                void setVisible(const bool visible);
+
+                /**
                  * @brief Get the callback function
                  *
                  * @return std::function<void()>

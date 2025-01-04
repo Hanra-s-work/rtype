@@ -173,6 +173,13 @@ void GUI::ECS::Components::ButtonComponent::setCallback(std::function<void()> ca
     _callbackName = callbackName;
 }
 
+void GUI::ECS::Components::ButtonComponent::setVisible(const bool visible)
+{
+    _visible = visible;
+    _componentText.setVisible(visible);
+    _componentShape.setVisible(visible);
+}
+
 std::function<void()> GUI::ECS::Components::ButtonComponent::callback()
 {
     return _callback;
@@ -187,8 +194,12 @@ void GUI::ECS::Components::ButtonComponent::toggleVisibility()
 {
     if (_visible) {
         _visible = false;
+        _componentText.setVisible(false);
+        _componentShape.setVisible(false);
     } else {
         _visible = true;
+        _componentText.setVisible(true);
+        _componentShape.setVisible(true);
     }
 }
 
