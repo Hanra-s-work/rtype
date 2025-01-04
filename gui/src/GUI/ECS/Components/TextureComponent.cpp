@@ -69,33 +69,53 @@ void GUI::ECS::Components::TextureComponent::setVisible(const bool visible)
 
 void GUI::ECS::Components::TextureComponent::setFilePath(const std::string &filePath)
 {
-    bool loadStatus = _texture.emplace().loadFromFile(filePath);
-    if (!loadStatus) {
-        PRETTY_CRITICAL << "Texture material not found in filepath: '" << filePath << "'." << std::endl;
+    _textureSet = false;
+    _texture = std::make_shared<sf::Texture>();
+    const bool loadStatus = _texture->loadFromFile(filePath);
+    if (loadStatus != true) {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "Texture material not found in filepath: '" << filePath << "'." << std::endl;
         throw CustomExceptions::FileNotFound(filePath);
     }
-    sf::Vector2u node = _texture.value().getSize();
+    _textureSet = true;
+    PRETTY_SUCCESS << "The texture is set" << std::endl;
+    sf::Vector2u node = _texture->getSize();
     _collisionInfo.setDimension({ node.x, node.y });
 }
 
 void GUI::ECS::Components::TextureComponent::setTexture(const std::any &texture)
 {
+    _textureSet = false;
     PRETTY_INFO << "Setting the texture" << std::endl;
     if (!texture.has_value()) {
-        PRETTY_WARNING << "There is no texture to be processed" << std::endl;
+        PRETTY_WARNING << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "There is no texture to be processed" << std::endl;
         return;
     }
-    std::optional<sf::Texture> textCapsule = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(texture, true, "<There is no sf::Texture to be extracted from the std::any cast.>, system error: ");
-    if (!textCapsule.has_value()) {
-        PRETTY_ERROR << "There is no sf::Texture to be processed" << std::endl;
-        throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>");
+    if (texture.type() == typeid(std::shared_ptr<sf::Texture>)) {
+        std::optional<std::shared_ptr<sf::Texture>> textureCapsule = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(texture, true, "<There is no std::shared_ptr<sf::Texture> to be extracted from the std::any cast.>, system error: ");
+        if (!textureCapsule.has_value()) {
+            PRETTY_ERROR << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "There is no std::shared_ptr<sf::Texture> to be processed" << std::endl;
+            throw CustomExceptions::NoTexture("<There is no std::shared_ptr<sf::Texture> to be extracted from the std::any cast.>");
+        }
+        PRETTY_INFO << "Updating texture with the new one as a copy." << std::endl;
+        _texture = std::make_shared<sf::Texture>(*(textureCapsule.value()));
+        _textureSet = true;
+        PRECISE_SUCCESS << "Updated the texture with the new one as a copy." << std::endl;
+    } else if (texture.type() == typeid(sf::Texture)) {
+        std::optional<sf::Texture> textCapsule = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(texture, true, "<There is no sf::Texture to be extracted from the std::any cast.>, system error: ");
+        if (!textCapsule.has_value()) {
+            PRETTY_ERROR << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "There is no sf::Texture to be processed" << std::endl;
+            throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::any cast.>");
+        }
+        PRETTY_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
+        _texture = std::make_shared<sf::Texture>(textCapsule.value());
+        _textureSet = true;
+        PRETTY_SUCCESS << "Updated the texture with a copy of the passed structure." << std::endl;
+    } else {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "No texture (sf::Texture or std::shared_ptr<sf::Texture>) found" << std::endl;
+        throw CustomExceptions::NoTexture("<No texture (sf::Texture or std::shared_ptr<sf::Texture>) found>");
     }
-    PRETTY_INFO << "Casting texture back to it's initial form" << std::endl;
-    sf::Texture text = textCapsule.value();
-    PRETTY_INFO << "Updating texture with the new one using the '=' operator and not the .update function" << std::endl;
-    _texture.emplace(text);
     PRETTY_INFO << "Getting the texture size" << std::endl;
-    sf::Vector2u node = _texture.value().getSize();
+    sf::Vector2u node = _texture->getSize();
     PRETTY_INFO << "Setting the collision info with the new texture size" << std::endl;
     _collisionInfo.setDimension({ node.x, node.y });
     PRETTY_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
@@ -133,12 +153,12 @@ void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy
 
 const std::any GUI::ECS::Components::TextureComponent::getTexture() const
 {
-    PRETTY_INFO << "Creating an any pointer from the sf::Texture" << std::endl;
-    if (!_texture.has_value()) {
-        PRETTY_CRITICAL << "The texture is not set, texture collisions '" << _collisionInfo << "'" << std::endl;
-        throw CustomExceptions::NoTexture("<There is no sf::Texture to be extracted from the std::optional>");
+    PRETTY_INFO << "Creating an any pointer from the std::shared_ptr<sf::Texture>" << std::endl;
+    if (!_textureSet) {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "The texture is not set, texture collisions '" << _collisionInfo << "'" << std::endl;
+        throw CustomExceptions::NoTexture("<There is no std::shared_ptr<sf::Texture> int the class>");
     }
-    return std::any(_texture.value());
+    return std::make_any<std::shared_ptr<sf::Texture>>(_texture);
 }
 
 const bool GUI::ECS::Components::TextureComponent::getVisible() const

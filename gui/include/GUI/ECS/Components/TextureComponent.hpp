@@ -71,7 +71,8 @@ namespace GUI
 
                 private:
                 bool _visible = true;
-                std::optional<sf::Texture> _texture;
+                bool _textureSet = false;
+                std::shared_ptr<sf::Texture> _texture;
                 GUI::ECS::Components::CollisionComponent _collisionInfo;
             };
 
