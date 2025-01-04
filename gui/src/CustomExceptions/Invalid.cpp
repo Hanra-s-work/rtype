@@ -89,11 +89,14 @@ namespace CustomExceptions
         return _buffer;
     }
 
-    InvalidSpriteConfiguration::InvalidSpriteConfiguration(const std::string &userConfiguration, const std::string &spriteName)
+    InvalidSpriteConfiguration::InvalidSpriteConfiguration(const std::string &userConfiguration, const std::string &spriteName, const std::string &exceptionDetail)
     {
         _msg = "Error: The configuration you provided for the sprite '" + spriteName + "' is incorrect.\n";
         _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
         _msg += "You provided:\n" + userConfiguration + "\n";
+        if (!exceptionDetail.empty()) {
+            _msg += "Additional details about the error: (" + exceptionDetail + ")\n";
+        }
         _msg += "When the following structure was expected:\n";
         _msg += "[<spritesheet_name>] (this is the loaded version, in the file it should be [spritesheet.<spritesheet_name>]) : the name of the spritesheet (unique identifier)\n";
         _msg += "name = \"<name of the sprite>\"                                                                              : set the name of the sprite  (a human readable name).\n";
@@ -104,6 +107,7 @@ namespace CustomExceptions
         _msg += "start_top = true                                                                                             : (or false) set the starting position of the sprite view field to start from the top (or not).\n";
         _msg += "initial_frame = 0                                                                                            : set the frame that will be used as the first one, here the number represents the index of the frame.\n";
         _msg += "end_frame = -1                                                                                               : (or the index of the frame) set the last frame to be taken from the spritesheet(-1 means all frames present), (default value: -1).\n";
+        _msg += "fame_delay = 100                                                                                             : (from 0 to 2147483647) delay between each frame in milliseconds (default value: 100)\n";
         _buffer = _msg.c_str();
     };
 

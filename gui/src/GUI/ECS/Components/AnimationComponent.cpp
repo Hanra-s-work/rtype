@@ -318,8 +318,8 @@ const Recoded::IntRect GUI::ECS::Components::AnimationComponent::getCurrentFrame
         throw CustomExceptions::NoAnimationFrames();
     }
     std::uint32_t frame = getCurrentFrameIndex();
-    std::uint32_t frameSize = _frames.size();
-    if (frame >= frameSize || frame < 0) {
+    std::uint32_t frameSize = _frames.size() - 1;
+    if (frame > frameSize || frame < 0) {
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
             << "Frame index out of bounds" << std::endl;
         throw CustomExceptions::InvalidIndex(std::to_string(frame), "0", std::to_string(frameSize));
@@ -505,6 +505,11 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
         << ", endFrame: " << Recoded::myToString(endFrame)
         << std::endl;
 
+    PRETTY_INFO << "Reseting the frame index to initial frame" << std::endl;
+    _currentFrameIndex = initialFrame;
+    PRETTY_INFO << "Setting the _frame initial to the correct value" << std::endl;
+    _frameInitial = initialFrame;
+
     GUI::ECS::Components::CollisionComponent spritesheetSize;
     std::any textureCapsule = _baseTexture.getTexture();
     if (!textureCapsule.has_value()) {
@@ -581,6 +586,18 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     const int rows = spritesheetSize.getHeight() / frameHeight;
 
     _totalFrames = (columns * rows);
+    PRETTY_DEBUG << "Entity id: '" << Recoded::myToString(getEntityNodeId())
+        << "' "
+        << "Calculated number of frames: '" << Recoded::myToString(_totalFrames)
+        << "', columns: '" << Recoded::myToString(columns)
+        << "', rows: '" << Recoded::myToString(rows)
+        << "', spritesheet height: '"
+        << Recoded::myToString(spritesheetSize.getHeight())
+        << "', spritesheet width: '"
+        << Recoded::myToString(spritesheetSize.getWidth())
+        << "', frame height: '" << frameHeight
+        << "', frame width: '" << frameWidth << "'"
+        << std::endl;
 
     if (initialFrame < 0 || initialFrame > _totalFrames) {
         PRETTY_ERROR << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
@@ -694,6 +711,12 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
         << ", _continueLoop(startTop, posy, rows): " << Recoded::myToString(_continueLoop(startTop, posy, rows))
         << ", _continueLoop(startLeft, posx, columns): " << Recoded::myToString(_continueLoop(startLeft, posx, columns))
         << std::endl;
+    if (_frames.size() > 0) {
+        _frameInitial = 0;
+        _currentFrameIndex = 0;
+        _currentRectangle = _frames[_currentFrameIndex];
+        _totalFrames = _frames.size();
+    }
     PRETTY_SUCCESS << "The frames have been processed." << std::endl;
 }
 

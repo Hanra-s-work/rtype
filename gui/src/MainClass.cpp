@@ -393,6 +393,7 @@ std::uint32_t Main::_initialiseSprites()
         bool startTop = it->second.getValue<bool>("start_top");
         int initialFrame = 0;
         int endFrame = (-1);
+        int frameDelay = 100;
 
         if (it->second.hasKey("initial_frame")) {
             initialFrame = it->second.getValue<int>("initial_frame");
@@ -400,32 +401,57 @@ std::uint32_t Main::_initialiseSprites()
         if (it->second.hasKey("end_frame")) {
             endFrame = it->second.getValue<int>("end_frame");
         }
+        if (it->second.hasKey("frame_delay")) {
+            frameDelay = it->second.getValue<int>("frame_delay");
+            if (frameDelay < 0) {
+                std::string errMsg = "<A number between 0 and 2147483647 was expected, however, you entered: '";
+                errMsg += Recoded::myToString(frameDelay);
+                errMsg += "'>";
+                throw CustomExceptions::InvalidSpriteConfiguration(it->second.getTOMLString(), name, errMsg);
+            }
+        }
 
         _updateLoadingText("Loading sprite '" + name + "'...");
         PRETTY_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
 
 
-        PRETTY_INFO << "Processing Animation component" << std::endl;
+        PRETTY_INFO << "Processing Animation component, id: '" << Recoded::myToString(_baseId) << "'" << std::endl;
+        PRETTY_INFO << "Passed parameters are: " <<
+            "name='" << name << "', " <<
+            "path='" << path << "', " <<
+            "sprite_width=" << Recoded::myToString(spriteWidth) << ", " <<
+            "sprite_height=" << Recoded::myToString(spriteHeight) << ", " <<
+            "start_left=" << Recoded::myToString(startLeft) << ", " <<
+            "start_top=" << Recoded::myToString(startTop) << ", " <<
+            "initial_frame=" << Recoded::myToString(initialFrame) << ", " <<
+            "end_frame=" << Recoded::myToString(endFrame) <<
+            "frame_delay=" << Recoded::myToString(frameDelay) << std::endl;
+
         std::shared_ptr<GUI::ECS::Components::AnimationComponent> animationPointer = std::make_shared<GUI::ECS::Components::AnimationComponent>(_baseId, path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
         _ecsEntities[typeid(GUI::ECS::Components::AnimationComponent)].push_back(animationPointer);
         _baseId++;
+        PRETTY_DEBUG << "Setting animation delay to : '" << Recoded::myToString(frameDelay) << "'" << std::endl;
+        animationPointer->setDelay(frameDelay);
+        PRETTY_INFO << "Animation component info: " << *animationPointer << std::endl;
         PRETTY_SUCCESS << "Animation component processed" << std::endl;
-        PRETTY_INFO << "Adding animation node to sprite '" << name << "'" << std::endl;
-        GUI::ECS::Components::SpriteComponent spriteEntity(_baseId, name);
-        spriteEntity.setAnimation(*animationPointer);
+        PRETTY_INFO << "Creating sprite id '" << name << "', id: '" << Recoded::myToString(_baseId) << "'" << std::endl;
+        PRETTY_DEBUG << "Setting animation, animation id: '" << Recoded::myToString(animationPointer->getEntityNodeId()) << "', sprite entity id: '" << _baseId << "'" << std::endl;
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> spriteEntity = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, *animationPointer);
         PRETTY_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
-        PRETTY_INFO << "Creating a shared pointer of the sprite" << std::endl;
-        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(spriteEntity);
-        PRETTY_SUCCESS << "Sprite pointer created" << std::endl;
         PRETTY_SUCCESS << "Sprite '" << name << "' loaded" << std::endl;
-        node->setApplication(application);
+        spriteEntity->setApplication(application);
         PRETTY_INFO << "Storing " << name << " into the ecs" << std::endl;
-        _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
+        _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(spriteEntity);
         PRETTY_SUCCESS << name << " stored into the ecs entity" << std::endl;
         _baseId++;
 
         PRETTY_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
         _updateLoadingText("Loading sprite '" + name + "'...[OK]");
+
+        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
     }
 
     PRETTY_SUCCESS << "The sprites are loaded." << std::endl;

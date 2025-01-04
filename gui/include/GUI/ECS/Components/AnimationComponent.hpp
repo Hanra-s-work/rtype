@@ -472,10 +472,10 @@ namespace GUI
                 bool _stopped = false;                                         //!< A boolean instance in charge of informing the program to not play the animation as well as resetting the index to the default one
                 bool _hasTicked = false;                                       //!< A boolean instance in charge of informing the user that the frame has been changed
                 bool _readReverse = false;                                     //!< A boolean instance in charge of informing the program to read the animation backwards
-                std::uint32_t _frameDelay;                                     //!< An unsigned integer to store the delay to wait between each frame
-                std::uint32_t _frameInitial;                                   //!< An unsigned integer to store the index of the initial frame (the default frame)
-                std::uint32_t _currentFrameIndex;                              //!< An unsigned integer to store the index of the frame that is currently active
-                std::uint32_t _totalFrames;                                    //!< An unsigned integer to store the total amount of frames in the animation
+                std::uint32_t _frameDelay = 100;                               //!< An unsigned integer to store the delay to wait between each frame
+                std::uint32_t _frameInitial = 0;                               //!< An unsigned integer to store the index of the initial frame (the default frame)
+                std::uint32_t _currentFrameIndex = 0;                          //!< An unsigned integer to store the index of the frame that is currently active
+                std::uint32_t _totalFrames = 0;                                //!< An unsigned integer to store the total amount of frames in the animation
                 GUI::ECS::Components::TextureComponent _baseTexture;           //!< A Texture component to store the base texture that is used to derive all the animations rectangles
                 std::vector<Recoded::IntRect> _frames;                         //!< An std::vector of Rectangle components to store all the derived frames of the animation
                 Recoded::IntRect _currentRectangle;                            //!< A Rectangle component to store the frame that is to be displayed

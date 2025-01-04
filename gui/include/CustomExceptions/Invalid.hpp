@@ -152,8 +152,9 @@ namespace CustomExceptions
          *
          * @param userConfiguration The configuration section provided by the user.
          * @param spriteName The name of the sprite that was affected by the configuration.
+         * @param exceptionDetail The detail about the reason why the error was triggered.
          */
-        InvalidSpriteConfiguration(const std::string &userConfiguration = "", const std::string &spriteName = "");
+        InvalidSpriteConfiguration(const std::string &userConfiguration = "", const std::string &spriteName = "", const std::string &exceptionDetail = "");
         /**
          * @brief Destroy the Invalid Sprite Configuration object
          *

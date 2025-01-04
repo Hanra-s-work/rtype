@@ -159,7 +159,7 @@ const std::any GUI::ECS::Components::TextureComponent::getTexture() const
     PRETTY_INFO << "Creating an any pointer from the std::shared_ptr<sf::Texture>" << std::endl;
     if (!_textureSet) {
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "The texture is not set, texture collisions '" << _collisionInfo << "'" << std::endl;
-        throw CustomExceptions::NoTexture("<There is no std::shared_ptr<sf::Texture> int the class>");
+        throw CustomExceptions::NoTexture("<There is no std::shared_ptr<sf::Texture> in the class>");
     }
     return std::make_any<std::shared_ptr<sf::Texture>>(_texture);
 }
