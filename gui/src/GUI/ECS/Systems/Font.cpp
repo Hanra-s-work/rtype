@@ -15,6 +15,8 @@
 
 GUI::ECS::Systems::Font::Font() : EntityNode(0) {};
 
+GUI::ECS::Systems::Font::Font(const std::uint32_t entityId) : EntityNode(entityId) {};
+
 GUI::ECS::Systems::Font::Font(const Font &other)
     : EntityNode(other.getEntityNodeId())
 {
@@ -148,7 +150,8 @@ void GUI::ECS::Systems::Font::setFontPath(const std::string &path)
     const bool response = node->openFromFile(path);
     PRETTY_DEBUG << "Font loading" << std::endl;
     if (!response) {
-        PRETTY_CRITICAL << "Error: Failed to load font from " << _fontPath << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Error: Failed to load font from " << _fontPath << std::endl;
         throw CustomExceptions::InvalidFontPath(path);
     };
     PRETTY_DEBUG << "Font loaded" << std::endl;
@@ -202,12 +205,12 @@ const unsigned int GUI::ECS::Systems::Font::getDefaultSize() const
 const std::any GUI::ECS::Systems::Font::getFontInstance() const
 {
     if (!_fontInstanceSet) {
-        PRETTY_CRITICAL << "Error: Font instance not set." << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "Error: Font instance not set." << std::endl;
         throw CustomExceptions::NoFont(_fontName);
     }
     std::any node = std::make_any<std::shared_ptr<sf::Font>>(_fontInstance);
     if (!node.has_value()) {
-        PRETTY_CRITICAL << "There is no font in the node" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "There is no font in the node" << std::endl;
     } else {
         PRETTY_SUCCESS << "There is a font in the node" << std::endl;
     }
@@ -237,7 +240,8 @@ void GUI::ECS::Systems::Font::update(const GUI::ECS::Systems::Font &copy)
 {
     std::any systemFont = copy.getFontInstance();
     if (!systemFont.has_value()) {
-        PRETTY_CRITICAL << "No font found." << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No font found." << std::endl;
         throw CustomExceptions::NoFont("<There is no sf::Font instance to manipulate>");
     }
     const std::string errMsg = "<There is no sf::Font instance to manipulate>, system error: ";

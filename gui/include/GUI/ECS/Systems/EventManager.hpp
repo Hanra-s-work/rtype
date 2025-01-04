@@ -73,7 +73,7 @@ namespace GUI
 
                 private:
                 MouseInfo _mouse;
-                GUI::ECS::Systems::KeyMapper _mapper;
+                KeyMapper _mapper;
                 std::vector<GUI::ECS::Systems::Key> _keys;
                 std::uint8_t _resetDelay = 10;
                 std::uint8_t _resetIndex = 0;

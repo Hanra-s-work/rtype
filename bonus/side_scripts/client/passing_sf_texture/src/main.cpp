@@ -169,6 +169,9 @@ int main(void)
     TextureComponent myTexture(path);
     SpriteComponent mySprite(myTexture);
 
+    TextureComponent copiedTexture;
+    copiedTexture.setTexture(myTexture);
+
     sf::Texture sampleNode(path);
     sf::Sprite sampleSprite(sampleNode);
     sampleSprite.setPosition({ 532, 0 });

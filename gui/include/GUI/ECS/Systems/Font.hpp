@@ -25,6 +25,7 @@ namespace GUI
             class Font : public EntityNode {
                 public:
                 Font();
+                Font(const std::uint32_t entityId);
                 Font(const GUI::ECS::Systems::Font &other);
                 Font(const std::string &name, const std::string &path);
                 Font(const std::string &name, const std::string &path, const unsigned int size);

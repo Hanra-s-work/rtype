@@ -26,7 +26,7 @@ GUI::ECS::Systems::Colour::Colour(const std::uint32_t colour, const std::string 
     setColour(colour, name);
 }
 
-GUI::ECS::Systems::Colour::Colour(const std::uint32_t entityId, Colour &copy)
+GUI::ECS::Systems::Colour::Colour(const std::uint32_t entityId, const Colour &copy)
     : EntityNode(entityId)
 {
     update(copy);

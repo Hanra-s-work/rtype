@@ -27,7 +27,6 @@ GUI::ECS::Components::CollisionComponent::CollisionComponent(const std::uint32_t
     _updateMouseCollisionData();
 }
 
-
 /**
  * @brief Default destructor.
  */

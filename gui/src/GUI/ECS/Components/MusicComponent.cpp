@@ -13,9 +13,15 @@
 
 #include "GUI/ECS/Components/MusicComponent.hpp"
 
-GUI::ECS::Components::MusicComponent::MusicComponent() : EntityNode(0) {};
+GUI::ECS::Components::MusicComponent::MusicComponent()
+    : EntityNode(0)
+{
+};
 
-GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
+GUI::ECS::Components::MusicComponent::MusicComponent(const std::uint32_t entityId)
+    : EntityNode(entityId)
+{
+};
 
 GUI::ECS::Components::MusicComponent::MusicComponent(const MusicComponent &music)
     : EntityNode(0)

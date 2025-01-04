@@ -13,12 +13,33 @@
 
 #include "GUI/ECS/Components/TextComponent.hpp"
 
-GUI::ECS::Components::TextComponent::TextComponent() : EntityNode(0) {};
+GUI::ECS::Components::TextComponent::TextComponent()
+    : EntityNode(0),
+    _font(0),
+    _textPos(0),
+    _color(0, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(0, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(0, GUI::ECS::Systems::Colour::Black)
+{
+};
 
-GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
+GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
+{
+};
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFontPath(fontPath);
@@ -27,7 +48,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFontPath(fontPath);
@@ -37,7 +63,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFontPath(fontPath);
@@ -48,7 +79,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFontPath(fontPath);
@@ -62,7 +98,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const std::string &fontPath, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::pair<float, float> &position)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFontPath(fontPath);
@@ -77,7 +118,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFont(fontInstance);
@@ -86,7 +132,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFont(fontInstance);
@@ -96,7 +147,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text, const unsigned int &size)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(entityId),
+    _textPos(entityId),
+    _color(entityId, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(entityId, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(entityId, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFont(fontInstance);
@@ -107,7 +163,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(0),
+    _textPos(0),
+    _color(0, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(0, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(0, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFont(fontInstance);
@@ -121,7 +182,12 @@ GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId,
 };
 
 GUI::ECS::Components::TextComponent::TextComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Font &fontInstance, const std::string &text, const unsigned int &size, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::pair<float, float> &position)
-    : EntityNode(entityId)
+    : EntityNode(entityId),
+    _font(0),
+    _textPos(0),
+    _color(0, GUI::ECS::Systems::Colour::Black),
+    _hoverColor(0, GUI::ECS::Systems::Colour::Black),
+    _clickedColor(0, GUI::ECS::Systems::Colour::Black)
 {
     _inConstructor = true;
     setFont(fontInstance);
@@ -367,7 +433,8 @@ void GUI::ECS::Components::TextComponent::_initialiseText()
         std::any systemFont = _font.getFontInstance();
         PRETTY_DEBUG << "Font package received, checking that it is not empty." << std::endl;
         if (!systemFont.has_value()) {
-            PRETTY_CRITICAL << "No font found in the provided system font." << std::endl;
+            PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+                << "No font found in the provided system font." << std::endl;
             throw CustomExceptions::NoFont("<There is no sf::Font instance to apply>");
         }
         PRETTY_DEBUG << "Font instance has content, unpacking" << std::endl;
@@ -375,7 +442,8 @@ void GUI::ECS::Components::TextComponent::_initialiseText()
         std::optional<std::shared_ptr<sf::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<sf::Font>, CustomExceptions::NoFont>(systemFont, true, errorMsg);
         PRETTY_DEBUG << "Font unpacked successfully into an std::optional, checking std::optional." << std::endl;
         if (!fontCapsule.has_value()) {
-            PRETTY_CRITICAL << "Failed to cast sf::Font from system font, anycast failed." << std::endl;
+            PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+                << "Failed to cast sf::Font from system font, anycast failed." << std::endl;
             throw CustomExceptions::NoFont(errorMsg);
         }
         PRETTY_DEBUG << "std::optional has content, unpacking" << std::endl;
@@ -397,7 +465,8 @@ void GUI::ECS::Components::TextComponent::_initialiseText()
         if (fontTexture.getSize().x > 0 && fontTexture.getSize().y > 0) {
             PRETTY_SUCCESS << "Font loaded and has a valid texture!" << std::endl;
         } else {
-            PRETTY_CRITICAL << "Font loaded, but no valid texture found!" << std::endl;
+            PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+                << "Font loaded, but no valid texture found!" << std::endl;
         }
         PRETTY_DEBUG << "Text component updated." << std::endl;
         _fontChanged = false;
@@ -409,7 +478,7 @@ void GUI::ECS::Components::TextComponent::_loadFont()
 {
     if (!_font.isLoaded()) {
         std::string msg = "Font name : '" + _font.getFontName() + "' (not found) in '" + _font.getFontPath() + "'";
-        PRETTY_CRITICAL << msg << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << msg << std::endl;
         throw CustomExceptions::NoFont(msg);
     }
     if (!_sfTextComponent.has_value()) {
@@ -420,7 +489,8 @@ void GUI::ECS::Components::TextComponent::_loadFont()
     std::any systemFont = _font.getFontInstance();
     PRETTY_DEBUG << "Font package received, checking that it is not empty." << std::endl;
     if (!systemFont.has_value()) {
-        PRETTY_CRITICAL << "No font found in the provided system font." << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No font found in the provided system font." << std::endl;
         throw CustomExceptions::NoFont("<There is no sf::Font instance to apply>");
     }
     PRETTY_DEBUG << "Font instance has content, unpacking" << std::endl;
@@ -428,7 +498,8 @@ void GUI::ECS::Components::TextComponent::_loadFont()
     std::optional<std::shared_ptr<sf::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<sf::Font>, CustomExceptions::NoFont>(systemFont, true, errorMsg);
     PRETTY_DEBUG << "Font unpacked successfully into an std::optional, checking std::optional." << std::endl;
     if (!fontCapsule.has_value()) {
-        PRETTY_CRITICAL << "Failed to cast sf::Font from system font, anycast failed." << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Failed to cast sf::Font from system font, anycast failed." << std::endl;
         throw CustomExceptions::NoFont(errorMsg);
     }
     PRETTY_DEBUG << "std::optional has content, unpacking" << std::endl;
@@ -442,7 +513,8 @@ void GUI::ECS::Components::TextComponent::_loadFont()
     if (fontTexture.getSize().x > 0 && fontTexture.getSize().y > 0) {
         PRETTY_SUCCESS << "Font loaded and has a valid texture!" << std::endl;
     } else {
-        PRETTY_CRITICAL << "Font loaded, but no valid texture found!" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Font loaded, but no valid texture found!" << std::endl;
     }
 
 }
@@ -486,7 +558,8 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
             if (fontTexture.getSize().x > 0 && fontTexture.getSize().y > 0) {
                 PRETTY_SUCCESS << "Font loaded and has a valid texture!" << std::endl;
             } else {
-                PRETTY_CRITICAL << "Font loaded, but no valid texture found!" << std::endl;
+                PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+                    << "Font loaded, but no valid texture found!" << std::endl;
             }
             sf::FloatRect textBounds = _sfTextComponent->getLocalBounds();
             PRETTY_DEBUG << "Text bounds gathered." << std::endl;
@@ -507,14 +580,16 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
         systemColour = _color.getRenderColour();
     }
     if (!systemColour.has_value()) {
-        PRETTY_CRITICAL << "No color value to be managed" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No color value to be managed" << std::endl;
         throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
     }
     std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
     std::optional<sf::Color> colourCapsule = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
     PRETTY_DEBUG << "Colour capsule gathered, checking integrity" << std::endl;
     if (!colourCapsule.has_value()) {
-        PRETTY_CRITICAL << "Colour capsule is empty" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Colour capsule is empty" << std::endl;
         throw CustomExceptions::NoColour(errMsg);
     }
     PRETTY_DEBUG << "Colour capsule is valid, updating text colour" << std::endl;

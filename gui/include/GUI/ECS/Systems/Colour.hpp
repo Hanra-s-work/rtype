@@ -60,7 +60,7 @@ namespace GUI
                  * @param entityId The ID of the entity.
                  * @param copy The color to copy.
                  */
-                Colour(const std::uint32_t entityId, Colour &copy);
+                explicit Colour(const std::uint32_t entityId, const Colour &copy);
                 /**
                  * @brief Constructs a color from a 32-bit integer representation.
                  * @param entityId The ID of the entity.

@@ -35,7 +35,7 @@
   * @param spriteHeight The height of the sprite (default: 20).
   * @param frameLimit The frame rate limit for the application (default: 60).
   * @param configFilePath Path to the configuration file (default: "client_config.toml").
-   * @param log Inform the program if it needs to output logs or not (default: false).
+  * @param log Inform the program if it needs to output logs or not (default: false).
   * @param debug Whether debug mode is enabled (default: false).
   */
 Main::Main(
@@ -406,14 +406,13 @@ std::uint32_t Main::_initialiseSprites()
 
 
         PRETTY_INFO << "Processing Animation component" << std::endl;
-        GUI::ECS::Components::AnimationComponent animationNode(_baseId, path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
-        std::shared_ptr<GUI::ECS::Components::AnimationComponent> animationPointer = std::make_shared<GUI::ECS::Components::AnimationComponent>(animationNode);
+        std::shared_ptr<GUI::ECS::Components::AnimationComponent> animationPointer = std::make_shared<GUI::ECS::Components::AnimationComponent>(_baseId, path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
         _ecsEntities[typeid(GUI::ECS::Components::AnimationComponent)].push_back(animationPointer);
         _baseId++;
         PRETTY_SUCCESS << "Animation component processed" << std::endl;
         PRETTY_INFO << "Adding animation node to sprite '" << name << "'" << std::endl;
         GUI::ECS::Components::SpriteComponent spriteEntity(_baseId, name);
-        spriteEntity.setAnimation(animationNode);
+        spriteEntity.setAnimation(*animationPointer);
         PRETTY_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
         PRETTY_INFO << "Creating a shared pointer of the sprite" << std::endl;
         std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(spriteEntity);

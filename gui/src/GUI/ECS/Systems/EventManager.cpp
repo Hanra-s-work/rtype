@@ -14,7 +14,10 @@
 #include <iostream>
 #include "GUI/ECS/Systems/EventManager.hpp"
 
-GUI::ECS::Systems::EventManager::EventManager(const std::uint32_t entityId) :EntityNode(entityId), _mapper(entityId) {};
+GUI::ECS::Systems::EventManager::EventManager(const std::uint32_t entityId)
+    :EntityNode(entityId), _mouse(entityId), _mapper(entityId)
+{
+};
 
 GUI::ECS::Systems::EventManager::~EventManager() {}
 

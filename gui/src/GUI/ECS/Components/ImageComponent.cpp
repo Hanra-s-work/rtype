@@ -14,17 +14,17 @@
 #include "GUI/ECS/Components/ImageComponent.hpp"
 
 GUI::ECS::Components::ImageComponent::ImageComponent()
-    : EntityNode(0)
+    : EntityNode(0), _collision(0), _base(0), _normalColor(0), _hoverColor(0), _clickedColor(0)
 {
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -34,7 +34,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -45,7 +45,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -59,7 +59,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -74,7 +74,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -84,7 +84,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -95,7 +95,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -109,7 +109,7 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
 {
     _inConstructor = true;
     setApplication(application);
@@ -281,7 +281,7 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
     result += indentation + "- Image Component present?: " + Recoded::myToString(_sfImage.has_value()) + "\n";
     result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + "}\n";
     result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
     result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
     result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
     return result;
@@ -333,15 +333,19 @@ GUI::ECS::Components::ImageComponent &GUI::ECS::Components::ImageComponent::oper
 void GUI::ECS::Components::ImageComponent::_initialiseImage()
 {
     if (!_sfImage.has_value()) {
-        std::any textureCapsule = _base.getTexture();
+        const std::any textureCapsule = _base.getTexture();
         if (textureCapsule.has_value()) {
-            try {
-                sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-                _sfImage.emplace(texture);
+            if (textureCapsule.type() != typeid(std::shared_ptr<sf::Texture>)) {
+                PRETTY_ERROR << "Texture is not a shared_ptr<sf::Texture>" << std::endl;
+                throw CustomExceptions::NoTexture("<No texture was found when a texture of type sf::Texture was expected>");
             }
-            catch (std::bad_any_cast &e) {
-                throw CustomExceptions::NoTexture("<No texture was found when a texture of type sf::Texture was expected>, system error: " + std::string(e.what()));
+            const std::string errMsg = "<No texture was found when a texture of type sf::Texture was expected>, system error: ";
+            const std::optional<std::shared_ptr<sf::Texture>> texture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, errMsg);
+            if (!texture.has_value()) {
+                PRETTY_ERROR << errMsg << std::endl;
+                throw CustomExceptions::NoTexture(errMsg);
             }
+            _sfImage.emplace(*(texture.value()));
         }
     }
 }
@@ -360,15 +364,24 @@ void GUI::ECS::Components::ImageComponent::_processColour()
         systemColour = _normalColor.getRenderColour();
     }
     if (!systemColour.has_value()) {
-        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No Color found" << std::endl;
+        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Color was expected)>");
     }
-    try {
-        sf::Color result = std::any_cast<sf::Color>(systemColour);
-        _sfImage->setColor(result);
+    const std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
+    if (systemColour.type() != typeid(sf::Color)) {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No Color found, " << errMsg << std::endl;
+        throw CustomExceptions::NoColour(errMsg);
     }
-    catch (std::bad_any_cast &e) {
-        throw CustomExceptions::NoColour("<The content returned by the getRenderColour function is not of type sf::Color>, system error: " + std::string(e.what()));
+    const std::optional<sf::Color> color = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
+    if (!color.has_value()) {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No Color found, " << errMsg << std::endl;
+        throw CustomExceptions::NoColour(errMsg);
     }
+    _sfImage->setColor(color.value());
+    PRETTY_SUCCESS << "Image colour has been set" << std::endl;
 }
 
 void GUI::ECS::Components::ImageComponent::_processImageComponent()
@@ -392,15 +405,13 @@ void GUI::ECS::Components::ImageComponent::_processImageComponent()
         }
         if (_textureAltered) {
             PRETTY_DEBUG << "The texture has been altered, updating image." << std::endl;
-            std::any textureCapsule = _base.getTexture();
-            if (textureCapsule.has_value()) {
-                try {
-                    sf::Texture texture = std::any_cast<sf::Texture>(textureCapsule);
-                    _sfImage->setTexture(texture);
+            const std::any textureCapsule = _base.getTexture();
+            if (textureCapsule.type() == typeid(std::shared_ptr<sf::Texture>) && textureCapsule.has_value()) {
+                const std::string errMsg = "<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: ";
+                const std::optional<std::shared_ptr<sf::Texture>> texture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, errMsg);
+                if (texture.has_value()) {
+                    _sfImage->setTexture(*(texture.value()));
                     _textureAltered = false;
-                }
-                catch (std::bad_any_cast &e) {
-                    throw CustomExceptions::NoTexture("<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: " + std::string(e.what()));
                 }
             }
         }

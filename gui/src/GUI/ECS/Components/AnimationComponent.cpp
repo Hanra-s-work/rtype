@@ -13,42 +13,48 @@
 
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 
-GUI::ECS::Components::AnimationComponent::AnimationComponent() : EntityNode(0) {};
+GUI::ECS::Components::AnimationComponent::AnimationComponent()
+    : EntityNode(0), _baseTexture(0), _clock(0)
+{
+};
 
-GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId) : EntityNode(entityId) {};
+GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId)
+    : EntityNode(entityId), _baseTexture(entityId), _clock(entityId)
+{
+};
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::vector<Recoded::IntRect> &textures)
-    : EntityNode(0)
+    : EntityNode(0), _baseTexture(0), _clock(0)
 {
     setAnimation(textures);
 };
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame, const int endFrame)
-    : EntityNode(0)
+    : EntityNode(0), _baseTexture(0), _clock(0)
 {
     setAnimation(path, frameWidth, frameHeight, startLeft, startTop, initialFrame, endFrame);
 };
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame, const int endFrame)
-    : EntityNode(0)
+    : EntityNode(0), _baseTexture(0), _clock(0)
 {
     setAnimation(spritesheet, frameWidth, frameHeight, startLeft, startTop, initialFrame, endFrame);
 };
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::vector<Recoded::IntRect> &rects)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _baseTexture(entityId), _clock(entityId)
 {
     setAnimation(rects);
 };
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const std::string &path, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame, const int endFrame)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _baseTexture(entityId), _clock(entityId)
 {
     setAnimation(path, frameWidth, frameHeight, startLeft, startTop, initialFrame, endFrame);
 };
 
 GUI::ECS::Components::AnimationComponent::AnimationComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &spritesheet, const unsigned int frameWidth, const unsigned int frameHeight, const bool startLeft, const bool startTop, const unsigned int initialFrame, const int endFrame)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _baseTexture(entityId), _clock(entityId)
 {
     setAnimation(spritesheet, frameWidth, frameHeight, startLeft, startTop, initialFrame, endFrame);
 };
@@ -70,7 +76,14 @@ void GUI::ECS::Components::AnimationComponent::setReadReverse(bool reverse)
 void GUI::ECS::Components::AnimationComponent::setDelay(float frameDuration)
 {
     if (frameDuration < 0) {
-        throw CustomExceptions::InvalidDuration(std::to_string(frameDuration), "0", "");
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Invalid duration, current: " << Recoded::myToString(frameDuration)
+            << ", min: 0, max: <unknown>" << std::endl;
+        throw CustomExceptions::InvalidDuration(
+            std::to_string(frameDuration),
+            "0",
+            ""
+        );
     }
     _frameDelay = frameDuration;
 }
@@ -78,6 +91,10 @@ void GUI::ECS::Components::AnimationComponent::setDelay(float frameDuration)
 void GUI::ECS::Components::AnimationComponent::setInitialFrame(std::uint32_t frameIndex)
 {
     if (frameIndex > _totalFrames || frameIndex < 0) {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Invalid duration, current: " << Recoded::myToString(frameIndex)
+            << ", min: 0, max: " << Recoded::myToString(_totalFrames)
+            << std::endl;
         throw CustomExceptions::InvalidIndex(std::to_string(frameIndex), "0", std::to_string(_totalFrames));
     }
     _frameInitial = frameIndex;
@@ -285,7 +302,8 @@ const std::uint32_t GUI::ECS::Components::AnimationComponent::getCurrentFrameInd
 {
     PRETTY_INFO << "Getting the current frame index" << std::endl;
     if (_frames.size() <= 0) {
-        PRETTY_CRITICAL << "No frames available" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No frames available" << std::endl;
         throw CustomExceptions::NoAnimationFrames();
     }
     return _currentFrameIndex;
@@ -295,13 +313,15 @@ const Recoded::IntRect GUI::ECS::Components::AnimationComponent::getCurrentFrame
 {
     PRETTY_INFO << "Getting the current frame" << std::endl;
     if (_frames.size() <= 0) {
-        PRETTY_CRITICAL << "No frames available" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No frames available" << std::endl;
         throw CustomExceptions::NoAnimationFrames();
     }
     std::uint32_t frame = getCurrentFrameIndex();
     std::uint32_t frameSize = _frames.size();
     if (frame >= frameSize || frame < 0) {
-        PRETTY_CRITICAL << "Frame index out of bounds" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Frame index out of bounds" << std::endl;
         throw CustomExceptions::InvalidIndex(std::to_string(frame), "0", std::to_string(frameSize));
     }
     PRETTY_SUCCESS << "Getting the current frame frame list." << std::endl;
@@ -317,7 +337,8 @@ const std::pair<int, int> GUI::ECS::Components::AnimationComponent::getFrameDime
 {
     PRETTY_INFO << "Getting the frame dimension" << std::endl;
     if (_frames.size() <= 0) {
-        PRETTY_CRITICAL << "No frames available" << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "No frames available" << std::endl;
         throw CustomExceptions::NoAnimationFrames();
     }
     PRETTY_SUCCESS << "Getting the frame dimensions from the first frame." << std::endl;
@@ -372,6 +393,7 @@ const GUI::ECS::Systems::Clock GUI::ECS::Components::AnimationComponent::getCloc
 GUI::ECS::Components::AnimationComponent &GUI::ECS::Components::AnimationComponent::operator=(const GUI::ECS::Components::AnimationComponent &copy)
 {
     if (this != &copy) {
+        PRETTY_DEBUG << "The animation component class is different from the current, updating" << std::endl;
         update(copy);
     }
     return *this;
@@ -385,12 +407,18 @@ void GUI::ECS::Components::AnimationComponent::_tick()
     }
 
     if (_frames.empty()) {
-        PRETTY_CRITICAL << "There are no frames to render." << std::endl;
-        throw CustomExceptions::InvalidIndex("<There are no frames>", "<Have you thought of adding frames to the class?>", "<If not use the setAnimation function>");
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "There are no frames to render." << std::endl;
+        throw CustomExceptions::InvalidIndex(
+            "<There are no frames>",
+            "<Have you thought of adding frames to the class?>",
+            "<If not use the setAnimation function>"
+        );
     }
 
     if (_frameInitial > _totalFrames) {
-        PRETTY_CRITICAL << "The default frame is greater than "
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "The default frame is greater than "
             << " the total amount of frames, frame initial: "
             << std::to_string(_frameInitial)
             << "minimum frames: 0"
@@ -413,13 +441,14 @@ void GUI::ECS::Components::AnimationComponent::_tickReverse()
 
 
     if (nextFrame == std::numeric_limits<std::uint32_t>::max() && _readReverse) {
-        PRETTY_INFO << "The next frame if negative, resetting counter to the maximum available frames." << std::endl;
+        PRETTY_INFO << "The next frame is negative, resetting counter to the maximum available frames." << std::endl;
         if (_loop) {
             PRETTY_INFO << "Looping is enabled, the sprite will thus return to the last frame." << std::endl;
             nextFrame = _totalFrames - 1;
         } else {
             if (_frameInitial > _totalFrames) {
-                PRETTY_CRITICAL << "The default frame is greater than "
+                PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+                    << "The default frame is greater than "
                     << " the total amount of frames, frame initial: "
                     << std::to_string(_frameInitial)
                     << "minimum frames: 0"
@@ -442,13 +471,14 @@ void GUI::ECS::Components::AnimationComponent::_tickRegular()
 
 
     if (nextFrame >= _totalFrames && !_readReverse) {
-        PRETTY_INFO << "The next frame if negative, resetting counter to the maximum available frames." << std::endl;
+        PRETTY_INFO << "The next frame is positive, resetting counter to the maximum available frames." << std::endl;
         if (_loop) {
             PRETTY_INFO << "Looping is enabled, the sprite will thus return to the last frame." << std::endl;
             nextFrame = 0;
         } else {
             if (_frameInitial > _totalFrames) {
-                PRETTY_CRITICAL << "The default frame is greater than "
+                PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+                    << "The default frame is greater than "
                     << " the total amount of frames, frame initial: "
                     << std::to_string(_frameInitial)
                     << "minimum frames: 0"
@@ -478,19 +508,25 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     GUI::ECS::Components::CollisionComponent spritesheetSize;
     std::any textureCapsule = _baseTexture.getTexture();
     if (!textureCapsule.has_value()) {
-        PRETTY_CRITICAL << "Texture is not set." << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Texture is not set." << std::endl;
         throw CustomExceptions::NoTexture("Base texture for the spritesheet animation");
     }
+    if (textureCapsule.type() != typeid(std::shared_ptr<sf::Texture>)) {
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Texture is no std::shared_ptr<sf::Texture> instance." << std::endl;
+        throw CustomExceptions::NoTexture("The texture type provided does not match std::shared_ptr<sf::Texture>");
+    }
     PRETTY_DEBUG << "Getting the texture" << std::endl;
-    std::optional<sf::Texture> OptionalTexture = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(textureCapsule, true, "Base texture for the spritesheet animation, <std::any , bad cast error>, system error: ");
+    std::optional<std::shared_ptr<sf::Texture>> OptionalTexture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, "Base texture for the spritesheet animation, <std::any , bad cast error>, system error: ");
     if (!OptionalTexture.has_value()) {
-        PRETTY_ERROR << "The decasting has failed, skipping the rest of the function" << std::endl;
+        PRETTY_ERROR << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' " << "The decasting has failed, skipping the rest of the function" << std::endl;
         return;
     }
-    PRETTY_INFO << "Texture Loaded" << std::endl;
-    sf::Texture texture = OptionalTexture.value();
+    PRETTY_INFO << "Texture Fetched" << std::endl;
+    std::shared_ptr<sf::Texture> texture = OptionalTexture.value();
     PRETTY_DEBUG << "Getting the texture size" << std::endl;
-    sf::Vector2u textureDim = texture.getSize();
+    sf::Vector2u textureDim = texture->getSize();
     PRETTY_DEBUG << "Texture size gathered ( width: " << textureDim.x
         << " height: " << textureDim.y << ")" << std::endl;
     spritesheetSize.setDimension({ textureDim.x, textureDim.y });
@@ -499,26 +535,46 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
         << ") and fameHeight (" << frameHeight << ")"
         << std::endl;
     if (frameWidth <= 0) {
-        PRETTY_CRITICAL << "Frame width must be greater than zero." << std::endl;
-        throw CustomExceptions::InvalidWidth(std::to_string(frameWidth), "1", std::to_string(spritesheetSize.getWidth()));
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Frame width must be greater than zero." << std::endl;
+        throw CustomExceptions::InvalidWidth(
+            std::to_string(frameWidth),
+            "1",
+            std::to_string(spritesheetSize.getWidth())
+        );
     }
     if (frameHeight <= 0) {
-        PRETTY_CRITICAL << "Frame height must be greater than zero." << std::endl;
-        throw CustomExceptions::InvalidHeight(std::to_string(frameHeight), "1", std::to_string(spritesheetSize.getHeight()));
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Frame height must be greater than zero." << std::endl;
+        throw CustomExceptions::InvalidHeight(
+            std::to_string(frameHeight),
+            "1",
+            std::to_string(spritesheetSize.getHeight())
+        );
     }
     if (frameWidth > spritesheetSize.getWidth()) {
-        PRETTY_CRITICAL << "The frame width is greater than the texture width, "
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "The frame width is greater than the texture width, "
             << "frame width: " << frameWidth
             << "texture width: " << spritesheetSize.getWidth()
             << std::endl;
-        throw CustomExceptions::InvalidWidth(Recoded::myToString(frameWidth), "0", Recoded::myToString(textureDim.x));
+        throw CustomExceptions::InvalidWidth(
+            Recoded::myToString(frameWidth),
+            "0",
+            Recoded::myToString(textureDim.x)
+        );
     }
     if (frameHeight > spritesheetSize.getHeight()) {
-        PRETTY_CRITICAL << "The frame height is greater than the texture height, "
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "The frame height is greater than the texture height, "
             << "frame height: " << frameHeight
             << "texture height: " << spritesheetSize.getHeight()
             << std::endl;
-        throw CustomExceptions::InvalidHeight(Recoded::myToString(frameHeight), "0", Recoded::myToString(textureDim.y));
+        throw CustomExceptions::InvalidHeight(
+            Recoded::myToString(frameHeight),
+            "0",
+            Recoded::myToString(textureDim.y)
+        );
     }
     PRETTY_INFO << "Cutting the texture into frames (Mathing some final elements)" << std::endl;
     const int columns = spritesheetSize.getWidth() / frameWidth;
@@ -527,7 +583,8 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     _totalFrames = (columns * rows);
 
     if (initialFrame < 0 || initialFrame > _totalFrames) {
-        PRETTY_ERROR << "Initial frame is out of range, expected at maximum: "
+        PRETTY_ERROR << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Initial frame is out of range, expected at maximum: "
             << Recoded::myToString(_totalFrames)
             << ", at minimum: 0, but got: " << Recoded::myToString(initialFrame)
             << std::endl;
@@ -535,7 +592,8 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     }
 
     if (endFrame != (-1) && (endFrame < 0 || endFrame > _totalFrames)) {
-        PRETTY_ERROR << "Initial frame is out of range, expected at maximum: "
+        PRETTY_ERROR << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "Initial frame is out of range, expected at maximum: "
             << Recoded::myToString(_totalFrames)
             << ", at minimum: 0 (or -1), but got: " << Recoded::myToString(endFrame)
             << std::endl;

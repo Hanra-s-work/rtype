@@ -13,48 +13,51 @@
 
 #include "GUI/ECS/Components/TextureComponent.hpp"
 
-GUI::ECS::Components::TextureComponent::TextureComponent() :EntityNode(0) {};
+GUI::ECS::Components::TextureComponent::TextureComponent()
+    :EntityNode(0), _collisionInfo(0)
+{
+};
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const TextureComponent &other)
-    : EntityNode(0)
+    : EntityNode(0), _collisionInfo(0)
 {
     update(other);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
-    : EntityNode(0)
+    : EntityNode(0), _collisionInfo(0)
 {
     setFilePath(filePath);
     setCollisionInfo(collisionInfo);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
-    : EntityNode(0)
+    : EntityNode(0), _collisionInfo(0)
 {
     setTexture(texture);
     setCollisionInfo(collisionInfo);
 }
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collisionInfo(entityId)
 {
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const TextureComponent &other)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collisionInfo(entityId)
 {
     update(other);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collisionInfo(entityId)
 {
     setFilePath(filePath);
     setCollisionInfo(collisionInfo);
 };
 
 GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _collisionInfo(entityId)
 {
     setTexture(texture);
     setCollisionInfo(collisionInfo);

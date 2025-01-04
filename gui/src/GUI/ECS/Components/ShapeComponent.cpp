@@ -15,18 +15,18 @@
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityID)
     : EntityNode(entityID),
-    _hoverColor(GUI::ECS::Systems::Colour::White),
-    _normalColor(GUI::ECS::Systems::Colour::White),
-    _clickedColor(GUI::ECS::Systems::Colour::White),
+    _hoverColor(entityID, GUI::ECS::Systems::Colour::White),
+    _normalColor(entityID, GUI::ECS::Systems::Colour::White),
+    _clickedColor(entityID, GUI::ECS::Systems::Colour::White),
     _shape(ActiveShape::NONE),
     _visible(true),
-    _collision()
+    _collision(entityID)
 {
     _inConstructor = false;
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::size_t pointCount, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(0)
+    : EntityNode(0), _hoverColor(0), _normalColor(0), _clickedColor(0), _collision(0)
 {
     _inConstructor = true;
     setShape(pointCount);
@@ -42,7 +42,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::size_t pointCoun
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::size_t pointCount, const float radius, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(0)
+    : EntityNode(0), _hoverColor(0), _normalColor(0), _clickedColor(0), _collision(0)
 {
     _inConstructor = true;
     setShape(pointCount, radius);
@@ -57,7 +57,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::size_t pointCoun
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::pair<float, float> &size, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(0)
+    : EntityNode(0), _hoverColor(0), _normalColor(0), _clickedColor(0), _collision(0)
 {
     _inConstructor = true;
     setShape(size);
@@ -72,7 +72,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::pair<float, floa
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const Recoded::FloatRect &rect, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(0)
+    : EntityNode(0), _hoverColor(0), _normalColor(0), _clickedColor(0), _collision(0)
 {
     _inConstructor = true;
     setShape(rect);
@@ -86,7 +86,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const Recoded::FloatRect &r
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const std::size_t pointCount, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _hoverColor(entityId), _normalColor(entityId), _clickedColor(entityId), _collision(entityId)
 {
     _inConstructor = true;
     setShape(pointCount);
@@ -101,7 +101,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const std::size_t pointCount, const float radius, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _hoverColor(entityId), _normalColor(entityId), _clickedColor(entityId), _collision(entityId)
 {
     _inConstructor = true;
     setShape(pointCount, radius);
@@ -116,7 +116,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const std::pair<float, float> &size, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _hoverColor(entityId), _normalColor(entityId), _clickedColor(entityId), _collision(entityId)
 {
     _inConstructor = true;
     setShape(size);
@@ -131,7 +131,7 @@ GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityId, const Recoded::FloatRect &rect, const GUI::ECS::Systems::Colour &normalColour, const GUI::ECS::Systems::Colour &hoverColour, const GUI::ECS::Systems::Colour &clickedColour, const bool visible)
-    : EntityNode(entityId)
+    : EntityNode(entityId), _hoverColor(entityId), _normalColor(entityId), _clickedColor(entityId), _collision(entityId)
 {
     _inConstructor = true;
     setShape(rect);
@@ -496,7 +496,8 @@ void GUI::ECS::Components::ShapeComponent::_processColor()
     const std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
     std::optional<sf::Color> colourCapsule = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
     if (!colourCapsule.has_value()) {
-        PRETTY_CRITICAL << errMsg << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << errMsg << std::endl;
         throw CustomExceptions::NoColour(errMsg);
     }
     const sf::Color colour = colourCapsule.value();
@@ -549,7 +550,8 @@ void GUI::ECS::Components::ShapeComponent::_assignShape(const std::any &shape, s
     const std::string errMsg = "<Unknown shape type>, any_cast error: ";
     std::optional<T> instanceCapsule = Utilities::unCast<T, CustomExceptions::InvalidShape>(shape, true, errMsg);
     if (!instanceCapsule.has_value()) {
-        PRETTY_CRITICAL << "The shape that was attempted to be uncast failed." << std::endl;
+        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
+            << "The shape that was attempted to be uncast failed." << std::endl;
         throw CustomExceptions::InvalidShape(errMsg);
     }
     clearShapes();
