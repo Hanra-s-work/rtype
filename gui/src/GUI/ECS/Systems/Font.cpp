@@ -5,6 +5,12 @@
 ** Font.cpp
 */
 
+/**
+ * @file Font.cpp
+ *
+ * @brief File in charge of containing the code for the font class
+ */
+
 #include "GUI/ECS/Systems/Font.hpp"
 
 GUI::ECS::Systems::Font::Font() : EntityNode(0) {};

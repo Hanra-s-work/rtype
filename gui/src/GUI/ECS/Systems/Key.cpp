@@ -5,6 +5,12 @@
 ** key.cpp
 */
 
+/**
+ * @file Key.cpp
+ *
+ * @brief File in charge of containing the code for the Key class
+ */
+
 #include "GUI/ECS/Systems/Key.hpp"
 
 GUI::ECS::Systems::KeyMapper::KeyMapper(const std::uint32_t EntityId)

@@ -7,6 +7,7 @@
 
 /**
  * @file MouseInfo.cpp
+ *
  * @brief Implementation of the MouseInfo class for tracking mouse events and state.
  */
 

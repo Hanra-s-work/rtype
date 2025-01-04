@@ -7,6 +7,7 @@
 
 /**
  * @file RenderComponent.cpp
+ *
  * @brief This is the file in charge of managing the rendering
  */
 
@@ -170,7 +171,6 @@ GUI::ECS::Components::TextureComponent &GUI::ECS::Components::TextureComponent::
     }
     return *this;
 };
-
 
 std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::TextureComponent &item)
 {

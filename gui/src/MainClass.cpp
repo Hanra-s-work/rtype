@@ -7,6 +7,7 @@
 
 /**
  * @file MainClass.cpp
+ *
  * @brief This is the file in charge of containing the class Main of the program.
  */
 
@@ -827,11 +828,6 @@ void Main::_testContent()
     }
 }
 
-void helloWorld()
-{
-    std::cout << "Hello World" << std::endl;
-}
-
 /**
  * @brief Function in charge of displaying the main menu to the user before launching them into the game.
  *
@@ -891,7 +887,7 @@ void Main::_mainLoop()
 
     GUI::ECS::Components::ShapeComponent rectangle(_baseId, { {200, 80}, {80,50} });
     _baseId++;
-    GUI::ECS::Components::ButtonComponent button(_baseId, rectangle, text, helloWorld);
+    GUI::ECS::Components::ButtonComponent button(_baseId, rectangle, text);
     button.setPosition({ 200,200 });
     button.setTextSize(20);
     _baseId++;

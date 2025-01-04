@@ -7,6 +7,7 @@
 
 /**
  * @file HelpFunctions.cpp
+ *
  * @brief This is the file in charge of displaying the help message.
  */
 

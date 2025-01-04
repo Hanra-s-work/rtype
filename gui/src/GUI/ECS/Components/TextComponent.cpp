@@ -7,6 +7,7 @@
 
 /**
  * @file TextComponent.cpp
+ *
  * @brief This is the file in charge of managing the text
  */
 
@@ -319,8 +320,6 @@ const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned in
     result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
     return result;
 }
-
-
 
 std::any GUI::ECS::Components::TextComponent::render() const
 {

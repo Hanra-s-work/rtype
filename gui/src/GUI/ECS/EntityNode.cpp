@@ -7,6 +7,7 @@
 
 /**
  * @file EntityNode.cpp
+ *
  * @brief This is the file in charge of managing the node ids
  */
 

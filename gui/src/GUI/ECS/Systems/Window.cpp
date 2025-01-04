@@ -5,6 +5,12 @@
 ** Window.cpp
 */
 
+/**
+ * @file Window.cpp
+ *
+ * @brief File in charge of containing the logic for the window class
+ */
+
 #include "GUI/ECS/Systems/Window.hpp"
 
 GUI::ECS::Systems::Window::Window(const std::uint32_t entityId, const std::uint32_t windowWidth, const std::uint32_t windowHeight, const std::string &windowName, unsigned int frameRateLimit)

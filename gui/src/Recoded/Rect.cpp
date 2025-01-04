@@ -5,6 +5,12 @@
 ** Rect.cpp
 */
 
+/**
+ * @file Rect.cpp
+ *
+ * @brief File in charge of containing the code for the Rect class
+ */
+
 #include "Recoded/Rect.hpp"
 
 template <typename T>

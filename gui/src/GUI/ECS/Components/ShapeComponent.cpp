@@ -5,6 +5,12 @@
 ** ShapeComponent.hpp
 */
 
+/**
+ * @file ShapeComponent.cpp
+ *
+ * @brief File in charge of containing the code for the Shape Component class
+ */
+
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 
 GUI::ECS::Components::ShapeComponent::ShapeComponent(const std::uint32_t entityID)

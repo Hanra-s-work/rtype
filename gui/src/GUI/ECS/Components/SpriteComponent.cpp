@@ -5,6 +5,12 @@
 ** SpriteComponent.cpp
 */
 
+/**
+ * @file SpriteComponent.cpp
+ *
+ * @brief File in charge of containing the code for the sprite component
+ */
+
 #include "GUI/ECS/Components/SpriteComponent.hpp"
 
 GUI::ECS::Components::SpriteComponent::SpriteComponent() :EntityNode(0) {};
@@ -385,7 +391,7 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
     PRETTY_SUCCESS << "Animation updated" << std::endl;
     PRETTY_INFO << "Updating the collision node with the child version. '" << _spriteName << "'" << std::endl;
     _collision.setDimension(animation.getFrameDimensions());
-    PRETTY_SUCCESS << "Collision updated for sprite '" << _spriteName << "'" << std::endl;    
+    PRETTY_SUCCESS << "Collision updated for sprite '" << _spriteName << "'" << std::endl;
     _animationSet = true;
     _collisionSet = true;
     if (!_sfSprite.has_value()) {

@@ -7,6 +7,7 @@
 
 /**
  * @file EventManager.cpp
+ *
  * @brief This is the file in charge of managing the events from the window.
  */
 

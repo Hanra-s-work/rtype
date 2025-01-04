@@ -7,6 +7,7 @@
 
 /**
  * @file Clock.cpp
+ *
  * @brief This file contains the implementation of the Clock class for time management.
  */
 

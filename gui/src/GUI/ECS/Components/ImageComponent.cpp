@@ -7,6 +7,7 @@
 
 /**
  * @file ImageComponent.cpp
+ *
  * @brief This is the file in charge of managing the text
  */
 
