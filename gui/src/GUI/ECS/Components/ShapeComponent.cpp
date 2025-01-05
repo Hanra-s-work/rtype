@@ -319,7 +319,7 @@ const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Component
     }
     if (_shape == ActiveShape::RECTANGLE) {
         if (!_sfShapeRectangle.has_value()) {
-            sf::RectangleShape tt({ 0,0 });
+            sf::RectangleShape tt({ 10,10 });
             return std::pair<ActiveShape, std::any>(_shape, std::make_any<sf::RectangleShape>(tt));
         }
         return std::pair<ActiveShape, std::any>(
@@ -329,7 +329,7 @@ const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Component
     }
     if (_shape == ActiveShape::CIRCLE) {
         if (!_sfShapeCircle.has_value()) {
-            sf::CircleShape tt(0, 30);
+            sf::CircleShape tt(10, 30);
             return std::pair<ActiveShape, std::any>(_shape, std::make_any<sf::CircleShape>(tt));
         }
         return std::pair<ActiveShape, std::any>(
@@ -339,7 +339,7 @@ const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Component
     }
     if (_shape == ActiveShape::CONVEX) {
         if (!_sfShapeConvex.has_value()) {
-            sf::ConvexShape tt(0);
+            sf::ConvexShape tt(10);
             return std::pair<ActiveShape, std::any>(_shape, std::make_any<sf::ConvexShape>(tt));
         }
         return std::pair<ActiveShape, std::any>(
@@ -448,9 +448,13 @@ void GUI::ECS::Components::ShapeComponent::clearShapes()
 std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> GUI::ECS::Components::ShapeComponent::render() const
 {
     if (!_visible || _shape == ActiveShape::NONE) {
+        PRETTY_WARNING << "The shape is either hidden or it's value is None" << std::endl;
+        PRETTY_DEBUG << "Visibility status: '" << Recoded::myToString(_visible) << "'" << std::endl;
+        PRETTY_DEBUG << "Shape status: '" << getShapeTypeString() << "'." << std::endl;
         return std::nullopt;
     }
     if (_shape == ActiveShape::RECTANGLE && _sfShapeRectangle.has_value()) {
+        PRETTY_DEBUG << "Returning value for the Rectangle shape." << std::endl;
         return std::optional(
             std::pair(
                 ActiveShape::RECTANGLE,
@@ -459,6 +463,7 @@ std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> GUI::ECS::
         );
     }
     if (_shape == ActiveShape::CIRCLE && _sfShapeCircle.has_value()) {
+        PRETTY_DEBUG << "Returning value for the Circle shape." << std::endl;
         return std::optional(
             std::pair(
                 ActiveShape::CIRCLE,
@@ -467,6 +472,7 @@ std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> GUI::ECS::
         );
     }
     if (_shape == ActiveShape::CONVEX && _sfShapeConvex.has_value()) {
+        PRETTY_DEBUG << "Returning value for the Convex shape." << std::endl;
         return std::optional(
             std::pair(
                 ActiveShape::CONVEX,
@@ -474,6 +480,7 @@ std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> GUI::ECS::
             )
         );
     }
+    PRETTY_WARNING << "No shape is set for this component" << std::endl;
     return std::nullopt;
 }
 
@@ -489,56 +496,65 @@ void GUI::ECS::Components::ShapeComponent::_processColor()
 {
     std::any systemColour;
     if (_collision.isClicked()) {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _clickedColor << "\n} and corresponds to the _clickedColour"
+            << std::endl;
         systemColour = _clickedColor.getRenderColour();
     } else if (_collision.isHovered()) {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _hoverColor << "\n} and corresponds to the _hoverColour"
+            << std::endl;
         systemColour = _hoverColor.getRenderColour();
     } else {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _normalColor << "\n} and corresponds to the _normalColour"
+            << std::endl;
         systemColour = _normalColor.getRenderColour();
     }
-    if (!systemColour.has_value()) {
-        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Font was expected)>");
-    }
     const std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
-    std::optional<sf::Color> colourCapsule = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
+    const std::optional<sf::Color> colourCapsule = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
     if (!colourCapsule.has_value()) {
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
             << errMsg << std::endl;
         throw CustomExceptions::NoColour(errMsg);
     }
-    const sf::Color colour = colourCapsule.value();
     if (_sfShapeCircle.has_value()) {
-        _sfShapeCircle->setFillColor(colour);
+        _sfShapeCircle->setFillColor(colourCapsule.value());
     }
     if (_sfShapeConvex.has_value()) {
-        _sfShapeConvex->setFillColor(colour);
+        _sfShapeConvex->setFillColor(colourCapsule.value());
     }
     if (_sfShapeRectangle.has_value()) {
-        _sfShapeRectangle->setFillColor(colour);
+        _sfShapeRectangle->setFillColor(colourCapsule.value());
     }
 }
 
 void GUI::ECS::Components::ShapeComponent::_processCollisions()
 {
     if (_shape == ActiveShape::NONE) {
+        PRETTY_WARNING << "There are no shapes with which to calculate collisions." << std::endl;
         return;
     }
 
     bool hitboxUpdated = false;
-    sf::Vector2f pos = { _collision.getPositionX(), _collision.getPositionY() };
-    sf::Vector2f size = { _collision.getWidth(), _collision.getHeight() };
+    const sf::Vector2f pos = { _collision.getPositionX(), _collision.getPositionY() };
+    const sf::Vector2f size = { _collision.getWidth(), _collision.getHeight() };
 
     sf::FloatRect collisionHitBox = { pos, size };
     if (_shape == ActiveShape::CIRCLE && _sfShapeCircle.has_value()) {
+        PRETTY_DEBUG << "Setting positions for : Circle shape" << std::endl;
         _sfShapeCircle->setPosition(pos);
         collisionHitBox = _sfShapeCircle->getGlobalBounds();
         hitboxUpdated = true;
     }
     if (_shape == ActiveShape::CONVEX && _sfShapeConvex.has_value()) {
+        PRETTY_DEBUG << "Setting positions for : Convex shape" << std::endl;
         _sfShapeConvex->setPosition(pos);
         collisionHitBox = _sfShapeConvex->getGlobalBounds();
         hitboxUpdated = true;
     }
     if (_shape == ActiveShape::RECTANGLE && _sfShapeRectangle.has_value()) {
+        PRETTY_DEBUG << "Setting positions for : Rectangle shape" << std::endl;
         _sfShapeRectangle->setPosition(pos);
         collisionHitBox = _sfShapeRectangle->getGlobalBounds();
         hitboxUpdated = true;
