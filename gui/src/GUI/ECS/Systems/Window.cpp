@@ -115,81 +115,66 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::TextComponent &
     if (!text.isVisible()) {
         return;
     }
-    std::any textCapsule = text.render();
-    if (!textCapsule.has_value()) {
-        throw CustomExceptions::NoRenderableText();
+    const std::any textCapsule = text.render();
+    const std::optional<sf::Text> txt = Utilities::unCast<sf::Text, CustomExceptions::NoRenderableText>(textCapsule, true, "<Unknown or empty text component, this is not a sf::Text>, any_cast error: ");
+    if (!txt.has_value()) {
+        PRETTY_CRITICAL << "<There is not sf::Text component to render, component id: '" << Recoded::myToString(text.getEntityNodeId()) << "'\n" << std::endl;
+        throw CustomExceptions::NoRenderableText("<There is no sf::Text component to render>");
     }
-    try {
-        sf::Text txt = std::any_cast<sf::Text>(textCapsule);
-        _sfWindow.draw(txt);
-    }
-    catch (std::bad_any_cast &e) {
-        std::string response = "<Unknown text, this is not a sf::Text>, any_cast error";
-        response += e.what();
-        throw CustomExceptions::NoRenderableText(response);
-    }
+    _sfWindow.draw(txt.value());
+    PRETTY_SUCCESS << "Text component, entity id: '" << Recoded::myToString(text.getEntityNodeId()) << "', is drawn." << std::endl;
 }
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
 {
     if (!shape.isVisible()) {
+        PRETTY_WARNING << "Shape is hidden, id: '"
+            << Recoded::myToString(shape.getEntityNodeId())
+            << "', name: '" << shape.getShapeTypeString() << "'." << std::endl;
         return;
     }
-    std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> shapeCapsule = shape.render();
+    const std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> shapeCapsule = shape.render();
     if (!shapeCapsule.has_value()) {
+        PRETTY_WARNING << "Shape is not renderable, id: '"
+            << Recoded::myToString(shape.getEntityNodeId()) << "'" << std::endl;
         return;
         // throw CustomExceptions::NoRenderableShape("<std::pair not found in std::any, have you initialised the class with a shape?>");
     }
-    std::pair<GUI::ECS::Components::ActiveShape, std::any> pairNode = shapeCapsule.value();
-    GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
-    std::any shapeData = pairNode.second;
+    const std::pair<GUI::ECS::Components::ActiveShape, std::any> pairNode = shapeCapsule.value();
+    const GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
+    const std::any shapeData = pairNode.second;
     if (shapeType == GUI::ECS::Components::ActiveShape::NONE) {
         PRETTY_WARNING << "There is no shape to render, skipping" << std::endl;
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {
-        if (!shapeData.has_value()) {
+        const std::optional<sf::RectangleShape> renderableShape = Utilities::unCast<sf::RectangleShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a RectangleShape>, any_cast error: ");
+        if (!renderableShape.has_value()) {
+            PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
             throw CustomExceptions::NoRenderableShape("<There is no sf::RectangleShape located in std::any>");
         }
-        try {
-            sf::RectangleShape renderableShape = std::any_cast<sf::RectangleShape>(shapeData);
-            _sfWindow.draw(renderableShape);
-        }
-        catch (std::bad_any_cast &e) {
-            std::string response = "<Unknown shape, this is not a RectangleShape>, any_cast error";
-            response += e.what();
-            throw CustomExceptions::InvalidShape(response);
-        }
+        _sfWindow.draw(renderableShape.value());
+        PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::CIRCLE) {
-        if (!shapeData.has_value()) {
+        const std::optional<sf::CircleShape> renderableShape = Utilities::unCast<sf::CircleShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a CircleShape>, any_cast error: ");
+        if (!renderableShape.has_value()) {
+            PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
             throw CustomExceptions::NoRenderableShape("<There is no sf::CircleShape located in std::any>");
         }
-        try {
-            sf::CircleShape renderableShape = std::any_cast<sf::CircleShape>(shapeData);
-            _sfWindow.draw(renderableShape);
-        }
-        catch (std::bad_any_cast &e) {
-            std::string response = "<Unknown shape, this is not a CircleShape>, any_cast error";
-            response += e.what();
-            throw CustomExceptions::InvalidShape(response);
-        }
+        _sfWindow.draw(renderableShape.value());
+        PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
     if (shapeType == GUI::ECS::Components::ActiveShape::CONVEX) {
-        if (!shapeData.has_value()) {
-            throw CustomExceptions::NoRenderableShape("<There is not an sf::ConvexShape located in std::any>");
+        const std::optional<sf::ConvexShape> renderableShape = Utilities::unCast<sf::ConvexShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a ConvexShape>, any_cast error: ");
+        if (!renderableShape.has_value()) {
+            PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
+            throw CustomExceptions::NoRenderableShape("<There is no sf::ConvexShape located in std::any>");
         }
-        try {
-            sf::ConvexShape renderableShape = std::any_cast<sf::ConvexShape>(shapeData);
-            _sfWindow.draw(renderableShape);
-        }
-        catch (std::bad_any_cast &e) {
-            std::string response = "<Unknown shape, this is not a ConvexShape>, any_cast error";
-            response += e.what();
-            throw CustomExceptions::InvalidShape(response);
-        }
+        _sfWindow.draw(renderableShape.value());
+        PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
 }
@@ -197,60 +182,76 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ImageComponent &image)
 {
     if (!image.isVisible()) {
+        PRETTY_WARNING << "The image named '" << image.getName()
+            << "' and whom's application is '" << image.getApplication()
+            << "' is set to invisible, it will thus not be rendered."
+            << std::endl;
         return;
     }
-    std::any imageCapsule = image.render();
-    if (!imageCapsule.has_value()) {
-        throw CustomExceptions::NoRenderableImage("<sf::Sprite not found in std::any>");
-    }
-    std::optional<sf::Sprite> spriteCapsule = Utilities::unCast<sf::Sprite, CustomExceptions::NoRenderableImage>(imageCapsule, true, "<Unknown Image, this is not an sf::Sprite>, any_cast error");
+    const std::any imageCapsule = image.render();
+    const std::optional<sf::Sprite> spriteCapsule = Utilities::unCast<sf::Sprite, CustomExceptions::NoRenderableImage>(imageCapsule, true, "<Unknown or empty Image, this is not an sf::Sprite>, any_cast error");
     if (!spriteCapsule.has_value()) {
-        throw CustomExceptions::NoRenderableImage("<Unknown Image, this is not an sf::Sprite>, any_cast error");
+        PRETTY_CRITICAL << "Image : '" << image.getName()
+            << "' and whom's application is '" << image.getApplication()
+            << "' could not be rendered.\n" << std::endl;
+        throw CustomExceptions::NoRenderableImage("<Missing Image, this is not an sf::Sprite>, any_cast error");
     }
-    PRETTY_DEBUG << "Uncasting sprite" << std::endl;
-    sf::Sprite sprite = spriteCapsule.value();
-    PRETTY_DEBUG << "Sprite Un-casted" << std::endl;
-    _sfWindow.draw(sprite);
-    PRETTY_DEBUG << "Sprite drawn" << std::endl;
+    _sfWindow.draw(spriteCapsule.value());
+    PRETTY_SUCCESS << "Image named '" << image.getName()
+        << "' and whom's application is '" << image.getApplication()
+        << "' is drawn" << std::endl;
 }
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::SpriteComponent &sprite)
 {
     if (!sprite.isVisible()) {
+        PRETTY_WARNING << "The sprite named '" << sprite.getName()
+            << "' and whom's application is '" << sprite.getApplication()
+            << "' is set to invisible, it will thus not be rendered."
+            << std::endl;
         return;
     }
-    std::any spriteNode = sprite.render();
-    if (!spriteNode.has_value()) {
-        throw CustomExceptions::NoRenderableImage("<sf::Sprite not found in std::any>");
-    }
-    std::optional<sf::Sprite> spriteCapsule = Utilities::unCast<sf::Sprite, CustomExceptions::NoRenderableImage>(spriteNode, true, "<Unknown Image, this is not an sf::Sprite>, any_cast error");
+    const std::any spriteNode = sprite.render();
+    const std::optional<sf::Sprite> spriteCapsule = Utilities::unCast<sf::Sprite, CustomExceptions::NoRenderableImage>(spriteNode, true, "<Unknown Image, this is not an sf::Sprite>, any_cast error");
     if (!spriteCapsule.has_value()) {
-        throw CustomExceptions::NoRenderableImage("<Unknown Sprite, this is not an sf::Sprite>, any_cast error");
+        PRETTY_CRITICAL << "Sprite : '" << sprite.getName()
+            << "' and whom's application is '" << sprite.getApplication()
+            << "' could not be rendered.\n" << std::endl;
+        throw CustomExceptions::NoRenderableImage("<Missing Sprite, this is not an sf::Sprite>, any_cast error");
     }
-    PRETTY_DEBUG << "Uncasting sprite" << std::endl;
-    sf::Sprite spr = spriteCapsule.value();
-    PRETTY_DEBUG << "Sprite Un-casted" << std::endl;
-    _sfWindow.draw(spr);
-    PRETTY_DEBUG << "Sprite drawn" << std::endl;
+    _sfWindow.draw(spriteCapsule.value());
+    PRETTY_SUCCESS << "Sprite named '" << sprite.getName()
+        << "' and whom's application is '" << sprite.getApplication()
+        << "' is drawn" << std::endl;
 }
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent &button)
 {
     if (!button.isVisible()) {
+        PRETTY_WARNING << "The button named '" << button.getName()
+            << "' and whom's application is '" << button.getApplication()
+            << "' is set to invisible, it will thus not be rendered."
+            << std::endl;
         return;
     }
     std::unordered_map<std::type_index, std::any> buttonCapsule = button.render();
 
-    std::any shapeCapsule = buttonCapsule[typeid(GUI::ECS::Components::ShapeComponent)];
+    const std::any shapeCapsule = buttonCapsule[typeid(GUI::ECS::Components::ShapeComponent)];
     if (shapeCapsule.has_value()) {
-        GUI::ECS::Components::ShapeComponent shape = std::any_cast<GUI::ECS::Components::ShapeComponent>(shapeCapsule);
-        draw(shape);
+        const std::optional<GUI::ECS::Components::ShapeComponent> shape = Utilities::unCast<GUI::ECS::Components::ShapeComponent, CustomExceptions::NoRenderableShape>(shapeCapsule, false, "<There is no ShapeComponent to render>");
+        if (!shape.has_value()) {
+            PRETTY_WARNING << "There is no shape to render for the button, skipping shape rendering." << std::endl;
+        }
+        draw(shape.value());
     }
 
-    std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
+    const std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
     if (textCapsule.has_value()) {
-        GUI::ECS::Components::TextComponent text = std::any_cast<GUI::ECS::Components::TextComponent>(textCapsule);
-        draw(text);
+        const std::optional<GUI::ECS::Components::TextComponent> text = Utilities::unCast<GUI::ECS::Components::TextComponent, CustomExceptions::NoRenderableShape>(textCapsule, false, "<There is no TextComponent to render>");
+        if (!text.has_value()) {
+            PRETTY_WARNING << "There is no text to render for the button, skipping text rendering." << std::endl;
+        }
+        draw(text.value());
     }
 }
 
