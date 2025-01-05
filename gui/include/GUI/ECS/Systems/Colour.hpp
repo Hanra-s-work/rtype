@@ -7,6 +7,7 @@
 
 /**
  * @file Color.hpp
+ *
  * @brief File in charge of storing and providing info about the colour.
  */
 

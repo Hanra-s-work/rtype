@@ -5,6 +5,12 @@
 ** Font.hpp
 */
 
+/**
+ * @file Font.hpp
+ *
+ * @brief File in charge of managing the fonts that are loaded in the program.
+ */
+
 #pragma once
 
 #include <any>
