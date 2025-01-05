@@ -448,10 +448,10 @@ std::uint32_t Main::_initialiseSprites()
         PRETTY_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
         _updateLoadingText("Loading sprite '" + name + "'...[OK]");
 
-        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
-        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
-        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
-        PRETTY_INFO << "buffer lines between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line1 between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line2 between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line3 between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line4 between two sprite loads" << std::endl;
     }
 
     PRETTY_SUCCESS << "The sprites are loaded." << std::endl;
@@ -863,6 +863,15 @@ void Main::_mainMenu()
 };
 
 /**
+ *@brief This is a orphan function in charge of testing the button component.
+ *
+ */
+void helloWorld()
+{
+    std::cout << "Hello world" << std::endl;
+}
+
+/**
  * @brief This is the function in charge of running the program's graphic logic.
  *
  * @return int The status of the overall execution of that section of the program.
@@ -910,11 +919,15 @@ void Main::_mainLoop()
 
     // Create a test button
 
-    GUI::ECS::Components::ShapeComponent rectangle(_baseId, { {200, 80}, {80,50} });
+    GUI::ECS::Components::ShapeComponent buttonRectangle(_baseId, { {200, 80}, {80,50} });
     _baseId++;
-    GUI::ECS::Components::ButtonComponent button(_baseId, rectangle, text);
+    GUI::ECS::Components::TextComponent buttonText(_baseId, font_body, "Sample Button", 40, GUI::ECS::Systems::Colour::BlueViolet, GUI::ECS::Systems::Colour::Azure2, GUI::ECS::Systems::Colour::Coral1, { 20, 50 });
+    _baseId++;
+    GUI::ECS::Components::ButtonComponent button(_baseId, buttonRectangle, buttonText);
+    button.setCallback(helloWorld);
     button.setPosition({ 200,200 });
     button.setTextSize(20);
+    button.setVisible(true);
     _baseId++;
 
     // Create an image 
