@@ -954,25 +954,26 @@ void Main::_mainLoop()
         window.draw(text);
         window.draw(button);
         window.draw(Image);
-        // int index = 0;
-        // for (std::any spriteItem : sprites) {
-        //     PRETTY_INFO << "Displaying sprite " << index << std::endl;
-        //     std::optional<std::shared_ptr<GUI::ECS::Components::SpriteComponent>> spriteCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(spriteItem, false);
-        //     if (!spriteCapsule.has_value()) {
-        //         PRETTY_WARNING << "No sprite entity" << std::endl;
-        //     } else {
-        //         PRETTY_SUCCESS << "Sprite entity found" << std::endl;
-        //         std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = spriteCapsule.value();
-        //         PRETTY_INFO << "Sprite component decapsulated" << std::endl;
-        //         sprite->checkTick();
-        //         PRETTY_INFO << "Ticked the sprite animation" << std::endl;
-        //         sprite->setPosition({ index, index });
-        //         PRETTY_INFO << "Moved the sprite to position " << Recoded::myToString<int>({ index, index }) << std::endl;
-        //         // window.draw(*sprite);
-        //         PRETTY_SUCCESS << "Sprite added to the render" << std::endl;
-        //         index++;
-        //     }
-        // }
+        int index = 0;
+        for (std::any spriteItem : sprites) {
+            PRETTY_INFO << "Displaying sprite " << index << std::endl;
+            std::optional<std::shared_ptr<GUI::ECS::Components::SpriteComponent>> spriteCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(spriteItem, false);
+            if (!spriteCapsule.has_value()) {
+                PRETTY_WARNING << "No sprite entity" << std::endl;
+            } else {
+                PRETTY_SUCCESS << "Sprite entity found" << std::endl;
+                std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = spriteCapsule.value();
+                PRETTY_INFO << "Sprite component decapsulated" << std::endl;
+                sprite->checkTick();
+                PRETTY_INFO << "Ticked the sprite animation" << std::endl;
+                sprite->setPosition({ index, index });
+                PRETTY_INFO << "Moved the sprite to position " << Recoded::myToString<int>({ index, index }) << std::endl;
+                window.draw(*sprite);
+                PRETTY_SUCCESS << "Sprite added to the render" << std::endl;
+                index++;
+            }
+            break;
+        }
         window.display();
         window.clear(GUI::ECS::Systems::Colour::Aqua);
     }
