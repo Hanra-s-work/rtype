@@ -437,7 +437,7 @@ namespace GUI
                 GUI::ECS::Systems::Colour _normalColor;                         //!< A Colour instance in charge of representing the colour when the component is in it's default state
                 GUI::ECS::Systems::Colour _clickedColor;                        //!< A Colour instance in charge of representing the colour when the component is clicked
 
-                GUI::ECS::Components::CollisionComponent _collision;
+                GUI::ECS::Components::CollisionComponent _collision;            //!< A component in charge of tracking the shapes collisions and position
             };
 
             /**

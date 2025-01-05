@@ -85,7 +85,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::White, const std::string &name = "", const std::string &application = "");
                 /**
                  * @brief Constructor with full parameter specification.
                  *
@@ -99,7 +99,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::White, const std::string &name = "", const std::string &application = "");
 
                 /**
                  * @brief Constructor with an entity ID and an image path.
@@ -132,7 +132,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::White, const std::string &name = "", const std::string &application = "");
                 /**
                  * @brief Constructor with full parameter specification.
                  *
@@ -146,7 +146,7 @@ namespace GUI
                  * @param name The name of the image
                  * @param application The application (context) of the image
                  */
-                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::Transparent, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::Transparent, const std::string &name = "", const std::string &application = "");
+                ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hoverColor = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &clickedColor = GUI::ECS::Systems::Colour::White, const std::string &name = "", const std::string &application = "");
 
                 /**
                  * @brief Destructor for ImageComponent.
@@ -369,19 +369,19 @@ namespace GUI
                 void _processImageComponent();
 
 
-                bool _visible = true;                                                            //!< A boolean value to know if the text should be rendered or not
-                bool _sizeAltered = false;                                                       //!< A boolean value to know if the size has been edited
-                bool _inConstructor = true;                                                      //!< A boolean value to know if the class has been built or is still being built
-                bool _textureAltered = false;                                                    //!< A boolean value to know if the texture has been edited
-                bool _positionAltered = false;                                                   //!< A boolean value to know if the positon of the text has been altered
-                std::string _name = "";                                                          //!< A string representing the name of the image
-                std::string _application = "";                                                   //!< A string representing the application context of the image
-                std::optional<sf::Sprite> _sfImage;                                     //!< An std::optional sf::Sprite to contain the final Sprite instance that will be rendered
-                CollisionComponent _collision;                                                         //!< A Collision component class to contain and track collisions
-                GUI::ECS::Components::TextureComponent _base;                                    //!< An GUI::ECS::Components::TextureComponent class to contain the active texture
-                GUI::ECS::Systems::Colour _normalColor = GUI::ECS::Systems::Colour::Black;         //!< A Colour class that contains the colour for the default state
-                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Black;    //!< A Colour class that contains the colour for the hover state
-                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Black;  //!< A Colour class that contains the colour for the clicked state
+                bool _visible = true;                                                             //!< A boolean value to know if the text should be rendered or not
+                bool _sizeAltered = false;                                                        //!< A boolean value to know if the size has been edited
+                bool _inConstructor = true;                                                       //!< A boolean value to know if the class has been built or is still being built
+                bool _textureAltered = false;                                                     //!< A boolean value to know if the texture has been edited
+                bool _positionAltered = false;                                                    //!< A boolean value to know if the positon of the text has been altered
+                std::string _name = "";                                                           //!< A string representing the name of the image
+                std::string _application = "";                                                    //!< A string representing the application context of the image
+                std::optional<sf::Sprite> _sfImage;                                               //!< An std::optional sf::Sprite to contain the final Sprite instance that will be rendered
+                CollisionComponent _collision;                                                    //!< A Collision component class to contain and track collisions
+                GUI::ECS::Components::TextureComponent _base;                                     //!< An GUI::ECS::Components::TextureComponent class to contain the active texture
+                GUI::ECS::Systems::Colour _hoverColor;                                            //!< A Colour class that contains the colour for the hover state
+                GUI::ECS::Systems::Colour _normalColor;                                           //!< A Colour class that contains the colour for the default state
+                GUI::ECS::Systems::Colour _clickedColor;                                          //!< A Colour class that contains the colour for the clicked state
             };
 
             /**

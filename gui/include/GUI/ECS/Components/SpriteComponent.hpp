@@ -779,9 +779,9 @@ namespace GUI
                 GUI::ECS::Components::AnimationComponent _animation;                                  //!< The animation component class containing the sprite's animations
                 bool _spriteSet = false;                                                              //!< A boolean to inform the class if the sprite instance is set
                 std::optional<sf::Sprite> _sfSprite;                                                  //!< An std::optional of sf::Sprite to allow the class to manage the sprite to render.
-                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Transparent;       //!< An instance holding the hover colour of the sprite
-                GUI::ECS::Systems::Colour _normalColor = GUI::ECS::Systems::Colour::Transparent;      //!< An instance holding the default colour of the sprite
-                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Transparent;     //!< An instance holding the clicked colour of the sprite
+                GUI::ECS::Systems::Colour _hoverColor;                                                //!< An instance holding the hover colour of the sprite
+                GUI::ECS::Systems::Colour _normalColor;                                               //!< An instance holding the default colour of the sprite
+                GUI::ECS::Systems::Colour _clickedColor;                                              //!< An instance holding the clicked colour of the sprite
             };
 
             /**
