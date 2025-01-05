@@ -1,5 +1,7 @@
 # R-Type
 
+![The r-type logo](./RtypeLogo.png)
+
 This is the r-type project
 You can find more information in the sections below:
 
