@@ -223,6 +223,20 @@ namespace GUI
                 void setVisible(const bool visible);
 
                 /**
+                 * @brief Set the Name of the button
+                 *
+                 * @param name A string instance representing the name of the button.
+                 */
+                void setName(const std::string &name);
+
+                /**
+                 * @brief Set the Application context of the button.
+                 *
+                 * @param application A string instance representing the context of the application.
+                 */
+                void setApplication(const std::string &application);
+
+                /**
                  * @brief Get the callback function
                  *
                  * @return std::function<void()>
@@ -349,9 +363,23 @@ namespace GUI
                 const bool getVisible() const;
 
                 /**
+                 * @brief Get the Name button component
+                 *
+                 * @return const std::string
+                 */
+                const std::string getName() const;
+
+                /**
+                 * @brief Get the Application of the button component
+                 *
+                 * @return const std::string
+                 */
+                const std::string getApplication() const;
+
+                /**
                  * @brief Get the Text Component
                  *
-                 * @return cost
+                 * @return The text component instance
                  */
                 const GUI::ECS::Components::TextComponent getTextComponent() const;
                 /**
@@ -417,7 +445,9 @@ namespace GUI
 
                 private:
                 bool _visible = true;                                           //!< A boolean instance that stores the state about the class needing to be rendered or not
-                std::string _callbackName = "";                                 //!< A string containing the name of the callback function
+                std::string _name = "Button";                                   //!< A string containing the name of the button
+                std::string _application = "Button";                            //!< A string containing the application context of the button
+                std::string _callbackName = "callback";                         //!< A string containing the name of the callback function
                 std::function<void()> _callback;                                //!< A function instance containing the callback function
                 GUI::ECS::Components::TextComponent _componentText;             //!< The text component instance in charge of displaying text.
                 GUI::ECS::Components::ShapeComponent _componentShape;           //!< The shape component instance in charge of displaying the shape behind the text.

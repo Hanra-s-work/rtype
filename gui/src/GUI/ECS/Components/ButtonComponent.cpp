@@ -180,6 +180,16 @@ void GUI::ECS::Components::ButtonComponent::setVisible(const bool visible)
     _componentShape.setVisible(visible);
 }
 
+void GUI::ECS::Components::ButtonComponent::setName(const std::string &name)
+{
+    _name = name;
+}
+
+void GUI::ECS::Components::ButtonComponent::setApplication(const std::string &application)
+{
+    _application = application;
+}
+
 std::function<void()> GUI::ECS::Components::ButtonComponent::callback()
 {
     return _callback;
@@ -282,6 +292,16 @@ const bool GUI::ECS::Components::ButtonComponent::getVisible() const
     return _visible;
 }
 
+const std::string GUI::ECS::Components::ButtonComponent::getName() const
+{
+    return _name;
+}
+
+const std::string GUI::ECS::Components::ButtonComponent::getApplication() const
+{
+    return _application;
+}
+
 const GUI::ECS::Components::TextComponent GUI::ECS::Components::ButtonComponent::getTextComponent() const
 {
     return _componentText;
@@ -302,9 +322,14 @@ const std::string GUI::ECS::Components::ButtonComponent::getInfo(const unsigned 
     }
     std::string result = indentation + "Button:\n";
     result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: " + Recoded::myToString(_visible) + "\n";
+    result += indentation + "- Name: " + _name + "\n";
+    result += indentation + "- Application: " + _application + "\n";
     result += indentation + "- Callback: " + _callbackName + "\n";
     result += indentation + "- Text: {\n" + _componentText.getInfo(indent + 1) + "}\n";
     result += indentation + "- Shape: {\n" + _componentShape.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Text Size: " + Recoded::myToString(_textSize) + "\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + "}\n";
     return result;
 }
 
