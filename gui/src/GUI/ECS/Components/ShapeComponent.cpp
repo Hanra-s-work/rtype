@@ -297,6 +297,21 @@ const GUI::ECS::Components::ActiveShape GUI::ECS::Components::ShapeComponent::ge
     return _shape;
 }
 
+const std::string GUI::ECS::Components::ShapeComponent::getShapeTypeString() const
+{
+    if (_shape == ActiveShape::NONE) {
+        return "None";
+    } else if (_shape == ActiveShape::CIRCLE) {
+        return "Circle";
+    } else if (_shape == ActiveShape::CONVEX) {
+        return "Convex";
+    } else if (_shape == ActiveShape::RECTANGLE) {
+        return "Rectangle";
+    } else {
+        return "Unknown";
+    }
+}
+
 const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Components::ShapeComponent::getActiveShape() const
 {
     if (_shape == ActiveShape::NONE) {
@@ -381,17 +396,7 @@ const std::string GUI::ECS::Components::ShapeComponent::getInfo(const unsigned i
     std::string result = indentation + "Shape:\n";
     result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Visible: " + Recoded::myToString(_visible) + "\n";
-    result += indentation + "- shape type: ";
-    if (_shape == ActiveShape::CIRCLE) {
-        result += "Circle";
-    } else if (_shape == ActiveShape::CONVEX) {
-        result += "Convex";
-    } else if (_shape == ActiveShape::NONE) {
-        result += "None";
-    } else {
-        result += "Rectangle";
-    }
-    result += "\n";
+    result += indentation + "- shape type: " + getShapeTypeString() + "\n";
     result += indentation + "- Shape rectangle set?: " + Recoded::myToString(_sfShapeRectangle.has_value()) + "\n";
     result += indentation + "- Shape circle set?: " + Recoded::myToString(_sfShapeCircle.has_value()) + "\n";
     result += indentation + "- Shape convex set?: " + Recoded::myToString(_sfShapeConvex.has_value()) + "\n";

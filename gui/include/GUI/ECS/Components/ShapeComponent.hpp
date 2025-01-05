@@ -287,6 +287,12 @@ namespace GUI
                  */
                 const ActiveShape getShapeType() const;
                 /**
+                 * @brief Get the Shape Type shape, none is returned if none are initialised.
+                 *
+                 * @return const std::string the text version of the shape type.
+                 */
+                const std::string getShapeTypeString() const;
+                /**
                  * @brief Get the Active Shape and it's type all contained in an std::pair
                  *
                  * @return const std::pair<ActiveShape, std::any>
