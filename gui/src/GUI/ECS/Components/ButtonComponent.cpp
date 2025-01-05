@@ -333,14 +333,12 @@ const std::string GUI::ECS::Components::ButtonComponent::getInfo(const unsigned 
     return result;
 }
 
-
-
 void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _collision.update(mouse);
     _componentText.update(mouse);
     _componentShape.update(mouse);
-    if (_collision.isClicked()) {
+    if (_collision.isClicked() || _componentShape.getCollisionComponent().isClicked() || _componentText.getCollisionComponent().isClicked()) {
         _callback();
     }
 }
