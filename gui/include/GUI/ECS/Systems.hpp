@@ -7,14 +7,17 @@
 
 /**
  * @file Systems.hpp
- * @brief This is the file in charge of linking the System children ressources.
+ * @brief This is the file that links the utility children ressources.
  */
 
 #pragma once
-#include "GUI/ECS/Systems/AnimationSystem.hpp"
-#include "GUI/ECS/Systems/ButtonSystem.hpp"
-#include "GUI/ECS/Systems/InputSystem.hpp"
-#include "GUI/ECS/Systems/RenderSystem.hpp"
+#include "GUI/ECS/Systems/Key.hpp"
+#include "GUI/ECS/Systems/Font.hpp"
+#include "GUI/ECS/Systems/Clock.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/Window.hpp"
+#include "GUI/ECS/Systems/MouseInfo.hpp"
+#include "GUI/ECS/Systems/EventManager.hpp"
 
 namespace GUI
 {
@@ -22,10 +25,15 @@ namespace GUI
     {
         namespace Systems
         {
-            class AnimationSystem;
-            class ButtonSystem;
-            class InputSystem;
-            class RenderSystem;
+            enum class Key;
+            enum class MouseWheel;
+            class KeyMapper;
+            class Font;
+            class Clock;
+            class Colour;
+            class EventManager;
+            class MouseInfo;
+            class Window;
         }
     }
 }

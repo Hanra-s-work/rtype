@@ -13,6 +13,7 @@
 #pragma once
 #include <any>
 #include <map>
+#include <tuple>
 #include <memory>
 #include <string>
 #include <cctype> 
@@ -21,23 +22,26 @@
 #include <iostream>
 #include <algorithm>
 #include <typeindex>
+#include <exception>
+#include <stdexcept>
 #include <unordered_map>
 #include <toml++/toml.hpp>
 
-#include "Debug.hpp"
-#include "MyRecodes.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
-#include "ExceptionHandling.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components.hpp"
-#include "GUI/ECS/Utilities/Colour.hpp"
-#include "GUI/ECS/Utilities/Window.hpp"
-#include "GUI/ECS/Utilities/EventManager.hpp"
+#include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/Window.hpp"
+#include "GUI/ECS/Systems/EventManager.hpp"
 
  /**
-  *@brief The Main class is the main class of the program.
+  * @brief The Main class is the main class of the program.
   *
   */
 class Main {
@@ -61,9 +65,10 @@ class Main {
    * @param spriteHeight The height of the sprite (default: 20).
    * @param frameLimit The frame rate limit for the application (default: 60).
    * @param configFilePath Path to the configuration file (default: "client_config.toml").
+   * @param log Inform the program if it needs to output logs or not (default: false).
    * @param debug Whether debug mode is enabled (default: false).
    */
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string configFilePath = "client_config.toml", bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false);
   ~Main();
 
   void run();
@@ -86,7 +91,8 @@ class Main {
   void setWindowSize(unsigned int width, unsigned int height);
   void setFrameLimit(unsigned int frameLimit);
   void setConfigFile(const std::string &configFile);
-  void setDebug(bool debug);
+  void setLog(const bool debug);
+  void setDebug(const bool debug);
 
   // Getters
   const std::string getIp();
@@ -102,7 +108,8 @@ class Main {
   bool getWindowCursorSpriteReadFromLeft();
   unsigned int getWindowCursorSpriteWidth();
   unsigned int getWindowCursorSpriteHeight();
-  bool getDebug() const;
+  const bool getLog() const;
+  const bool getDebug() const;
   unsigned int getFrameLimit() const;
   std::string getConfigFile() const;
   std::tuple<unsigned int, unsigned int> getWindowPosition();
@@ -128,9 +135,16 @@ class Main {
   void _initialiseConnection();
   void _initialiseRessources();
 
+  void _updateLoadingText(const std::string &detail = "Loading...");
+
+  void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
+
+  void _mainMenu();
+
   void _testContent();
 
   void _closeConnection();
+
 
   // Private members
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
@@ -147,13 +161,19 @@ class Main {
   bool _imageIsSprite;
   bool _spriteStartTop;
   bool _spriteStartLeft;
+  bool _log;
   bool _debug;
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
   std::uint32_t _baseId = 0;
   std::string _configFilePath = "client_config.toml";
+  unsigned int _loadingIndex = 0;
+  unsigned int _mainWindowIndex = 0;
+  unsigned int _mainEventIndex = 0;
   TOMLLoader _tomlContent;
+  bool _mainMenuMusicStarted = false;
+  bool _mainMenuEntered = false;
 };
 
 int RealMain(int argc, char **argv);

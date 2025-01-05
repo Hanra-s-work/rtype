@@ -14,11 +14,11 @@
 
 #include <string>
 #include <SFML/Audio.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
-#include "Debug.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI
@@ -79,7 +79,7 @@ namespace GUI
 
                 const std::string getApplication() const;
                 /**
-                 *@brief This is a function meant for debugging purposes
+                 * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *

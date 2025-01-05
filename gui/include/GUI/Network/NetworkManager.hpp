@@ -17,8 +17,9 @@
 #include <asio.hpp>
 
 #include "ProtocolHandler.hpp"
-#include "Debug.hpp"
-#include "MyRecodes.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 class NetworkManager : public GUI::ECS::EntityNode {

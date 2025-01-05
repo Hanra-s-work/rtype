@@ -7,6 +7,7 @@
 
 /**
  * @file MainClass.cpp
+ *
  * @brief This is the file in charge of containing the class Main of the program.
  */
 
@@ -34,6 +35,7 @@
   * @param spriteHeight The height of the sprite (default: 20).
   * @param frameLimit The frame rate limit for the application (default: 60).
   * @param configFilePath Path to the configuration file (default: "client_config.toml").
+  * @param log Inform the program if it needs to output logs or not (default: false).
   * @param debug Whether debug mode is enabled (default: false).
   */
 Main::Main(
@@ -53,8 +55,9 @@ Main::Main(
     unsigned int spriteWidth,
     unsigned int spriteHeight,
     unsigned int frameLimit,
-    const std::string configFilePath,
-    bool debug
+    const std::string &configFilePath,
+    const bool log,
+    const bool debug
 ) :
     _windowWidth(windowWidth),
     _windowHeight(windowHeight),
@@ -70,46 +73,50 @@ Main::Main(
     _configFilePath(configFilePath),
     _spriteHeight(spriteHeight)
 {
+    _log = log;
+    Logging::Log::getInstance().setLogEnabled(log);
+    PRETTY_INFO << "Logging is enabled" << std::endl;
     _debug = debug;
-    Debug::getInstance().setDebugEnabled(debug);
-    Debug::getInstance() << "Processing ip" << std::endl;
+    Logging::Log::getInstance().setDebugEnabled(debug);
+    PRETTY_DEBUG << "The debug section of the log is enabled" << std::endl;
+    PRETTY_INFO << "Processing ip" << std::endl;
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::InvalidIp(ip);
+        throw CustomExceptions::InvalidIp(ip);
     }
-    Debug::getInstance() << "Processing port" << std::endl;
+    PRETTY_INFO << "Processing port" << std::endl;
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::InvalidPort(std::to_string(port));
+        throw CustomExceptions::InvalidPort(std::to_string(port));
     }
-    Debug::getInstance() << "Processing cursor icon" << std::endl;
+    PRETTY_INFO << "Processing cursor icon" << std::endl;
     std::string windowText = _lowerText(windowCursorIcon);
     if (windowText.empty() || windowText == "null" || windowText == "none") {
         _windowCursorIcon = "";
     } else if (_isFilePresent(windowCursorIcon) == true) {
         _windowCursorIcon = windowCursorIcon;
     } else {
-        throw MyException::FileNotFound(windowCursorIcon);
+        throw CustomExceptions::FileNotFound(windowCursorIcon);
     }
-    Debug::getInstance() << "Processing frame limit" << std::endl;
+    PRETTY_INFO << "Processing frame limit" << std::endl;
     if (_isFrameLimitCorrect(frameLimit)) {
         _windowFrameLimit = frameLimit;
     } else {
-        throw MyException::InvalidFrameLimit(frameLimit);
+        throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
-    Debug::getInstance() << "End of processing" << std::endl;
+    PRETTY_INFO << "End of processing" << std::endl;
 }
 
 /**
- *@brief Destroy the Main:: Main object
+ * @brief Destroy the Main:: Main object
  *
  */
 Main::~Main() {}
 
 /**
- *@brief Function in charge of converting a string of characters
+ * @brief Function in charge of converting a string of characters
  * to their lowercase version.
  *
  * @param text The string to process
@@ -177,7 +184,7 @@ const bool Main::_isPortCorrect(const unsigned int port) const
 }
 
 /**
- *@brief Check if the provided file path is present and can be opened.
+ * @brief Check if the provided file path is present and can be opened.
  *
  * @param filepath
  * @return true The path is present
@@ -189,7 +196,7 @@ const bool Main::_isFilePresent(const std::string &filepath) const
 }
 
 /**
- *@brief The function in charge of checking if the provided frame limit is correct.
+ * @brief The function in charge of checking if the provided frame limit is correct.
  *
  * @param frameLimit
  * @return true
@@ -204,7 +211,7 @@ const bool Main::_isFrameLimitCorrect(const unsigned int frameLimit) const
 }
 
 /**
- *@brief Check if a font configuration is correct.
+ * @brief Check if a font configuration is correct.
  *
  * @param node
  * @return true
@@ -223,7 +230,7 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
 }
 
 /**
- *@brief Check if a music configuration is correct.
+ * @brief Check if a music configuration is correct.
  *
  * @param node
  * @return true
@@ -243,7 +250,7 @@ const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
 }
 
 /**
- *@brief Check if a sprite configuration is correct.
+ * @brief Check if a sprite configuration is correct.
  *
  * @param node
  * @return true
@@ -266,7 +273,7 @@ const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
 
 
 /**
- *@brief This is a generic function that will check if a given key is present and that the type of the value is correct.
+ * @brief This is a generic function that will check if a given key is present and that the type of the value is correct.
  *
  * @param node
  * @param key
@@ -286,7 +293,7 @@ const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std
 }
 
 /**
- *@brief The function in charge of initialising the connection to the server.
+ * @brief The function in charge of initialising the connection to the server.
  *
  * @return int
  */
@@ -295,12 +302,12 @@ void Main::_initialiseConnection()
     std::string address = _ip + ":" + std::to_string(_port);
 
     if (SUCCESS != SUCCESS) {
-        throw MyException::ConnectionFailed(address);
+        throw CustomExceptions::ConnectionFailed(address);
     }
 }
 
 /**
- *@brief Close the connection with the server.
+ * @brief Close the connection with the server.
  *
  */
 void Main::_closeConnection()
@@ -310,7 +317,7 @@ void Main::_closeConnection()
 
 
 /**
- *@brief This is the function in charge of loading the Sprites and Spritesheets into the program.
+ * @brief This is the function in charge of loading the Sprites and Spritesheets into the program.
  *
  */
 std::uint32_t Main::_initialiseSprites()
@@ -322,82 +329,138 @@ std::uint32_t Main::_initialiseSprites()
     std::unordered_map<std::string, TOMLLoader> loadedSprites;
 
     if (_tomlContent.hasKey(spriteSheetKey)) {
-        Debug::getInstance() << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
-            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
-        Debug::getInstance() << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
             sprites = _tomlContent.getTable(spriteSheetKey);
         } else {
-            throw MyException::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        Debug::getInstance() << "The key " << spriteSheetKey << " is missing from the config file, " <<
+        PRETTY_CRITICAL << "The key " << spriteSheetKey << " is missing from the config file, " <<
             "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
-        throw MyException::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
+        throw CustomExceptions::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
     }
 
-    Debug::getInstance() << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
+    PRETTY_INFO << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
 
     TOMLLoader tempNode(sprites);
 
-    Debug::getInstance() << "Getting the sprite configuration chunks" << std::endl;
+    PRETTY_INFO << "Getting the sprite configuration chunks" << std::endl;
 
     unsigned int counter = 1;
     std::string data = "Processed Sprites: \n";
     const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
 
     for (std::string &it : sprites.getKeys()) {
+        _updateLoadingText("Processing '" + it + "'...");
         data += "\t" + std::to_string(counter) + " : " + "'" + it + "'\n";
-        Debug::getInstance() << "Processing sprite: '" << it << "'" << std::endl;
+        PRETTY_INFO << "Processing sprite: '" << it << "'" << std::endl;
         if (!sprites.hasKey(it)) {
-            throw MyException::NoTOMLKey(tomlPath, it);
+            throw CustomExceptions::NoTOMLKey(tomlPath, it);
         }
         loadedSprites[it] = tempNode;
         if (sprites.getValueType(it) != toml::node_type::table) {
-            throw MyException::InvalidTOMLKeyType(tomlPath, it, sprites.getTypeAsString(it), expectedStringType);
+            throw CustomExceptions::InvalidTOMLKeyType(tomlPath, it, sprites.getTypeAsString(it), expectedStringType);
         }
         loadedSprites[it].update(sprites.getTable(it));
         if (!_isSpriteConfigurationCorrect(loadedSprites[it])) {
             std::string userConfig = loadedSprites[it].getTOMLString();
-            throw MyException::InvalidSpriteConfiguration(userConfig, it);
+            throw CustomExceptions::InvalidSpriteConfiguration(userConfig, it);
         }
         counter++;
+        _updateLoadingText("Processing '" + it + "'...[OK]");
     };
-    Debug::getInstance() << data << std::endl;
+    PRETTY_SUCCESS << data << std::endl;
 
-    Debug::getInstance() << "Initialising the sprites" << std::endl;
+    PRETTY_INFO << "Initialising the sprites" << std::endl;
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedSprites.begin(); it != loadedSprites.end(); ++it) {
         std::string application = it->first;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
-        int sprite_width = it->second.getValue<int>("sprite_width");
-        int sprite_height = it->second.getValue<int>("sprite_height");
-        bool start_left = it->second.getValue<bool>("start_left");
-        bool start_top = it->second.getValue<bool>("start_top");
+        int spriteWidth = it->second.getValue<int>("sprite_width");
+        int spriteHeight = it->second.getValue<int>("sprite_height");
+        bool startLeft = it->second.getValue<bool>("start_left");
+        bool startTop = it->second.getValue<bool>("start_top");
+        int initialFrame = 0;
+        int endFrame = (-1);
+        int frameDelay = 100;
 
-        Debug::getInstance() << "Loading sprite '" << name << "' ..." << std::endl;
+        if (it->second.hasKey("initial_frame")) {
+            initialFrame = it->second.getValue<int>("initial_frame");
+        }
+        if (it->second.hasKey("end_frame")) {
+            endFrame = it->second.getValue<int>("end_frame");
+        }
+        if (it->second.hasKey("frame_delay")) {
+            frameDelay = it->second.getValue<int>("frame_delay");
+            if (frameDelay < 0) {
+                std::string errMsg = "<A number between 0 and 2147483647 was expected, however, you entered: '";
+                errMsg += Recoded::myToString(frameDelay);
+                errMsg += "'>";
+                throw CustomExceptions::InvalidSpriteConfiguration(it->second.getTOMLString(), name, errMsg);
+            }
+        }
 
-        GUI::ECS::Components::AnimationComponent animationNode(path, sprite_width, sprite_height, start_left, start_top);
-        std::shared_ptr<GUI::ECS::Components::SpriteComponent> node = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, animationNode);
-        _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(node);
+        _updateLoadingText("Loading sprite '" + name + "'...");
+        PRETTY_INFO << "Loading sprite '" << name << "' [LOADING]" << std::endl;
+
+
+        PRETTY_INFO << "Processing Animation component, id: '" << Recoded::myToString(_baseId) << "'" << std::endl;
+        PRETTY_INFO << "Passed parameters are: " <<
+            "name='" << name << "', " <<
+            "path='" << path << "', " <<
+            "sprite_width=" << Recoded::myToString(spriteWidth) << ", " <<
+            "sprite_height=" << Recoded::myToString(spriteHeight) << ", " <<
+            "start_left=" << Recoded::myToString(startLeft) << ", " <<
+            "start_top=" << Recoded::myToString(startTop) << ", " <<
+            "initial_frame=" << Recoded::myToString(initialFrame) << ", " <<
+            "end_frame=" << Recoded::myToString(endFrame) <<
+            "frame_delay=" << Recoded::myToString(frameDelay) << std::endl;
+
+        std::shared_ptr<GUI::ECS::Components::AnimationComponent> animationPointer = std::make_shared<GUI::ECS::Components::AnimationComponent>(_baseId, path, spriteWidth, spriteHeight, startLeft, startTop, initialFrame, endFrame);
+        _ecsEntities[typeid(GUI::ECS::Components::AnimationComponent)].push_back(animationPointer);
         _baseId++;
+        PRETTY_DEBUG << "Setting animation delay to : '" << Recoded::myToString(frameDelay) << "'" << std::endl;
+        animationPointer->setDelay(frameDelay);
+        PRETTY_INFO << "Animation component info: " << *animationPointer << std::endl;
+        PRETTY_SUCCESS << "Animation component processed" << std::endl;
+        PRETTY_INFO << "Creating sprite id '" << name << "', id: '" << Recoded::myToString(_baseId) << "'" << std::endl;
+        PRETTY_DEBUG << "Setting animation, animation id: '" << Recoded::myToString(animationPointer->getEntityNodeId()) << "', sprite entity id: '" << _baseId << "'" << std::endl;
+        std::shared_ptr<GUI::ECS::Components::SpriteComponent> spriteEntity = std::make_shared<GUI::ECS::Components::SpriteComponent>(_baseId, name, *animationPointer);
+        PRETTY_SUCCESS << "Sprite entity added to sprite '" << name << "'" << std::endl;
+        PRETTY_SUCCESS << "Sprite '" << name << "' loaded" << std::endl;
+        spriteEntity->setApplication(application);
+        PRETTY_INFO << "Storing " << name << " into the ecs" << std::endl;
+        _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)].push_back(spriteEntity);
+        PRETTY_SUCCESS << name << " stored into the ecs entity" << std::endl;
+        _baseId++;
+
+        PRETTY_SUCCESS << "Sprite '" << name << "' [LOADED]" << std::endl;
+        _updateLoadingText("Loading sprite '" + name + "'...[OK]");
+
+        PRETTY_INFO << "buffer line1 between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line2 between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line3 between two sprite loads" << std::endl;
+        PRETTY_INFO << "buffer line4 between two sprite loads" << std::endl;
     }
 
-    Debug::getInstance() << "The sprites are loaded." << std::endl;
-    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_SUCCESS << "The sprites are loaded." << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
 /**
- *@brief This is the function in charge of loading the ²s into the program.
+ * @brief This is the function in charge of loading the ²s into the program.
  *
  */
 std::uint32_t Main::_initialiseAudio()
@@ -410,28 +473,28 @@ std::uint32_t Main::_initialiseAudio()
     std::unordered_map<std::string, TOMLLoader> loadedAudios;
 
     if (_tomlContent.hasKey(musicKey)) {
-        Debug::getInstance() << "Fetching the content for '" << musicKey << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << musicKey << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
-            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(musicKeyAlt)) {
-        Debug::getInstance() << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
             audio = _tomlContent.getTable(musicKey);
         } else {
-            throw MyException::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        Debug::getInstance() << "The key " << musicKey << " is missing from the config file, " <<
+        PRETTY_CRITICAL << "The key " << musicKey << " is missing from the config file, " <<
             "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
-        throw MyException::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
+        throw CustomExceptions::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
     }
 
-    Debug::getInstance() << audio.getRawTOML() << std::endl;
+    PRETTY_INFO << audio.getRawTOML() << std::endl;
 
 
     TOMLLoader tempNode(audio);
@@ -448,24 +511,26 @@ std::uint32_t Main::_initialiseAudio()
 
     const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
 
-    Debug::getInstance() << "Getting the music configuration chunks" << std::endl;
+    PRETTY_INFO << "Getting the music configuration chunks" << std::endl;
 
     for (std::string &iterator : audios) {
+        _updateLoadingText("Processing music '" + iterator + "'...");
         if (!audio.hasKey(iterator)) {
-            throw MyException::NoTOMLKey(tomlPath, iterator);
+            throw CustomExceptions::NoTOMLKey(tomlPath, iterator);
         }
         loadedAudios[iterator] = tempNode;
         if (audio.getValueType(iterator) != toml::node_type::table) {
-            throw MyException::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
+            throw CustomExceptions::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
         }
         loadedAudios[iterator].update(audio.getTable(iterator));
         if (!_isMusicConfigurationCorrect(loadedAudios[iterator])) {
             std::string userConfig = loadedAudios[iterator].getTOMLString();
-            throw MyException::InvalidMusicConfiguration(userConfig, iterator);
+            throw CustomExceptions::InvalidMusicConfiguration(userConfig, iterator);
         }
+        _updateLoadingText("Processing music '" + iterator + "'...[OK]");
     }
 
-    Debug::getInstance() << "Initialising the musics" << std::endl;
+    PRETTY_INFO << "Initialising the musics" << std::endl;
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedAudios.begin(); it != loadedAudios.end(); ++it) {
         std::string application = it->first;
@@ -473,6 +538,8 @@ std::uint32_t Main::_initialiseAudio()
         std::string path = it->second.getValue<std::string>("path");
         int volume = 100;
         bool loop = false;
+
+        _updateLoadingText("Loading music '" + name + "'...");
 
         if (_isKeyPresentAndOfCorrectType(it->second, "volume", toml::node_type::integer)) {
             volume = it->second.getValue<int>("volume");
@@ -483,15 +550,16 @@ std::uint32_t Main::_initialiseAudio()
         std::shared_ptr<GUI::ECS::Components::MusicComponent> node = std::make_shared<GUI::ECS::Components::MusicComponent>(_baseId, path, name, application, volume, loop);
         _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)].push_back(node);
         _baseId++;
+        _updateLoadingText("Loading music '" + name + "'...[OK]");
     }
 
-    Debug::getInstance() << "The musics are loaded." << std::endl;
-    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_SUCCESS << "The musics are loaded." << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
 /**
- *@brief This is the function in charge of loading the fonts into the program.
+ * @brief This is the function in charge of loading the fonts into the program.
  *
  */
 std::uint32_t Main::_initialiseFonts()
@@ -503,41 +571,41 @@ std::uint32_t Main::_initialiseFonts()
     std::unordered_map<std::string, TOMLLoader> loadedFonts;
 
     if (_tomlContent.hasKey(fontKey)) {
-        Debug::getInstance() << "Fetching the content for '" << fontKey << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << fontKey << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
-            throw MyException::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else if (_tomlContent.hasKey(fontKeyAlt)) {
-        Debug::getInstance() << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
-        Debug::getInstance() << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
+        PRETTY_INFO << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
+        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
         if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
             font = _tomlContent.getTable(fontKey);
         } else {
-            throw MyException::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
+            throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
         }
     } else {
-        Debug::getInstance() << "The key " << fontKey << " is missing from the config file, " <<
+        PRETTY_CRITICAL << "The key " << fontKey << " is missing from the config file, " <<
             "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
-        throw MyException::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
+        throw CustomExceptions::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
     }
 
-    Debug::getInstance() << font.getRawTOML() << std::endl;
+    PRETTY_INFO << font.getRawTOML() << std::endl;
 
     const std::string titleFontNode = "title";
     const std::string bodyFontNode = "body";
     const std::string defaultFontNode = "default";
 
     if (!font.hasKey(titleFontNode)) {
-        throw MyException::NoTitleFontConfiguration(tomlPath);
+        throw CustomExceptions::NoTitleFontConfiguration(tomlPath);
     }
     if (!font.hasKey(bodyFontNode)) {
-        throw MyException::NoBodyFontConfiguration(tomlPath);
+        throw CustomExceptions::NoBodyFontConfiguration(tomlPath);
     }
     if (!font.hasKey(defaultFontNode)) {
-        throw MyException::NoDefaultFontConfiguration(tomlPath);
+        throw CustomExceptions::NoDefaultFontConfiguration(tomlPath);
     }
 
     TOMLLoader tempNode(font);
@@ -554,23 +622,23 @@ std::uint32_t Main::_initialiseFonts()
     if (!_isFontConfigurationCorrect(loadedFonts["title"])) {
         const std::string userConfig = loadedFonts["title"].getTOMLString();
         const std::string fontName = titleFontNode;
-        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
     }
     if (!_isFontConfigurationCorrect(loadedFonts["body"])) {
         const std::string userConfig = loadedFonts["body"].getTOMLString();
         const std::string fontName = bodyFontNode;
-        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
     }
     if (!_isFontConfigurationCorrect(loadedFonts["default"])) {
         const std::string userConfig = loadedFonts["default"].getTOMLString();
         const std::string fontName = defaultFontNode;
-        throw MyException::InvalidFontConfiguration(userConfig, fontName);
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
     }
 
 
     for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
         std::string application = it->first;
-        Debug::getInstance() << "Font application = '" + application << std::endl;
+        PRETTY_INFO << "Font application = '" + application + "'" << std::endl;
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
         int defaultSize = 50;
@@ -586,16 +654,20 @@ std::uint32_t Main::_initialiseFonts()
         if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
             italic = it->second.getValue<bool>("italic");
         }
-        std::shared_ptr<GUI::ECS::Utilities::Font> node = std::make_shared<GUI::ECS::Utilities::Font>(_baseId, name, path, defaultSize, application, bold, italic);
-        _ecsEntities[typeid(GUI::ECS::Utilities::Font)].push_back(node);
+        PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
+        std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
+        PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
+        PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
+        _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
+        PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
         _baseId++;
     }
-    Debug::getInstance() << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
 /**
- *@brief This is the function in charge of initialise the default ressources for the class.
+ * @brief This is the function in charge of initialise the default ressources for the class.
  *
  */
 void Main::_initialiseRessources()
@@ -603,87 +675,319 @@ void Main::_initialiseRessources()
     std::uint32_t _baseId = 0;
     _ecsEntities.clear();
 
-    Debug::getInstance() << "========================== Displaying loaded toml data. ==========================" << std::endl;
+    PRETTY_INFO << "========================== Displaying loaded toml data. ==========================" << std::endl;
     _tomlContent.printTOML();
-    Debug::getInstance() << "========================== Displayed loaded toml data.  ==========================" << std::endl;
+    PRETTY_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
-    std::shared_ptr<GUI::ECS::Utilities::Window> window = std::make_shared<GUI::ECS::Utilities::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
+    std::shared_ptr<GUI::ECS::Systems::Window> window = std::make_shared<GUI::ECS::Systems::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
     _baseId++;
-    std::shared_ptr<GUI::ECS::Utilities::EventManager> event = std::make_shared<GUI::ECS::Utilities::EventManager>(_baseId);
+    std::shared_ptr<GUI::ECS::Systems::EventManager> event = std::make_shared<GUI::ECS::Systems::EventManager>(_baseId);
     _baseId++;
 
     window->setFullScreen(_windowFullscreen);
     window->setFramerateLimit(_windowFrameLimit);
 
-    _ecsEntities[typeid(GUI::ECS::Utilities::Window)].push_back(window);
-    _ecsEntities[typeid(GUI::ECS::Utilities::EventManager)].push_back(event);
+    _ecsEntities[typeid(GUI::ECS::Systems::Window)].push_back(window);
+    _ecsEntities[typeid(GUI::ECS::Systems::EventManager)].push_back(event);
+
+    _mainWindowIndex = _ecsEntities[typeid(GUI::ECS::Systems::Window)].size() - 1;
+
+    _mainEventIndex = _ecsEntities[typeid(GUI::ECS::Systems::EventManager)].size() - 1;
+
+    _baseId = _initialiseFonts();
+
+    PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], true);
+    if (!firstFontCapsule.has_value()) {
+        throw CustomExceptions::NoFont();
+    }
+
+    GUI::ECS::Systems::Font firstFont = *firstFontCapsule.value();
+    std::shared_ptr<GUI::ECS::Components::TextComponent> loading = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, firstFont, "Loading...", 20, GUI::ECS::Systems::Colour::Aqua, GUI::ECS::Systems::Colour::Aquamarine, GUI::ECS::Systems::Colour::Chartreuse1);
+    _baseId++;
+    _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(loading);
+    window->draw(*loading);
+    window->display();
+    _loadingIndex = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size() - 1;
 
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
-    _baseId = _initialiseFonts();
-    Debug::getInstance() << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
+    PRETTY_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
+void Main::_updateLoadingText(const std::string &detail)
+{
+    PRETTY_DEBUG << "Updating loading display" << std::endl;
+    std::vector<std::any> windows = _ecsEntities[typeid(GUI::ECS::Systems::Window)];
+    std::vector<std::any> eventManagers = _ecsEntities[typeid(GUI::ECS::Systems::EventManager)];
+    std::vector<std::any> textComponents = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+
+    if (_mainWindowIndex > windows.size()) {
+        PRETTY_ERROR << "Index out of bounds." << std::endl;
+        throw CustomExceptions::NoWindow("The window index you tried to access does not exist, the index was: " + Recoded::myToString(_mainWindowIndex));
+    }
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> windowCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(windows[_mainWindowIndex], true, "The type of the window is unknown, system error: ");
+    if (!windowCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no window to access" << std::endl;
+        throw CustomExceptions::NoWindow("The window index you tried to access does not exist, the index was: " + Recoded::myToString(_mainWindowIndex));
+    }
+    std::shared_ptr<GUI::ECS::Systems::Window> window = windowCapsule.value();
+
+    if (_mainEventIndex > eventManagers.size()) {
+        PRETTY_ERROR << "Index out of bounds." << std::endl;
+        throw CustomExceptions::NoEventManager("The event manager index you tried to access does not exist, the index was: " + Recoded::myToString(_mainEventIndex));
+    }
+    std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> eventManagerCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>, CustomExceptions::NoEventManager>(eventManagers[_mainEventIndex], true, "The type of the event manager is unknown, system error: ");
+    if (!eventManagerCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no event manager to access" << std::endl;
+        throw CustomExceptions::NoEventManager("The event manager index you tried to access does not exist, the index was: " + Recoded::myToString(_mainEventIndex));
+    }
+    std::shared_ptr<GUI::ECS::Systems::EventManager> event = eventManagerCapsule.value();
+
+    if (_loadingIndex > textComponents.size()) {
+        PRETTY_ERROR << "Index out of bounds." << std::endl;
+        throw CustomExceptions::NoText("The text component index you tried to access does not exist, the index was: " + Recoded::myToString(_loadingIndex));
+    }
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>, CustomExceptions::NoText>(textComponents[_loadingIndex], true, "The type of the text component is unknown, system error: ");
+    if (!textCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no text to access" << std::endl;
+        throw CustomExceptions::NoText("The text index you tried to access does not exist, the index was: " + Recoded::myToString(_loadingIndex));
+    }
+    std::shared_ptr<GUI::ECS::Components::TextComponent> text = textCapsule.value();
+
+    if (!window->isOpen()) {
+        throw CustomExceptions::NoWindow("There is no window to draw on!");
+    }
+    event->processEvents(*window);
+    if (!window->isOpen()) {
+        throw CustomExceptions::NoWindow("There is no window to draw on!");
+    }
+
+    text->update(event->getMouseInfo());
+    text->setText(detail);
+    window->clear();
+    window->draw(*text);
+    window->display();
+    PRETTY_SUCCESS << "Loading text updated" << std::endl;
+}
+
+void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse)
+{
+    PRETTY_INFO << "Updating mouse information for renderable components." << std::endl;
+    std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    std::vector<std::any> shapes = _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)];
+    std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
+    for (unsigned int index = 0; index < sprites.size(); index++) {
+        PRETTY_INFO << "Processing index for sprite : " << std::to_string(index) << std::endl;
+        try {
+            std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = std::any_cast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(sprites[index]);
+            sprite->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRETTY_ERROR << "Error casting sprite component, system error: " + std::string(e.what()) << std::endl;
+        }
+    }
+    for (unsigned int index = 0; index < texts.size(); index++) {
+        PRETTY_INFO << "Processing index for text : " << std::to_string(index) << std::endl;
+        try {
+            std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::any_cast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(texts[index]);
+            text->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRETTY_ERROR << "Error casting text component, system error: " + std::string(e.what()) << std::endl;
+        }
+    }
+    for (unsigned int index = 0; index < buttons.size(); index++) {
+        PRETTY_INFO << "Processing index for button : " << std::to_string(index) << std::endl;
+        try {
+            std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::any_cast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttons[index]);
+            button->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRETTY_ERROR << "Error casting button component, system error: " + std::string(e.what()) << std::endl;
+        }
+    }
+    for (unsigned int index = 0; index < shapes.size(); index++) {
+        PRETTY_INFO << "Processing index for shape : " << std::to_string(index) << std::endl;
+        try {
+            std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::any_cast<std::shared_ptr<GUI::ECS::Components::ShapeComponent>>(shapes[index]);
+            shape->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRETTY_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
+        }
+    }
+    for (unsigned int index = 0; index < images.size(); index++) {
+        PRETTY_INFO << "Processing index for image : " << std::to_string(index) << std::endl;
+        try {
+            std::shared_ptr<GUI::ECS::Components::ImageComponent> image = std::any_cast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(images[index]);
+            image->update(mouse);
+        }
+        catch (std::bad_any_cast &e) {
+            PRETTY_ERROR << "Error casting shape component, system error: " + std::string(e.what()) << std::endl;
+        }
+    }
+    PRETTY_SUCCESS << "Updated mouse information for renderable components." << std::endl;
+}
+
+/**
+ * @brief Small function in charge of launching all the loaded musics.
+ *
+ */
 void Main::_testContent()
 {
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
 
     for (unsigned int index = 0; index < musics.size(); index++) {
-        std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
-        Debug::getInstance() << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
-        music_ptr->play();
+        try {
+            std::shared_ptr<GUI::ECS::Components::MusicComponent> music_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Components::MusicComponent>>(musics[index]);
+            PRETTY_INFO << "Playing " << music_ptr->getMusicName() << " audio." << std::endl;
+            music_ptr->play();
+        }
+        catch (std::bad_any_cast &e) {
+            PRETTY_ERROR << "Error casting music component, system error: " + std::string(e.what()) << std::endl;
+        }
     }
 }
 
 /**
- *@brief This is the function in charge of running the program's graphic logic.
+ * @brief Function in charge of displaying the main menu to the user before launching them into the game.
+ *
+ */
+void Main::_mainMenu()
+{
+
+};
+
+/**
+ *@brief This is a orphan function in charge of testing the button component.
+ *
+ */
+void helloWorld()
+{
+    std::cout << "Hello world" << std::endl;
+}
+
+/**
+ * @brief This is the function in charge of running the program's graphic logic.
  *
  * @return int The status of the overall execution of that section of the program.
  */
 void Main::_mainLoop()
 {
     // Get the window and event
-    std::shared_ptr<GUI::ECS::Utilities::Window> window_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Window>>(_ecsEntities[typeid(GUI::ECS::Utilities::Window)][0]);
-    std::shared_ptr<GUI::ECS::Utilities::EventManager> event_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::EventManager>>(_ecsEntities[typeid(GUI::ECS::Utilities::EventManager)][0]);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> window_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][0], false);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
 
-    GUI::ECS::Utilities::Window &window = *window_ptr;
-    GUI::ECS::Utilities::EventManager &event = *event_ptr;
+    if (!window_ptr.has_value()) {
+        throw CustomExceptions::NoWindow("<std::any un-casting failed>");
+    }
+    GUI::ECS::Systems::Window &window = *window_ptr.value();
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    GUI::ECS::Systems::EventManager &event = *event_ptr.value();
 
     // Get the fonts
 
-    std::shared_ptr<GUI::ECS::Utilities::Font> font_title_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][0]);
-    std::shared_ptr<GUI::ECS::Utilities::Font> font_body_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][1]);
-    std::shared_ptr<GUI::ECS::Utilities::Font> font_default_ptr = std::any_cast<std::shared_ptr<GUI::ECS::Utilities::Font>>(_ecsEntities[typeid(GUI::ECS::Utilities::Font)][2]);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_title_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], false);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_body_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][1], false);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_default_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][2], false);
 
-    GUI::ECS::Utilities::Font &font_title = *font_title_ptr;
-    GUI::ECS::Utilities::Font &font_body = *font_body_ptr;
-    GUI::ECS::Utilities::Font &font_default = *font_default_ptr;
+    if (!font_title_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Title font", "<std::any un-casting failed>");
+    }
+    if (!font_body_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Body font", "<std::any un-casting failed>");
+    }
+    if (!font_default_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Default font", "<std::any un-casting failed>");
+    }
+    GUI::ECS::Systems::Font &font_title = *font_title_ptr.value();
+    GUI::ECS::Systems::Font &font_body = *font_body_ptr.value();
+    GUI::ECS::Systems::Font &font_default = *font_default_ptr.value();
 
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Utilities::Colour::YellowGreen, GUI::ECS::Utilities::Colour::Cyan, GUI::ECS::Utilities::Colour::Yellow, { 20, 50 });
+    std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
+
+    // Create a test text
+
+    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Systems::Colour::Pink, GUI::ECS::Systems::Colour::Cyan, GUI::ECS::Systems::Colour::Yellow, { 20, 50 });
+    _baseId++;
+
+    // Create a test button
+    Recoded::FloatRect buttonShapeRect({ {200, 80}, {80,50} });
+    GUI::ECS::Components::ShapeComponent buttonRectangle(_baseId, buttonShapeRect);
+    buttonRectangle.setNormalColor(GUI::ECS::Systems::Colour::White);
+    _baseId++;
+    GUI::ECS::Components::TextComponent buttonText(_baseId, font_body, "Sample Button", 40, GUI::ECS::Systems::Colour::BlueViolet, GUI::ECS::Systems::Colour::Azure2, GUI::ECS::Systems::Colour::Coral1, { 20, 50 });
+    _baseId++;
+    GUI::ECS::Components::ButtonComponent button(_baseId, buttonRectangle, buttonText);
+    button.setCallback(helloWorld);
+    button.setPosition({ 200,200 });
+    button.setTextSize(20);
+    button.setVisible(true);
+    _baseId++;
+
+    // Create an image 
+    GUI::ECS::Components::CollisionComponent col(10, 10, 10, 10, 10);
+    GUI::ECS::Components::TextureComponent MyTexture(_baseId, std::string("./assets/img/r-typesheet2.gif"), col);
+    GUI::ECS::Components::ImageComponent Image(_baseId, MyTexture, "testName", "application name");
+    Image.setVisible(true);
+    Image.setPosition({ 0, 0 });
+
+    PRETTY_INFO << "Updating loading text to 'All the ressources have been loaded'." << std::endl;
+    _updateLoadingText("All the ressources have been loaded.");
+    PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     while (window.isOpen()) {
         event.processEvents(window);
-        if (event.isKeyPressed(GUI::ECS::Utilities::Key::T)) {
+        _updateMouseForAllRendererables(event.getMouseInfo());
+        if (event.isKeyPressed(GUI::ECS::Systems::Key::CapsLock)) {
             _testContent();
         }
-        sf::Vector2f mousePos = event.getMousePosition();
-        Debug::getInstance() << "Text Component: \n" << text << std::endl;
-        Debug::getInstance() << "Mouse position: (x: " << mousePos.x << ", y: " << mousePos.y << ")" << std::endl;
+        text.update(event.getMouseInfo());
+        button.update(event.getMouseInfo());
+        PRETTY_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
         window.draw(text);
+        window.draw(button);
+        window.draw(Image);
+        int index = 0;
+        for (std::any spriteItem : sprites) {
+            PRETTY_INFO << "Displaying sprite " << index << std::endl;
+            std::optional<std::shared_ptr<GUI::ECS::Components::SpriteComponent>> spriteCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(spriteItem, false);
+            if (!spriteCapsule.has_value()) {
+                PRETTY_WARNING << "No sprite entity" << std::endl;
+            } else {
+                PRETTY_SUCCESS << "Sprite entity found" << std::endl;
+                std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = spriteCapsule.value();
+                PRETTY_INFO << "Sprite component decapsulated" << std::endl;
+                sprite->checkTick();
+                PRETTY_INFO << "Ticked the sprite animation" << std::endl;
+                sprite->setPosition({ index, index });
+                PRETTY_INFO << "Moved the sprite to position " << Recoded::myToString<int>({ index, index }) << std::endl;
+                window.draw(*sprite);
+                PRETTY_SUCCESS << "Sprite added to the render" << std::endl;
+                index++;
+            }
+            break;
+        }
         window.display();
-        window.clear();
+        window.clear(GUI::ECS::Systems::Colour::Aqua);
     }
 }
 
 /**
- *@brief This is the function used to start the program's main section.
+ * @brief This is the function used to start the program's main section.
  *
  * @return int The status of the execution of that section of the program.
  */
 void Main::run()
 {
-    _initialiseConnection();
     _initialiseRessources();
+    _initialiseConnection();
     _mainLoop();
     _closeConnection();
 }
@@ -694,7 +998,7 @@ void Main::run()
  *
  * @param ip : std::string
  *
- * @throws MyException::IncorrectIp(ip) : This error is thrown
+ * @throws CustomExceptions::IncorrectIp(ip) : This error is thrown
  * if the ip format is wrong.
  */
 void Main::setIp(const std::string &ip)
@@ -702,15 +1006,15 @@ void Main::setIp(const std::string &ip)
     if (_isIpInRange(ip) == true) {
         _ip = ip;
     } else {
-        throw MyException::InvalidIp(ip);
+        throw CustomExceptions::InvalidIp(ip);
     }
 }
 
 /**
- *@brief Set the port on which the GUI is going to connect to.
+ * @brief Set the port on which the GUI is going to connect to.
  *
  * @param port
- * @throws MyException::InvalidPort(port) This error is thrown
+ * @throws CustomExceptions::InvalidPort(port) This error is thrown
  * if the port format is incorrect
  */
 void Main::setPort(const unsigned int port)
@@ -718,12 +1022,12 @@ void Main::setPort(const unsigned int port)
     if (_isPortCorrect(port) == true) {
         _port = port;
     } else {
-        throw MyException::InvalidPort(std::to_string(port));
+        throw CustomExceptions::InvalidPort(std::to_string(port));
     }
 }
 
 /**
- *@brief Set the width of the window.
+ * @brief Set the width of the window.
  *
  * @param width
  */
@@ -733,7 +1037,7 @@ void Main::setWindowWidth(unsigned int width)
 }
 
 /**
- *@brief Set the height of the window.
+ * @brief Set the height of the window.
  *
  * @param height
  */
@@ -743,7 +1047,7 @@ void Main::setWindowHeight(unsigned int height)
 }
 
 /**
- *@brief Set if the cursor is visible when in the window.
+ * @brief Set if the cursor is visible when in the window.
  *
  * @param cursorVisible
  */
@@ -753,7 +1057,7 @@ void Main::setWindowCursor(bool cursorVisible)
 }
 
 /**
- *@brief Start the window in full screen mode.
+ * @brief Start the window in full screen mode.
  *
  * @param fullscreen
  */
@@ -763,7 +1067,7 @@ void Main::setWindowFullscreen(bool fullscreen)
 }
 
 /**
- *@brief Set the title of the window.
+ * @brief Set the title of the window.
  *
  * @param title
  */
@@ -773,7 +1077,7 @@ void Main::setWindowTitle(const std::string &title)
 }
 
 /**
- *@brief Set the position of the window.
+ * @brief Set the position of the window.
  *
  * @param x The x position of the window.
  * @param y The y position of the window.
@@ -785,11 +1089,11 @@ void Main::setWindowPosition(unsigned int x, unsigned int y)
 }
 
 /**
- *@brief Set the icon of the cursor
+ * @brief Set the icon of the cursor
  * (if the user wishes to change the default icon)
  *
  * @param cursorImage
- * @throws MyException::FileNotFound(cursorImage) This error is thrown
+ * @throws CustomExceptions::FileNotFound(cursorImage) This error is thrown
  * if the path to the file is invalid or the file cannot be opened.
  */
 void Main::setWindowCursorIcon(const std::string cursorImage)
@@ -799,12 +1103,12 @@ void Main::setWindowCursorIcon(const std::string cursorImage)
     } else if (_isFilePresent(cursorImage) == true) {
         _windowCursorIcon = cursorImage;
     } else {
-        throw MyException::FileNotFound(cursorImage);
+        throw CustomExceptions::FileNotFound(cursorImage);
     }
 }
 
 /**
- *@brief Set if the image passed is of type sprite or not.
+ * @brief Set if the image passed is of type sprite or not.
  *
  * @param imageIsSprite
  */
@@ -814,7 +1118,7 @@ void Main::setWindowCursorSprite(bool imageIsSprite)
 }
 
 /**
- *@brief Set the height for the sprite's overlay texture,
+ * @brief Set the height for the sprite's overlay texture,
  * which is used to draw the sprite's texture during animation.
  *
  * @param spriteWidth
@@ -825,7 +1129,7 @@ void Main::setWindowCursorSpriteWidth(unsigned int spriteWidth)
 }
 
 /**
- *@brief Inform if the animation should start from the top.
+ * @brief Inform if the animation should start from the top.
  *
  * @param spriteStartTop
  */
@@ -835,7 +1139,7 @@ void Main::setWindowCursorSpriteReadFromTop(bool spriteStartTop)
 }
 
 /**
- *@brief Inform if the animation should start from the left.
+ * @brief Inform if the animation should start from the left.
  *
  * @param spriteStartLeft
  */
@@ -845,7 +1149,7 @@ void Main::setWindowCursorSpriteReadFromLeft(bool spriteStartLeft)
 }
 
 /**
- *@brief Set the height for the sprite's overlay texture,
+ * @brief Set the height for the sprite's overlay texture,
  * which is used to draw the sprite's texture during animation.
  *
  * @param spriteHeight
@@ -856,7 +1160,7 @@ void Main::setWindowCursorSpriteHeight(unsigned int spriteHeight)
 }
 
 /**
- *@brief The window width and height that will be created.
+ * @brief The window width and height that will be created.
  *
  * @param width
  * @param height
@@ -868,20 +1172,20 @@ void Main::setWindowSize(unsigned int width, unsigned int height)
 }
 
 /**
- *@brief The function in charge of setting the frame Limit
+ * @brief The function in charge of setting the frame Limit
  *
  * @param frameLimit
  */
 void Main::setFrameLimit(unsigned int frameLimit)
 {
     if (_isFrameLimitCorrect(frameLimit) == false) {
-        throw MyException::InvalidFrameLimit(frameLimit);
+        throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
     _windowFrameLimit = frameLimit;
 }
 
 /**
- *@brief This is the function in charge of seting the config filepath.
+ * @brief This is the function in charge of seting the config filepath.
  *
  * @param configFile
  */
@@ -892,18 +1196,29 @@ void Main::setConfigFile(const std::string &configFile)
 }
 
 /**
- *@brief Toggle the debug mode for the program.
+ * @brief Toggle the logging mode for the program.
  *
- * @param debug
+ * @param log
  */
-void Main::setDebug(bool debug)
+void Main::setLog(const bool log)
 {
-    _debug = debug;
-    Debug::getInstance().setDebugEnabled(debug);
+    _log = log;
+    Logging::Log::getInstance().setLogEnabled(log);
 }
 
 /**
- *@brief Get the value of the ip that was set.
+ * @brief Toggle the debug mode for the program.
+ *
+ * @param debug
+ */
+void Main::setDebug(const bool debug)
+{
+    _debug = debug;
+    Logging::Log::getInstance().setDebugEnabled(debug);
+}
+
+/**
+ * @brief Get the value of the ip that was set.
  *
  * @return const std::string
  */
@@ -913,7 +1228,7 @@ const std::string Main::getIp()
 }
 
 /**
- *@brief Get the value of the port.
+ * @brief Get the value of the port.
  *
  * @return const unsigned int
  */
@@ -923,7 +1238,7 @@ const unsigned int Main::getPort()
 }
 
 /**
- *@brief Get the value of the window width.
+ * @brief Get the value of the window width.
  *
  * @return unsigned int
  */
@@ -933,7 +1248,7 @@ unsigned int  Main::getWindowWidth()
 }
 
 /**
- *@brief Get the value of the window height.
+ * @brief Get the value of the window height.
  *
  * @return unsigned int
  */
@@ -943,7 +1258,7 @@ unsigned int Main::getWindowHeight()
 }
 
 /**
- *@brief Get the status of the window cursor.
+ * @brief Get the status of the window cursor.
  *
  * @return true
  * @return false
@@ -954,7 +1269,7 @@ bool Main::getWindowCursor()
 }
 
 /**
- *@brief Get the status of the window (if it is in fullscreen)
+ * @brief Get the status of the window (if it is in fullscreen)
  *
  * @return true
  * @return false
@@ -965,7 +1280,7 @@ bool Main::getWindowFullscreen()
 }
 
 /**
- *@brief Get the title of the window.
+ * @brief Get the title of the window.
  *
  * @return const std::string&
  */
@@ -987,7 +1302,7 @@ const std::string &Main::getWindowCursorIcon()
 }
 
 /**
- *@brief Get the status if the cursor is of type image or spritesheet
+ * @brief Get the status if the cursor is of type image or spritesheet
  *
  * @return true
  * @return false
@@ -998,7 +1313,7 @@ bool Main::getWindowCursorSprite()
 }
 
 /**
- *@brief Get if the program is supposed to read from the top or not.
+ * @brief Get if the program is supposed to read from the top or not.
  *
  * @return true
  * @return false
@@ -1009,7 +1324,7 @@ bool Main::getWindowCursorSpriteReadFromTop()
 }
 
 /**
- *@brief Get if the program is supposed to read from the left or the rigth.
+ * @brief Get if the program is supposed to read from the left or the rigth.
  *
  * @return true
  * @return false
@@ -1020,7 +1335,7 @@ bool Main::getWindowCursorSpriteReadFromLeft()
 }
 
 /**
- *@brief Get the width of the sprite texture.
+ * @brief Get the width of the sprite texture.
  *
  * @return unsigned int
  */
@@ -1030,7 +1345,7 @@ unsigned int Main::getWindowCursorSpriteWidth()
 }
 
 /**
- *@brief Get the height of the sprite texture.
+ * @brief Get the height of the sprite texture.
  *
  * @return unsigned int
  */
@@ -1040,19 +1355,30 @@ unsigned int Main::getWindowCursorSpriteHeight()
 }
 
 /**
- *@brief The function in charge of returning the status of the debug variable.
+ * @brief The function in charge of returning the status of the logging variable.
  *
  * @return true
  * @return false
  */
-bool Main::getDebug() const
+const bool Main::getLog() const
+{
+    return _log;
+}
+
+/**
+ * @brief The function in charge of returning the status of the debug variable.
+ *
+ * @return true
+ * @return false
+ */
+const bool Main::getDebug() const
 {
     return _debug;
 }
 
 
 /**
- *@brief Function in charge of returning the current frame limit.
+ * @brief Function in charge of returning the current frame limit.
  *
  * @return unsigned int
  */
@@ -1063,7 +1389,7 @@ unsigned int Main::getFrameLimit() const
 
 
 /**
- *@brief Function in charge of returning the path to the config file.
+ * @brief Function in charge of returning the path to the config file.
  *
  * @return std::string
  */
@@ -1101,7 +1427,7 @@ std::tuple<unsigned int, unsigned int> Main::getWindowSize()
 }
 
 /**
- *@brief Load a toml file into the program if it is present.
+ * @brief Load a toml file into the program if it is present.
  *
  */
 void Main::_loadToml()

@@ -13,15 +13,16 @@
 #pragma once
 
 #include <cstdint>
+#include <utility>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
-#include "Debug.hpp"
-#include "MyRecodes.hpp"
-#include "ExceptionHandling.hpp"
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
+#include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
-#include "GUI/ECS/Utilities/MouseInfo.hpp"
+#include "GUI/ECS/Systems/MouseInfo.hpp"
 
 namespace GUI
 {
@@ -45,17 +46,17 @@ namespace GUI
                 void setPositionX(const float &posX);
                 void setPositionY(const float &posY);
 
-                void setPosition(const sf::Vector2f &position);
-                void setPosition(const sf::Vector2u &position);
+                void setPosition(const std::pair<int, int> &position);
 
-                void setDimension(const sf::Vector2f &dimension);
-                void setDimension(const sf::Vector2u &dimension);
-                void setMousePosition(const sf::Vector2f &mousePosition);
+                void setDimension(const std::pair<int, int> &position);
 
-                void update(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void setMousePosition(const std::pair<int, int> &position);
+
+                void update(const std::pair<int, int> &mousePosition);
+                void update(const GUI::ECS::Systems::MouseInfo &mouse);
                 void update(const GUI::ECS::Components::CollisionComponent &copy);
 
-                void updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse);
+                void updateMouseInfo(const GUI::ECS::Systems::MouseInfo &mouse);
 
                 const bool isClicked() const;
                 const bool isHovered() const;
@@ -67,15 +68,15 @@ namespace GUI
                 const float getPositionX() const;
                 const float getPositionY() const;
 
-                const sf::FloatRect getGeometry() const;
+                const Recoded::FloatRect getGeometry() const;
 
-                const sf::Vector2f getPosition() const;
+                const std::pair<float, float> getPosition() const;
 
-                const sf::Vector2f getDimension() const;
+                const std::pair<float, float> getDimension() const;
 
-                const GUI::ECS::Utilities::MouseInfo getMouseInfo() const;
+                const GUI::ECS::Systems::MouseInfo getMouseInfo() const;
                 /**
-                 *@brief This is a function meant for debugging purposes
+                 * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
                  * It will dump them for itself and any of it's underlying classes
                  *
@@ -88,13 +89,13 @@ namespace GUI
 
                 protected:
                 void _updateMouseCollisionData();
-                bool _isHovered;
-                bool _isClicked;
-                float _posX;
-                float _posY;
-                float _width;
-                float _height;
-                GUI::ECS::Utilities::MouseInfo _mouse;
+                bool _isHovered = false;
+                bool _isClicked = false;
+                float _posX = 0;
+                float _posY = 0;
+                float _width = 0;
+                float _height = 0;
+                GUI::ECS::Systems::MouseInfo _mouse;
             };
 
             /**
