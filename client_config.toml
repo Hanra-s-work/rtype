@@ -97,6 +97,59 @@ path = "assets/audio/success-fanfare-trumpets-6185.ogg"
 loop = false
 volume = 100
 
+# the background for the program
+[backgrounds]
+
+# Default structure
+# [backgrounds.<background_name>] # the name of the background (unique identifier)
+# name = "<name of the background>" # set the name of the background  (a human readable name)
+# path = "<path to the background>" # set the path to the background image
+# x = <x> # (0 -> 1000) set the x position of the background
+# y = <y> # (0 -> 1000) set the y position of the background
+# allow_as_level_background = true # (or false) allow the background to be used as a level background
+
+[backgrounds.mainMenu]
+name = "Main Menu"
+path = "assets/background/black_hole.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.settings]
+name = "Settings"
+path = "assets/background/blue_star_space.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.game_over]
+name = "Game Over"
+path = "assets/background/dark_even_sky.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.connection_failed]
+name = "Connection Failed"
+path = "assets/background/connection_space.jpeg"
+x = 0
+y = 0
+allow_as_level_background = false
+
+[backgrounds.paralax]
+name = "Paralax"
+path = "assets/background/purple_sky.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.space]
+name = "Space"
+path = "assets/background/dark_blue_stars.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
 # The spritesheets
 [spritesheets]
 
