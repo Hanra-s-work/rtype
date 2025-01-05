@@ -5,6 +5,13 @@
 ** Color.cpp
 */
 
+/**
+ * @file Colour.cpp
+ *
+ * @brief This is the cpp file in charge of storing the functions and colour
+ * definitions of the colour class
+ */
+
 #include "GUI/ECS/Systems/Colour.hpp"
 
 GUI::ECS::Systems::Colour::Colour() : EntityNode(0) {};
