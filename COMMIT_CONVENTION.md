@@ -8,8 +8,12 @@ This repository does not use the conventional commit down to the letter.
 
 ## Commit Message Convention
 
-Each commit message must follow the format:
-`infinitive verb: <concise description>`
+Each commit message must follow one of the two formats below:
+
+- `lowecase infinitive verb: <concise description>`
+- `[uppercase infinitive verb] <concise description>`
+
+Additional details about the commit sections:
 
 - **Prefix**: The commit message should always begin with an action verb in its infinitive form. The verb should describe the type of change being made.
 - **Description**: After the verb, provide a brief description of what has been done in that commit. Avoid past tense or gerunds (form of a verb that ends in "-ing" and functions as a noun in a sentence).
@@ -20,8 +24,9 @@ Each commit message must follow the format:
 - `add: a new service endpoint for user management`
 - `fix: login endpoint handling edge cases`
 - `update: documentation with new examples`
-- `remove: redundant code from the user service`
-- `edit: UI to match updated mockups`
+- `[REMOVE] redundant code from the user service`
+- `[EDIT] UI to match updated mockups`
+- `[RENAME] Readme.md -> README.md`
 
 ### Common Commit Verbs
 
@@ -38,16 +43,19 @@ Each commit message must follow the format:
 
 ### Additional Notes
 
-- **Prefixes** should always be in uppercase to clearly identify the action.
+- **Prefixes** should always be in uppercase to clearly identify the action if they are encapsulated by `[]`, however, if they are followed not encapsulated by `[]` and followed by a `:` they should be in lowercase.
 - Try to keep descriptions concise and to the point. Use the body for further elaboration if needed.
 - If the commit is related to workflows or external dependencies, be explicit in the description.
 
 ### Examples from this Repository
 
-- `add: Sign In screens with social login buttons`
-- `fix: SQL error in the database connection setup`
-- `update: the cron job to check expired tokens`
-- `remove: unused imports in the backend code`
-- `edit: forgot password screen layout`
-- `refactor: login and register code to improve readability`
-- `merge: remote-tracking branch 'origin/dev-back' into dev`
+- `add: Player constructor`
+- `fix: redundance on constructor arguments`
+- `add: AllyMissile and EnemyMissile constructors`
+- `add: calling OnCreate() function on constructors`
+- `add: Monster and DroppableMonster constructors, Monster TakeDamage`
+- `[FIX] the path to the import of the EntityNode.hpp file`
+- `[ADD] a window utility management class`
+- `[ADD] a window that can open`
+- `[FIX] exception handling issues`
+- `[UPDATE] the type of the mainloop function`
