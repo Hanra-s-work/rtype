@@ -579,10 +579,19 @@ void GUI::ECS::Components::TextComponent::_processTextComponent()
     PRETTY_INFO << "Font loaded, updating text colour" << std::endl;
     std::any systemColour;
     if (_textPos.isClicked()) {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _clickedColor << "\n} and corresponds to the _clickedColour"
+            << std::endl;
         systemColour = _clickedColor.getRenderColour();
     } else if (_textPos.isHovered()) {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _hoverColor << "\n} and corresponds to the _hoverColour"
+            << std::endl;
         systemColour = _hoverColor.getRenderColour();
     } else {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _color << "\n} and corresponds to the _colour"
+            << std::endl;
         systemColour = _color.getRenderColour();
     }
     if (!systemColour.has_value()) {

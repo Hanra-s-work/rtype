@@ -14,17 +14,20 @@
 #include "GUI/ECS/Components/ImageComponent.hpp"
 
 GUI::ECS::Components::ImageComponent::ImageComponent()
-    : EntityNode(0), _collision(0), _base(0), _normalColor(0), _hoverColor(0), _clickedColor(0)
+    : EntityNode(0), _collision(0), _base(0),
+    _normalColor(0, GUI::ECS::Systems::Colour::White), _hoverColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId)
-    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -34,7 +37,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -45,7 +49,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -59,7 +64,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const GUI::ECS::Components::TextureComponent &imageTexture, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _collision(entityId), _base(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _collision(entityId), _base(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -74,7 +80,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -84,7 +91,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -95,7 +103,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -109,7 +118,8 @@ GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityI
 };
 
 GUI::ECS::Components::ImageComponent::ImageComponent(const std::uint32_t entityId, const std::string &imagePath, std::pair<unsigned int, unsigned int> dimensions, const std::pair<float, float> &position, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor, const std::string &name, const std::string &application)
-    : EntityNode(entityId), _base(entityId), _collision(entityId), _normalColor(entityId), _hoverColor(entityId), _clickedColor(entityId)
+    : EntityNode(entityId), _base(entityId), _collision(entityId),
+    _normalColor(entityId, GUI::ECS::Systems::Colour::White), _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
     _inConstructor = true;
     setApplication(application);
@@ -281,8 +291,8 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
     result += indentation + "- Image Component present?: " + Recoded::myToString(_sfImage.has_value()) + "\n";
     result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + "}\n";
     result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
     result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
     result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
     return result;
 };
@@ -353,27 +363,27 @@ void GUI::ECS::Components::ImageComponent::_initialiseImage()
 void GUI::ECS::Components::ImageComponent::_processColour()
 {
     if (!_sfImage.has_value()) {
+        PRETTY_WARNING << "ImageComponent has no image" << std::endl;
         return;
     }
     std::any systemColour;
     if (_collision.isClicked()) {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _clickedColor << "\n} and corresponds to the _clickedColour"
+            << std::endl;
         systemColour = _clickedColor.getRenderColour();
     } else if (_collision.isHovered()) {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _hoverColor << "\n} and corresponds to the _hoverColour"
+            << std::endl;
         systemColour = _hoverColor.getRenderColour();
     } else {
+        PRETTY_DEBUG << "The colour being applied is : {\n"
+            << _normalColor << "\n} and corresponds to the _normalColour"
+            << std::endl;
         systemColour = _normalColor.getRenderColour();
     }
-    if (!systemColour.has_value()) {
-        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
-            << "No Color found" << std::endl;
-        throw CustomExceptions::NoColour("<There was no content returned by getRenderColour when std::any (containing sf::Color was expected)>");
-    }
     const std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
-    if (systemColour.type() != typeid(sf::Color)) {
-        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
-            << "No Color found, " << errMsg << std::endl;
-        throw CustomExceptions::NoColour(errMsg);
-    }
     const std::optional<sf::Color> color = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
     if (!color.has_value()) {
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
