@@ -396,6 +396,11 @@ std::any GUI::ECS::Components::TextComponent::render() const
     return std::make_any<sf::Text>(_sfTextComponent.value());
 };
 
+const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextComponent::getCollisionComponent() const
+{
+    return _textPos;
+}
+
 void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _textPos.update(mouse);
@@ -415,6 +420,7 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::Tex
     setHoverColor(copy.getHoverColor());
     setNormalColor(copy.getNormalColor());
     setClickedColor(copy.getClickedColor());
+    _textPos = copy.getCollisionComponent();
     _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();

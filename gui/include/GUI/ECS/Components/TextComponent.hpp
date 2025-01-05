@@ -312,6 +312,13 @@ namespace GUI
                 const std::string getInfo(const unsigned int indent = 0) const;
 
                 /**
+                 * @brief Function in charge of returning the collision instance of the text component.
+                 *
+                 * @return const GUI::ECS::Components::CollisionComponent
+                 */
+                const GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
+
+                /**
                  * @brief Function in charge of rendering the text if it is set to visible, otherwise, does nothing
                  *
                  * @return std::optional<std::any>
@@ -369,10 +376,10 @@ namespace GUI
                 unsigned int _size = 30;                                                         //!< An unsigned int to contain the user assigned size
                 std::optional<sf::Text> _sfTextComponent;                                        //!< An std::optional sf::Text to contain the final text instance that will be rendered
                 CollisionComponent _textPos;                                                     //!< A Collision component class to contain and track collisions
-                GUI::ECS::Systems::Font _font;                                                 //!< An GUI::ECS::Systems::Font class to contain the active font
-                GUI::ECS::Systems::Colour _color = GUI::ECS::Systems::Colour::Black;         //!< A Colour class that contains the colour for the default state
-                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Black;    //!< A Colour class that contains the colour for the hover state
-                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Black;  //!< A Colour class that contains the colour for the clicked state
+                GUI::ECS::Systems::Font _font;                                                   //!< An GUI::ECS::Systems::Font class to contain the active font
+                GUI::ECS::Systems::Colour _color = GUI::ECS::Systems::Colour::Black;             //!< A Colour class that contains the colour for the default state
+                GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Black;        //!< A Colour class that contains the colour for the hover state
+                GUI::ECS::Systems::Colour _clickedColor = GUI::ECS::Systems::Colour::Black;      //!< A Colour class that contains the colour for the clicked state
             };
 
             /**
