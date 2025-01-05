@@ -451,8 +451,9 @@ volume = 100
 # sprite_height = <height> # (0-> 1000) set the height of the sprite view field, in pixels
 # start_left = true # (or false) set the starting position of the sprite view field to start from the left (or not)
 # start_top = true # (or false) set the starting position of the sprite view field to start from the top (or not)
-# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame.
+# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame. (default value: 0)
 # end_frame = -1 # (or the index of the frame) set the last frame to be taken from the spritesheet (-1 means all frames present), (default value: -1)
+# frame_delay = 100 # (from 0 to 2147483647) delay between each frame in milliseconds (default value: 100)
 
 # The spritesheets to manage
 
@@ -465,6 +466,7 @@ start_left = true
 start_top = true
 initial_frame = 3 # ship facing right: 3 to 7, ship facing left: 8 to 12
 end_frame = 12
+frame_delay = 100 # delay between each frame in milliseconds
 
 #The second line of sprites can't be cut because they are not in a matrix like layout
 
@@ -477,6 +479,7 @@ start_left = true
 start_top = true
 initial_frame = 48 # particles: 48 to 64
 end_frame = 64
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite1_small_explosions]
 name = "r-typesheet1_small_explosions"
@@ -487,6 +490,7 @@ start_left = true
 start_top = true
 initial_frame = 208 # from 208 to 210 fire left, from 210 to 213, fire rigth
 end_frame = 213 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 # the next line cannot be cut cleanly because they are not in a matrix-like agency
 # the next line cannot be cut cleanly because they are not in a matrix-like agency
@@ -501,6 +505,7 @@ start_left = true
 start_top = true
 initial_frame = 74 # from 74 to 75, to the rigth, from 76 to 77 to the left
 end_frame = 77 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 # The next line cannot be cut cleanly because they are not in a matrix-like agency
 # The next line cannot be cut cleanly because they are not in a matrix-like agency
@@ -515,6 +520,7 @@ start_left = true
 start_top = false
 initial_frame = 244
 end_frame = 250
+frame_delay = 100 # delay between each frame in milliseconds
 
 # The next line cannot be cut cleanly because they are not in a matrix-like agency
 
@@ -528,6 +534,7 @@ start_left = true
 start_top = false
 initial_frame = 0 # to the left: 0 to 8, to the right: 9 to 16
 end_frame = 16 
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite1]
 name = "r-typesheet1"
@@ -538,6 +545,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite2]  # might get split in the future, complex spritesheet containing multiple sprites of different sizes
 name = "r-typesheet2"
@@ -548,6 +556,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite3]
 name = "r-typesheet3"
@@ -558,6 +567,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # mas: 11
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite5]
 name = "r-typesheet5"
@@ -568,6 +578,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # left: 0 to 7, right: 8 to 15
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite7]
 name = "r-typesheet7"
@@ -578,6 +589,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # looking left, no jets: 0 to 2, left right, no jets: 3 to 5, looking left, jets: 6 to 8, looking right, jets: 9 to 11
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite8]
 name = "r-typesheet8"
@@ -588,6 +600,7 @@ start_left = true
 start_top = true
 initial_frame = 0 
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 # looking forward:
 # - east: 0
 # - east (a bit tilted to the south) 1
@@ -614,6 +627,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 
 [spritesheets.sprite10]
@@ -625,6 +639,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # craft left: 0 to 5, craft right: 6 to 11, up: 14 to 16, standing left: 17, standing right: 18, up rigth: 19 to 21, missiles will not be cut properly, you would need to realine the spritesheet for that.
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite11]
 name = "r-typesheet11"
@@ -635,6 +650,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # left: 0 to 2, right: 3 to 5
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite12]
 name = "r-typesheet12"
@@ -645,6 +661,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # craft: up-left: 0 to 2, up-right: 3 to 5, down-left: 6 to 8, down-right: 9 to 11
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite13]
 name = "r-typesheet13"
@@ -655,6 +672,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite14]
 name = "r-typesheet14"
@@ -665,6 +683,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # 0 to 9
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite16]
 name = "r-typesheet16"
@@ -675,6 +694,7 @@ start_left = true
 start_top = true
 initial_frame = 0 #calculate your own frames, this spritesheet need to be re-aligned to be properly cut.
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite17]
 name = "r-typesheet17"
@@ -685,6 +705,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # upwards: 0 to 7 , downwards: 8 to 15
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite18]
 name = "r-typesheet18"
@@ -695,6 +716,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # unhatched: 0 to 3, breaking: 7 to 4, entity: 8 to 11
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite19]
 name = "r-typesheet19"
@@ -705,6 +727,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # max: 13
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite19_ship_horizontal]
 name = "r-typesheet19_ship_horizontal"
@@ -715,6 +738,7 @@ start_left = true
 start_top = true
 initial_frame = 20
 end_frame = 21
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite19_bullet]
 name = "r-typesheet19_bullet"
@@ -725,6 +749,7 @@ start_left = true
 start_top = false
 initial_frame = 11
 end_frame = 11
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite20] # badly cut due to the sprite not being in a matrix like manner
 name = "r-typesheet20"
@@ -735,6 +760,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite21] # badly cut due to sprites not being in a matrix like manner
 name = "r-typesheet21"
@@ -745,6 +771,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite22]
 name = "r-typesheet22"
@@ -755,6 +782,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # max 15
 end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite23]
 name = "r-typesheet23"
@@ -765,6 +793,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # to the left, : 0 to 7, to the right 8 to 15
 end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite24]
 name = "r-typesheet24"
@@ -775,6 +804,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite25]
 name = "r-typesheet25"
@@ -785,6 +815,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite26]
 name = "r-typesheet26"
@@ -795,6 +826,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = 5
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite27]
 name = "r-typesheet27"
@@ -805,6 +837,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = 1
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite28]
 name = "r-typesheet28"
@@ -815,6 +848,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = 0
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite29]
 name = "r-typesheet29"
@@ -825,6 +859,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite30] # Spritesheet not aligned, sprites will have missing pieces
 name = "r-typesheet30"
@@ -835,6 +870,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite30a]
 name = "r-typesheet30a"
@@ -845,6 +881,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite31_vertical] # Horizontal sprites will be cut in 2 due to them not being aligned in a matrix like manner
 name = "r-typesheet31_vertical"
@@ -855,6 +892,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite31_red_stone]
 name = "r-typesheet31_red_stone"
@@ -865,6 +903,7 @@ start_left = true
 start_top = false
 initial_frame = 12
 end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite32]
 name = "r-typesheet32"
@@ -875,6 +914,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite33]
 name = "r-typesheet33"
@@ -885,6 +925,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite34]
 name = "r-typesheet34"
@@ -895,6 +936,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite35]
 name = "r-typesheet35"
@@ -905,6 +947,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite36]
 name = "r-typesheet36"
@@ -915,6 +958,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_mothership_intact]
 name = "r-typesheet37_mothership_intact"
@@ -925,6 +969,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = 0
+frame_delay = 100 # delay between each frame in milliseconds
 
 #Second section of the spritesheet could not be parsed due to the sprites not being aligned in a matrix like manner
 
@@ -937,6 +982,7 @@ start_left = true
 start_top = true
 initial_frame = 142 # from 142 to 149 and 159 to 166
 end_frame = 166
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_gun]
 name = "r-typesheet37_emp_gun"
@@ -947,6 +993,7 @@ start_left = true
 start_top = true
 initial_frame = 179
 end_frame = 179
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_laser]
 name = "r-typesheet37_emp_laser"
@@ -957,6 +1004,7 @@ start_left = true
 start_top = true
 initial_frame = 87
 end_frame = 91
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_gun_orientation]
 name = "r-typesheet37_emp_gun_orientation"
@@ -967,6 +1015,7 @@ start_left = true
 start_top = true
 initial_frame = 215
 end_frame = 219
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_orientation] # Badly cut due to the sprites not being aligned in a matrix like manner
 name = "r-typesheet37_emp_orientation"
@@ -977,6 +1026,7 @@ start_left = true
 start_top = true
 initial_frame = 57
 end_frame = 64
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_broken_emp_gun]
 name = "r-typesheet37_broken_emp_gun"
@@ -987,6 +1037,7 @@ start_left = true
 start_top = true
 initial_frame = 431
 end_frame = 431
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_gun_explosion]
 name = "r-typesheet37_emp_gun_explosion"
@@ -997,6 +1048,7 @@ start_left = true
 start_top = true
 initial_frame = 371
 end_frame = 371
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_gun_explosion2]
 name = "r-typesheet37_emp_gun_explosion2"
@@ -1007,6 +1059,7 @@ start_left = true
 start_top = true
 initial_frame = 390
 end_frame = 390
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_gun_explosion3]
 name = "r-typesheet37_emp_gun_explosion3]"
@@ -1017,6 +1070,7 @@ start_left = true
 start_top = true
 initial_frame = 409
 end_frame = 409
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_emp_gun_explosion4]
 name = "r-typesheet37_emp_gun_explosion4]"
@@ -1027,6 +1081,7 @@ start_left = true
 start_top = true
 initial_frame = 428
 end_frame = 428
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_big_gun]
 name = "r-typesheet37_big_gun"
@@ -1037,6 +1092,7 @@ start_left = false
 start_top = true
 initial_frame = 145
 end_frame = 145
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_initial_flame]
 name = "r-typesheet37_initial_flame"
@@ -1047,6 +1103,7 @@ start_left = true
 start_top = true
 initial_frame = 106
 end_frame = 106
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_mid_flame]
 name = "r-typesheet37_mid_flame"
@@ -1057,6 +1114,7 @@ start_left = true
 start_top = true
 initial_frame = 97
 end_frame = 98
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_end_flame]
 name = "r-typesheet37_end_flame"
@@ -1067,6 +1125,7 @@ start_left = true
 start_top = true
 initial_frame = 458
 end_frame = 461
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_small_projectile]
 name = "r-typesheet37_small_projectile"
@@ -1077,6 +1136,7 @@ start_left = false
 start_top = true
 initial_frame = 808
 end_frame = 811
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_top_turret]
 name = "r-typesheet37_top_turret"
@@ -1087,6 +1147,7 @@ start_left = true
 start_top = false
 initial_frame = 328
 end_frame = 337
+frame_delay = 100 # delay between each frame in milliseconds
 
 # small turrets skipped due to them not being aligned on an round pixel index they could thus not be properly cut
 
@@ -1099,6 +1160,7 @@ start_left = true
 start_top = true
 initial_frame = 447 # row1: 447 to 455, row 2: 464 to 472, row3: 481 to 489, row4: 498 to 506
 end_frame = 506
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_small_line_craft]
 name = "r-typesheet37_small_line_craft"
@@ -1109,6 +1171,7 @@ start_left = true
 start_top = true
 initial_frame = 244 #row1: 244 to 245, row2: 252 to 253, row3: 260 to 261, row4: 268 to 269
 end_frame = 269
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_blue_projectiles]
 name = "r-typesheet37_blue_projectiles"
@@ -1119,6 +1182,7 @@ start_left = true
 start_top = false
 initial_frame = 1028
 end_frame = 1031
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_ship_broken]
 name = "r-typesheet37_ship_broken"
@@ -1129,6 +1193,7 @@ start_left = true
 start_top = false
 initial_frame = 0
 end_frame = 0
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite37_nuclear_cloud] # Sprites will be a bit cut off due to bad alignement on the spritesheet
 name = "r-typesheet37_nuclear_cloud"
@@ -1139,6 +1204,7 @@ start_left = true
 start_top = false
 initial_frame = 6 # mushroom downwards: 6 to 19, mushroom upwards: 32 to 45
 end_frame = 45
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite38_parents]
 name = "r-typesheet38_parents"
@@ -1149,6 +1215,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = 1
+frame_delay = 100 # delay between each frame in milliseconds
 
 # The intermediate ships of the spritesheet could not be cut because they are not aligned on a square/rectangular grid in a matrix like manner
 
@@ -1161,6 +1228,7 @@ start_left = true
 start_top = false
 initial_frame = 3
 end_frame = 7
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite39] # The parent (split in 2, frame 2 and 3)
 name = "r-typesheet39"
@@ -1171,6 +1239,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite39_underlings] # There are only 4 frames of interest here
 name = "r-typesheet39_underlings"
@@ -1181,6 +1250,7 @@ start_left = true
 start_top = false
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite40_boss] #This is the first line of the spritesheet
 name = "r-typesheet40_boss"
@@ -1191,6 +1261,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # the range is 0 to 7
 end_frame = 7
+frame_delay = 100 # delay between each frame in milliseconds
 
 # The underlings could not be processed because they were not in a matrix like array
 
@@ -1203,6 +1274,7 @@ start_left = true
 start_top = true
 initial_frame = 34 # the range is 34 to 37
 end_frame = 37
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite40_uob_entity] # uob (unidentified object)
 name = "r-typesheet40_uob_entity"
@@ -1213,6 +1285,7 @@ start_left = true
 start_top = true
 initial_frame = 85 # the range is 85 to 88 and 101 to 104
 end_frame = 104
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite40_terraform]
 name = "r-typesheet40_terraform"
@@ -1223,6 +1296,7 @@ start_left = false
 start_top = false
 initial_frame = 5 # there is only one block
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite41] #spritesheet to uneven to parse in a matrix like manner
 name = "r-typesheet41"
@@ -1233,6 +1307,7 @@ start_left = true
 start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite42] # spaceships
 name = "r-typesheet42"
@@ -1243,6 +1318,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # cyan ship: 0 to 4, purple 5 to 9, green: 10 to 14, red: 15 to 19, dark blue: 20 to 24
 end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite43_fireball]
 name = "r-typesheet43_fireball"
@@ -1253,6 +1329,7 @@ start_left = true
 start_top = true
 initial_frame = 8
 end_frame = 15 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 
 [spritesheets.sprite43_small_explosion]
@@ -1264,6 +1341,7 @@ start_left = true
 start_top = true
 initial_frame = 28
 end_frame = 37
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite43_laser]
 name = "r-typesheet43_laser"
@@ -1274,6 +1352,7 @@ start_left = true
 start_top = true
 initial_frame = 63
 end_frame = 69
+frame_delay = 100 # delay between each frame in milliseconds
 
 # The last line of sprites from the spritesheet could not be rendered due to them not being aligned in a matrix like manner
 
@@ -1286,6 +1365,7 @@ start_left = true
 start_top = true
 initial_frame = 4
 end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite44_medium_explosion] # due to frame alignement, the white and black circles will be cropped as well as some small sections of the medium center sprites
 name = "r-typesheet44_medium_explosion"
@@ -1296,6 +1376,7 @@ start_left = true
 start_top = true
 initial_frame = 10
 end_frame = 20
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite44_big_explosion] # due to sprite size, the sprites will be a bit cut off on the top and bottom
 name = "r-typesheet44_big_explosion"
@@ -1306,6 +1387,7 @@ start_left = true
 start_top = false
 initial_frame = 0
 end_frame = 10 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 ```
 
 Let's break it down:
@@ -1343,8 +1425,9 @@ Let's break it down:
 # sprite_height = <height> # (0-> 1000) set the height of the sprite view field, in pixels
 # start_left = true # (or false) set the starting position of the sprite view field to start from the left (or not)
 # start_top = true # (or false) set the starting position of the sprite view field to start from the top (or not)
-# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame.
+# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame. (default value: 0)
 # end_frame = -1 # (or the index of the frame) set the last frame to be taken from the spritesheet (-1 means all frames present), (default value: -1)
+# frame_delay = 100 # (from 0 to 2147483647) delay between each frame in milliseconds (default value: 100)
 ```
 
 The `[font]`, `[music]`, `[spritesheets]` represent the main sections of the configuration file:
@@ -1387,6 +1470,7 @@ The construction of a `[spritesheet]` block, element in charge of displaying the
 * `start_top = true` (or `false`) : set the starting position of the sprite view field to start from the top (or not)
 * `initial_frame = 0` : set the frame that will be used as the first one, here the number represents the index of the frame. (default value: `0`)
 * `end_frame = -1` (or `<the index of the frame>`) : set the last frame to be taken from the spritesheet (`-1` means all frames present), (default value: `-1`)
+* `frame_delay = 100` (from 0 to 2147483647) : set the delay between each frame in milliseconds (default value: 100)
 
 ## Troubleshooting
 
