@@ -918,8 +918,9 @@ void Main::_mainLoop()
     _baseId++;
 
     // Create a test button
-
-    GUI::ECS::Components::ShapeComponent buttonRectangle(_baseId, { {200, 80}, {80,50} });
+    Recoded::FloatRect buttonShapeRect({ {200, 80}, {80,50} });
+    GUI::ECS::Components::ShapeComponent buttonRectangle(_baseId, buttonShapeRect);
+    buttonRectangle.setNormalColor(GUI::ECS::Systems::Colour::White);
     _baseId++;
     GUI::ECS::Components::TextComponent buttonText(_baseId, font_body, "Sample Button", 40, GUI::ECS::Systems::Colour::BlueViolet, GUI::ECS::Systems::Colour::Azure2, GUI::ECS::Systems::Colour::Coral1, { 20, 50 });
     _baseId++;
@@ -931,9 +932,11 @@ void Main::_mainLoop()
     _baseId++;
 
     // Create an image 
-    GUI::ECS::Components::CollisionComponent col(0, 0, 0, 0, 0);
-    GUI::ECS::Components::TextureComponent MyTexture(_baseId, std::string("./assets/img/r-typesheet3.gif"), col);
+    GUI::ECS::Components::CollisionComponent col(10, 10, 10, 10, 10);
+    GUI::ECS::Components::TextureComponent MyTexture(_baseId, std::string("./assets/img/r-typesheet2.gif"), col);
     GUI::ECS::Components::ImageComponent Image(_baseId, MyTexture, "testName", "application name");
+    Image.setVisible(true);
+    Image.setPosition({ 0, 0 });
 
     PRETTY_INFO << "Updating loading text to 'All the ressources have been loaded'." << std::endl;
     _updateLoadingText("All the ressources have been loaded.");
@@ -971,7 +974,7 @@ void Main::_mainLoop()
         //     }
         // }
         window.display();
-        window.clear();
+        window.clear(GUI::ECS::Systems::Colour::Aqua);
     }
 }
 
