@@ -773,7 +773,7 @@ const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::MistyRose(255, 228, 2
 const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::MistyRose1(255, 228, 225, "MistyRose1");
 const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::Salmon(250, 128, 114, "Salmon");
 const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::MistyRose3(205, 183, 181, "MistyRose3");
-const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::White(255, 255, 255, "White");
+const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::White(255, 255, 255, 255, "White");
 const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::Gray100(255, 255, 255, "Gray100");
 const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::Grey100(255, 255, 255, "Grey100");
 const GUI::ECS::Systems::Colour GUI::ECS::Systems::Colour::Gray99(252, 252, 252, "Gray99");
