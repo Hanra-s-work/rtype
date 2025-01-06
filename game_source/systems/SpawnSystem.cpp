@@ -35,7 +35,6 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const std
 {
     Entity player = r.spawn_entity();
     r.add_component<Position>(player, {pos_x, pos_y});
-    r.add_component<Velocity>(player, {0.f, 0.f});
     r.add_component<Image>(player, {image_enum::PLAYER_ASSET, 20.f, 20.f});
     r.add_component<Collider>(player, {10.f});
     r.add_component<Health>(player, {3, 3});

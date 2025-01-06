@@ -1,6 +1,7 @@
 #include <sstream>
 #include "EventSystem.hpp"
 #include "SpawnSystem.hpp"
+#include "MovementSystem.hpp"
 
 void event_system(Registry& r)
 {
@@ -36,7 +37,15 @@ bool performAction(const GameMessage& event, Registry& r)
     case CONNECT:
         spawn_player(r, 120, 540, event.msg.username);
         break;
-    
+    case DISCONNECT:
+        r.kill_entity(Entity(event.id));
+        break;
+    case MOVE:
+        move_player(r, event.id, event.msg.coords.x, event.msg.coords.y);
+        break;
+    case SHOOT:
+        spawn_missile(r, event.msg.coords.x, event.msg.coords.y, type_enum::PLAYER);
+        break;
     default:
         return false;
     }

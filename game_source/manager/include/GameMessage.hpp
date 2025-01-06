@@ -11,8 +11,9 @@
 enum messageType {
     CONNECT,    ///< Represents a connecting player event.
     DISCONNECT, ///< Represents a disconnecting player event.
-    SPAWN,      ///< Represents a spawn event.
     MOVE,       ///< Represents a movement event.
+    SHOOT,      ///< Represents a player shooting event
+    SPAWN,      ///< Represents a spawn event.
     KILL,       ///< Represents a kill event.
     DAMAGE,     ///< Represents a damage event.
     HEAL,       ///< Represents a healing event.
