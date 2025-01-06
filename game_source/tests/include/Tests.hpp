@@ -58,6 +58,10 @@ int test_create_game(void);
  */
 int test_run_update(void);
 
+int test_get_game_event(void);
+
+int test_send_msg(void);
+
 /**
  * @brief A collection of test functions to be executed.
  * 
@@ -69,5 +73,7 @@ const std::vector<std::function<int(void)>> tests = {
     test_create_registry,  ///< Test for creating a registry.
     test_run_systems,      ///< Test for running systems within the registry.
     test_create_game,      ///< Test for creating a game.
-    test_run_update        ///< Test for running the game's update cycle.
+    test_run_update,       ///< Test for running the game's update cycle.
+    test_get_game_event,
+    test_send_msg
 };

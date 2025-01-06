@@ -74,3 +74,51 @@ int test_run_update(void)
     std::cout << "Test OK" << std::endl;
     return 0;
 }
+
+int test_get_game_event(void)
+{
+    try {
+        if (!g)
+            throw std::runtime_error("Game not initialized");
+        g->update(6);
+        auto list = g->getGameEvents();
+        for (auto a : list) {
+            std::istringstream iss = std::istringstream(a);
+            GameMessage msg = g->deserialize(iss);
+            std::cout << msg.type << " " << msg.id << std::endl;
+        }
+    } catch (std::exception &e) {
+        std::cout << "Test Failed" << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return -1;
+    }
+    std::cout << "Test OK" << std::endl;
+    return 0;
+}
+
+int test_send_msg(void)
+{
+    GameMessage msg = {messageType::CONNECT, 0, {0, 0, "Player1", {0, 0}}};
+    std::ostringstream oss;
+    std::string s;
+    try {
+        if (!g)
+            throw std::runtime_error("Game not initialized");
+        g->serialize(msg, oss);
+        s = oss.str();
+        g->onServerEventReceived(s);
+        g->update(1);
+        auto list = g->getGameEvents();
+        for (auto a : list) {
+            std::istringstream iss = std::istringstream(a);
+            GameMessage msg = g->deserialize(iss);
+            std::cout << msg.type << " " << msg.id << std::endl;
+        }
+    } catch (std::exception &e) {
+        std::cout << "Test Failed" << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return -1;
+    }
+    std::cout << "Test OK" << std::endl;
+    return 0;
+}

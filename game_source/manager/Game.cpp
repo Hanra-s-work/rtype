@@ -35,6 +35,7 @@ std::forward_list<std::string> Game::getGameEvents(void)
         serialize(event, oss);
         serializedMessages.push_front(oss.str());
     }
+    _eventsFromGame.clear();
     return serializedMessages;
 }
 
@@ -57,6 +58,7 @@ void Game::serialize(const GameMessage& message, std::ostringstream& os)
     os.write(reinterpret_cast<const char*>(&message.id), sizeof(message.id));
     os.write(reinterpret_cast<const char*>(&message.msg.status), sizeof(message.msg.status));
     os.write(reinterpret_cast<const char*>(&message.msg.asset_id), sizeof(message.msg.asset_id));
+    os.write(reinterpret_cast<const char*>(&message.msg.username), sizeof(message.msg.username));
     os.write(reinterpret_cast<const char*>(&message.msg.coords.x), sizeof(message.msg.coords.x));
     os.write(reinterpret_cast<const char*>(&message.msg.coords.y), sizeof(message.msg.coords.y));
 }
@@ -68,6 +70,7 @@ GameMessage Game::deserialize(std::istringstream& is)
     is.read(reinterpret_cast<char*>(&message.id), sizeof(message.id));
     is.read(reinterpret_cast<char*>(&message.msg.status), sizeof(message.msg.status));
     is.read(reinterpret_cast<char*>(&message.msg.asset_id), sizeof(message.msg.asset_id));
+    is.read(reinterpret_cast<char*>(&message.msg.username), sizeof(message.msg.username));
     is.read(reinterpret_cast<char*>(&message.msg.coords.x), sizeof(message.msg.coords.x));
     is.read(reinterpret_cast<char*>(&message.msg.coords.y), sizeof(message.msg.coords.y));
     return message;

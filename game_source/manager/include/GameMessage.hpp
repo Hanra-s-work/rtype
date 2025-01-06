@@ -9,13 +9,15 @@
  * like spawning, movement, damage, and status updates.
  */
 enum messageType {
-    SPAWN,     ///< Represents a spawn event.
-    MOVE,      ///< Represents a movement event.
-    KILL,      ///< Represents a kill event.
-    DAMAGE,    ///< Represents a damage event.
-    HEAL,      ///< Represents a healing event.
-    BUFF,      ///< Represents a buff event.
-    STATUS     ///< Represents a status event.
+    CONNECT,    ///< Represents a connecting player event.
+    DISCONNECT, ///< Represents a disconnecting player event.
+    SPAWN,      ///< Represents a spawn event.
+    MOVE,       ///< Represents a movement event.
+    KILL,       ///< Represents a kill event.
+    DAMAGE,     ///< Represents a damage event.
+    HEAL,       ///< Represents a healing event.
+    BUFF,       ///< Represents a buff event.
+    STATUS      ///< Represents a status event.
 };
 
 /**
@@ -35,9 +37,10 @@ struct coord {
  * coordinates. This information is used to describe the context of a specific event in the game.
  */
 struct messageInfo {
-    int status;     ///< Status of the event (e.g., success or failure).
-    int asset_id;   ///< ID representing the game asset related to the event (e.g., entity or object).
-    coord coords;   ///< Coordinates associated with the event, such as the position of an entity.
+    int status;         ///< Status of the event (e.g., success or failure).
+    int asset_id;       ///< ID representing the game asset related to the event (e.g., entity or object).
+    char username[9];   ///< Username of player connecting
+    coord coords;       ///< Coordinates associated with the event, such as the position of an entity.
 };
 
 /**

@@ -15,5 +15,5 @@ namespace Time {
      * 
      * @note This value is typically updated each frame and used for time-dependent actions, such as movement.
      */
-    static float deltaTime = 0; ///< The time elapsed between the current and previous frame (in seconds).
+    extern float deltaTime; ///< The time elapsed between the current and previous frame (in seconds).
 }

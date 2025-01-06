@@ -1,5 +1,6 @@
 #include <sstream>
 #include "EventSystem.hpp"
+#include "SpawnSystem.hpp"
 
 void event_system(Registry& r)
 {
@@ -25,9 +26,19 @@ void event_system(Registry& r)
 
 bool validateAction(const GameMessage& event, Registry& r)
 {
-    return false;
+    return true;
 }
+
 bool performAction(const GameMessage& event, Registry& r)
 {
+    switch (event.type)
+    {
+    case CONNECT:
+        spawn_player(r, 120, 540, event.msg.username);
+        break;
+    
+    default:
+        break;
+    }
     return false;
 }
