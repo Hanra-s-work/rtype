@@ -15,7 +15,9 @@
  * and obstacles. It checks for overlap between entities' positions and takes appropriate actions 
  * based on the nature of the collision, such as applying damage or triggering events.
  * 
- * @param r The `Registry` that contains all game entities and their components, used to check and 
- *        resolve collisions between entities.
+ * @param r The `Registry` that contains all game entities and their components.
+ * @param positions The container of the component `Position`.
+ * @param colliders The container of the component `Collider`.
+ * @param types The container of the component `Type`.
  */
 void collision_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Collider> &colliders, ComponentContainer<Type> &types);

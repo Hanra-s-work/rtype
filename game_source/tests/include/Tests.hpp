@@ -20,8 +20,26 @@
  */
 void cleanup(void);
 
+/**
+ * @brief Test the functionality of the Zipper class.
+ * 
+ * This test verifies that the Zipper class correctly zips two vectors
+ * containing optional values. The test iterates through the zipped pairs
+ * and checks if the values match.
+ * 
+ * @return An integer indicating the result of the test (e.g., 0 for success, non-zero for failure).
+ */
 int test_zipper(void);
 
+/**
+ * @brief Test the functionality of the IndexedZipper class.
+ * 
+ * This test verifies that the IndexedZipper class correctly zips two vectors
+ * containing optional values, along with their respective indices. The test 
+ * iterates through the zipped tuples and checks if the values match.
+ * 
+ * @return An integer indicating the result of the test (e.g., 0 for success, non-zero for failure).
+ */
 int test_indexed_zipper(void);
 
 /**
@@ -64,8 +82,26 @@ int test_create_game(void);
  */
 int test_run_update(void);
 
+/**
+ * @brief Test retrieving game events from the Game instance.
+ * 
+ * This test ensures that the Game object updates correctly and retrieves
+ * game events. It deserializes each event and prints its type and ID to 
+ * verify the functionality.
+ * 
+ * @return An integer indicating the result of the test (e.g., 0 for success, non-zero for failure).
+ */
 int test_get_game_event(void);
 
+/**
+ * @brief Test sending a message to the Game instance.
+ * 
+ * This test verifies that a message can be serialized, sent to the Game 
+ * instance, and processed correctly. The Game object updates, retrieves 
+ * game events, and deserializes them to validate the process.
+ * 
+ * @return An integer indicating the result of the test (e.g., 0 for success, non-zero for failure)..
+ */
 int test_send_msg(void);
 
 /**
