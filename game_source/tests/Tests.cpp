@@ -17,6 +17,50 @@ void cleanup(void)
         delete q;
 }
 
+int test_zipper(void)
+{
+    std::vector<std::optional<int>> v1 = {97, 98, std::nullopt, 99, 100};
+    std::vector<std::optional<char>> v2 = {'a', 'b', 'o', 'c', std::nullopt};
+    try
+    {
+        Zipper z = Zipper(v1, v2);
+        for (auto &&[num, letter] : z) {
+            if (num != letter)
+                throw std::runtime_error("Zipper is not zipping.");
+        }
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Test Failed" << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return -1;
+    }
+    std::cout << "Test OK" << std::endl;
+    return 0;
+}
+
+int test_indexed_zipper(void)
+{
+    std::vector<std::optional<int>> v1 = {97, 98, std::nullopt, 99, 100};
+    std::vector<std::optional<char>> v2 = {'a', 'b', 'o', 'c', std::nullopt};
+    try
+    {
+        IndexedZipper z = IndexedZipper(v1, v2);
+        for (auto &&[idx, num, letter] : z) {
+            if (num != letter)
+                throw std::runtime_error("IndexedZipper is not zipping.");
+        }
+    }
+    catch(const std::exception& e)
+    {
+        std::cout << "Test Failed" << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return -1;
+    }
+    std::cout << "Test OK" << std::endl;
+    return 0;
+}
+
 int test_create_registry(void)
 {
     try {

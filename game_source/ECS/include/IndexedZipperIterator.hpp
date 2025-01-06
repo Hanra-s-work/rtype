@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <tuple>
 #include <optional>
 #include <type_traits>
@@ -43,7 +44,7 @@ public:
      * @param it_tuple A tuple of iterators pointing to the current positions in the containers.
      * @param max The maximum number of elements to iterate over (determined by the smallest container size).
      */
-    IndexedZipperIterator(iterator_tuple it_tuple, size_t max) : _current(it_tuple), _max(max), _idx(0) {}
+    IndexedZipperIterator(iterator_tuple it_tuple, size_t max, size_t idx = 0) : _current(it_tuple), _max(max), _idx(idx) {}
 
     /**
      * @brief Copy constructor.
@@ -61,7 +62,6 @@ public:
      */
     IndexedZipperIterator& operator++() {
         incr_all(std::index_sequence_for<Containers...>());
-        ++_idx;
         return *this;
     }
 
@@ -134,7 +134,13 @@ private:
      */
     template <size_t... Is>
     void incr_all(std::index_sequence<Is...>) {
-        (std::get<Is>(_current)++, ...);
+        (++std::get<Is>(_current), ...);
+        ++_idx;
+
+        while (_idx < _max && !all_set(std::index_sequence<Is...>{})) {
+            (++std::get<Is>(_current), ...);
+            ++_idx;
+        }
     }
 
     /**
@@ -145,7 +151,7 @@ private:
      */
     template <size_t... Is>
     bool all_set(std::index_sequence<Is...>) {
-        return (... && (std::get<Is>(_current) != std::get<Is>(_current)));
+        return (... && std::get<Is>(_current)[0].has_value());
     }
 
     /**

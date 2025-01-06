@@ -19,7 +19,7 @@ void event_system(Registry& r)
         if (validateAction(event, r)) {
             performAction(event, r);
         } else {
-            std::cerr << "Invalid action received: " << event.id << std::endl;
+            std::cerr << "Invalid action received: " << event.type << std::endl;
         }
     }
 }
@@ -38,7 +38,7 @@ bool performAction(const GameMessage& event, Registry& r)
         break;
     
     default:
-        break;
+        return false;
     }
-    return false;
+    return true;
 }

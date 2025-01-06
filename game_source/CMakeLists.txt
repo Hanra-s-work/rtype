@@ -12,6 +12,7 @@ set(SOURCES
     ECS/Entity.cpp
     ECS/Registry.cpp
     manager/Time.cpp
+    manager/Random.cpp
     manager/Game.cpp
     manager/Queue.cpp
     systems/AISystem.cpp

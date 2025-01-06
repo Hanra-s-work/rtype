@@ -43,7 +43,7 @@ public:
      * @return An iterator pointing past the last tuple of elements from the zipped containers.
      */
     iterator end() {
-        return iterator(_end, _size);
+        return iterator(_end, _size, _size);
     }
 
 private:

@@ -1,6 +1,7 @@
 #include "SpawnSystem.hpp"
 
 #include <iostream>
+#include "Random.hpp"
 #include "Registry.hpp"
 #include "Time.hpp"
 
@@ -11,9 +12,9 @@ void spawn_monster_system(Registry &r)
 {
     spawn_timer -= Time::deltaTime;
     if (spawn_timer <= 0.0f) {
-        float x = 1000.f; //change to random when we know window size
-        float y = 400.f;
-        spawn_monster(r, 1000, 400);
+        float x = 2000.f;
+        float y = randint(60, 960);
+        spawn_monster(r, x, y);
         std::cout << "spawning monster..." << std::endl;
         spawn_timer = DEFAULT_TIMER;
     }
@@ -23,9 +24,9 @@ void spawn_obstacle_system(Registry &r)
 {
     spawn_obstacle_timer -= Time::deltaTime;
     if (spawn_obstacle_timer <= 0.0f) {
-        float x = 1000.f; //change to random when we know window size
+        float x = 2000.f; //change to random when we know window size
         float y = 400.f;
-        spawn_obstacle(r, 1000, 400);
+        spawn_obstacle(r, x, y);
         spawn_obstacle_timer = DEFAULT_TIMER * 3;
     }
 }
@@ -57,8 +58,8 @@ void spawn_monster(Registry &r, const float &pos_x, const float &pos_y)
     r.add_component<Health>(monster, {3, 3});
     //optional r.add_component<Weapon>(monster, {1, .5f, 1.f});
     r.add_component<Type>(monster, {type_enum::MONSTER});
-    //r.add_component<Behavior>(monster, {rand(DEFAULT, UP_DOWN, FOLLOW)});
-    //r.add_component<LootDrop>(monster, {rand(NONE, POWERUP, HEALTH)});
+    r.add_component<Behaviour>(monster, {behaviour_enum::DEFAULT});
+    r.add_component<LootDrop>(monster, {loot_enum::NONE});
     r.add_component<Lifetime>(monster, {35.f});
     r.dispatcher->notify({messageType::SPAWN, monster, {0, image_enum::MONSTER1_ASSET, "", {pos_x, pos_y}}});
 }

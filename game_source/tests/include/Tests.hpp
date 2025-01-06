@@ -5,6 +5,8 @@
 #include <functional>
 #include <vector>
 
+#include "Zipper.hpp"
+#include "IndexedZipper.hpp"
 #include "Game.hpp"
 #include "Registry.hpp"
 #include "Components.hpp"
@@ -17,6 +19,10 @@
  * have been run. This ensures that each test is isolated and doesn't interfere with others.
  */
 void cleanup(void);
+
+int test_zipper(void);
+
+int test_indexed_zipper(void);
 
 /**
  * @brief Test function for creating a registry.
@@ -70,10 +76,12 @@ int test_send_msg(void);
  * and executing the tests.
  */
 const std::vector<std::function<int(void)>> tests = {
+    test_zipper,           ///< Test for creating a zipper
+    test_indexed_zipper,   ///< Test for creating an indexed zipper
     test_create_registry,  ///< Test for creating a registry.
     test_run_systems,      ///< Test for running systems within the registry.
     test_create_game,      ///< Test for creating a game.
     test_run_update,       ///< Test for running the game's update cycle.
-    test_get_game_event,
-    test_send_msg
+    test_get_game_event,   ///< Test for getting in-game events
+    test_send_msg          ///< Test for sending game changes
 };
