@@ -12,7 +12,9 @@
  * entity is ready to fire based on the weapon's cooldown time and fire rate. When an entity fires a weapon, 
  * a missile or projectile is spawned, and the weapon's cooldown timer is reset.
  * 
- * @param r The `Registry` that contains all game entities and their components, used to access and update 
- *        the `Weapon` and other related components of entities.
+ * @param r The `Registry` that contains all game entities and their components.
+ * @param weapons The container of the component `Weapon`.
+ * @param positions The container of the component `Position`.
+ * @param types The container of the component `Type`.
  */
 void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentContainer<Position> &positions, ComponentContainer<Type> &types);
