@@ -227,38 +227,35 @@ The following output should appear colorised on your terminal (could not be repr
 [ 75%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/VertexArray.cpp.o
 [ 75%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/VertexBuffer.cpp.o
 [ 76%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTextureImplFBO.cpp.o
-[ 77%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTextureImplDefault.cpp.o
-[ 78%] Linking CXX static library ../../../lib/libsfml-graphics.a
-[ 78%] Built target sfml-graphics
-[ 79%] Building CXX object CMakeFiles/r-type_client.dir/src/Main.cpp.o
-[ 80%] Building CXX object CMakeFiles/r-type_client.dir/src/Debug.cpp.o
-[ 80%] Building CXX object CMakeFiles/r-type_client.dir/src/RealMain.cpp.o
-[ 81%] Building CXX object CMakeFiles/r-type_client.dir/src/MainClass.cpp.o
-[ 82%] Building CXX object CMakeFiles/r-type_client.dir/src/TOMLLoader.cpp.o
-[ 83%] Building CXX object CMakeFiles/r-type_client.dir/src/HelpFunctions.cpp.o
-[ 83%] Building CXX object CMakeFiles/r-type_client.dir/src/ExceptionHandling.cpp.o
-[ 84%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/Network/NetworkManager.cpp.o
-[ 85%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/Network/ProtocolHandler.cpp.o
-[ 86%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Component.cpp.o
-[ 86%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/EntityNode.cpp.o
-[ 87%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/TextComponent.cpp.o
-[ 88%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/MusicComponent.cpp.o
-[ 89%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ShapeComponent.cpp.o
-[ 89%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/SpriteComponent.cpp.o
-[ 90%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ButtonComponent.cpp.o
-[ 91%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/TextureComponent.cpp.o
-[ 91%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/CollisionComponent.cpp.o
-[ 92%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/AnimationComponent.cpp.o
-[ 93%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/InputSystem.cpp.o
-[ 94%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/ButtonSystem.cpp.o
-[ 94%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/RenderSystem.cpp.o
-[ 95%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/AnimationSystem.cpp.o
-[ 96%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/key.cpp.o
-[ 97%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/Font.cpp.o
-[ 97%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/Clock.cpp.o
-[ 98%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/Window.cpp.o
-[ 99%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/MouseInfo.cpp.o
-[100%] Building CXX object CMakeFiles/r-type_client.dir/src/GUI/ECS/Utilities/EventManager.cpp.o
+[ 76%] Building CXX object _deps/sfml-build/src/SFML/Graphics/CMakeFiles/sfml-graphics.dir/RenderTextureImplDefault.cpp.o
+[ 77%] Linking CXX static library ../../../lib/libsfml-graphics.a
+[ 77%] Built target sfml-graphics
+[ 78%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/Main.cpp.o
+[ 78%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/RealMain.cpp.o
+[ 79%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/MainClass.cpp.o
+[ 79%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/TOMLLoader.cpp.o
+[ 80%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/CustomExceptions/No.cpp.o
+[ 81%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/CustomExceptions/Invalid.cpp.o
+[ 82%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/Network/NetworkManager.cpp.o
+[ 82%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/Network/ProtocolHandler.cpp.o
+[ 83%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Component.cpp.o
+[ 84%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/EntityNode.cpp.o
+[ 84%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/TextComponent.cpp.o
+[ 85%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/MusicComponent.cpp.o
+[ 86%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ImageComponent.cpp.o
+[ 86%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ShapeComponent.cpp.o
+[ 87%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/SpriteComponent.cpp.o
+[ 88%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/ButtonComponent.cpp.o
+[ 88%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/TextureComponent.cpp.o
+[ 89%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/CollisionComponent.cpp.o
+[ 90%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Components/AnimationComponent.cpp.o
+[ 90%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/Key.cpp.o
+[ 91%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/Font.cpp.o
+[ 92%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/Clock.cpp.o
+[ 92%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/Colour.cpp.o
+[ 93%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/Window.cpp.o
+[ 94%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/MouseInfo.cpp.o
+[100%] Building CXX object gui/CMakeFiles/r-type_client.dir/src/GUI/ECS/Systems/EventManager.cpp.o
 [100%] Linking CXX executable r-type_client
 [100%] Built target r-type_client
 ```
