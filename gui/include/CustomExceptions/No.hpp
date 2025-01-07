@@ -141,6 +141,66 @@ namespace CustomExceptions
 
     /**
      * @brief This is the class in charge of informing the user
+     * that they tried to access a non-existant Icon.
+     *
+     */
+    class NoIcon : public std::exception {
+        public:
+        /**
+         * @brief Construct a new No Sprite Sheet object
+         *
+         * @param exceptionDetail A string allowing you to provide
+         * extra detail if required
+         */
+        NoIcon(const std::string &exceptionDetail = "");
+        /**
+         * @brief Destroy the No Sprite Sheet object
+         *
+         */
+        ~NoIcon();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that they tried to access a non-existant background.
+     *
+     */
+    class NoBackground : public std::exception {
+        public:
+        /**
+         * @brief Construct a new No Sprite Sheet object
+         *
+         * @param exceptionDetail A string allowing you to provide
+         * extra detail if required
+         */
+        NoBackground(const std::string &exceptionDetail = "");
+        /**
+         * @brief Destroy the No Sprite Sheet object
+         *
+         */
+        ~NoBackground();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
      * that they tried to access a non-existant collision class.
      *
      */
@@ -646,6 +706,36 @@ namespace CustomExceptions
 
     /**
      * @brief This is the class in charge of informing the user
+     * that there is no configuration for the font in charge of displaying text
+     * that will help display icon's in the buttons.
+     *
+     */
+    class NoButtonFontConfiguration : public std::exception {
+        public:
+        /**
+         * @brief Construct a new No Default Font Configuration object
+         *
+         * @param tomlPath The path to the toml configuration file.
+         */
+        NoButtonFontConfiguration(const std::string &tomlPath = "");
+        /**
+         * @brief Destroy the No Default Font Configuration object
+         *
+         */
+        ~NoButtonFontConfiguration();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
      * that they tried to access a non-existant toml instance.
      *
      */
@@ -778,6 +868,58 @@ namespace CustomExceptions
          */
         NoFontInConfigFile(const std::string &tomlPath = "", const std::string &tomlKey = "");
         ~NoFontInConfigFile();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the program could not find the Icon section in the configuration file.
+     *
+     */
+    class NoIconInConfigFile : public std::exception {
+        public:
+        /**
+         * @brief Construct a new No Icon In Config File object
+         *
+         * @param tomlPath The path to the toml file.
+         * @param tomlKey The key that was affected.
+         */
+        NoIconInConfigFile(const std::string &tomlPath = "", const std::string &tomlKey = "");
+        ~NoIconInConfigFile();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the program could not find the Background section in the configuration file.
+     *
+     */
+    class NoBackgroundInConfigFile : public std::exception {
+        public:
+        /**
+         * @brief Construct a new No Background In Config File object
+         *
+         * @param tomlPath The path to the toml file.
+         * @param tomlKey The key that was affected.
+         */
+        NoBackgroundInConfigFile(const std::string &tomlPath = "", const std::string &tomlKey = "");
+        ~NoBackgroundInConfigFile();
         /**
          * @brief Retrieves the error message.
          * @return A C-style string representing the error message.
