@@ -1051,10 +1051,23 @@ void Main::_mainMenuScreen()
         }
     }
 
+
     PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
-    const std::pair<int, int> windowPosition = win.value()->getPosition();
-    int x = 0;
-    int y = 0;
+    const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    if (windowDimensions.first == 0.0 || windowDimensions.second == 0.0) {
+        PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
+        throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
+    }
+
+    PRETTY_DEBUG << "Calculating the left bound of the second sixth for the x coordinate" << std::endl;
+    const float xMin = windowDimensions.first / 6.0f;
+    PRETTY_DEBUG << "Calculating the right bound of the second sixth (end of the second sixth) for the x coordinate." << std::endl;
+    const float xMax = windowDimensions.first / 3.0f;
+    PRETTY_DEBUG << "Extracting the middle of the second sixth for the region and coordinate of where to render the asset." << std::endl;
+    const int x = xMin + (xMax - xMin) * 0.5f;
+
+    PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
+    const int y = windowDimensions.second / 2;
     icon->setPosition({ x, y });
 
 
