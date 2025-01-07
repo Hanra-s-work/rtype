@@ -40,10 +40,22 @@
 #include "GUI/ECS/Systems/Window.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
 
- /**
-  * @brief The Main class is the main class of the program.
-  *
-  */
+enum class ActiveScreen {
+  LOADING,
+  MENU,
+  GAME,
+  DEMO,
+  SETTINGS,
+  GAME_OVER,
+  BOSS_FIGHT,
+  CONNECTION_FAILED,
+  CONNECTION_ADDRESS,
+};
+
+/**
+ * @brief The Main class is the main class of the program.
+ *
+ */
 class Main {
   public:
   /**
@@ -93,6 +105,7 @@ class Main {
   void setConfigFile(const std::string &configFile);
   void setLog(const bool debug);
   void setDebug(const bool debug);
+  void setActiveScreen(const ActiveScreen screen);
 
   // Getters
   const std::string getIp();
@@ -114,6 +127,8 @@ class Main {
   std::string getConfigFile() const;
   std::tuple<unsigned int, unsigned int> getWindowPosition();
   std::tuple<unsigned int, unsigned int> getWindowSize();
+  const ActiveScreen getActiveScreen() const;
+  const std::string getActiveScreenAsString() const;
 
   private:
   // Private helper methods
@@ -125,13 +140,65 @@ class Main {
   const bool _isFilePresent(const std::string &filepath) const;
   const bool _isFrameLimitCorrect(const unsigned int frameLimit) const;
   const bool _isFontConfigurationCorrect(const TOMLLoader &node) const;
+  const bool _isIconConfigurationCorrect(const TOMLLoader &node) const;
   const bool _isMusicConfigurationCorrect(const TOMLLoader &node) const;
   const bool _isSpriteConfigurationCorrect(const TOMLLoader &node) const;
+  const bool _isBackgroundConfigurationCorrect(const TOMLLoader &node) const;
   const bool _isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std::string &key, const toml::node_type &valueType) const;
+
+  /**
+   * @brief Function in charge of retrieving the section corresponding to the provided key and return it as a TOMLLoader content.
+   *
+   * @tparam Exception The exception for an invalid format when the section is found.
+   * @tparam ExceptionMissing The exception for a missing section.
+   *
+   * @param node The parent TOML content in which to search.
+   * @param key The first probable name of the section.
+   * @param keyAlt The second probable name of the section.
+   *
+   * @return const TOMLLoader The section extracted from the parent.
+   *
+   * @throws Exception The exception for an invalid format when the section is found
+   * @throws ExceptionMissing The exception for when the section is not found.
+   */
+  template <typename Exception = CustomExceptions::InvalidFontConfiguration, typename ExceptionMissing = CustomExceptions::NoFontInConfigFile>
+  const TOMLLoader _getTOMLNodeContent(const TOMLLoader &node, const std::string &key, const std::string &keyAlt)
+  {
+    TOMLLoader ItemNode(_tomlContent);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+
+    if (_tomlContent.hasKey(key)) {
+      PRETTY_INFO << "Fetching the content for '" << key << "'." << std::endl;
+      PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(key) << "'." << std::endl;
+      if (_tomlContent.getValueType(key) == toml::node_type::table) {
+        ItemNode = _tomlContent.getTable(key);
+      } else {
+        throw Exception(tomlPath, key, _tomlContent.getValueTypeAsString(key), _tomlContent.getTypeAsString(toml::node_type::table));
+      }
+    } else if (_tomlContent.hasKey(keyAlt)) {
+      PRETTY_INFO << "Fetching the content for '" << keyAlt << "'." << std::endl;
+      PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(keyAlt) << "'." << std::endl;
+      if (_tomlContent.getValueType(keyAlt) == toml::node_type::table) {
+        ItemNode = _tomlContent.getTable(keyAlt);
+      } else {
+        throw Exception(tomlPath, keyAlt, _tomlContent.getValueTypeAsString(keyAlt), _tomlContent.getTypeAsString(toml::node_type::table));
+      }
+    } else {
+      PRETTY_CRITICAL << "The key " << key << " is missing from the config file, " <<
+        "the other supported key " << keyAlt << " wasn't found in the config file." << std::endl;
+      throw ExceptionMissing(_tomlContent.getTOMLPath(), key);
+    }
+
+    PRETTY_DEBUG << ItemNode.getRawTOML() << std::endl;
+    return ItemNode;
+  }
 
   std::uint32_t _initialiseAudio();
   std::uint32_t _initialiseFonts();
+  std::uint32_t _initialiseIcon();
   std::uint32_t _initialiseSprites();
+  std::uint32_t _initialiseBackgrounds();
+
   void _initialiseConnection();
   void _initialiseRessources();
 
@@ -139,7 +206,44 @@ class Main {
 
   void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
 
-  void _mainMenu();
+  void _sendAllPackets();
+  void _processIncommingPackets();
+
+
+  // Screens for the gui
+  void _gameScreen();
+  void _demoScreen();
+  void _settingsMenu();
+  void _gameOverScreen();
+  void _mainMenuScreen();
+  void _connectionFailedScreen();
+  void _connectionAddressScreen();
+
+  // Function related to managing sub components in the windows
+
+  // Musics
+
+  // Main menu music
+  void _startMainMenuMusic();
+  void _stopMainMenuMusic();
+
+  // Game loop music
+  void _startGameLoopMusic();
+  void _stopGameLoopMusic();
+
+  // Boss fight music
+  void _startBossFightMusic();
+  void _stopBossFightMusic();
+
+  // Sound effects
+
+  void _shootSound();
+  void _damageSound();
+  void _deadSound();
+  void _buttonSound();
+  void _gameOverSound();
+  void _winSound();
+
 
   void _testContent();
 
@@ -168,12 +272,15 @@ class Main {
   unsigned int _windowFrameLimit;
   std::uint32_t _baseId = 0;
   std::string _configFilePath = "client_config.toml";
+  unsigned int _defaultFont = 0;
   unsigned int _loadingIndex = 0;
   unsigned int _mainWindowIndex = 0;
   unsigned int _mainEventIndex = 0;
   TOMLLoader _tomlContent;
+  ActiveScreen _activeScreen = ActiveScreen::LOADING;
+  bool _gameMusicStarted = false;
   bool _mainMenuMusicStarted = false;
-  bool _mainMenuEntered = false;
+  bool _bossFightMusicStarted = false;
 };
 
 int RealMain(int argc, char **argv);
