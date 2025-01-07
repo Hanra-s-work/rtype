@@ -7,6 +7,7 @@
 
 /**
  * @file CollisionComponent.cpp
+ *
  * @brief This is the file in charge of managing the collision checking
  */
 
@@ -25,7 +26,6 @@ GUI::ECS::Components::CollisionComponent::CollisionComponent(const std::uint32_t
 {
     _updateMouseCollisionData();
 }
-
 
 /**
  * @brief Default destructor.
@@ -77,66 +77,54 @@ void GUI::ECS::Components::CollisionComponent::setPositionY(const float &posY)
 }
 
 /**
- *@brief Set the position of the object.
+ * @brief Set the position of the object.
  *
- * @param position an sf::Vector2f of the object's position.
+ * @param position an std::pair<int, int> of the object's position.
  */
-void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2f &position)
+void GUI::ECS::Components::CollisionComponent::setPosition(const std::pair<int, int> &position)
 {
-    _posX = position.x;
-    _posY = position.y;
+    _posX = position.first;
+    _posY = position.second;
     _updateMouseCollisionData();
 }
 
 /**
- *@brief Set the position of the object.
+ * @brief Set the dimension of the object.
  *
- * @param position an sf::Vector2u of the object's position.
+ * @param dimension an std::pair<float, float> of the of the object's dimension.
  */
-void GUI::ECS::Components::CollisionComponent::setPosition(const sf::Vector2u &position)
+void GUI::ECS::Components::CollisionComponent::setDimension(const std::pair<int, int> &dimension)
 {
-    _posX = position.x;
-    _posY = position.y;
+    _width = dimension.first;
+    _height = dimension.second;
     _updateMouseCollisionData();
 }
 
-/**
- *@brief Set the dimension of the object.
- *
- * @param dimension an sf::Vector2f of the of the object's dimension.
- */
-void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2f &dimension)
-{
-    _width = dimension.x;
-    _height = dimension.y;
-    _updateMouseCollisionData();
-}
-
-/**
- *@brief Set the dimension of the object.
- *
- * @param dimension an sf::Vector2u of the of the object's dimension.
- */
-void GUI::ECS::Components::CollisionComponent::setDimension(const sf::Vector2u &dimension)
-{
-    _width = dimension.x;
-    _height = dimension.y;
-    _updateMouseCollisionData();
-}
 
 /**
  * @brief Updates the mouse position for collision checks.
  *
- * @param mousePosition New mouse position as an SFML vector.
+ * @param mousePosition New mouse position as an std::pair<int, int> vector.
  */
-void GUI::ECS::Components::CollisionComponent::setMousePosition(const sf::Vector2f &mousePosition)
+void GUI::ECS::Components::CollisionComponent::setMousePosition(const std::pair<int, int> &mousePosition)
 {
     _mouse.update(mousePosition);
     _updateMouseCollisionData();
 }
 
+
 /**
- *@brief Update the info object used in the CollisionComponent class.
+ * @brief Update the mouse info object used for mouse tracking.
+ *
+ * @param copy
+ */
+void GUI::ECS::Components::CollisionComponent::update(const std::pair<int, int> &mouse)
+{
+    _mouse.update(mouse);
+    _updateMouseCollisionData();
+}
+/**
+ * @brief Update the info object used in the CollisionComponent class.
  *
  * @param copy
  */
@@ -152,22 +140,23 @@ void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Components
 }
 
 /**
- *@brief Update the mouse info object used for mouse tracking.
+ * @brief Update the mouse info object used for mouse tracking.
  *
  * @param copy
  */
-void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::CollisionComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _mouse.update(mouse);
     _updateMouseCollisionData();
 }
+
 
 /**
  * @brief Updates the mouse info object used for collision checks.
  *
  * @param mouse Mouse information object.
  */
-void GUI::ECS::Components::CollisionComponent::updateMouseInfo(const GUI::ECS::Utilities::MouseInfo &mouse)
+void GUI::ECS::Components::CollisionComponent::updateMouseInfo(const GUI::ECS::Systems::MouseInfo &mouse)
 {
     _mouse.update(mouse);
     _updateMouseCollisionData();
@@ -178,7 +167,7 @@ void GUI::ECS::Components::CollisionComponent::updateMouseInfo(const GUI::ECS::U
  *
  * @return `true` if the component is clicked; otherwise, `false`.
  */
-bool GUI::ECS::Components::CollisionComponent::isClicked() const
+const bool GUI::ECS::Components::CollisionComponent::isClicked() const
 {
     return _isClicked;
 }
@@ -188,7 +177,7 @@ bool GUI::ECS::Components::CollisionComponent::isClicked() const
  *
  * @return `true` if the component is hovered; otherwise, `false`.
  */
-bool GUI::ECS::Components::CollisionComponent::isHovered() const
+const bool GUI::ECS::Components::CollisionComponent::isHovered() const
 {
     return _isHovered;
 }
@@ -198,7 +187,7 @@ bool GUI::ECS::Components::CollisionComponent::isHovered() const
  *
  * @return Width of the component.
  */
-float GUI::ECS::Components::CollisionComponent::getWidth() const
+const float GUI::ECS::Components::CollisionComponent::getWidth() const
 {
     return _width;
 }
@@ -208,7 +197,7 @@ float GUI::ECS::Components::CollisionComponent::getWidth() const
  *
  * @return Height of the component.
  */
-float GUI::ECS::Components::CollisionComponent::getHeight() const
+const float GUI::ECS::Components::CollisionComponent::getHeight() const
 {
     return _height;
 }
@@ -218,7 +207,7 @@ float GUI::ECS::Components::CollisionComponent::getHeight() const
  *
  * @return X-coordinate of the component's position.
  */
-float GUI::ECS::Components::CollisionComponent::getPositionX() const
+const float GUI::ECS::Components::CollisionComponent::getPositionX() const
 {
     return _posX;
 }
@@ -228,7 +217,7 @@ float GUI::ECS::Components::CollisionComponent::getPositionX() const
  *
  * @return Y-coordinate of the component's position.
  */
-float GUI::ECS::Components::CollisionComponent::getPositionY() const
+const float GUI::ECS::Components::CollisionComponent::getPositionY() const
 {
     return _posY;
 }
@@ -238,49 +227,44 @@ float GUI::ECS::Components::CollisionComponent::getPositionY() const
  *
  * @return sf::FloatRect instance of the coordinates.
  */
-sf::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
+const Recoded::FloatRect GUI::ECS::Components::CollisionComponent::getGeometry() const
 {
-    sf::FloatRect rect;
-
-    rect.size.x = _width;
-    rect.size.y = _height;
-    rect.position.y = _posY;
-    rect.position.x = _posX;
-    return rect;
+    Recoded::FloatRect data({ 0, 0 }, { 0, 0 });
+    return data;
 }
 
 /**
  * @brief Get the position of the item in the form of an sf::Vector2i
  *
- * @return sf::Vector2f of the position of the element
+ * @return std::pair<float, float> of the position of the element
  */
-sf::Vector2f GUI::ECS::Components::CollisionComponent::getPosition() const
+const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getPosition() const
 {
-    sf::Vector2f position;
-    position.x = _posX;
-    position.y = _posY;
+    std::pair<float, float> position;
+    position.first = _posX;
+    position.second = _posY;
     return position;
 }
 
 /**
- *@brief Get the dimension of the item in the form of an sf::Vector2i
+ * @brief Get the dimension of the item in the form of an sf::Vector2i
  *
- * @return sf::Vector2f of the dimension of the element.
+ * @return std::pair<float, float> of the dimension of the element.
  */
-sf::Vector2f GUI::ECS::Components::CollisionComponent::getDimension() const
+const std::pair<float, float> GUI::ECS::Components::CollisionComponent::getDimension() const
 {
-    sf::Vector2f dimension;
-    dimension.x = _width;
-    dimension.y = _height;
+    std::pair<float, float> dimension;
+    dimension.first = _width;
+    dimension.second = _height;
     return dimension;
 }
 
 /**
- *@brief This is the function in charge of returning the MouseInfo class instance.
+ * @brief This is the function in charge of returning the MouseInfo class instance.
  *
- * @return GUI::ECS::Utilities::MouseInfo The MouseInfo class.
+ * @return GUI::ECS::Systems::MouseInfo The MouseInfo class.
  */
-GUI::ECS::Utilities::MouseInfo GUI::ECS::Components::CollisionComponent::getMouseInfo() const
+const GUI::ECS::Systems::MouseInfo GUI::ECS::Components::CollisionComponent::getMouseInfo() const
 {
     return _mouse;
 }
@@ -291,9 +275,9 @@ GUI::ECS::Utilities::MouseInfo GUI::ECS::Components::CollisionComponent::getMous
  * @param itemTwo The other CollisionComponent to check against.
  * @return `true` if the components are colliding; otherwise, `false`.
  */
-bool GUI::ECS::Components::CollisionComponent::isColliding(const CollisionComponent &itemTwo) const
+const bool GUI::ECS::Components::CollisionComponent::isColliding(const CollisionComponent &itemTwo) const
 {
-    Debug::getInstance() << "CollisionComponent: Checking if 2 shapes are colliding" << std::endl;
+    PRETTY_INFO << "CollisionComponent: Checking if 2 shapes are colliding" << std::endl;
     const bool rightEdge = _posX + _width <= itemTwo._posX;
     const bool leftEdge = _posX >= itemTwo._posX + itemTwo._width;
     const bool bottomEdge = _posY + _height <= itemTwo._posY;
@@ -305,8 +289,31 @@ bool GUI::ECS::Components::CollisionComponent::isColliding(const CollisionCompon
     return true;
 }
 
+const std::string GUI::ECS::Components::CollisionComponent::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Collision Info:\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Hovered: " + Recoded::myToString(_isHovered) + "\n";
+    result += indentation + "- Clicked: " + Recoded::myToString(_isClicked) + "\n";
+    result += indentation + "- Position: ( x: " + Recoded::myToString(_posX) + ", y: " + Recoded::myToString(_posY) + " )\n";
+    result += indentation + "- Dimensions: ( width: " + Recoded::myToString(_width) + ", height: " + Recoded::myToString(_height) + " )\n";
+    result += indentation + "- Mouse Info: {\n" + _mouse.getInfo(indent + 1) + indentation + "}\n";
+    return result;
+}
+
+std::ostream &GUI::ECS::Components::operator<<(std::ostream &os, const GUI::ECS::Components::CollisionComponent &item)
+{
+    os << item.getInfo();
+    return os;
+}
+
 /**
- *@brief This is the overload in charge of allowing the user to update their variables using the = sign.
+ * @brief This is the overload in charge of allowing the user to update their variables using the = sign.
  *
  * @param copy
  * @return GUI::ECS::Components::CollisionComponent&
@@ -324,22 +331,93 @@ GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::CollisionCompone
  */
 void GUI::ECS::Components::CollisionComponent::_updateMouseCollisionData()
 {
-    Debug::getInstance() << "CollisionComponent: Updating the collision between the mouse and the shape." << std::endl;
+    PRETTY_DEBUG << "Updating the collision between the mouse and the shape." << std::endl;
     _isHovered = false;
     _isClicked = false;
-    const sf::Vector2f &mousePos = _mouse.getMousePosition();
+    const std::pair<int, int> &mousePos = _mouse.getMousePosition();
     const bool inFocus = _mouse.isMouseInFocus();
 
     if (
-        mousePos.x >= _posX && mousePos.x <= _posX + _width
-        && mousePos.y >= _posY && mousePos.y <= _posY + _height
+        mousePos.first >= _posX && mousePos.first <= _posX + _width
+        && mousePos.second >= _posY && mousePos.second <= _posY + _height
         && inFocus
         ) {
         _isHovered = true;
     }
 
-    if (_isHovered && _mouse.isMouseLeftButtonClicked()) {
+    if (_isHovered && (_mouse.isMouseLeftButtonClicked() || _mouse.isMouseRightButtonClicked())) {
         _isClicked = true;
     }
+    PRETTY_SUCCESS << "Collision data updated." << std::endl;
 }
 
+[[nodiscard]] const bool GUI::ECS::Components::operator==(GUI::ECS::Components::CollisionComponent left, GUI::ECS::Components::CollisionComponent right)
+{
+    return left.getPosition() == right.getPosition() &&
+        left.getDimension() == right.getDimension();
+};
+
+[[nodiscard]] const bool GUI::ECS::Components::operator!=(GUI::ECS::Components::CollisionComponent left, GUI::ECS::Components::CollisionComponent right)
+{
+    return !(left == right);
+};
+
+[[nodiscard]] const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::operator+(GUI::ECS::Components::CollisionComponent left, GUI::ECS::Components::CollisionComponent right)
+{
+    return CollisionComponent(
+        0,
+        left.getWidth() + right.getWidth(),
+        left.getHeight() + right.getHeight(),
+        left.getPositionX() + right.getPositionX(),
+        left.getPositionY() + right.getPositionY()
+    );
+};
+
+[[nodiscard]] const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::operator-(GUI::ECS::Components::CollisionComponent left, GUI::ECS::Components::CollisionComponent right)
+{
+    return CollisionComponent(
+        0,
+        left.getWidth() - right.getWidth(),
+        left.getHeight() - right.getHeight(),
+        left.getPositionX() - right.getPositionX(),
+        left.getPositionY() - right.getPositionY()
+    );
+};
+
+[[nodiscard]] const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::operator*(GUI::ECS::Components::CollisionComponent left, GUI::ECS::Components::CollisionComponent right)
+{
+    return CollisionComponent(
+        0,
+        left.getWidth() * right.getWidth(),
+        left.getHeight() * right.getHeight(),
+        left.getPositionX() * right.getPositionX(),
+        left.getPositionY() * right.getPositionY()
+    );
+};
+
+const GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::operator+=(GUI::ECS::Components::CollisionComponent &left, GUI::ECS::Components::CollisionComponent right)
+{
+    left.setWidth(left.getWidth() + right.getWidth());
+    left.setHeight(left.getHeight() + right.getHeight());
+    left.setPositionX(left.getPositionX() + right.getPositionX());
+    left.setPositionY(left.getPositionY() + right.getPositionY());
+    return left;
+};
+
+const GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::operator-=(GUI::ECS::Components::CollisionComponent &left, GUI::ECS::Components::CollisionComponent right)
+{
+    left.setWidth(left.getWidth() - right.getWidth());
+    left.setHeight(left.getHeight() - right.getHeight());
+    left.setPositionX(left.getPositionX() - right.getPositionX());
+    left.setPositionY(left.getPositionY() - right.getPositionY());
+    return left;
+};
+
+const GUI::ECS::Components::CollisionComponent &GUI::ECS::Components::operator*=(GUI::ECS::Components::CollisionComponent &left, GUI::ECS::Components::CollisionComponent right)
+{
+    left.setWidth(left.getWidth() * right.getWidth());
+    left.setHeight(left.getHeight() * right.getHeight());
+    left.setPositionX(left.getPositionX() * right.getPositionX());
+    left.setPositionY(left.getPositionY() * right.getPositionY());
+    return left;
+};

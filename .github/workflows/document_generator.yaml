@@ -226,7 +226,7 @@ jobs:
 
       - name: Inject external html ressources if html is present
         run: |
-          if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION}}/html" ]; then
+          if [ -e "${{env.TEMPORARY_FOLDER}}/${{env.OUTPUT_GENERATION}}/html" ]; then
             CWD=$(pwd)
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html"
             if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files" ]; then
@@ -287,6 +287,7 @@ jobs:
         with:
           name: ${{env.CACHE_KEY_CLEANED}}
           path: "${{env.TEMPORARY_FOLDER}}"
+          # path: "${{env.TEMPORARY_FOLDER}}/${{env.OUTPUT_GENERATION}}" # If the html issue was not fixed, try the following
           retention-days: 1
           overwrite: true
 
@@ -325,7 +326,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload selected content
-          path: ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}
+          path: ${{env.OUTPUT_GENERATION}}/documentation/${{env.HTML_GENERATION}}
           name: "github-pages"
 
       - name: Deploy to GitHub Pages
@@ -605,20 +606,20 @@ jobs:
       #     make_latest: true
       #     token: ${{ secrets.GITHUB_TOKEN }}
 
-  clean_created_cache:
-    name: Clear the cache generated during the build time
-    permissions: write-all
-    runs-on: ubuntu-latest*
-    if: github.ref == 'refs/heads/main'
-    needs: [publish_html ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Delete Created cache
-        env:
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
-        run: |
-          gh cache list
-          gh cache delete --all
+  # clean_created_cache:
+  #   name: Clear the cache generated during the build time
+  #   permissions: write-all
+  #   runs-on: ubuntu-latest*
+  #   if: github.ref == 'refs/heads/main'
+  #   needs: [publish_html ]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Delete Created cache
+  #       env:
+  #         GH_TOKEN: ${{secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         gh cache list
+  #         gh cache delete --all

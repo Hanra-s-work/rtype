@@ -20,6 +20,7 @@
 #include "GUI/ECS/Components/SpriteComponent.hpp"
 #include "GUI/ECS/Components/TextComponent.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
+#include "GUI/ECS/Components/ImageComponent.hpp"
 
 namespace GUI
 {
@@ -27,14 +28,16 @@ namespace GUI
     {
         namespace Components
         {
-            class AnimationComponent;
-            class ButtonComponent;
-            class CollisionComponent;
-            class MusicComponents;
-            class ShapeComponent;
-            class SpriteComponent;
             class TextComponent;
+            class ImageComponent;
+            class MusicComponent;
+            class ShapeComponent;
+            class ButtonComponent;
+            class SpriteComponent;
+            enum class ActiveShape;
             class TextureComponent;
+            class CollisionComponent;
+            class AnimationComponent;
         }
     }
 }

@@ -13,7 +13,10 @@
 
 #pragma once
 #include <cstdint>
-#include "Debug.hpp"
+
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
 
 namespace GUI
 {

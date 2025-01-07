@@ -15,13 +15,21 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib)
 set(SOURCES
 
     # Files at the source of the program
+    src/Log.cpp
     src/Main.cpp
-    src/Debug.cpp
     src/RealMain.cpp
     src/MainClass.cpp
     src/TOMLLoader.cpp
     src/HelpFunctions.cpp
-    src/ExceptionHandling.cpp
+
+    # Custom exceptions
+    src/CustomExceptions/No.cpp
+    src/CustomExceptions/Found.cpp
+    src/CustomExceptions/Failed.cpp
+    src/CustomExceptions/Invalid.cpp
+    src/CustomExceptions/Unknown.cpp
+    src/CustomExceptions/NotFound.cpp
+    src/CustomExceptions/NotInitialised.cpp
 
     # Network files
     src/GUI/Network/NetworkManager.cpp
@@ -34,6 +42,7 @@ set(SOURCES
     # ECS Components
     src/GUI/ECS/Components/TextComponent.cpp
     src/GUI/ECS/Components/MusicComponent.cpp
+    src/GUI/ECS/Components/ImageComponent.cpp
     src/GUI/ECS/Components/ShapeComponent.cpp
     src/GUI/ECS/Components/SpriteComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
@@ -41,19 +50,20 @@ set(SOURCES
     src/GUI/ECS/Components/CollisionComponent.cpp
     src/GUI/ECS/Components/AnimationComponent.cpp
 
-    # ECS system components
-    src/GUI/ECS/Systems/InputSystem.cpp
-    src/GUI/ECS/Systems/ButtonSystem.cpp
-    src/GUI/ECS/Systems/RenderSystem.cpp
-    src/GUI/ECS/Systems/AnimationSystem.cpp
+    # ECS Systems
+    src/GUI/ECS/Systems/Key.cpp
+    src/GUI/ECS/Systems/Font.cpp
+    src/GUI/ECS/Systems/Clock.cpp
+    src/GUI/ECS/Systems/Colour.cpp
+    src/GUI/ECS/Systems/Window.cpp
+    src/GUI/ECS/Systems/MouseInfo.cpp
+    src/GUI/ECS/Systems/EventManager.cpp
 
-    # ECS Utilities
-    src/GUI/ECS/Utilities/key.cpp
-    src/GUI/ECS/Utilities/Font.cpp
-    src/GUI/ECS/Utilities/Clock.cpp
-    src/GUI/ECS/Utilities/Window.cpp
-    src/GUI/ECS/Utilities/MouseInfo.cpp
-    src/GUI/ECS/Utilities/EventManager.cpp
+    # General Utilities files
+
+    # Custom rebinds
+    src/Recoded/Rect.cpp
+    src/Recoded/ToString.cpp
 )
 
 # Check for threads

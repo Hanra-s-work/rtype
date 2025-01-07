@@ -7,6 +7,7 @@
 
 /**
  * @file HelpFunctions.cpp
+ *
  * @brief This is the file in charge of displaying the help message.
  */
 
@@ -14,16 +15,16 @@
 #include "Constants.hpp"
 
  /**
-  *@brief Display the Usage section of the help prompt.
+  * @brief Display the Usage section of the help prompt.
   *
   * @param binName
   */
 static void displayUsageSummary(const std::string binName)
 {
     std::cout << "USAGE:\n";
-    std::cout << "\t" << binName << " [--ip] [--port] [--debug] [--help] [--version]";
-    std::cout << " [--full-screen] [--window-width] [--window-height] [--frame-rate-limit]";
-    std::cout << " [--config-file]";
+    std::cout << "\t" << binName << " [--ip] [--port] [--log] [--debug] [--help]";
+    std::cout << " [--version] [--full-screen] [--window-width] [--window-height]";
+    std::cout << " [--frame-rate-limit] [--config-file]";
     // std::cout << " [--position-x] [--position-y] [--window-title] [--cursor] ";
     // std::cout << " [--cursor-icon] [--image-is-sprite] [--sprite-start-top] ";
     // std::cout << " [--sprite-start-left] [--sprite-width] [--sprite-height]";
@@ -31,7 +32,7 @@ static void displayUsageSummary(const std::string binName)
 }
 
 /**
- *@brief Display the Options section of the help prompt.
+ * @brief Display the Options section of the help prompt.
  *
  */
 static void displayDetailedUsage()
@@ -39,7 +40,8 @@ static void displayDetailedUsage()
     std::cout << "OPTIONS:\n";
     std::cout << "\t--ip=\"127.0.0.1\"            \tSet the value of the ip on which the program will communicate. (Default value: 127.0.0.1)\n";
     std::cout << "\t--port=\"5000\"               \tSet the value of the port on which the program will communicate. (Default value: 5000)\n";
-    std::cout << "\t--debug                       \tEnable debug logging.\n";
+    std::cout << "\t--log                         \tEnable logging.\n";
+    std::cout << "\t--debug                       \tEnable debug logging. (if this option is provided, the --log flag becomes forced regardless of it being provided or not)\n";
     std::cout << "\t--help                        \tDisplay this help message and exit.\n\n";
     std::cout << "\t--version                     \tDisplay the version of the program and exit.\n";
     std::cout << "\t--full-screen                 \tEnable full screen mode.\n";
@@ -61,7 +63,7 @@ static void displayDetailedUsage()
 }
 
 /**
- *@brief Display the Author section of the help prompt.
+ * @brief Display the Author section of the help prompt.
  *
  */
 static void displayAuthors()
@@ -79,8 +81,8 @@ static void displayAuthors()
 }
 
 /**
- *@brief A function in charge of displaying the programs version.
- *
+ * @brief Displays version information for the program.
+ * @param helpMode If true, will prepend a 'VERSION\:\\n' string to the output (default: false).
  */
 void DisplayVersion(bool helpMode = false)
 {
@@ -91,9 +93,9 @@ void DisplayVersion(bool helpMode = false)
 }
 
 /**
- *@brief The main function of the help display.
+ * @brief The main function of the help display.
  *
- * @param binName
+ * @param binName Name of the executable binary.
  */
 void DisplayHelp(const std::string binName)
 {

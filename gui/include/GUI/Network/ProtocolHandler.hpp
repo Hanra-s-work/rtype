@@ -17,7 +17,10 @@
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
-#include "Debug.hpp"
+
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 class Packet : public GUI::ECS::EntityNode {

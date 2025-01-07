@@ -12,7 +12,10 @@
 
 #pragma once
 #include <cstdint>
-#include "Debug.hpp"
+
+#include "Log.hpp"
+#include "LogMacros.hpp"
+#include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 
 namespace GUI

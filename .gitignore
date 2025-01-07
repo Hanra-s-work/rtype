@@ -1,5 +1,6 @@
 # No build/cache files
 *.o
+*.out
 *.vscode
 *.DS_Store
 *.code-workspace
@@ -19,6 +20,7 @@ r-type_client
 rtype
 rtype_gui
 rtype_server
+my_window
 
 # No build files
 bootstrap

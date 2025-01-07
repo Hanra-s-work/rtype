@@ -28,7 +28,7 @@ italic = false
 # The font that will be defaulted to when no other font is specified or available
 [font.default]
 name = "6809 Chargen"
-path = "assets/font/Joystix/TTF Fonts/6809_chargen.ttf"
+path = "assets/font/6809 Chargen/TTF Fonts/6809_chargen.ttf"
 default_size = 50
 bold = false
 italic = false
@@ -108,8 +108,90 @@ volume = 100
 # sprite_height = <height> # (0-> 1000) set the height of the sprite view field, in pixels
 # start_left = true # (or false) set the starting position of the sprite view field to start from the left (or not)
 # start_top = true # (or false) set the starting position of the sprite view field to start from the top (or not)
+# initial_frame = 0 # set the frame that will be used as the first one, here the number represents the index of the frame. (default value: 0)
+# end_frame = -1 # (or the index of the frame) set the last frame to be taken from the spritesheet (-1 means all frames present), (default value: -1)
+# frame_delay = 100 # (from 0 to 2147483647) delay between each frame in milliseconds (default value: 100)
 
 # The spritesheets to manage
+
+[spritesheets.sprite1_ship]
+name = "r-typesheet1_ship"
+path = "assets/img/r-typesheet1.gif"
+sprite_width = 33
+sprite_height = 18
+start_left = true
+start_top = true
+initial_frame = 3 # ship facing right: 3 to 7, ship facing left: 8 to 12
+end_frame = 12
+frame_delay = 100 # delay between each frame in milliseconds
+
+#The second line of sprites can't be cut because they are not in a matrix like layout
+
+[spritesheets.sprite1_particles]
+name = "r-typesheet1_particles"
+path = "assets/img/r-typesheet1.gif"
+sprite_width = 32
+sprite_height = 19
+start_left = true
+start_top = true
+initial_frame = 48 # particles: 48 to 64
+end_frame = 64
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite1_small_explosions]
+name = "r-typesheet1_small_explosions"
+path = "assets/img/r-typesheet1.gif"
+sprite_width = 19
+sprite_height = 12
+start_left = true
+start_top = true
+initial_frame = 208 # from 208 to 210 fire left, from 210 to 213, fire rigth
+end_frame = 213 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+
+# the next line cannot be cut cleanly because they are not in a matrix-like agency
+# the next line cannot be cut cleanly because they are not in a matrix-like agency
+
+
+[spritesheets.sprite1_big_fire_line]
+name = "r-typesheet1_big_fire_line"
+path = "assets/img/r-typesheet1.gif"
+sprite_width = 66
+sprite_height = 17
+start_left = true
+start_top = true
+initial_frame = 74 # from 74 to 75, to the rigth, from 76 to 77 to the left
+end_frame = 77 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+
+# The next line cannot be cut cleanly because they are not in a matrix-like agency
+# The next line cannot be cut cleanly because they are not in a matrix-like agency
+# The next line cannot be cut cleanly because they are not in a matrix-like agency
+
+[spritesheets.sprite1_red_fireball]
+name = "r-typesheet1_red_fireball"
+path = "assets/img/r-typesheet1.gif"
+sprite_width = 16
+sprite_height = 12
+start_left = true
+start_top = false
+initial_frame = 244
+end_frame = 250
+frame_delay = 100 # delay between each frame in milliseconds
+
+# The next line cannot be cut cleanly because they are not in a matrix-like agency
+
+
+[spritesheets.sprite1_round_blue_explosions]
+name = "r-typesheet1_round_blue_explosions"
+path = "assets/img/r-typesheet1.gif"
+sprite_width = 33
+sprite_height = 31
+start_left = true
+start_top = false
+initial_frame = 0 # to the left: 0 to 8, to the right: 9 to 16
+end_frame = 16 
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite1]
 name = "r-typesheet1"
@@ -118,331 +200,848 @@ sprite_width = 20
 sprite_height = 20
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite2]
+[spritesheets.sprite2]  # might get split in the future, complex spritesheet containing multiple sprites of different sizes
 name = "r-typesheet2"
 path = "assets/img/r-typesheet2.gif"
 sprite_width = 20
 sprite_height = 20
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite3]
 name = "r-typesheet3"
 path = "assets/img/r-typesheet3.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 18
+sprite_height = 18
 start_left = true
 start_top = true
+initial_frame = 0 # mas: 11
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite5]
 name = "r-typesheet5"
 path = "assets/img/r-typesheet5.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 32
+sprite_height = 36
 start_left = true
 start_top = true
+initial_frame = 0 # left: 0 to 7, right: 8 to 15
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite7]
 name = "r-typesheet7"
 path = "assets/img/r-typesheet7.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 34
 start_left = true
 start_top = true
+initial_frame = 0 # looking left, no jets: 0 to 2, left right, no jets: 3 to 5, looking left, jets: 6 to 8, looking right, jets: 9 to 11
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite8]
 name = "r-typesheet8"
 path = "assets/img/r-typesheet8.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 34
+sprite_height = 34
 start_left = true
 start_top = true
+initial_frame = 0 
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+# looking forward:
+# - east: 0
+# - east (a bit tilted to the south) 1
+# - east (a bit tilted to the east)  2
+# - south-east: 3
+# - south (a bit tilted to the east) 4
+# - south: 5
+# - south (a bit tilted to the west) 6
+# - south-west: 7
+# - west: 8
+# - west (a bit tilted to the south) 9
+# - north-west: 10
+# - north (a bit tilted to the west) 11
+# - north: 12
+# - north (a bit tilted to the east) 13
+# - north-east: 14
 
-[spritesheets.sprite9]
+[spritesheets.sprite9] # spritesheet to uneven to parse in a matrix like manner
 name = "r-typesheet9"
 path = "assets/img/r-typesheet9.gif"
 sprite_width = 20
 sprite_height = 20
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+
 
 [spritesheets.sprite10]
 name = "r-typesheet10"
 path = "assets/img/r-typesheet10.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 30
 start_left = true
 start_top = true
+initial_frame = 0 # craft left: 0 to 5, craft right: 6 to 11, up: 14 to 16, standing left: 17, standing right: 18, up rigth: 19 to 21, missiles will not be cut properly, you would need to realine the spritesheet for that.
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite11]
 name = "r-typesheet11"
 path = "assets/img/r-typesheet11.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0 # left: 0 to 2, right: 3 to 5
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite12]
 name = "r-typesheet12"
 path = "assets/img/r-typesheet12.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 17
+sprite_height = 18
 start_left = true
 start_top = true
+initial_frame = 0 # craft: up-left: 0 to 2, up-right: 3 to 5, down-left: 6 to 8, down-right: 9 to 11
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite13]
 name = "r-typesheet13"
 path = "assets/img/r-typesheet13.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite14]
 name = "r-typesheet14"
 path = "assets/img/r-typesheet14.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 50
+sprite_height = 50
 start_left = true
 start_top = true
+initial_frame = 0 # 0 to 9
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite16]
 name = "r-typesheet16"
 path = "assets/img/r-typesheet16.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 18
+sprite_height = 11
 start_left = true
 start_top = true
+initial_frame = 0 #calculate your own frames, this spritesheet need to be re-aligned to be properly cut.
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite17]
 name = "r-typesheet17"
 path = "assets/img/r-typesheet17.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 65
+sprite_height = 66
 start_left = true
 start_top = true
+initial_frame = 0 # upwards: 0 to 7 , downwards: 8 to 15
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite18]
 name = "r-typesheet18"
 path = "assets/img/r-typesheet18.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0 # unhatched: 0 to 3, breaking: 7 to 4, entity: 8 to 11
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite19]
 name = "r-typesheet19"
 path = "assets/img/r-typesheet19.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0 # max: 13
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite20]
+[spritesheets.sprite19_ship_horizontal]
+name = "r-typesheet19_ship_horizontal"
+path = "assets/img/r-typesheet19.gif"
+sprite_width = 29
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 20
+end_frame = 21
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite19_bullet]
+name = "r-typesheet19_bullet"
+path = "assets/img/r-typesheet19.gif"
+sprite_width = 10
+sprite_height = 8
+start_left = true
+start_top = false
+initial_frame = 11
+end_frame = 11
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite20] # badly cut due to the sprite not being in a matrix like manner
 name = "r-typesheet20"
 path = "assets/img/r-typesheet20.gif"
 sprite_width = 20
 sprite_height = 20
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite21]
+[spritesheets.sprite21] # badly cut due to sprites not being in a matrix like manner
 name = "r-typesheet21"
 path = "assets/img/r-typesheet21.gif"
 sprite_width = 20
 sprite_height = 20
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite22]
 name = "r-typesheet22"
 path = "assets/img/r-typesheet22.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0 # max 15
+end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite23]
 name = "r-typesheet23"
 path = "assets/img/r-typesheet23.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0 # to the left, : 0 to 7, to the right 8 to 15
+end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite24]
 name = "r-typesheet24"
 path = "assets/img/r-typesheet24.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 65
+sprite_height = 65
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite25]
 name = "r-typesheet25"
 path = "assets/img/r-typesheet25.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite26]
 name = "r-typesheet26"
 path = "assets/img/r-typesheet26.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 65
+sprite_height = 50
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = 5
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite27]
 name = "r-typesheet27"
 path = "assets/img/r-typesheet27.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 34
+sprite_height = 34
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = 1
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite28]
 name = "r-typesheet28"
 path = "assets/img/r-typesheet28.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 130
+sprite_height = 50
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = 0
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite29]
 name = "r-typesheet29"
 path = "assets/img/r-typesheet29.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 33
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite30]
+[spritesheets.sprite30] # Spritesheet not aligned, sprites will have missing pieces
 name = "r-typesheet30"
 path = "assets/img/r-typesheet30.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 172
+sprite_height = 209
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite30a]
 name = "r-typesheet30a"
 path = "assets/img/r-typesheet30a.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 34
+sprite_height = 34
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite31]
-name = "r-typesheet31"
+[spritesheets.sprite31_vertical] # Horizontal sprites will be cut in 2 due to them not being aligned in a matrix like manner
+name = "r-typesheet31_vertical"
 path = "assets/img/r-typesheet31.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 34
+sprite_height = 34
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite31_red_stone]
+name = "r-typesheet31_red_stone"
+path = "assets/img/r-typesheet31.gif"
+sprite_width = 11
+sprite_height = 10
+start_left = true
+start_top = false
+initial_frame = 12
+end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite32]
 name = "r-typesheet32"
 path = "assets/img/r-typesheet32.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 260
+sprite_height = 144
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite33]
 name = "r-typesheet33"
 path = "assets/img/r-typesheet33.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 260
+sprite_height = 142
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite34]
 name = "r-typesheet34"
 path = "assets/img/r-typesheet34.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 260
+sprite_height = 144
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite35]
 name = "r-typesheet35"
 path = "assets/img/r-typesheet35.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 264
+sprite_height = 143
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
 [spritesheets.sprite36]
 name = "r-typesheet36"
 path = "assets/img/r-typesheet36.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 264
+sprite_height = 143
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite37]
-name = "r-typesheet37"
+[spritesheets.sprite37_mothership_intact]
+name = "r-typesheet37_mothership_intact"
 path = "assets/img/r-typesheet37.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 594
+sprite_height = 191
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = 0
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite38]
-name = "r-typesheet38"
+#Second section of the spritesheet could not be parsed due to the sprites not being aligned in a matrix like manner
+
+[spritesheets.sprite37_turret_firering]
+name = "r-typesheet37_turret_firering"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 33
+sprite_height = 32
+start_left = true
+start_top = true
+initial_frame = 142 # from 142 to 149 and 159 to 166
+end_frame = 166
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_gun]
+name = "r-typesheet37_emp_gun"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 35
+sprite_height = 32
+start_left = true
+start_top = true
+initial_frame = 179
+end_frame = 179
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_laser]
+name = "r-typesheet37_emp_laser"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 37
+sprite_height = 70
+start_left = true
+start_top = true
+initial_frame = 87
+end_frame = 91
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_gun_orientation]
+name = "r-typesheet37_emp_gun_orientation"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 37
+sprite_height = 32
+start_left = true
+start_top = true
+initial_frame = 215
+end_frame = 219
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_orientation] # Badly cut due to the sprites not being aligned in a matrix like manner
+name = "r-typesheet37_emp_orientation"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 73
+sprite_height = 64
+start_left = true
+start_top = true
+initial_frame = 57
+end_frame = 64
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_broken_emp_gun]
+name = "r-typesheet37_broken_emp_gun"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 28
+sprite_height = 26
+start_left = true
+start_top = true
+initial_frame = 431
+end_frame = 431
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_gun_explosion]
+name = "r-typesheet37_emp_gun_explosion"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 31
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 371
+end_frame = 371
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_gun_explosion2]
+name = "r-typesheet37_emp_gun_explosion2"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 31
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 390
+end_frame = 390
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_gun_explosion3]
+name = "r-typesheet37_emp_gun_explosion3]"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 31
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 409
+end_frame = 409
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_emp_gun_explosion4]
+name = "r-typesheet37_emp_gun_explosion4]"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 31
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 428
+end_frame = 428
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_big_gun]
+name = "r-typesheet37_big_gun"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 92
+sprite_height = 29
+start_left = false
+start_top = true
+initial_frame = 145
+end_frame = 145
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_initial_flame]
+name = "r-typesheet37_initial_flame"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 65
+sprite_height = 62
+start_left = true
+start_top = true
+initial_frame = 106
+end_frame = 106
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_mid_flame]
+name = "r-typesheet37_mid_flame"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 127
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 97
+end_frame = 98
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_end_flame]
+name = "r-typesheet37_end_flame"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 31
+sprite_height = 29
+start_left = true
+start_top = true
+initial_frame = 458
+end_frame = 461
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_small_projectile]
+name = "r-typesheet37_small_projectile"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 18
+sprite_height = 32
+start_left = false
+start_top = true
+initial_frame = 808
+end_frame = 811
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_top_turret]
+name = "r-typesheet37_top_turret"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 35
+sprite_height = 35
+start_left = true
+start_top = false
+initial_frame = 328
+end_frame = 337
+frame_delay = 100 # delay between each frame in milliseconds
+
+# small turrets skipped due to them not being aligned on an round pixel index they could thus not be properly cut
+
+[spritesheets.sprite37_turret_flame]
+name = "r-typesheet37_turret_flame"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 35
+sprite_height = 36
+start_left = true
+start_top = true
+initial_frame = 447 # row1: 447 to 455, row 2: 464 to 472, row3: 481 to 489, row4: 498 to 506
+end_frame = 506
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_small_line_craft]
+name = "r-typesheet37_small_line_craft"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 74
+sprite_height = 36
+start_left = true
+start_top = true
+initial_frame = 244 #row1: 244 to 245, row2: 252 to 253, row3: 260 to 261, row4: 268 to 269
+end_frame = 269
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_blue_projectiles]
+name = "r-typesheet37_blue_projectiles"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 14
+sprite_height = 12
+start_left = true
+start_top = false
+initial_frame = 1028
+end_frame = 1031
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_ship_broken]
+name = "r-typesheet37_ship_broken"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 591
+sprite_height = 178
+start_left = true
+start_top = false
+initial_frame = 0
+end_frame = 0
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite37_nuclear_cloud] # Sprites will be a bit cut off due to bad alignement on the spritesheet
+name = "r-typesheet37_nuclear_cloud"
+path = "assets/img/r-typesheet37.gif"
+sprite_width = 23
+sprite_height = 39
+start_left = true
+start_top = false
+initial_frame = 6 # mushroom downwards: 6 to 19, mushroom upwards: 32 to 45
+end_frame = 45
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite38_parents]
+name = "r-typesheet38_parents"
 path = "assets/img/r-typesheet38.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 186
+sprite_height = 152
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = 1
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite39]
+# The intermediate ships of the spritesheet could not be cut because they are not aligned on a square/rectangular grid in a matrix like manner
+
+[spritesheets.sprite38_projectile]
+name = "r-typesheet38_projectile"
+path = "assets/img/r-typesheet38.gif"
+sprite_width = 34
+sprite_height = 30
+start_left = true
+start_top = false
+initial_frame = 3
+end_frame = 7
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite39] # The parent (split in 2, frame 2 and 3)
 name = "r-typesheet39"
 path = "assets/img/r-typesheet39.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 68
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite40]
-name = "r-typesheet40"
+[spritesheets.sprite39_underlings] # There are only 4 frames of interest here
+name = "r-typesheet39_underlings"
+path = "assets/img/r-typesheet39.gif"
+sprite_width = 33
+sprite_height = 35
+start_left = true
+start_top = false
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite40_boss] #This is the first line of the spritesheet
+name = "r-typesheet40_boss"
 path = "assets/img/r-typesheet40.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 66
+sprite_height = 59
 start_left = true
 start_top = true
+initial_frame = 0 # the range is 0 to 7
+end_frame = 7
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite41]
+# The underlings could not be processed because they were not in a matrix like array
+
+[spritesheets.sprite40_platform]
+name = "r-typesheet40_platform"
+path = "assets/img/r-typesheet40.gif"
+sprite_width = 66
+sprite_height = 32
+start_left = true
+start_top = true
+initial_frame = 34 # the range is 34 to 37
+end_frame = 37
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite40_uob_entity] # uob (unidentified object)
+name = "r-typesheet40_uob_entity"
+path = "assets/img/r-typesheet40.gif"
+sprite_width = 33
+sprite_height = 32
+start_left = true
+start_top = true
+initial_frame = 85 # the range is 85 to 88 and 101 to 104
+end_frame = 104
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite40_terraform]
+name = "r-typesheet40_terraform"
+path = "assets/img/r-typesheet40.gif"
+sprite_width = 48
+sprite_height = 46
+start_left = false
+start_top = false
+initial_frame = 5 # there is only one block
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite41] #spritesheet to uneven to parse in a matrix like manner
 name = "r-typesheet41"
 path = "assets/img/r-typesheet41.gif"
 sprite_width = 20
 sprite_height = 20
 start_left = true
 start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite42]
+[spritesheets.sprite42] # spaceships
 name = "r-typesheet42"
 path = "assets/img/r-typesheet42.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 33
+sprite_height = 17
 start_left = true
 start_top = true
+initial_frame = 0 # cyan ship: 0 to 4, purple 5 to 9, green: 10 to 14, red: 15 to 19, dark blue: 20 to 24
+end_frame = -1 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite43]
-name = "r-typesheet43"
+[spritesheets.sprite43_fireball]
+name = "r-typesheet43_fireball"
 path = "assets/img/r-typesheet43.gif"
-sprite_width = 20
-sprite_height = 20
+sprite_width = 17
+sprite_height = 13
 start_left = true
 start_top = true
+initial_frame = 8
+end_frame = 15 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
 
-[spritesheets.sprite44]
-name = "r-typesheet44"
-path = "assets/img/r-typesheet44.gif"
-sprite_width = 20
-sprite_height = 20
+
+[spritesheets.sprite43_small_explosion]
+name = "r-typesheet43_small_explosion"
+path = "assets/img/r-typesheet43.gif"
+sprite_width = 18
+sprite_height = 16
 start_left = true
 start_top = true
+initial_frame = 28
+end_frame = 37
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite43_laser]
+name = "r-typesheet43_laser"
+path = "assets/img/r-typesheet43.gif"
+sprite_width = 50
+sprite_height = 5
+start_left = true
+start_top = true
+initial_frame = 63
+end_frame = 69
+frame_delay = 100 # delay between each frame in milliseconds
+
+# The last line of sprites from the spritesheet could not be rendered due to them not being aligned in a matrix like manner
+
+[spritesheets.sprite44_small_explosion] # as the explosion is not correctly aligned, the sprites will be cut of in a more or less visible manner
+name = "r-typesheet44_small_explosion"
+path = "assets/img/r-typesheet44.gif"
+sprite_width = 32
+sprite_height = 32
+start_left = true
+start_top = true
+initial_frame = 4
+end_frame = 15
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite44_medium_explosion] # due to frame alignement, the white and black circles will be cropped as well as some small sections of the medium center sprites
+name = "r-typesheet44_medium_explosion"
+path = "assets/img/r-typesheet44.gif"
+sprite_width = 65
+sprite_height = 44
+start_left = true
+start_top = true
+initial_frame = 10
+end_frame = 20
+frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite44_big_explosion] # due to sprite size, the sprites will be a bit cut off on the top and bottom
+name = "r-typesheet44_big_explosion"
+path = "assets/img/r-typesheet44.gif"
+sprite_width = 65
+sprite_height = 53
+start_left = true
+start_top = false
+initial_frame = 0
+end_frame = 10 #end of all the frames
+frame_delay = 100 # delay between each frame in milliseconds
