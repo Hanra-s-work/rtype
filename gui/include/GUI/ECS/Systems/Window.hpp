@@ -16,6 +16,7 @@
 #include <any>
 #include <string>
 #include <cstring>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Log.hpp"
@@ -82,6 +83,28 @@ namespace GUI
                 ~Window();
 
                 /**
+                 * @brief Set the Position of the window
+                 *
+                 * @param position an std::pair<int, int> of the window position (x, y).
+                 */
+                void setPosition(const std::pair<int, int> &position);
+
+                /**
+                 * @brief Set the Icon of the window
+                 *
+                 * @param icon A GUI::ECS::Components::ImageComponent of the window icon to be set.
+                 */
+                void setIcon(const GUI::ECS::Components::ImageComponent &icon);
+
+
+                /**
+                 * @brief Set the Title of the window
+                 *
+                 * @param title
+                 */
+                void setTitle(const std::string &title = "R-Type");
+
+                /**
                  * @brief Clears the window with the specified color.
                  *
                  * @param color The color to clear the window with. Defaults to black.
@@ -141,6 +164,27 @@ namespace GUI
                  * @return true if fullscreen mode is enabled, false otherwise.
                  */
                 const bool getFullScreen() const;
+
+                /**
+                 * @brief Get the Title of the window
+                 *
+                 * @return const std::string
+                 */
+                const std::string getTitle() const;
+
+                /**
+                 * @brief Get the Dimensions of the window
+                 *
+                 * @return const std::pair<int, int> of the window dimensions (width,height) in pixels
+                 */
+                const std::pair<int, int> getDimensions() const;
+
+                /**
+                 * @brief Get the Position of the window
+                 *
+                 * @return const std::pair<int, int>  of the window position (x, y) in pixels
+                 */
+                const std::pair<int, int> getPosition() const;
 
                 /**
                  * @brief Renders a text component to the window.
