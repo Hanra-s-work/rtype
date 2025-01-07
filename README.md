@@ -5,6 +5,8 @@
 This is the r-type project
 You can find more information in the sections below:
 
+Or online at: [rtype.pingpal.news](https://rtype.pingpal.news)
+
 ## Table of contents
 
 * [Introduction](#introduction)
