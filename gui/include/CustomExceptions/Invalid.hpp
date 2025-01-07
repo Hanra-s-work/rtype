@@ -264,6 +264,64 @@ namespace CustomExceptions
 
     /**
      * @brief This is the class in charge of informing the user
+     * that the window x position is invalid.
+     *
+     */
+    class InvalidWindowX : public std::exception {
+        public:
+        /**
+         * @brief Construct a new Invalid Window X position object
+         *
+         * @param argument The width provided by the user.
+         */
+        InvalidWindowX(const std::string &argument = "");
+        /**
+         * @brief Destroy the Invalid Window X position object
+         *
+         */
+        ~InvalidWindowX();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the window Y position is invalid.
+     *
+     */
+    class InvalidWindowY : public std::exception {
+        public:
+        /**
+         * @brief Construct a new Invalid Window Width object
+         *
+         * @param argument The Y position provided by the user.
+         */
+        InvalidWindowY(const std::string &argument = "");
+        /**
+         * @brief Destroy the Invalid Window Width object
+         *
+         */
+        ~InvalidWindowY();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
      * that the window height is invalid.
      *
      */

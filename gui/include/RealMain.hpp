@@ -93,6 +93,8 @@ class Main {
   void setWindowHeight(unsigned int height);
   void setWindowFullscreen(bool fullscreen);
   void setWindowTitle(const std::string &title);
+  void setWindowPositionX(unsigned int x);
+  void setWindowPositionY(unsigned int y);
   void setWindowPosition(unsigned int x, unsigned int y);
   void setWindowCursorIcon(const std::string cursorImage);
   void setWindowCursorSprite(bool imageIsSprite);
@@ -272,10 +274,11 @@ class Main {
   unsigned int _windowFrameLimit;
   std::uint32_t _baseId = 0;
   std::string _configFilePath = "client_config.toml";
-  unsigned int _defaultFont = 0;
+  unsigned int _iconIndex = 0;
   unsigned int _loadingIndex = 0;
-  unsigned int _mainWindowIndex = 0;
   unsigned int _mainEventIndex = 0;
+  unsigned int _mainWindowIndex = 0;
+  unsigned int _defaultFontIndex = 0;
   TOMLLoader _tomlContent;
   ActiveScreen _activeScreen = ActiveScreen::LOADING;
   bool _gameMusicStarted = false;

@@ -169,10 +169,10 @@ namespace CustomExceptions
         return _buffer;
     }
 
-    InvalidWindowWidth::InvalidWindowWidth(const std::string &arguemnt)
+    InvalidWindowWidth::InvalidWindowWidth(const std::string &argument)
     {
         _msg = "Error: The width you provided for the window is incorrect.\n";
-        _msg += "You provided: " + arguemnt + "\n";
+        _msg += "You provided: " + argument + "\n";
         _msg += "When the following structure was expected:\n";
         _msg += "A positive integer, for example: 800\n";
         _buffer = _msg.c_str();
@@ -181,6 +181,38 @@ namespace CustomExceptions
     InvalidWindowWidth::~InvalidWindowWidth() {};
 
     const char *InvalidWindowWidth::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWindowX::InvalidWindowX(const std::string &argument)
+    {
+        _msg = "Error: The X position you provided for the window is incorrect.\n";
+        _msg += "You provided: " + argument + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "An integer, for example: 10\n";
+        _buffer = _msg.c_str();
+    }
+
+    InvalidWindowX::~InvalidWindowX() {};
+
+    const char *InvalidWindowX::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWindowY::InvalidWindowY(const std::string &argument)
+    {
+        _msg = "Error: The Y position you provided for the window is incorrect.\n";
+        _msg += "You provided: " + argument + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "An integer, for example: 10\n";
+        _buffer = _msg.c_str();
+    }
+
+    InvalidWindowY::~InvalidWindowY() {};
+
+    const char *InvalidWindowY::what() const noexcept
     {
         return _buffer;
     }

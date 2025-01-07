@@ -524,12 +524,12 @@ std::uint32_t Main::_initialiseFonts()
         }
         PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
         std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
-        if (application == defaultFontNode) {
-            _defaultFont = _baseId;
-        }
         PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
         PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
+        if (application == defaultFontNode) {
+            _defaultFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
         PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
         _baseId++;
     }
@@ -594,6 +594,7 @@ std::uint32_t Main::_initialiseIcon()
     icon->setPosition({ x,y });
     _baseId++;
     _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)].push_back(icon);
+    _iconIndex = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)].size() - 1;
     _updateLoadingText("Loading icon...[OK]");
 
     return _baseId;
@@ -835,7 +836,7 @@ void Main::_initialiseRessources()
     }
 
     PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFont], true);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], true);
     if (!firstFontCapsule.has_value()) {
         throw CustomExceptions::NoFont();
     }
@@ -1015,7 +1016,51 @@ void Main::_gameOverScreen()
 
 void Main::_mainMenuScreen()
 {
+    const std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> background;
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> icon;
 
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+
+    for (const std::any node : images) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> nodeCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(node, false);
+        if (!nodeCapsule.has_value()) {
+            PRETTY_WARNING << "The uncasting of an image component has failed." << std::endl;
+            continue;
+        }
+        if (
+            nodeCapsule.value()->getName() == "mainMenu" ||
+            nodeCapsule.value()->getApplication() == "mainMenu" ||
+            nodeCapsule.value()->getName() == "Main Menu" ||
+            nodeCapsule.value()->getApplication() == "Main Menu"
+            ) {
+            background = nodeCapsule.value();
+        } else if (
+            nodeCapsule.value()->getName() == "icon" ||
+            nodeCapsule.value()->getApplication() == "icon" ||
+            nodeCapsule.value()->getName() == "Main Icon" ||
+            nodeCapsule.value()->getApplication() == "Main Icon" ||
+            nodeCapsule.value()->getName() == "R-type" ||
+            nodeCapsule.value()->getApplication() == "R-type"
+            ) {
+            icon = nodeCapsule.value();
+        }
+    }
+
+    PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
+    const std::pair<int, int> windowPosition = win.value()->getPosition();
+    int x = 0;
+    int y = 0;
+    icon->setPosition({ x, y });
+
+
+    PRETTY_DEBUG << "Drawing the elements required for the main menu to be displayed." << std::endl;
+    win.value()->draw(*background);
+    win.value()->draw(*icon);
 }
 
 void Main::_connectionFailedScreen()
@@ -1583,6 +1628,26 @@ void Main::setWindowTitle(const std::string &title)
 void Main::setWindowPosition(unsigned int x, unsigned int y)
 {
     _windowX = x;
+    _windowY = y;
+}
+
+/**
+ * @brief Set the X position of the window.
+ *
+ * @param x The x position of the window.
+ */
+void Main::setWindowPositionX(unsigned int x)
+{
+    _windowX = x;
+}
+
+/**
+ * @brief Set the Y position of the window.
+ *
+ * @param y The y position of the window.
+ */
+void Main::setWindowPositionY(unsigned int y)
+{
     _windowY = y;
 }
 
