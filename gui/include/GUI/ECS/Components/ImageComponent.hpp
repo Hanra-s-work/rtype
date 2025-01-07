@@ -225,6 +225,13 @@ namespace GUI
                 void setVisible(const bool visible);
 
                 /**
+                 * @brief Set the Level Background Compatible variable
+                 *
+                 * @param levelBackground
+                 */
+                void setLevelBackgroundCompatible(const bool levelBackground);
+
+                /**
                  * @brief Toggles the visibility of the image.
                  */
                 void toggleVisibility();
@@ -236,6 +243,14 @@ namespace GUI
                  * @return false The image is hidden
                  */
                 const bool isVisible() const;
+
+                /**
+                 * @brief Know if the background can be used as a level bacground
+                 *
+                 * @return true it can be used as a level background
+                 * @return false it cannot be used as a level background
+                 */
+                const bool isLevelBackgroundCompatible() const;
 
                 /**
                  * @brief Get the Name of the image
@@ -320,6 +335,18 @@ namespace GUI
                 const std::string getInfo(const unsigned int indent = 0) const;
 
                 /**
+                 * @brief Get the Level Background Compatibility object
+                 *
+                 * @return true it can be used as a level background
+                 * @return false it cannot be used as a level background
+                 *
+                 * @note This function is a sub function for the update function,
+                 * please call the function `isLevelBackgroundCompatible` for the
+                 * same effect.
+                 */
+                const bool getLevelBackgroundCompatibility() const;
+
+                /**
                  * @brief Renders the image to the given window.
                  *
                  * @return std::optional<std::any> the internal component to render
@@ -369,7 +396,8 @@ namespace GUI
                 void _processImageComponent();
 
 
-                bool _visible = true;                                                             //!< A boolean value to know if the text should be rendered or not
+                bool _visible = true;                                                             //!< A boolean value to know if the image should be rendered or not
+                bool _levelBackground = false;                                                    //!< A boolean value to know if the image can be used as a background in a level
                 bool _sizeAltered = false;                                                        //!< A boolean value to know if the size has been edited
                 bool _inConstructor = true;                                                       //!< A boolean value to know if the class has been built or is still being built
                 bool _textureAltered = false;                                                     //!< A boolean value to know if the texture has been edited

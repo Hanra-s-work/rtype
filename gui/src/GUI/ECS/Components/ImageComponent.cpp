@@ -209,6 +209,11 @@ void GUI::ECS::Components::ImageComponent::setVisible(const bool visible)
     _visible = visible;
 };
 
+void GUI::ECS::Components::ImageComponent::setLevelBackgroundCompatible(const bool levelBackground)
+{
+    _levelBackground = levelBackground;
+}
+
 void GUI::ECS::Components::ImageComponent::toggleVisibility()
 {
     if (_visible) {
@@ -221,6 +226,11 @@ void GUI::ECS::Components::ImageComponent::toggleVisibility()
 const bool GUI::ECS::Components::ImageComponent::isVisible() const
 {
     return _visible;
+}
+
+const bool GUI::ECS::Components::ImageComponent::isLevelBackgroundCompatible() const
+{
+    return _levelBackground;
 }
 
 const std::string GUI::ECS::Components::ImageComponent::getName() const
@@ -297,6 +307,11 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
     return result;
 };
 
+const bool GUI::ECS::Components::ImageComponent::getLevelBackgroundCompatibility() const
+{
+    return isLevelBackgroundCompatible();
+}
+
 std::any GUI::ECS::Components::ImageComponent::render() const
 {
     if (!_visible || !_sfImage.has_value()) {
@@ -329,6 +344,8 @@ void GUI::ECS::Components::ImageComponent::update(const GUI::ECS::Components::Im
     setHoverColor(copy.getHoverColor());
     setNormalColor(copy.getNormalColor());
     setClickedColor(copy.getClickedColor());
+
+    setLevelBackgroundCompatible(copy.getLevelBackgroundCompatibility());
 
     _inConstructor = false;
     _processImageComponent();
