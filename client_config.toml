@@ -97,6 +97,26 @@ path = "assets/audio/success-fanfare-trumpets-6185.ogg"
 loop = false
 volume = 100
 
+# The logo of the program
+
+# Default structure
+# [icon] # the name of the logo (unique identifier)
+# name = "Logo Name" # the name of the logo
+# path = "<path to the logo>" # set the path to the logo image
+# width = <width> # (0 -> 1000) set the width of the logo (Default: 256)
+# height = <height> # (0 -> 1000) set the height of the logo (Default: 256)
+# x = <x> # (0 -> 1000) set the x position of the logo (Default: 0)
+# y = <y> # (0 -> 1000) set the y position of the logo (Default: 0)
+
+[icon]
+name = "R-type"
+path = "assets/icon/RtypeLogo.png"
+width = 256
+height = 256
+x = 0
+y = 0
+
+
 # the background for the program
 [backgrounds]
 
@@ -104,9 +124,9 @@ volume = 100
 # [backgrounds.<background_name>] # the name of the background (unique identifier)
 # name = "<name of the background>" # set the name of the background  (a human readable name)
 # path = "<path to the background>" # set the path to the background image
-# x = <x> # (0 -> 1000) set the x position of the background
-# y = <y> # (0 -> 1000) set the y position of the background
-# allow_as_level_background = true # (or false) allow the background to be used as a level background
+# x = <x> # (0 -> 1000) set the x position of the background (Default: 0)
+# y = <y> # (0 -> 1000) set the y position of the background (Default: 0)
+# allow_as_level_background = true # (or false) allow the background to be used as a level background (Default: true)
 
 [backgrounds.mainMenu]
 name = "Main Menu"
@@ -122,14 +142,14 @@ x = 0
 y = 0
 allow_as_level_background = true
 
-[backgrounds.game_over]
+[backgrounds.gameOver]
 name = "Game Over"
 path = "assets/background/dark_even_sky.jpeg"
 x = 0
 y = 0
 allow_as_level_background = true
 
-[backgrounds.connection_failed]
+[backgrounds.connectionFailed]
 name = "Connection Failed"
 path = "assets/background/connection_space.jpeg"
 x = 0
