@@ -103,10 +103,10 @@ volume = 100
 # [icon] # the name of the logo (unique identifier)
 # name = "Logo Name" # the name of the logo
 # path = "<path to the logo>" # set the path to the logo image
-# width = <width> # (0 -> 1000) set the width of the logo (Default: 256)
-# height = <height> # (0 -> 1000) set the height of the logo (Default: 256)
-# x = <x> # (0 -> 1000) set the x position of the logo (Default: 0)
-# y = <y> # (0 -> 1000) set the y position of the logo (Default: 0)
+# width = <width> # (0 -> 1000) set the initial width of the logo (Default: 256)
+# height = <height> # (0 -> 1000) set the initial height of the logo (Default: 256)
+# x = <x> # (0 -> 1000) set the initial x position of the logo (Default: 0)
+# y = <y> # (0 -> 1000) set the initial y position of the logo (Default: 0)
 
 [icon]
 name = "R-type"
@@ -117,16 +117,18 @@ x = 0
 y = 0
 
 
-# the background for the program
+# The background for the program
 [backgrounds]
 
 # Default structure
 # [backgrounds.<background_name>] # the name of the background (unique identifier)
 # name = "<name of the background>" # set the name of the background  (a human readable name)
 # path = "<path to the background>" # set the path to the background image
-# x = <x> # (0 -> 1000) set the x position of the background (Default: 0)
-# y = <y> # (0 -> 1000) set the y position of the background (Default: 0)
+# x = <x> # (0 -> 2147483647) set the x position of the background (Default: 0)
+# y = <y> # (0 -> 2147483647) set the y position of the background (Default: 0)
 # allow_as_level_background = true # (or false) allow the background to be used as a level background (Default: true)
+
+# The backgrounds to manage
 
 [backgrounds.mainMenu]
 name = "Main Menu"

@@ -440,6 +440,81 @@ path = "assets/audio/success-fanfare-trumpets-6185.ogg"
 loop = false
 volume = 100
 
+# The logo of the program
+
+# Default structure
+# [icon] # the name of the logo (unique identifier)
+# name = "Logo Name" # the name of the logo
+# path = "<path to the logo>" # set the path to the logo image
+# width = <width> # (0 -> 1000) set the width of the logo (Default: 256)
+# height = <height> # (0 -> 1000) set the height of the logo (Default: 256)
+# x = <x> # (0 -> 1000) set the x position of the logo (Default: 0)
+# y = <y> # (0 -> 1000) set the y position of the logo (Default: 0)
+
+[icon]
+name = "R-type"
+path = "assets/icon/RtypeLogo.png"
+width = 256
+height = 256
+x = 0
+y = 0
+
+
+# the background for the program
+[backgrounds]
+
+# Default structure
+# [backgrounds.<background_name>] # the name of the background (unique identifier)
+# name = "<name of the background>" # set the name of the background  (a human readable name)
+# path = "<path to the background>" # set the path to the background image
+# x = <x> # (0 -> 1000) set the x position of the background (Default: 0)
+# y = <y> # (0 -> 1000) set the y position of the background (Default: 0)
+# allow_as_level_background = true # (or false) allow the background to be used as a level background (Default: true)
+
+# The backgrounds to manage
+
+[backgrounds.mainMenu]
+name = "Main Menu"
+path = "assets/background/black_hole.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.settings]
+name = "Settings"
+path = "assets/background/blue_star_space.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.gameOver]
+name = "Game Over"
+path = "assets/background/dark_even_sky.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.connectionFailed]
+name = "Connection Failed"
+path = "assets/background/connection_space.jpeg"
+x = 0
+y = 0
+allow_as_level_background = false
+
+[backgrounds.paralax]
+name = "Paralax"
+path = "assets/background/purple_sky.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
+[backgrounds.space]
+name = "Space"
+path = "assets/background/dark_blue_stars.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
 # The spritesheets
 [spritesheets]
 
@@ -1414,6 +1489,30 @@ Let's break it down:
 # loop = true # (or false) # play the music on repeat
 # volume = <volume> # (0 -> 100) set the volume of the track to play.
 
+# The logo of the program
+[icon]
+
+# Default structure
+# [icon] # the name of the logo (unique identifier)
+# name = "Logo Name" # the name of the logo
+# path = "<path to the logo>" # set the path to the logo image
+# width = <width> # (0 -> 1000) set the width of the logo (Default: 256)
+# height = <height> # (0 -> 1000) set the height of the logo (Default: 256)
+# x = <x> # (0 -> 1000) set the x position of the logo (Default: 0)
+# y = <y> # (0 -> 1000) set the y position of the logo (Default: 0)
+
+
+# The background for the program
+[backgrounds]
+
+# Default structure
+# [backgrounds.<background_name>] # the name of the background (unique identifier)
+# name = "<name of the background>" # set the name of the background  (a human readable name)
+# path = "<path to the background>" # set the path to the background image
+# x = <x> # (0 -> 1000) set the x position of the background (Default: 0)
+# y = <y> # (0 -> 1000) set the y position of the background (Default: 0)
+# allow_as_level_background = true # (or false) allow the background to be used as a level background (Default: true)
+
 # The spritesheets
 [spritesheets]
 
@@ -1430,10 +1529,12 @@ Let's break it down:
 # frame_delay = 100 # (from 0 to 2147483647) delay between each frame in milliseconds (default value: 100)
 ```
 
-The `[font]`, `[music]`, `[spritesheets]` represent the main sections of the configuration file:
+The `[font]`, `[music]`, `[icon]`, `[backgrounds]`, `[spritesheets]` represent the main sections of the configuration file:
 
 * `[font]`: Font configuration
 * `[music]`: Music configuration
+* `[icon]`: Icon of the program
+* `[backgrounds]`: background images used in the program
 * `[spritesheets]`: Spritesheet configuration
 
 The `[font]` block will contain the different fonts used for the different sections, i.e: the block `[font.title]` represents the design for text that is supposed to be a title.
@@ -1456,6 +1557,33 @@ The construction of a `[music]` block is the following:
 * `path = "<valid path to the audio file>"` : set the path to the file (supported format, ogg, wav [and other SFML Music supported formats])
 * `loop = true` (or `false`) : play the music on repeat
 * `volume = <volume>` (`0` to `100`) : set the volume of the track to play
+
+The `[icon]` block will contain the icon of the program so that it can be displayed during the program runtime.
+
+> Note that it is the only block that does not contain any child ones, this is because there is only one icon for the program and thus there is no need to complexify this section.
+
+The construction of the `[icon]` block is as following:
+
+* [icon]: the section representing that the following content is an icon
+* `name = "name of the icon"` : set the name of the icon, this will be used for debugging purposes.
+* `path = "<valid path to the icon file>"` : set the path to the file
+* `width = <width>` : set the initial width of the icon, in pixels
+* `height = <height>` : set the initial height of the icon, in pixels
+* `x = <x>` : set the initial x position of the icon, in pixels
+* `y = <y>` : set the initial y position of the icon, in pixels
+
+The `[backgrounds]` block will contain all the sprites that are available to the client, it is not recommended to remove any of the default ones that are already present.
+
+The construction of a `[backgrounds]` block, element in charge of displaying the characters (images) on screen is the following:
+
+* [backgrounds.<background_name>] : the name of the background to load (unique identifier)
+* `name = "<name of the background>"` : set the name of the background  (a human readable name)
+* `path = "<valid path to the image file>"` : set the path to the file (supported format, gif, png [and other SFML Texture supported formats])
+* `width = <width>` (`0` to `1000`) : set the width of the background view field, in pixels
+* `height = <height>` (`0` to `1000`) : set the height of the background view field, in pixels
+* `x = <x>` (`0` to `2147483647`) : set the initial x position of the icon, in pixels
+* `y = <y>` (`0` to `2147483647`) : set the initial y position of the icon, in pixels
+* `allow_as_level_background = true` (or `false`) : allow the background to be used as a level background (Default: `true`)
 
 The `[spritesheet]` block will contain all the sprites that are available to the client, it is not recommended to remove any of the default ones that are already present.
 
