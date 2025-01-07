@@ -6,6 +6,8 @@
 #include <vector>
 #include <functional>
 
+#include "EventDispatcher.hpp"
+#include "Queue.hpp"
 #include "ComponentContainer.hpp"
 #include "Entity.hpp"
 #include "Systems.hpp"
@@ -37,7 +39,7 @@ public:
     /**
      * @brief Default constructor.
      */
-    Registry();
+    Registry(EventDispatcher *_dispatcher, Queue *_queue);
 
     /**
      * @brief Adds a system to the registry.
@@ -50,11 +52,11 @@ public:
      */
     template <typename... Components, typename Function>
     void add_system(Function&& f) {
-        auto system = [f = std::forward<Function>(f), this]() {
-        auto component_arrays = get_component_array<Components...>();
-        std::apply([&](auto&&... args) {
-            f(*this, std::forward<decltype(args)>(args)...);
-        }, component_arrays);
+        auto system = [f = std::forward<Function>(f), r = this]() {
+            auto component_arrays = r->get_component_array<Components...>();
+            std::apply([&](auto&&... args) {
+                f(*r, std::forward<decltype(args)>(args)...);
+            }, component_arrays);
         };
 
         _systems.push_back(system);
@@ -176,6 +178,10 @@ public:
      * @param entity The entity to delete.
      */
     void kill_entity(const Entity& entity);
+
+public:
+    EventDispatcher *dispatcher;
+    Queue *queue;
 
 private:
     std::unordered_map<std::type_index, std::any> _components; /**< Stores component containers indexed by type. */

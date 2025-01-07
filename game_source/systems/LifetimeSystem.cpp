@@ -1,17 +1,15 @@
 #include "LifetimeSystem.hpp"
-#include "Registry.hpp"
-#include "Lifetime.hpp"
 #include "IndexedZipper.hpp"
 
-void lifetime_system(Registry &r)
+#include "Time.hpp"
+
+void lifetime_system(Registry &r, ComponentContainer<Lifetime> &lifetimes)
 {
-    auto &lifetimes = r.get_components<Lifetime>();
-
-    float delta_time = 1;
-
     for (auto &&[idx, lif] : IndexedZipper(lifetimes)) {
-        lif->time_left -= delta_time;
-        if (lif->time_left <= 0.f)
+        lif->time_left -= Time::deltaTime;
+        if (lif->time_left <= 0.f){
             r.kill_entity(Entity(idx));
+            r.dispatcher->notify({messageType::KILL, idx, {0, 0, "", {0, 0}}});
+        }
     }
 }

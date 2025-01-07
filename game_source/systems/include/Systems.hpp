@@ -13,5 +13,16 @@ class Registry;
  *        systems and access components.
  */
 void setup_systems(Registry &r);
+
+/**
+ * @brief Registers components in the given registry.
+ * 
+ * This function sets up the necessary components for the game by 
+ * registering them with the provided `Registry` instance. Each 
+ * component type is registered to enable their management and usage 
+ * in the game's entity-component-system (ECS) architecture.
+ * 
+ * @param r Reference to the `Registry` instance where components will be registered.
+ */
 void setup_components(Registry &r);
 

@@ -1,16 +1,10 @@
 #include "AISystem.hpp"
 
-#include "Registry.hpp"
-#include "Behaviour.hpp"
-#include "Velocity.hpp"
+#include "Time.hpp"
 #include "Zipper.hpp"
 
-void ai_system(Registry &r)
+void ai_system(Registry &r, ComponentContainer<Behaviour> &behaviours, ComponentContainer<Velocity> &velocities)
 {
-    float delta_time = 1;
-    auto &behaviours = r.get_components<Behaviour>();
-    auto &velocities = r.get_components<Velocity>();
-
     for (auto &&[beh, vel] : Zipper(behaviours, velocities)) {
         if (!beh || !vel) continue;
 
@@ -18,7 +12,7 @@ void ai_system(Registry &r)
             case behaviour_enum::DEFAULT:
                 continue;
             case behaviour_enum::UP_DOWN:
-                beh->timer += delta_time;
+                beh->timer += Time::deltaTime;
                 if (beh->timer >= AI_TIMER) {
                     vel->vY *= -1;
                     beh->timer = 0;

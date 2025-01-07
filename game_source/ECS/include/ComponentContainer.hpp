@@ -174,7 +174,7 @@ public:
     void insert_at(size_type id, const Component& component) {
         if (std::holds_alternative<sparse_storage_t>(_storage)) {
             auto& sparse = std::get<sparse_storage_t>(_storage);
-            sparse[id] = component;
+            sparse.insert_at(id, component);
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
             dense.insert_at(id, component);
@@ -190,7 +190,7 @@ public:
     void insert_at(size_type id, Component&& component) {
         if (std::holds_alternative<sparse_storage_t>(_storage)) {
             auto& sparse = std::get<sparse_storage_t>(_storage);
-            sparse[id] = std::forward<Component>(component);
+            sparse.insert_at(id, std::forward<Component>(component));
         } else {
             auto& dense = std::get<dense_storage_t>(_storage);
             dense.insert_at(id, std::forward<Component>(component));

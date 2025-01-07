@@ -1,6 +1,5 @@
 #include "CollisionSystem.hpp"
 
-#include "Registry.hpp"
 #include "IndexedZipper.hpp"
 #include "Components.hpp"
 #include "SpawnSystem.hpp"
@@ -9,12 +8,17 @@ void collision_player_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
     auto &&[healths, teams] = r.get_component_array<Health, Team>();
     if (teams[entity2]->team == team_enum::ENEMY) {
+
         healths[entity1]->current -= 1;
+        r.dispatcher->notify({messageType::DAMAGE, entity1, {0, 0, "", {0, 0}}});
+
         if (healths[entity1]->current == 0) {
-            //also send game over msg to client
             r.kill_entity(Entity(entity1));
+            r.dispatcher->notify({messageType::KILL, entity1, {0, 0, "", {0, 0}}});
         }
+
         r.kill_entity(Entity(entity2));
+        r.dispatcher->notify({messageType::KILL, entity2, {0, 0, "", {0, 0}}});
     }
 }
 
@@ -23,12 +27,18 @@ void collision_monster_missile(Registry &r, size_t &entity1, size_t &entity2)
     auto &&[healths, teams, loot_drops, positions] = r.get_component_array<Health, Team, LootDrop, Position>();
     if (teams[entity2]->team == team_enum::ALLY) {
         healths[entity1]->current -= 1;
+        r.dispatcher->notify({messageType::DAMAGE, entity1, {0, 0, "", {0, 0}}});
+
         if (healths[entity1]->current == 0) {
             auto loot = loot_drops[entity1];
             spawn_powerup(r, positions[entity1]->X, positions[entity1]->Y, loot->loot);
+
             r.kill_entity(Entity(entity1));
+            r.dispatcher->notify({messageType::KILL, entity1, {0, 0, "", {0, 0}}});
         }
+
         r.kill_entity(Entity(entity2));
+        r.dispatcher->notify({messageType::KILL, entity2, {0, 0, "", {0, 0}}});
     }
 }
 
@@ -36,6 +46,7 @@ void collision_player_obstacle(Registry &r, size_t &entity1, size_t &entity2)
 {
     auto &healths = r.get_components<Health>();
     healths[entity1]->current -= 1;
+    r.dispatcher->notify({messageType::DAMAGE, entity1, {0, 0, "", {0, 0}}});
 }
 
 void collision_monster_obstacle(Registry &r, size_t &entity1, size_t &entity2)
@@ -45,18 +56,22 @@ void collision_monster_obstacle(Registry &r, size_t &entity1, size_t &entity2)
 
 void collision_player_powerup(Registry &r, size_t &entity1, size_t &entity2)
 {
-    //get lootdrops component
-    //if lootdrop == health
-    auto &healths = r.get_components<Health>();
-    healths[entity1]->current = healths[entity1]->max;
-    //else
-    auto &powerups = r.get_components<PowerUp>();
-    powerups[entity1]->enabled = true;
+    auto &&[healths, loots] = r.get_component_array<Health, LootDrop>();
+    if (loots[entity2]->loot == loot_enum::HEALTH_DROP) {
+        healths[entity1]->current = healths[entity1]->max;
+        r.dispatcher->notify({messageType::HEAL, entity1, {0, 0, "", {0, 0}}});
+    }
+    else if (loots[entity2]->loot == loot_enum::POWERUP_DROP) {
+        auto &powerups = r.get_components<PowerUp>();
+        powerups[entity1]->enabled = true;
+        r.dispatcher->notify({messageType::BUFF, entity1, {0, 0, {0, 0}}});
+    }
 }
 
 void collision_obstacle_missile(Registry &r, size_t &entity1, size_t &entity2)
 {
     r.kill_entity(Entity(entity2));
+    r.dispatcher->notify({messageType::KILL, entity2, {0, 0, "", {0, 0}}});
 }
 
 namespace std {
@@ -77,12 +92,8 @@ const std::unordered_map<std::pair<type_enum, type_enum>, std::function<void(Reg
     {std::make_pair(type_enum::OBSTACLE, type_enum::MISSILE), collision_obstacle_missile}
 };
 
-void collision_system(Registry &r)
+void collision_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Collider> &colliders, ComponentContainer<Type> &types)
 {
-    auto &positions = r.get_components<Position>();
-    auto &colliders = r.get_components<Collider>();
-    auto &types = r.get_components<Type>();
-
     for (auto &&[idx1, pos1, col1, type1] : IndexedZipper(positions, colliders, types)) {
         if (!pos1 || !col1 || !type1) continue;
 
