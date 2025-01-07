@@ -95,6 +95,13 @@ Once done, your folder should look like this:
     │   ├── success-fanfare-trumpets-6185.ogg
     │   ├── Undertale_Damage_Sound_Effect.ogg
     │   └── undertale_new.wav
+    ├── background
+    │   ├── black_hole.jpeg
+    │   ├── blue_star_space.jpeg
+    │   ├── connection_space.jpeg
+    │   ├── dark_blue_stars.jpeg
+    │   ├── dark_even_sky.jpeg
+    │   └── purple_sky.jpeg
     ├── font
     │   ├── 6809 Chargen
     │   │   ├── Licenses
@@ -106,11 +113,19 @@ Once done, your folder should look like this:
     │   │   │   └── Desktop EULA 1.7.txt
     │   │   └── TTF Fonts
     │   │       └── color_basic.ttf
+    │   ├── Desktop-Betsy Flanagan-TTF
+    │   │   ├── Licenses
+    │   │   │   └── Desktop EULA 1.7.txt
+    │   │   └── TTF Fonts
+    |   |       ├── betsy_flanagan.ttf
+    │   │       └── betsy_flanagan_2.ttf
     │   └── Joystix
     │       ├── Licenses
     │       │   └── Desktop Ebook EULA 1.7.txt
     │       └── TTF Fonts
     │           └── joystix_monospace.ttf
+    ├── icon
+    │   └── RtypeLogo.png
     └── img
         ├── r-typesheet10.gif
         ├── r-typesheet11.gif
