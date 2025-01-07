@@ -173,6 +173,68 @@ namespace CustomExceptions
 
     /**
      * @brief This is the class in charge of informing the user
+     * that the icon configuration they provided is incorrect.
+     *
+     */
+    class InvalidIconConfiguration : public std::exception {
+        public:
+        /**
+         * @brief Construct a new Invalid Sprite Configuration object
+         *
+         * @param userConfiguration The configuration section provided by the user.
+         * @param iconName The name of the icon that was affected by the configuration.
+         * @param exceptionDetail The detail about the reason why the error was triggered.
+         */
+        InvalidIconConfiguration(const std::string &tomlPath = "", const std::string &userConfiguration = "", const std::string &iconName = "", const std::string &exceptionDetail = "");
+        /**
+         * @brief Destroy the Invalid Sprite Configuration object
+         *
+         */
+        ~InvalidIconConfiguration();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the background configuration they provided is incorrect.
+     *
+     */
+    class InvalidBackgroundConfiguration : public std::exception {
+        public:
+        /**
+         * @brief Construct a new Invalid Sprite Configuration object
+         *
+         * @param userConfiguration The configuration section provided by the user.
+         * @param backgroundName The name of the background that was affected by the configuration.
+         * @param exceptionDetail The detail about the reason why the error was triggered.
+         */
+        InvalidBackgroundConfiguration(const std::string &tomlPath = "", const std::string &userConfiguration = "", const std::string &backgroundName = "", const std::string &exceptionDetail = "");
+        /**
+         * @brief Destroy the Invalid Sprite Configuration object
+         *
+         */
+        ~InvalidBackgroundConfiguration();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
+
+    /**
+     * @brief This is the class in charge of informing the user
      * that the window width is invalid.
      *
      */
