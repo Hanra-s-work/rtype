@@ -5,6 +5,7 @@
 #include <vector>
 #include <mutex>
 #include <cstdint>
+#include "asio_hash.hpp"
 
 /**
  * Each logic instance:

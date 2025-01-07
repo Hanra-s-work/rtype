@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <cstdint>
+#include "asio_hash.hpp"
 
 /**
  * ClientManager:
