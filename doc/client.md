@@ -376,6 +376,14 @@ default_size = 50
 bold = false
 italic = false
 
+# The font that will be used for the buttons
+[font.button]
+name = "Betsy Flanagan"
+path = "assets/font/Desktop-Betsy Flanagan-TTF/TTF Fonts/betsy_flanagan_2.ttf"
+default_size = 50
+bold = false
+italic = false
+
 # The music
 [music]
 
