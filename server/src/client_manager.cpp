@@ -7,13 +7,10 @@
 
 uint32_t ClientManager::resolveClientID(const asio::ip::udp::endpoint& ep) {
     std::lock_guard<std::mutex> lock(mutex_);
-
     auto it = epToId_.find(ep);
     if (it != epToId_.end()) {
-        // Already have an ID for this endpoint
         return it->second;
     } else {
-        // Create a new ID
         uint32_t newId = nextId_++;
         epToId_[ep] = newId;
         idToEp_[newId] = ep;
@@ -23,7 +20,6 @@ uint32_t ClientManager::resolveClientID(const asio::ip::udp::endpoint& ep) {
 
 void ClientManager::removeClient(const asio::ip::udp::endpoint& ep) {
     std::lock_guard<std::mutex> lock(mutex_);
-
     auto it = epToId_.find(ep);
     if (it != epToId_.end()) {
         uint32_t cid = it->second;

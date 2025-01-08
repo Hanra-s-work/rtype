@@ -3,75 +3,71 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include "../../game_source/manager/include/Game.hpp"
-#include "message.hpp"
+#include <iostream>
+#include <algorithm> // for std::remove
+#include "../../game_source/manager/include/Game.hpp"           // Your main game logic
+#include "message.hpp"        // Our minimal net message structure
 
 /**
  * @struct GameInstance
- * @brief Holds a single instance of the game: a GameLogic object and a list of clients in that game.
+ * @brief Holds a single `Game` instance plus a list of clients in that session.
  */
 struct GameInstance {
-    uint32_t gameId;                     ///< Unique ID for this game instance
-    std::unique_ptr<Game> logic;    ///< The underlying GameLogic (already implemented)
-    std::vector<uint32_t> clients;       ///< The client IDs currently in this game
+    uint32_t gameId;                 ///< Unique ID for this game session
+    std::unique_ptr<Game> game;      ///< The Game class instance
+    std::vector<uint32_t> clients;   ///< The IDs of clients in this game
 };
 
 /**
  * @class GameManager
- * @brief Manages multiple GameLogic instances (multiple games) and assigns clients to them.
- *
- * The GameManager can find a game that is not full, create new games, remove clients,
- * and dispatch messages to the appropriate GameLogic instance.
+ * @brief Manages multiple `Game` sessions, assigning clients to them, and routing messages.
  */
 class GameManager {
 public:
     /**
-     * @brief Assigns a client to an existing or new game.
-     * @param clientId The unique client ID to assign.
-     * @return The ID of the game the client was assigned to.
+     * @brief Assigns a client to an existing or newly created game.
+     * @param clientId The unique ID of the client.
+     * @return The ID of the game session the client is assigned to.
      */
     uint32_t assignClientToGame(uint32_t clientId);
 
     /**
-     * @brief Removes a client from the game they are currently in.
-     * @param clientId The unique client ID to remove.
+     * @brief Removes a client from their current game (if any).
+     * @param clientId The unique ID of the client.
      */
     void removeClientFromGame(uint32_t clientId);
 
     /**
-     * @brief Retrieves the game ID for a given client, or 0 if not assigned.
-     * @param clientId The unique client ID.
-     * @return The ID of the game the client is in, or 0 if not found.
+     * @brief Retrieves the game ID for a given client.
+     * @param clientId The unique ID of the client.
+     * @return The game ID, or 0 if none.
      */
     uint32_t getGameIdForClient(uint32_t clientId) const;
 
     /**
-     * @brief Updates all active games, calling each game’s update(dt).
-     * @param dt The time delta in seconds since the last update.
+     * @brief Updates all active games by calling `Game::update(dt)` on each.
+     * @param dt The time delta since last frame, in seconds.
      */
     void updateAllGames(float dt);
 
     /**
-     * @brief Dispatches a message to a specific game’s logic for handling (move, fire, etc.).
-     * @param gameId The ID of the game instance.
-     * @param clientId The client ID who sent the message.
-     * @param msg The message to handle.
+     * @brief Routes a network-level Message to the appropriate `Game` instance.
+     * @param gameId The ID of the game to handle the message.
+     * @param clientId The ID of the client who sent it.
+     * @param msg The decoded network message (4-byte header + payload).
      */
     void handleGameMessage(uint32_t gameId, uint32_t clientId, const Message& msg);
 
 private:
     /**
-     * @brief Searches for an existing game that isn’t full, or creates a new one.
-     * @return The ID of the chosen or newly created game.
+     * @brief Finds an existing game that isn't full, or creates a new one.
+     * @return The ID of the chosen game.
      */
     uint32_t findOrCreateGame();
 
-    /// Maps gameId -> a GameInstance (includes the GameLogic).
-    std::unordered_map<uint32_t, GameInstance> games_;
+    std::unordered_map<uint32_t, GameInstance> games_;  ///< Maps gameId -> GameInstance
+    std::unordered_map<uint32_t, uint32_t> clientToGame_; ///< Maps clientId -> gameId
+    uint32_t nextGameId_ = 1; ///< Counter for assigning new game IDs
 
-    /// Maps clientId -> gameId (which game a client belongs to).
-    std::unordered_map<uint32_t, uint32_t> clientToGame_;
-
-    /// Counter for assigning new game IDs.
-    uint32_t nextGameId_ = 1;
+    static const size_t MAX_PLAYERS_PER_GAME = 4; ///< Example capacity
 };

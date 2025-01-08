@@ -1,65 +1,61 @@
 #include "game_manager.hpp"
-#include <iostream>
-#include <algorithm>
-
-// Suppose each GameLogic can handle up to 4 players.
-static const size_t MAX_PLAYERS_PER_GAME = 4;
 
 /**
  * @file game_manager.cpp
- * @brief Implementation of GameManager methods.
+ * @brief Implementation of the GameManager class methods.
  */
 
 uint32_t GameManager::assignClientToGame(uint32_t clientId) {
-    // If the client is already assigned, return that existing game.
+    // Check if already assigned
     auto it = clientToGame_.find(clientId);
     if (it != clientToGame_.end()) {
         return it->second;
     }
 
-    // Otherwise, find or create a game that isn't full.
-    uint32_t gameId = findOrCreateGame();
-    auto &game = games_.at(gameId);
+    // Otherwise find or create a new game
+    uint32_t gid = findOrCreateGame();
+    auto &gInst = games_.at(gid);
 
-    // Add this client to the game.
-    game.clients.push_back(clientId);
-    clientToGame_[clientId] = gameId;
+    gInst.clients.push_back(clientId);
+    clientToGame_[clientId] = gid;
 
-    // Notify the game logic that a new player joined.
-    game.logic->addPlayer(clientId); // A hypothetical method in GameLogic.
+    std::cout << "[GameManager] Added client " << clientId 
+              << " to game " << gid << "\n";
 
-    std::cout << "[GameManager] Assigned client " << clientId 
-              << " to game " << gameId << "\n";
-    return gameId;
+    // The Game class might have some method to handle a new player, or an event:
+    // For example, create a spawn event or call onServerEventReceived(...).
+    // We'll just illustrate:
+    std::string connectEvent = "Player connected ID=" + std::to_string(clientId);
+    gInst.game->onServerEventReceived(connectEvent);
+
+    return gid;
 }
 
 void GameManager::removeClientFromGame(uint32_t clientId) {
     auto it = clientToGame_.find(clientId);
-    if (it == clientToGame_.end()) {
-        return; // client is not in any game
-    }
+    if (it == clientToGame_.end()) return;
 
-    uint32_t gameId = it->second;
-    auto &instance = games_.at(gameId);
+    uint32_t gid = it->second;
+    auto &gInst = games_.at(gid);
 
-    // Remove the clientId from the game's list of clients.
-    auto &vec = instance.clients;
-    vec.erase(std::remove(vec.begin(), vec.end(), clientId), vec.end());
+    // Remove from client list
+    auto &cList = gInst.clients;
+    cList.erase(std::remove(cList.begin(), cList.end(), clientId), cList.end());
 
-    // Notify the game logic that a player left or crashed.
-    instance.logic->removePlayer(clientId); // Hypothetical method in GameLogic.
+    // Possibly notify the Game that this player left:
+    std::string disconnectEvent = "Player disconnected ID=" + std::to_string(clientId);
+    gInst.game->onServerEventReceived(disconnectEvent);
 
-    // Remove from client->game mapping.
     clientToGame_.erase(clientId);
 
     std::cout << "[GameManager] Removed client " << clientId 
-              << " from game " << gameId << "\n";
+              << " from game " << gid << "\n";
 
-    // If no clients remain, we can destroy the game.
-    if (vec.empty()) {
-        games_.erase(gameId);
-        std::cout << "[GameManager] Destroyed game " << gameId 
-                  << " (no remaining clients).\n";
+    // If the game is empty, we can remove it:
+    if (cList.empty()) {
+        games_.erase(gid);
+        std::cout << "[GameManager] Destroyed game " << gid 
+                  << " (no players left)\n";
     }
 }
 
@@ -72,43 +68,60 @@ uint32_t GameManager::getGameIdForClient(uint32_t clientId) const {
 }
 
 void GameManager::updateAllGames(float dt) {
+    // For each active game, call update
     for (auto &pair : games_) {
-        auto &inst = pair.second;
-        // Update the GameLogic for each game.
-        inst.logic->update(dt);
-        // If the game logic has events to broadcast, you’d handle them here.
+        auto &gInst = pair.second;
+        gInst.game->update(dt);
+        // Optionally collect events from gInst.game->getGameEvents() and broadcast them
     }
 }
 
 void GameManager::handleGameMessage(uint32_t gameId, uint32_t clientId, const Message& msg) {
     auto it = games_.find(gameId);
-    if (it == games_.end()) return; // no such game
+    if (it == games_.end()) {
+        return; // no such game
+    }
 
-    auto &game = it->second;
-    // Interpret the msg.type/payload and call the appropriate GameLogic method.
-    // Example:
-    // if (msg.type == 10) { decode payload, game.logic->movePlayer(clientId, x, y); }
-    // else if (msg.type == 11) { game.logic->playerFire(clientId); }
-    // This depends entirely on how your GameLogic is structured.
+    auto &gInst = it->second;
 
-    (void)clientId; // silence unused warnings if not used.
-    (void)msg;      // same reason
+    // Typically, you would parse msg.payload into a GameMessage or some command structure
+    // Then call gInst.game->onGameEventReceived(...) or similar
+    // For demonstration, let's do a minimal approach:
+
+    // 1) Convert the raw `Message` into a `GameMessage` if you want
+    // We'll pretend the payload is a single integer or something.
+    // Real code: you'd do more robust serialization, e.g. using `Game::deserialize`.
+    if (!msg.payload.empty()) {
+        // Suppose we interpret the first byte as a messageType
+        // Or use your 'deserialize' logic:
+        std::istringstream iss(std::string(
+            reinterpret_cast<const char*>(msg.payload.data()), msg.payload.size()));
+        GameMessage gm = gInst.game->deserialize(iss);
+
+        // Now pass this to the game:
+        gInst.game->onGameEventReceived(gm);
+    } 
+    else {
+        // If there's no payload, maybe handle it differently
+        // or do nothing
+    }
 }
 
 uint32_t GameManager::findOrCreateGame() {
-    // Look for an existing game that isn’t full
+    // Find existing non-full game
     for (auto &pair : games_) {
         if (pair.second.clients.size() < MAX_PLAYERS_PER_GAME) {
             return pair.first;
         }
     }
-    // Otherwise, create a new game
-    uint32_t newId = nextGameId_++;
-    GameInstance inst;
-    inst.gameId = newId;
-    inst.logic = std::make_unique<Game>(); // your existing logic
-    games_[newId] = std::move(inst);
 
-    std::cout << "[GameManager] Created new game with id " << newId << "\n";
-    return newId;
+    // Otherwise create a new one
+    uint32_t gid = nextGameId_++;
+    GameInstance gInst;
+    gInst.gameId = gid;
+    gInst.game = std::make_unique<Game>(); // your actual Game constructor
+    games_[gid] = std::move(gInst);
+
+    std::cout << "[GameManager] Created new game " << gid << "\n";
+    return gid;
 }

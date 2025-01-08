@@ -1,55 +1,48 @@
 #pragma once
 #include "message.hpp"
 #include <cstring>
+#include <vector>
 
 /**
- * @brief Decodes a raw buffer into a Message struct using a 4-byte header.
- * 
- * Header:
- *  - 2 bytes: type (uint16_t)
- *  - 2 bytes: length (uint16_t)
- * Then `length` bytes of payload follow.
- *
- * @param data The raw incoming buffer.
- * @param length The total bytes in `data`.
- * @param out A reference to a Message struct to fill.
- * @return true if successful, false if invalid/too short.
+ * @brief Decodes a raw buffer into a Message (2-byte type, 2-byte length, then payload).
+ * @param data Pointer to the incoming data.
+ * @param length Total bytes available in `data`.
+ * @param out The Message struct to fill.
+ * @return true if successful, false if invalid format.
  */
 inline bool decodeMessage(const char* data, size_t length, Message& out) {
     if (length < 4) return false;
+    uint16_t netType, netLen;
+    std::memcpy(&netType, data, 2);
+    std::memcpy(&netLen,  data + 2, 2);
 
-    uint16_t net_type, net_len;
-    std::memcpy(&net_type, data, 2);
-    std::memcpy(&net_len, data + 2, 2);
+    // If needed, do ntohs here:
+    // netType = ntohs(netType);
+    // netLen  = ntohs(netLen);
 
-    // If needed, do ntohs on net_type, net_len
-    // net_type = ntohs(net_type);
-    // net_len = ntohs(net_len);
+    if (length < (4 + netLen)) return false;
 
-    if (length < (4 + net_len)) return false;
-
-    out.type = net_type;
-    out.payload.resize(net_len);
-    if (net_len > 0) {
-        std::memcpy(out.payload.data(), data + 4, net_len);
-    }
+    out.type = netType;
+    out.payload.resize(netLen);
+    std::memcpy(out.payload.data(), data + 4, netLen);
     return true;
 }
 
 /**
- * @brief Encodes a Message into a raw buffer (4-byte header + payload).
+ * @brief Encodes a Message into a raw buffer (2-byte type, 2-byte length, then payload).
  * @param msg The Message to encode.
- * @return A vector of bytes ready to send over the network.
+ * @return A vector of bytes ready to send.
  */
 inline std::vector<uint8_t> encodeMessage(const Message& msg) {
-    uint16_t net_type = msg.type;  // or htons(msg.type)
-    uint16_t net_len  = static_cast<uint16_t>(msg.payload.size()); // or htons
+    // If needed, do htons
+    uint16_t netType = msg.type;
+    uint16_t netLen  = static_cast<uint16_t>(msg.payload.size());
 
-    std::vector<uint8_t> buffer(4 + net_len);
-    std::memcpy(buffer.data(), &net_type, 2);
-    std::memcpy(buffer.data() + 2, &net_len, 2);
-    if (net_len > 0) {
-        std::memcpy(buffer.data() + 4, msg.payload.data(), net_len);
+    std::vector<uint8_t> buffer(4 + netLen);
+    std::memcpy(buffer.data(), &netType, 2);
+    std::memcpy(buffer.data() + 2, &netLen, 2);
+    if (netLen > 0) {
+        std::memcpy(buffer.data() + 4, msg.payload.data(), netLen);
     }
     return buffer;
 }

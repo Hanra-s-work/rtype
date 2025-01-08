@@ -6,34 +6,26 @@
 
 /**
  * @class ClientManager
- * @brief Tracks the mapping between (ip::udp::endpoint) and a unique client ID (uint32_t).
- *
- * This allows the server to consistently identify a client by an ID number,
- * even if it only knows the client’s (IP,port).
+ * @brief Tracks (ip::udp::endpoint)->clientId for consistent identification of clients.
  */
 class ClientManager {
 public:
     /**
-     * @brief Resolves or creates a client ID for a given remote endpoint.
-     * @param ep The remote endpoint (IP + port).
-     * @return The unique client ID associated with that endpoint.
+     * @brief Resolves or creates a clientId for a given remote endpoint.
+     * @param ep The client's (IP,port) endpoint.
+     * @return The clientId assigned to that endpoint.
      */
     uint32_t resolveClientID(const asio::ip::udp::endpoint& ep);
 
     /**
-     * @brief Removes a client from the manager if it exists.
-     * @param ep The remote endpoint to remove.
+     * @brief Removes a client from the manager by endpoint.
+     * @param ep The endpoint to remove.
      */
     void removeClient(const asio::ip::udp::endpoint& ep);
 
 private:
-    std::mutex mutex_; ///< Protects access to the maps below.
-
-    /// Maps endpoint -> assigned client ID.
+    std::mutex mutex_; ///< Protects the maps below
     std::unordered_map<asio::ip::udp::endpoint, uint32_t> epToId_;
-
-    /// Maps client ID -> endpoint (if needed).
     std::unordered_map<uint32_t, asio::ip::udp::endpoint> idToEp_;
-
-    uint32_t nextId_ = 1; ///< Next ID to assign for a new client.
+    uint32_t nextId_ = 1;
 };

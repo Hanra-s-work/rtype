@@ -4,9 +4,12 @@
 
 /**
  * @struct Message
- * @brief Represents a decoded message with a 2-byte type, a 2-byte payload length, and a payload vector.
+ * @brief Minimal network message with a 4-byte header (type + length) and a payload.
  */
 struct Message {
-    uint16_t type;               ///< The message type code
-    std::vector<uint8_t> payload;///< The message payload bytes
+    uint16_t type; ///< Could map to messageType in GameMessage.hpp (CONNECT, DISCONNECT, etc.)
+    std::vector<uint8_t> payload; ///< Arbitrary payload bytes
 };
+
+// In your case, 'type' might match the 'messageType' enum from GameMessage.hpp.
+// You can define: CONNECT=1, DISCONNECT=2, MOVE=3, etc. or directly use the enum's values.
