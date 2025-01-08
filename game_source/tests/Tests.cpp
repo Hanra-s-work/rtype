@@ -128,7 +128,7 @@ int test_get_game_event(void)
         auto list = g->getGameEvents();
         for (auto a : list) {
             std::istringstream iss = std::istringstream(a);
-            GameMessage msg = g->deserialize(iss);
+            GameMessage msg = deserialize(iss);
             std::cout << msg.type << " " << msg.id << std::endl;
         }
     } catch (std::exception &e) {
@@ -148,14 +148,14 @@ int test_send_msg(void)
     try {
         if (!g)
             throw std::runtime_error("Game not initialized");
-        g->serialize(msg, oss);
+        serialize(msg, oss);
         s = oss.str();
         g->onServerEventReceived(s);
         g->update(1);
         auto list = g->getGameEvents();
         for (auto a : list) {
             std::istringstream iss = std::istringstream(a);
-            GameMessage msg = g->deserialize(iss);
+            GameMessage msg = deserialize(iss);
             std::cout << msg.type << " " << msg.id << std::endl;
         }
     } catch (std::exception &e) {

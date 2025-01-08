@@ -14,6 +14,7 @@ set(SOURCES
     manager/Time.cpp
     manager/Random.cpp
     manager/Game.cpp
+    manager/GameMessage.cpp
     manager/Queue.cpp
     systems/AISystem.cpp
     systems/CollisionSystem.cpp

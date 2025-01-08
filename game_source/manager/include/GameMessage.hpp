@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstddef>
+#include <sstream>
+#include <cstdint>
+#include <cstring>
 
 /**
  * @brief Enum representing the different types of game messages.
@@ -8,17 +11,19 @@
  * The `messageType` enum defines various message types used for communication in the game, such as events 
  * like spawning, movement, damage, and status updates.
  */
-enum messageType {
-    CONNECT,    ///< Represents a connecting player event.
-    DISCONNECT, ///< Represents a disconnecting player event.
-    MOVE,       ///< Represents a movement event.
-    SHOOT,      ///< Represents a player shooting event
-    SPAWN,      ///< Represents a spawn event.
-    KILL,       ///< Represents a kill event.
-    DAMAGE,     ///< Represents a damage event.
-    HEAL,       ///< Represents a healing event.
-    BUFF,       ///< Represents a buff event.
-    STATUS      ///< Represents a status event.
+enum messageType : uint8_t {
+    EMPTY,
+    CONNECT,     ///< Represents a connecting player event.
+    DISCONNECT,  ///< Represents a disconnecting player event.
+    MOVE,        ///< Represents a movement event.
+    SHOOT,       ///< Represents a player shooting event
+    SPAWN,       ///< Represents a spawn event.
+    KILL,        ///< Represents a kill event.
+    DAMAGE,      ///< Represents a damage event.
+    HEAL,        ///< Represents a healing event.
+    BUFF,        ///< Represents a buff event.
+    STATUS,      ///< Represents a status event.
+    ERROR = 0xFF ///< Represents an error occurred.
 };
 
 /**
@@ -55,3 +60,25 @@ struct GameMessage {
     size_t id;          ///< The unique identifier for the entity or object involved in the event.
     messageInfo msg;    ///< Additional information about the event (status, asset ID, and coordinates).
 };
+
+/**
+     * @brief Deserializes a GameMessage object from a binary stream.
+     *
+     * This function reads binary data from the provided input stream and reconstructs a `GameMessage` object.
+     * The binary data should have been written using the `serialize` function.
+     *
+     * @param is The input stream from which the binary data will be read.
+     * @return GameMessage The reconstructed `GameMessage` object.
+     */
+GameMessage deserialize(std::istringstream& is);
+
+/**
+     * @brief Serializes a GameMessage object into a binary stream.
+     *
+     * This function writes the `GameMessage` object's data to the provided output stream in binary format.
+     * The serialized data can later be read using the `deserialize` function.
+     *
+     * @param message The `GameMessage` object to serialize.
+     * @param os The output stream to which the binary data will be written.
+     */
+void serialize(const GameMessage& message, std::ostringstream& os);

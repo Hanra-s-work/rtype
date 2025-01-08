@@ -8,6 +8,7 @@
 #include "Zipper.hpp"
 #include "IndexedZipper.hpp"
 #include "Game.hpp"
+#include "GameMessage.hpp"
 #include "Registry.hpp"
 #include "Components.hpp"
 #include "Systems.hpp"
