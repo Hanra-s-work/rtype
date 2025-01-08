@@ -1,32 +1,24 @@
 cmake_minimum_required(VERSION 3.15)
-project(R-TypeServer CXX)
+project(MultigameServer CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# If your code uses threads (and Asio typically needs it):
-find_package(Threads REQUIRED)
-
-# If using standalone Asio or Boost.Asio, you'd locate or find it, for example:
+# If using standalone Asio, find it or link it. Example:
+# find_package(Threads REQUIRED)
 # find_path(ASIO_INCLUDE_DIR asio.hpp)
-# target_include_directories(r-type_server PRIVATE ${ASIO_INCLUDE_DIR})
 
-# Create the executable from main.cpp and the sources in src/
-add_executable(r-type_server
-    main.cpp              # In the server folder
-    src/message_codec.cpp
-    src/client_manager.cpp
-    src/logic_manager.cpp
-    src/server.cpp
+add_executable(multigame_server
+    main.cpp
+    server/server.cpp
+    server/game_manager.cpp
+    server/client_manager.cpp
+    # message.cpp if needed, etc.
 )
 
-# Tell the compiler where to find header files (the "src" folder).
-target_include_directories(r-type_server PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+# E.g. for standalone Asio:
+# target_include_directories(multigame_server PRIVATE ${ASIO_INCLUDE_DIR})
+# target_link_libraries(multigame_server PRIVATE Threads::Threads)
 
-# Link with threads (and any other libraries you might need):
-target_link_libraries(r-type_server PRIVATE Threads::Threads)
-
-# Optional: Set extra warning flags, etc.
-# target_compile_options(r-type_server PRIVATE -Wall -Wextra -pedantic)
+# If you have "game_logic.cpp", add it or link it. 
+# This example assumes "GameLogic" is header-only or compiled elsewhere.

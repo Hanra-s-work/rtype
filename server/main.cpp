@@ -6,23 +6,54 @@ int main() {
     try {
         asio::io_context io_context;
 
-        // Create the server: port 9000 for clients, 9001 for logic
-        auto server = std::make_shared<Server>(io_context, 9000, 9001);
+        // Create server on UDP port 9000, binding to 0.0.0.0 so it’s accessible on the LAN
+        auto server = std::make_shared<Server>(io_context, 9000);
 
-        // Run io_context in multiple threads for concurrency
-        std::vector<std::thread> thread_pool;
-        unsigned int num_threads = std::thread::hardware_concurrency();
-        if (num_threads == 0) num_threads = 4;
+        // Thread pool for running async I/O
+        unsigned int numThreads = std::max(4u, std::thread::hardware_concurrency());
+        std::vector<std::thread> threadPool;
+        threadPool.reserve(numThreads);
 
-        for (unsigned int i = 0; i < num_threads; ++i) {
-            thread_pool.emplace_back([&io_context]() {
+        for (unsigned i = 0; i < numThreads; ++i) {
+            threadPool.emplace_back([&io_context]() {
                 io_context.run();
             });
         }
 
-        // Wait for all threads
-        for (auto &t : thread_pool) {
-            t.join();
+        // Optional: A dedicated update loop for the games if needed
+        // (some people run game update logic in each GameLogic object on separate threads,
+        //  or on a single loop in main. This example does a single “manager” loop.)
+        bool running = true;
+        std::thread gameLoopThread([&]() {
+            using clock = std::chrono::steady_clock;
+            auto lastTime = clock::now();
+
+            while (running) {
+                auto now = clock::now();
+                float dt = std::chrono::duration<float>(now - lastTime).count();
+                lastTime = now;
+
+                // Update all games
+                server->getGameManager().updateAllGames(dt);
+
+                // Sleep to aim for ~60 fps or so
+                std::this_thread::sleep_for(std::chrono::milliseconds(16));
+            }
+        });
+
+        // Wait for user input to exit or do some other means
+        std::cout << "[Server] Press ENTER to quit.\n";
+        std::cin.get(); // blocking read
+
+        running = false; // signal to stop game loop
+        io_context.stop(); // stop I/O
+
+        // Join threads
+        for (auto &t : threadPool) {
+            if (t.joinable()) t.join();
+        }
+        if (gameLoopThread.joinable()) {
+            gameLoopThread.join();
         }
 
     } catch (std::exception& e) {
