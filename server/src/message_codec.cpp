@@ -9,10 +9,6 @@ bool decodeMessage(const char* data, size_t length, Message& out_msg) {
     std::memcpy(&net_type, data, 2);
     std::memcpy(&net_length, data + 2, 2);
 
-    // If you need endianness conversions, do them here, e.g. ntohs:
-    // net_type = ntohs(net_type);
-    // net_length = ntohs(net_length);
-
     if (length < (4 + net_length)) {
         return false;
     }
@@ -27,8 +23,6 @@ bool decodeMessage(const char* data, size_t length, Message& out_msg) {
 std::vector<uint8_t> encodeMessage(const Message& msg) {
     uint16_t net_type = msg.type;
     uint16_t net_len  = static_cast<uint16_t>(msg.payload.size());
-
-    // If needed, convert to network order: net_type = htons(msg.type), etc.
 
     std::vector<uint8_t> buffer(4 + net_len);
     std::memcpy(buffer.data(), &net_type, 2);
