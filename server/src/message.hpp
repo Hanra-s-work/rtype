@@ -1,15 +1,12 @@
 #pragma once
-
 #include <cstdint>
 #include <vector>
 
 /**
- * Basic message format:
- *   - 2 bytes: type
- *   - 2 bytes: length
- *   - payload (length bytes)
+ * @struct Message
+ * @brief Represents a decoded message with a 2-byte type, a 2-byte payload length, and a payload vector.
  */
 struct Message {
-    uint16_t type = 0;
-    std::vector<uint8_t> payload;
+    uint16_t type;               ///< The message type code
+    std::vector<uint8_t> payload;///< The message payload bytes
 };
