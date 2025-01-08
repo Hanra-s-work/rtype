@@ -5,6 +5,46 @@ Registry *r = nullptr;
 Game *g = nullptr;
 Queue *q = nullptr;
 
+inline void printMessage(GameMessage &msg)
+{
+    switch (msg.type)
+    {
+    case MOVE:
+        std::cout << "MOVE " << msg.id << " " << msg.msg.coords.x << " " << msg.msg.coords.y;
+        break;
+    case SHOOT:
+        std::cout << "SHOOT " << msg.id;
+        break;
+    case SPAWN:
+        std::cout << "SPAWN " << msg.id << " " << msg.msg.asset_id << " " << msg.msg.coords.x << " " << msg.msg.coords.y;
+        break;
+    case KILL:
+        std::cout << "KILL " << msg.id;
+        break;
+    case DAMAGE:
+        std::cout << "MOVE " << msg.id;
+        break;
+    case STATUS:
+        std::cout << "STATUS ";
+        switch (msg.msg.status)
+        {
+        case 0x00:
+            std::cout << "ON GOING";
+            break;
+        case 0x01:
+            std::cout << "VICTORY";
+            break;
+        default:
+            std::cout << "DEFEAT";
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+    std::cout << std::endl;
+}
+
 void cleanup(void)
 {
     if (ev)
@@ -129,7 +169,7 @@ int test_get_game_event(void)
         for (auto a : list) {
             std::istringstream iss = std::istringstream(a);
             GameMessage msg = deserialize(iss);
-            std::cout << msg.type << " " << msg.id << std::endl;
+            //printMessage(msg);
         }
     } catch (std::exception &e) {
         std::cout << "Test Failed" << std::endl;
@@ -156,7 +196,40 @@ int test_send_msg(void)
         for (auto a : list) {
             std::istringstream iss = std::istringstream(a);
             GameMessage msg = deserialize(iss);
-            std::cout << msg.type << " " << msg.id << std::endl;
+            //printMessage(msg);
+        }
+    } catch (std::exception &e) {
+        std::cout << "Test Failed" << std::endl;
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return -1;
+    }
+    std::cout << "Test OK" << std::endl;
+    return 0;
+}
+
+int test_stress(void)
+{
+    GameMessage msg1 = {messageType::CONNECT, 0, {0, 0, "Player1", {0, 0}}};
+    GameMessage msg2 = {messageType::CONNECT, 0, {0, 0, "Player2", {0, 0}}};
+    try {
+        Game newGame;
+        std::ostringstream oss;
+        std::string s;
+        serialize(msg1, oss);
+        s = oss.str();
+        newGame.onServerEventReceived(s);
+        serialize(msg2, oss);
+        s = oss.str();
+        newGame.onServerEventReceived(s);
+        for (int i = 0; i <= 60; i++) {
+            newGame.update(1);
+            auto events = newGame.getGameEvents();
+            for (auto event : events) {
+                std::cout << "frame " << i << ": ";
+                std::istringstream iss(event);
+                GameMessage msg = deserialize(iss);
+                printMessage(msg);
+            }
         }
     } catch (std::exception &e) {
         std::cout << "Test Failed" << std::endl;
