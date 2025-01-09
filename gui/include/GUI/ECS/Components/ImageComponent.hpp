@@ -23,8 +23,8 @@
 #include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
 {
@@ -317,11 +317,11 @@ namespace GUI
                 /**
                  * @brief Get the Collision object
                  *
-                 * @return const GUI::ECS::Components::CollisionComponent
+                 * @return const GUI::ECS::Systems::Collision
                  *
                  * @note This is a sister function used for the update function.
                  */
-                const GUI::ECS::Components::CollisionComponent getCollision() const;
+                const GUI::ECS::Systems::Collision getCollision() const;
 
                 /**
                  * @brief This is a function meant for debugging purposes
@@ -405,7 +405,7 @@ namespace GUI
                 std::string _name = "";                                                           //!< A string representing the name of the image
                 std::string _application = "";                                                    //!< A string representing the application context of the image
                 std::optional<sf::Sprite> _sfImage;                                               //!< An std::optional sf::Sprite to contain the final Sprite instance that will be rendered
-                CollisionComponent _collision;                                                    //!< A Collision component class to contain and track collisions
+                GUI::ECS::Systems::Collision _collision;                                          //!< A Collision component class to contain and track collisions
                 GUI::ECS::Components::TextureComponent _base;                                     //!< An GUI::ECS::Components::TextureComponent class to contain the active texture
                 GUI::ECS::Systems::Colour _hoverColor;                                            //!< A Colour class that contains the colour for the hover state
                 GUI::ECS::Systems::Colour _normalColor;                                           //!< A Colour class that contains the colour for the default state

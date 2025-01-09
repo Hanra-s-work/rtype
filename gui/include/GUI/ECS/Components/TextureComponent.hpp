@@ -23,7 +23,7 @@
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/MouseInfo.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 
 namespace GUI
 {
@@ -35,20 +35,20 @@ namespace GUI
                 public:
                 TextureComponent();
                 TextureComponent(const TextureComponent &other);
-                TextureComponent(const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
-                TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                TextureComponent(const std::any &texture, const GUI::ECS::Systems::Collision &collisionInfo);
+                TextureComponent(const std::string &filePath, const GUI::ECS::Systems::Collision &collisionInfo);
 
                 explicit TextureComponent(const std::uint32_t entityId);
                 explicit TextureComponent(const std::uint32_t entityId, const TextureComponent &other);
-                explicit TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo);
-                explicit TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                explicit TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Systems::Collision &collisionInfo);
+                explicit TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Systems::Collision &collisionInfo);
 
                 ~TextureComponent();
 
                 void setVisible(const bool visible);
                 void setFilePath(const std::string &filePath);
                 void setTexture(const std::any &texture);
-                void setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo);
+                void setCollisionInfo(const GUI::ECS::Systems::Collision &collisionInfo);
                 void setPosition(const std::pair<int, int> &position);
                 void setSize(const std::pair<int, int> &size);
 
@@ -56,7 +56,7 @@ namespace GUI
 
                 const bool getVisible() const;
                 const std::any getTexture() const;
-                const GUI::ECS::Components::CollisionComponent getCollisionInfo() const;
+                const GUI::ECS::Systems::Collision getCollisionInfo() const;
                 /**
                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -73,7 +73,7 @@ namespace GUI
                 bool _visible = true;
                 bool _textureSet = false;
                 std::shared_ptr<sf::Texture> _texture;
-                GUI::ECS::Components::CollisionComponent _collisionInfo;
+                GUI::ECS::Systems::Collision _collisionInfo;
             };
 
             /**

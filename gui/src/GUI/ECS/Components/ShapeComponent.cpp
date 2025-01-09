@@ -258,7 +258,7 @@ void GUI::ECS::Components::ShapeComponent::setDimension(const std::pair<float, f
     _collision.setDimension(dimension);
 }
 
-void GUI::ECS::Components::ShapeComponent::setCollision(const GUI::ECS::Components::CollisionComponent &collision)
+void GUI::ECS::Components::ShapeComponent::setCollision(const GUI::ECS::Systems::Collision &collision)
 {
     _collision.update(collision);
     if (_shape != ActiveShape::NONE && !_inConstructor) {
@@ -380,7 +380,7 @@ const std::pair<GUI::ECS::Components::ActiveShape, std::any> GUI::ECS::Component
     return getActiveShape();
 }
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ShapeComponent::getCollisionComponent() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::ShapeComponent::getCollision() const
 {
     return _collision;
 }
@@ -427,7 +427,7 @@ void GUI::ECS::Components::ShapeComponent::update(const GUI::ECS::Components::Sh
         setHoverColor(copy.getHoverColor());
         setNormalColor(copy.getNormalColor());
         setClickedColor(copy.getClickedColor());
-        _collision.update(copy.getCollisionComponent());
+        _collision.update(copy.getCollision());
         _processColor();
     } else {
         throw CustomExceptions::InvalidShape("No existing shape");

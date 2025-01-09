@@ -278,7 +278,7 @@ const bool GUI::ECS::Components::ImageComponent::getVisible() const
     return _visible;
 };
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ImageComponent::getCollision() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::ImageComponent::getCollision() const
 {
     return _collision;
 }

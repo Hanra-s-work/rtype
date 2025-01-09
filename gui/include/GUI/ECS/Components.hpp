@@ -14,7 +14,6 @@
 
 #include "GUI/ECS/Components/AnimationComponent.hpp"
 #include "GUI/ECS/Components/ButtonComponent.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
 #include "GUI/ECS/Components/MusicComponent.hpp"
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 #include "GUI/ECS/Components/SpriteComponent.hpp"
@@ -36,7 +35,6 @@ namespace GUI
             class SpriteComponent;
             enum class ActiveShape;
             class TextureComponent;
-            class CollisionComponent;
             class AnimationComponent;
         }
     }

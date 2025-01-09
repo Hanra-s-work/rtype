@@ -30,7 +30,7 @@
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/MouseInfo.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 
 namespace GUI
 {
@@ -258,7 +258,7 @@ namespace GUI
                  *
                  * @param collision The collision component to query the data from.
                  */
-                void setCollision(const CollisionComponent &collision);
+                void setCollision(const GUI::ECS::Systems::Collision &collision);
 
                 /**
                  * @brief Toggles the visibility of the shape.
@@ -339,11 +339,11 @@ namespace GUI
                 /**
                  * @brief Get the Collision Component of the object
                  *
-                 * @return const CollisionComponent
+                 * @return const Collision
                  *
                  * @note This is an internal function used by the update function.
                  */
-                const CollisionComponent getCollisionComponent() const;
+                const GUI::ECS::Systems::Collision getCollision() const;
                 /**
                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -437,7 +437,7 @@ namespace GUI
                 GUI::ECS::Systems::Colour _normalColor;                         //!< A Colour instance in charge of representing the colour when the component is in it's default state
                 GUI::ECS::Systems::Colour _clickedColor;                        //!< A Colour instance in charge of representing the colour when the component is clicked
 
-                GUI::ECS::Components::CollisionComponent _collision;            //!< A component in charge of tracking the shapes collisions and position
+                GUI::ECS::Systems::Collision _collision;                        //!< A component in charge of tracking the shapes collisions and position
             };
 
             /**

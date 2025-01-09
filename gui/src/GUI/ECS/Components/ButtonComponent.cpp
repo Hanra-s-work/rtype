@@ -16,7 +16,7 @@
 GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entityId)
     : EntityNode(entityId), _callback(nullptr), _componentText(entityId), _componentShape(entityId)
 {
-    _collision = _componentShape.getCollisionComponent();
+    _collision = _componentShape.getCollision();
     _textSize = _componentText.getSize();
 };
 
@@ -25,7 +25,7 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Component
 {
     _componentText.update(textItem);
     _componentShape.update(shapeItem);
-    _collision = _componentShape.getCollisionComponent();
+    _collision = _componentShape.getCollision();
     _textSize = _componentText.getSize();
 };
 
@@ -34,11 +34,11 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Component
 {
     _componentText.update(textItem);
     _componentShape.update(shapeItem);
-    _collision = _componentShape.getCollisionComponent();
+    _collision = _componentShape.getCollision();
     _textSize = _componentText.getSize();
 };
 
-GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize)
+GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize)
     : EntityNode(0), _componentText(0), _componentShape(std::uint32_t(0))
 {
     _componentText.update(textItem);
@@ -46,7 +46,7 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Component
     setCollision(collisionItem, textSize);
 };
 
-GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize)
+GUI::ECS::Components::ButtonComponent::ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize)
     : EntityNode(0), _componentText(0), _componentShape(std::uint32_t(0)), _callback(callback)
 {
     _componentText.update(textItem);
@@ -60,7 +60,7 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entit
 {
     _componentText.update(textItem);
     _componentShape.update(shapeItem);
-    _collision = _componentShape.getCollisionComponent();
+    _collision = _componentShape.getCollision();
     _textSize = _componentText.getSize();
 };
 
@@ -69,11 +69,11 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entit
 {
     _componentText.update(textItem);
     _componentShape.update(shapeItem);
-    _collision = _componentShape.getCollisionComponent();
+    _collision = _componentShape.getCollision();
     _textSize = _componentText.getSize();
 };
 
-GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize)
+GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize)
     : EntityNode(entityId), _componentText(entityId), _componentShape(entityId)
 {
     _componentText.update(textItem);
@@ -81,7 +81,7 @@ GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entit
     setCollision(collisionItem, textSize);
 };
 
-GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize)
+GUI::ECS::Components::ButtonComponent::ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize)
     : EntityNode(entityId), _componentText(entityId), _componentShape(entityId), _callback(callback)
 {
     _componentText.update(textItem);
@@ -158,7 +158,7 @@ void GUI::ECS::Components::ButtonComponent::setShapeDimension(const std::pair<fl
     _componentShape.setDimension(dimension);
 }
 
-void GUI::ECS::Components::ButtonComponent::setCollision(const GUI::ECS::Components::CollisionComponent &collision, const std::uint32_t textSize)
+void GUI::ECS::Components::ButtonComponent::setCollision(const GUI::ECS::Systems::Collision &collision, const std::uint32_t textSize)
 {
     setPosition(collision.getPosition());
     setDimension(collision.getDimension(), textSize);
@@ -272,7 +272,7 @@ const std::pair<float, float> GUI::ECS::Components::ButtonComponent::getShapeDim
     return _componentShape.getDimension();
 }
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ButtonComponent::getCollision() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::ButtonComponent::getCollision() const
 {
     return _collision;
 }
@@ -338,7 +338,7 @@ void GUI::ECS::Components::ButtonComponent::update(const GUI::ECS::Systems::Mous
     _collision.update(mouse);
     _componentText.update(mouse);
     _componentShape.update(mouse);
-    if (_collision.isClicked() || _componentShape.getCollisionComponent().isClicked() || _componentText.getCollisionComponent().isClicked()) {
+    if (_collision.isClicked() || _componentShape.getCollision().isClicked() || _componentText.getCollision().isClicked()) {
         _callback();
     }
 }

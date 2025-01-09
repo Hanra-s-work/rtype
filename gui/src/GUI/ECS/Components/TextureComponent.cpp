@@ -24,14 +24,14 @@ GUI::ECS::Components::TextureComponent::TextureComponent(const TextureComponent 
     update(other);
 };
 
-GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::string &filePath, const GUI::ECS::Systems::Collision &collisionInfo)
     : EntityNode(0), _collisionInfo(0)
 {
     setFilePath(filePath);
     setCollisionInfo(collisionInfo);
 };
 
-GUI::ECS::Components::TextureComponent::TextureComponent(const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::any &texture, const GUI::ECS::Systems::Collision &collisionInfo)
     : EntityNode(0), _collisionInfo(0)
 {
     setTexture(texture);
@@ -49,14 +49,14 @@ GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t ent
     update(other);
 };
 
-GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::string &filePath, const GUI::ECS::Systems::Collision &collisionInfo)
     : EntityNode(entityId), _collisionInfo(entityId)
 {
     setFilePath(filePath);
     setCollisionInfo(collisionInfo);
 };
 
-GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Components::CollisionComponent &collisionInfo)
+GUI::ECS::Components::TextureComponent::TextureComponent(const std::uint32_t entityId, const std::any &texture, const GUI::ECS::Systems::Collision &collisionInfo)
     : EntityNode(entityId), _collisionInfo(entityId)
 {
     setTexture(texture);
@@ -124,7 +124,7 @@ void GUI::ECS::Components::TextureComponent::setTexture(const std::any &texture)
     PRETTY_SUCCESS << "Dimensions for the collisionInfo is set." << std::endl;
 }
 
-void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Components::CollisionComponent &collisionInfo)
+void GUI::ECS::Components::TextureComponent::setCollisionInfo(const GUI::ECS::Systems::Collision &collisionInfo)
 {
     _collisionInfo.update(collisionInfo);
 }
@@ -169,7 +169,7 @@ const bool GUI::ECS::Components::TextureComponent::getVisible() const
     return _visible;
 }
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextureComponent::getCollisionInfo() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::TextureComponent::getCollisionInfo() const
 {
     return _collisionInfo;
 }

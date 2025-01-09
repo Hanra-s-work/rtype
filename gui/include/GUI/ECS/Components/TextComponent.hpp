@@ -25,7 +25,7 @@
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Font.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 
 namespace GUI
 {
@@ -225,6 +225,20 @@ namespace GUI
                 void setVisible(const bool visible);
 
                 /**
+                 * @brief Set the Name of the component
+                 *
+                 * @param name
+                 */
+                void setName(const std::string &name);
+
+                /**
+                 * @brief Set the application context of the component
+                 *
+                 * @param application
+                 */
+                void setApplication(const std::string &application);
+
+                /**
                  * @brief Toggle the visibility of the object.
                  * @if visible -> hidden
                  * @else hidden
@@ -314,9 +328,23 @@ namespace GUI
                 /**
                  * @brief Function in charge of returning the collision instance of the text component.
                  *
-                 * @return const GUI::ECS::Components::CollisionComponent
+                 * @return const GUI::ECS::Systems::Collision
                  */
-                const GUI::ECS::Components::CollisionComponent getCollisionComponent() const;
+                const GUI::ECS::Systems::Collision getCollision() const;
+
+                /**
+                 * @brief Get the Name text component
+                 *
+                 * @return const std::string
+                 */
+                const std::string getName() const;
+
+                /**
+                 * @brief Get the Application context of the component
+                 *
+                 * @return const std::string
+                 */
+                const std::string getApplication() const;
 
                 /**
                  * @brief Function in charge of rendering the text if it is set to visible, otherwise, does nothing
@@ -373,9 +401,11 @@ namespace GUI
                 bool _inConstructor = true;                                                      //!< A boolean value to know if the class has been built or is still being built
                 bool _positionAltered = false;                                                   //!< A boolean value to know if the positon of the text has been altered
                 std::string _text = "SampleText";                                                //!< A string to contain the text set by the user
+                std::string _textName = "text";                                                  //!< A string to contain the name of the text component.
+                std::string _textApplication = "text";                                           //!< A string to contain the application context of the text component.
                 unsigned int _size = 30;                                                         //!< An unsigned int to contain the user assigned size
                 std::optional<sf::Text> _sfTextComponent;                                        //!< An std::optional sf::Text to contain the final text instance that will be rendered
-                CollisionComponent _textPos;                                                     //!< A Collision component class to contain and track collisions
+                GUI::ECS::Systems::Collision _textPos;                                           //!< A Collision component class to contain and track collisions
                 GUI::ECS::Systems::Font _font;                                                   //!< An GUI::ECS::Systems::Font class to contain the active font
                 GUI::ECS::Systems::Colour _color = GUI::ECS::Systems::Colour::Black;             //!< A Colour class that contains the colour for the default state
                 GUI::ECS::Systems::Colour _hoverColor = GUI::ECS::Systems::Colour::Black;        //!< A Colour class that contains the colour for the hover state
@@ -386,6 +416,7 @@ namespace GUI
              * @brief Outputs the text's info to a stream.
              * @param os The output stream.
              * @param item The text to output.
+             *
              * @return The modified output stream.
              */
             std::ostream &operator<<(std::ostream &os, const TextComponent &item);

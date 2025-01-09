@@ -271,6 +271,7 @@ void process_arguments(Main &main, int argc, char **argv)
  *
  * @param argc The number of command-line arguments.
  * @param argv The array of command-line arguments as C-style strings.
+ *
  * @return An integer status code: SUCCESS (0) on successful execution, ERROR (non-zero) on failure.
  */
 int RealMain(int argc, char **argv)
