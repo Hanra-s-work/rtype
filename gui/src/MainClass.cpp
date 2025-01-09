@@ -527,8 +527,17 @@ std::uint32_t Main::_initialiseFonts()
         PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
         PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
+        if (application == titleFontNode) {
+            _titleFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
+        if (application == bodyFontNode) {
+            _bodyFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
         if (application == defaultFontNode) {
             _defaultFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
+        if (application == buttonFontNode) {
+            _buttonFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
         }
         PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
         _baseId++;
@@ -994,6 +1003,55 @@ void Main::_processIncommingPackets()
 
 }
 
+/**
+ * @brief Function in charge of getting the center X axis of the screen.
+ *
+ * @return unsigned int
+ *
+ * @throws CustomExceptions::NoWindow if there is no window instance to gather the information from.
+ */
+const unsigned int Main::_getScreenCenterX()
+{
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
+    const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    if (windowDimensions.first == 0.0) {
+        PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
+        throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
+    }
+    PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
+    return windowDimensions.first / 2;
+}
+
+
+/**
+ * @brief Function in charge of getting the center Y axis of the screen.
+ *
+ * @return unsigned int
+ *
+ * @throws CustomExceptions::NoWindow if there is no window instance to gather the information from.
+ */
+const unsigned int Main::_getScreenCenterY()
+{
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
+    const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    if (windowDimensions.second == 0.0) {
+        PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
+        throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
+    }
+    PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
+    return windowDimensions.second / 2;
+}
+
 void Main::_gameScreen()
 {
 
@@ -1009,9 +1067,228 @@ void Main::_settingsMenu()
 
 }
 
+void Main::_unknownScreen()
+{
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+
+    const std::string titleKey = "unknownScreenTitle";
+    const std::string bodyKey = "unknownScreenBody";
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> home;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+
+
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                title = textCapsule.value();
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                body = textCapsule.value();
+            } else {
+                continue;
+            }
+        }
+    }
+
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule) {
+            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
+                homeButtonFound = true;
+                home = buttonCapsule.value();
+            }
+        }
+    }
+
+    if (!titleTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
+        title->setApplication(titleKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
+        _baseId += 1;
+    }
+
+    if (!bodyTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
+        body->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
+        _baseId += 1;
+    }
+
+    if (!homeButtonFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], false);
+        if (!defaultFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> buttonText = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(defaultFont.value()), "It seems like you have landed on an unknown page.");
+        buttonText->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(buttonText);
+        _baseId += 1;
+        Recoded::FloatRect rectangle;
+        rectangle.position.first = 0;
+        rectangle.position.second = 0;
+        rectangle.size.first = 20;
+        rectangle.size.second = 20;
+        std::shared_ptr<GUI::ECS::Components::ShapeComponent> buttonShape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId, rectangle, GUI::ECS::Systems::Colour::White);
+        buttonShape->setVisible(true);
+        _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(buttonShape);
+        _baseId += 1;
+        std::shared_ptr<GUI::ECS::Components::ButtonComponent> home = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *buttonShape, *buttonText);
+        home->setApplication(_mainMenuKey);
+        home->setCallback(std::bind(&Main::_mainMenuScreen, this), "_mainMenuScreen");
+        _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(home);
+        _baseId += 1;
+    }
+
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+
+    title->setPosition({ posx, posy });
+    body->setPosition({ posx, posy + 20 });
+    home->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*title);
+    win.value()->draw(*body);
+    win.value()->draw(*home);
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
+}
+
 void Main::_gameOverScreen()
 {
 
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+
+    const std::string titleKey = "GameOverScreenTitle";
+    const std::string bodyKey = "GameOverScreenBody";
+    const std::string backgroundKey = "gameOver";
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> home;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+
+
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                title = textCapsule.value();
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                body = textCapsule.value();
+            } else {
+                continue;
+            }
+        }
+    }
+
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule) {
+            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
+                homeButtonFound = true;
+                home = buttonCapsule.value();
+            }
+        }
+    }
+
+    if (!titleTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
+        title->setApplication(titleKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
+        _baseId += 1;
+    }
+
+    if (!bodyTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
+        body->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
+        _baseId += 1;
+    }
+
+    if (!homeButtonFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], false);
+        if (!defaultFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> buttonText = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(defaultFont.value()), "It seems like you have landed on an unknown page.");
+        buttonText->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(buttonText);
+        _baseId += 1;
+        Recoded::FloatRect rectangle;
+        rectangle.position.first = 0;
+        rectangle.position.second = 0;
+        rectangle.size.first = 20;
+        rectangle.size.second = 20;
+        std::shared_ptr<GUI::ECS::Components::ShapeComponent> buttonShape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId, rectangle, GUI::ECS::Systems::Colour::White);
+        buttonShape->setVisible(true);
+        _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(buttonShape);
+        _baseId += 1;
+        std::shared_ptr<GUI::ECS::Components::ButtonComponent> home = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *buttonShape, *buttonText);
+        home->setApplication(_mainMenuKey);
+        home->setCallback(std::bind(&Main::_mainMenuScreen, this), "_mainMenuScreen");
+        _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(home);
+        _baseId += 1;
+    }
+
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+
+    title->setPosition({ posx, posy });
+    body->setPosition({ posx, posy + 20 });
+    home->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*title);
+    win.value()->draw(*body);
+    win.value()->draw(*home);
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
 void Main::_mainMenuScreen()
@@ -1074,6 +1351,11 @@ void Main::_mainMenuScreen()
     PRETTY_DEBUG << "Drawing the elements required for the main menu to be displayed." << std::endl;
     win.value()->draw(*background);
     win.value()->draw(*icon);
+}
+
+void Main::_bossFightScreen()
+{
+
 }
 
 void Main::_connectionFailedScreen()
@@ -1529,8 +1811,27 @@ void Main::_mainLoop()
             _testContent();
         }
         PRETTY_INFO << "Mouse position: " << Recoded::myToString(event->getMousePosition()) << std::endl;
-        if (_activeScreen == ActiveScreen::MENU)
-            window->display();
+        if (_activeScreen == ActiveScreen::MENU) {
+            _mainMenuScreen();
+        } else if (_activeScreen == ActiveScreen::GAME) {
+            _gameScreen();
+        } else if (_activeScreen == ActiveScreen::SETTINGS) {
+            _settingsMenu();
+        } else if (_activeScreen == ActiveScreen::GAME_OVER) {
+            _gameOverScreen();
+        } else if (_activeScreen == ActiveScreen::BOSS_FIGHT) {
+            _bossFightScreen();
+        } else if (_activeScreen == ActiveScreen::CONNECTION_FAILED) {
+            _connectionFailedScreen();
+        } else if (_activeScreen == ActiveScreen::DEMO) {
+            _demoScreen();
+        } else if (_activeScreen == ActiveScreen::LOADING) {
+            _updateLoadingText("Apparently we are loading something...");
+        } else {
+            _unknownScreen();
+            PRETTY_ERROR << "Unknown active screen: " << _activeScreen << std::endl;
+        }
+        window->display();
         window->clear(GUI::ECS::Systems::Colour::Black);
     }
 }
@@ -2056,38 +2357,7 @@ const ActiveScreen Main::getActiveScreen() const
  */
 const std::string Main::getActiveScreenAsString() const
 {
-    switch (_activeScreen) {
-        case ActiveScreen::LOADING:
-            return "LOADING";
-            break;
-        case ActiveScreen::MENU:
-            return "MENU";
-            break;
-        case ActiveScreen::GAME:
-            return "GAME";
-            break;
-        case ActiveScreen::DEMO:
-            return "DEMO";
-            break;
-        case ActiveScreen::SETTINGS:
-            return "SETTINGS";
-            break;
-        case ActiveScreen::GAME_OVER:
-            return "GAME OVER";
-            break;
-        case ActiveScreen::BOSS_FIGHT:
-            return "BOSS FIGHT";
-            break;
-        case ActiveScreen::CONNECTION_FAILED:
-            return "CONNECTION FAILED";
-            break;
-        case ActiveScreen::CONNECTION_ADDRESS:
-            return "CONNECTION ADDRESS";
-            break;
-        default:
-            return "UNKNOWN";
-            break;
-    }
+    return Recoded::myToString(_activeScreen);
 }
 
 /**
