@@ -24,6 +24,7 @@
 #include <typeindex>
 #include <exception>
 #include <stdexcept>
+#include <functional>
 #include <unordered_map>
 #include <toml++/toml.hpp>
 
@@ -32,6 +33,7 @@
 #include "Utilities.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
+#include "ActiveScreen.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -40,22 +42,11 @@
 #include "GUI/ECS/Systems/Window.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
 
-enum class ActiveScreen {
-  LOADING,
-  MENU,
-  GAME,
-  DEMO,
-  SETTINGS,
-  GAME_OVER,
-  BOSS_FIGHT,
-  CONNECTION_FAILED,
-  CONNECTION_ADDRESS,
-};
 
-/**
- * @brief The Main class is the main class of the program.
- *
- */
+ /**
+  * @brief The Main class is the main class of the program.
+  *
+  */
 class Main {
   public:
   /**
@@ -212,16 +203,34 @@ class Main {
   void _processIncommingPackets();
 
 
+  const unsigned int _getScreenCenterX();
+  const unsigned int _getScreenCenterY();
+
   // Screens for the gui
-  void _gameScreen();
-  void _demoScreen();
-  void _settingsMenu();
-  void _gameOverScreen();
-  void _mainMenuScreen();
-  void _connectionFailedScreen();
-  void _connectionAddressScreen();
+  void _gameScreen();                //GAME
+  void _demoScreen();                //DEMO
+  void _settingsMenu();              //SETTINGS
+  void _unknownScreen();             //when the enum does not cover it
+  void _gameOverScreen();            //GAME_OVER
+  void _mainMenuScreen();            //MENU
+  void _bossFightScreen();           //BOSS_FIGHT
+  void _connectionFailedScreen();    //CONNECTION_FAILED
+  void _connectionAddressScreen();   //CONNECTION_ADDRESS
 
   // Function related to managing sub components in the windows
+
+  // Action functions (functions used in button components)
+  void _goPlay();              // Game screen
+  void _goDemo();              // Demo screen
+  void _goHome();              // Main menu screen
+  void _goExit();              // Exit program
+  void _goSettings();          // Settings screen
+  void _goGameOver();          // Game over screen
+  void _goBossFight();         // Boss fight screen
+  void _goUnknown();           // When the screen is unknown
+  void _goConnectionFailed();  // Connection failed screen
+  void _goConnectionAddress(); // Connection changer screen
+
 
   // Musics
 
@@ -253,7 +262,11 @@ class Main {
 
 
   // Private members
+
+  // ecs entity holder
   std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
+
+  // settings information
   std::string _ip;
   unsigned int _port;
   unsigned int _windowWidth;
@@ -272,15 +285,31 @@ class Main {
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
+
+  // Entity id tracking
   std::uint32_t _baseId = 0;
+
+  // Configuration file information
   std::string _configFilePath = "client_config.toml";
+  TOMLLoader _tomlContent;
+
+  // ecs important indexes
   unsigned int _iconIndex = 0;
   unsigned int _loadingIndex = 0;
   unsigned int _mainEventIndex = 0;
   unsigned int _mainWindowIndex = 0;
+  unsigned int _titleFontIndex = 0;
+  unsigned int _bodyFontIndex = 0;
   unsigned int _defaultFontIndex = 0;
-  TOMLLoader _tomlContent;
+  unsigned int _buttonFontIndex = 0;
+
+  // ecs important key
+  std::string _mainMenuKey = "mainMenuButton";
+
+  // Current screen in focus
   ActiveScreen _activeScreen = ActiveScreen::LOADING;
+
+  // Music tracking variables
   bool _gameMusicStarted = false;
   bool _mainMenuMusicStarted = false;
   bool _bossFightMusicStarted = false;
