@@ -295,8 +295,9 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent
         const std::optional<GUI::ECS::Components::ShapeComponent> shape = Utilities::unCast<GUI::ECS::Components::ShapeComponent, CustomExceptions::NoRenderableShape>(shapeCapsule, false, "<There is no ShapeComponent to render>");
         if (!shape.has_value()) {
             PRETTY_WARNING << "There is no shape to render for the button, skipping shape rendering." << std::endl;
+        } else {
+            draw(shape.value());
         }
-        draw(shape.value());
     }
 
     const std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
@@ -304,8 +305,9 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent
         const std::optional<GUI::ECS::Components::TextComponent> text = Utilities::unCast<GUI::ECS::Components::TextComponent, CustomExceptions::NoRenderableShape>(textCapsule, false, "<There is no TextComponent to render>");
         if (!text.has_value()) {
             PRETTY_WARNING << "There is no text to render for the button, skipping text rendering." << std::endl;
+        } else {
+            draw(text.value());
         }
-        draw(text.value());
     }
 }
 
