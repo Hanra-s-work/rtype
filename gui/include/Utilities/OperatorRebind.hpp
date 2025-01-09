@@ -39,15 +39,16 @@ namespace Utilities
      * This function uses the custom `Recoded::myToString` function to convert the pair to a string
      * and then inserts the result into the output stream.
      *
-     * @tparam T The type of the elements in the pair.
+     * @tparam T1 The type of the first element in the pair.
+     * @tparam T2 The type of the second element in the pair.
      *
      * @param os The output stream to which the pair will be written.
      * @param item The pair of items to output.
      *
      * @return The modified output stream with the pair's string representation appended.
      */
-    template<typename T>
-    inline std::ostream &operator<<(std::ostream &os, const std::pair<T, T> &item)
+    template<typename T1, typename T2>
+    inline std::ostream &operator<<(std::ostream &os, const std::pair<T1, T2> &item)
     {
         os << Recoded::myToString(item);
         return os;
