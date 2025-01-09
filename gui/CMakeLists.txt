@@ -47,7 +47,6 @@ set(SOURCES
     src/GUI/ECS/Components/SpriteComponent.cpp
     src/GUI/ECS/Components/ButtonComponent.cpp
     src/GUI/ECS/Components/TextureComponent.cpp
-    src/GUI/ECS/Components/CollisionComponent.cpp
     src/GUI/ECS/Components/AnimationComponent.cpp
 
     # ECS Systems
@@ -57,6 +56,7 @@ set(SOURCES
     src/GUI/ECS/Systems/Colour.cpp
     src/GUI/ECS/Systems/Window.cpp
     src/GUI/ECS/Systems/MouseInfo.cpp
+    src/GUI/ECS/Systems/Collision.cpp
     src/GUI/ECS/Systems/EventManager.cpp
 
     # General Utilities files

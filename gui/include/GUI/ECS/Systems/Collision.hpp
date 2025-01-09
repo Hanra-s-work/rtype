@@ -28,17 +28,17 @@ namespace GUI
 {
     namespace ECS
     {
-        namespace Components
+        namespace Systems
         {
             /**
-             * @class CollisionComponent
+             * @class Collision
              * @brief Represents a rectangular component that can detect collisions and
              *        mouse interactions, such as hovering and clicking.
              */
-            class CollisionComponent : public EntityNode {
+            class Collision : public EntityNode {
                 public:
-                CollisionComponent(const std::uint32_t entityId = 0, const float width = 0, const float height = 0, const float positionX = 0, const float positionY = 0);
-                ~CollisionComponent();
+                Collision(const std::uint32_t entityId = 0, const float width = 0, const float height = 0, const float positionX = 0, const float positionY = 0);
+                ~Collision();
 
                 void setWidth(const float &width);
                 void setHeight(const float &height);
@@ -54,13 +54,13 @@ namespace GUI
 
                 void update(const std::pair<int, int> &mousePosition);
                 void update(const GUI::ECS::Systems::MouseInfo &mouse);
-                void update(const GUI::ECS::Components::CollisionComponent &copy);
+                void update(const GUI::ECS::Systems::Collision &copy);
 
                 void updateMouseInfo(const GUI::ECS::Systems::MouseInfo &mouse);
 
                 const bool isClicked() const;
                 const bool isHovered() const;
-                const bool isColliding(const CollisionComponent &itemTwo) const;
+                const bool isColliding(const Collision &itemTwo) const;
 
                 const float getWidth() const;
                 const float getHeight() const;
@@ -85,7 +85,7 @@ namespace GUI
                  */
                 const std::string getInfo(const unsigned int indent = 0) const;
 
-                CollisionComponent &operator =(const GUI::ECS::Components::CollisionComponent &copy);
+                Collision &operator =(const GUI::ECS::Systems::Collision &copy);
 
                 protected:
                 void _updateMouseCollisionData();
@@ -104,7 +104,7 @@ namespace GUI
              * @param item The collision component to output.
              * @return The modified output stream.
              */
-            std::ostream &operator<<(std::ostream &os, const CollisionComponent &item);
+            std::ostream &operator<<(std::ostream &os, const Collision &item);
 
             /**
              * @brief Compares two colors for equality.
@@ -112,7 +112,7 @@ namespace GUI
              * @param right The second collision component.
              * @return `true` if the colors are equal; otherwise, `false`.
              */
-            [[nodiscard]] const bool operator==(CollisionComponent left, CollisionComponent right);
+            [[nodiscard]] const bool operator==(Collision left, Collision right);
 
             /**
              * @brief Compares two colors for inequality.
@@ -120,7 +120,7 @@ namespace GUI
              * @param right The second collision component.
              * @return `true` if the colors are not equal; otherwise, `false`.
              */
-            [[nodiscard]] const bool operator!=(CollisionComponent left, CollisionComponent right);
+            [[nodiscard]] const bool operator!=(Collision left, Collision right);
 
             /**
              * @brief Adds two colors component-wise.
@@ -128,7 +128,7 @@ namespace GUI
              * @param right The second collision component.
              * @return The resulting collision component.
              */
-            [[nodiscard]] const CollisionComponent operator+(CollisionComponent left, CollisionComponent right);
+            [[nodiscard]] const Collision operator+(Collision left, Collision right);
 
             /**
              * @brief Subtracts two colors component-wise.
@@ -136,7 +136,7 @@ namespace GUI
              * @param right The second collision component.
              * @return The resulting collision component.
              */
-            [[nodiscard]] const CollisionComponent operator-(CollisionComponent left, CollisionComponent right);
+            [[nodiscard]] const Collision operator-(Collision left, Collision right);
 
             /**
              * @brief Multiplies two colors component-wise.
@@ -144,7 +144,7 @@ namespace GUI
              * @param right The second collision component.
              * @return The resulting collision component.
              */
-            [[nodiscard]] const CollisionComponent operator*(CollisionComponent left, CollisionComponent right);
+            [[nodiscard]] const Collision operator*(Collision left, Collision right);
 
             /**
              * @brief Adds another collision component to the current collision component component-wise.
@@ -152,7 +152,7 @@ namespace GUI
              * @param right The collision component to add.
              * @return Reference to the modified collision component.
              */
-            const CollisionComponent &operator+=(CollisionComponent &left, CollisionComponent right);
+            const Collision &operator+=(Collision &left, Collision right);
 
             /**
              * @brief Subtracts another collision component from the current collision component component-wise.
@@ -160,7 +160,7 @@ namespace GUI
              * @param right The collision component to subtract.
              * @return Reference to the modified collision component.
              */
-            const CollisionComponent &operator-=(CollisionComponent &left, CollisionComponent right);
+            const Collision &operator-=(Collision &left, Collision right);
 
             /**
              * @brief Multiplies another collision component with the current collision component component-wise.
@@ -168,7 +168,7 @@ namespace GUI
              * @param right The collision component to multiply.
              * @return Reference to the modified collision component.
              */
-            const CollisionComponent &operator*=(CollisionComponent &left, CollisionComponent right);
+            const Collision &operator*=(Collision &left, Collision right);
 
         }
     }
