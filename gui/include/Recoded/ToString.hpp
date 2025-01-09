@@ -24,7 +24,6 @@
 #include <unordered_map>
 
 #include "ActiveScreen.hpp"
-#include "Recoded/Rect.hpp"
 #include "GUI/ECS/GameComponents/Package.hpp"
 #include "GUI/ECS/GameComponents/ECSPackage.hpp"
 #include "GUI/ECS/GameComponents/EntityType.hpp"
@@ -33,6 +32,7 @@
 
 namespace Recoded
 {
+
     /**
      * @brief Converts a boolean value to its string representation.
      *
@@ -81,7 +81,8 @@ namespace Recoded
      * std::cout << myToString(p); // Output: ( x: 1, y: 2 )
      * ```
      *
-     * @tparam T The type of the elements in the pair. Both elements must be of the same type.
+     * @tparam T1 The type of the first element in the pair.
+     * @tparam T2 The type of the second element in the pair.
      *
      * @param value The pair to convert.
      *
@@ -89,46 +90,12 @@ namespace Recoded
      *
      * @note Uses `Recoded::myToString` to convert elements to strings.
      */
-    template <typename T>
-    const std::string myToString(const std::pair<T, T> &value)
+    template <typename T1, typename T2>
+    const std::string myToString(const std::pair<T1, T2> &value)
     {
         return "( x: " + myToString(value.first) + ", y: " + myToString(value.second) + ")";
     };
 
-    /**
-     * @brief Converts a `Rect<T>` object to its string representation.
-     *
-     * This function formats a `Rect<T>` as
-     * `( x: <x>, y: <y>, width: <width>, height: <height> )`,
-     * where `<x>`, `<y>`, `<width>`, and `<height>` are the string representations
-     * of the rectangle's properties. The string representations of the properties
-     * are generated using `myToString`.
-     *
-     * Example:
-     * ```
-     * Rect<int> rect = {{10, 20}, {100, 50}};
-     * std::cout << myToString(rect);
-     * // Output: ( x: 10, y: 20, width: 100, height: 50 )
-     * ```
-     *
-     * @tparam T The type of the rectangle's properties (e.g., `int`, `float`).
-     *
-     * @param rectangle The `Rect<T>` object to convert to a string.
-     *
-     * @return A string representation of the rectangle in the format
-     *         `( x: <x>, y: <y>, width: <width>, height: <height> )`.
-     *
-     * @note Uses `Recoded::myToString` to convert elements to strings.
-     */
-    template <typename T>
-    const std::string myToString(const Rect<T> &rectangle)
-    {
-        std::string result = "( x: " + myToString(rectangle.position.first);
-        result += ", y: " + myToString(rectangle.position.second);
-        result += ", width: " + myToString(rectangle.size.first);
-        result += ", height: " + myToString(rectangle.size.second) + ")";
-        return result;
-    }
 
     /**
      * @brief Converts a std::map to a string representation.

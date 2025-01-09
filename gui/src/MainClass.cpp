@@ -823,6 +823,8 @@ void Main::_initialiseRessources()
     PRETTY_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
     std::shared_ptr<GUI::ECS::Systems::Window> window = std::make_shared<GUI::ECS::Systems::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
+    PRETTY_DEBUG << "Setting the window position to : " << std::pair<int, int>({ _windowX, _windowY }) << std::endl;
+    window->setPosition({ _windowX, _windowY });
     _baseId++;
     std::shared_ptr<GUI::ECS::Systems::EventManager> event = std::make_shared<GUI::ECS::Systems::EventManager>(_baseId);
     _baseId++;
@@ -1315,6 +1317,7 @@ void Main::_mainMenuScreen()
             nodeCapsule.value()->getName() == "Main Menu" ||
             nodeCapsule.value()->getApplication() == "Main Menu"
             ) {
+            PRETTY_INFO << "Background found, assinning to variable" << std::endl;
             background = nodeCapsule.value();
         } else if (
             nodeCapsule.value()->getName() == "icon" ||
@@ -1324,6 +1327,7 @@ void Main::_mainMenuScreen()
             nodeCapsule.value()->getName() == "R-type" ||
             nodeCapsule.value()->getApplication() == "R-type"
             ) {
+            PRETTY_INFO << "Icon found, assinning to variable" << std::endl;
             icon = nodeCapsule.value();
         }
     }
@@ -1757,6 +1761,11 @@ void Main::_testContent()
  */
 void Main::_mainLoop()
 {
+    // Create the clock component for the ecs function.
+    std::int64_t elapsedTime = 0;
+    std::shared_ptr<GUI::ECS::Systems::Clock> ECSClock = std::make_shared<GUI::ECS::Systems::Clock>(_baseId);
+    _ecsEntities[typeid(GUI::ECS::Systems::Clock)].push_back(ECSClock);
+
     // Get the window and event
     const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> window_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][0], false);
     const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
@@ -1802,12 +1811,23 @@ void Main::_mainLoop()
 
     setActiveScreen(ActiveScreen::MENU);
 
+    PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
+        PRETTY_DEBUG << "The active screen is: '" << _activeScreen << "'" << std::endl;
+        elapsedTime = ECSClock->reset();
+        PRETTY_DEBUG << "Since the last clock reset, the time that has elapsed is: '" << elapsedTime << "'" << std::endl;
+        PRETTY_INFO << "Sending all the packets" << std::endl;
         _sendAllPackets();
+        PRETTY_INFO << "All the packets have been sent" << std::endl;
+        PRETTY_INFO << "Processing incoming packets" << std::endl;
         _processIncommingPackets();
+        PRETTY_SUCCESS << "Processed incoming packets" << std::endl;
         event->processEvents(*window);
+        PRETTY_SUCCESS << "Processed window events (user input basically)" << std::endl;
         _updateMouseForAllRendererables(event->getMouseInfo());
-        if (event->isKeyPressed(GUI::ECS::Systems::Key::CapsLock)) {
+        PRETTY_SUCCESS << "Updated mouse position for all rendererables" << std::endl;
+        if (event->isKeyPressed(GUI::ECS::Systems::Key::End)) {
+            PRETTY_INFO << "Caps lock is pressed, switching to debug mode" << std::endl;
             _testContent();
         }
         PRETTY_INFO << "Mouse position: " << Recoded::myToString(event->getMousePosition()) << std::endl;

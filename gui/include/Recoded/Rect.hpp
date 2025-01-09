@@ -98,6 +98,9 @@ namespace Recoded
         std::pair<T, T> size{};     //!< The size of the rectangle (width, height)
     };
 
+    template <typename T>
+    inline std::ostream &operator<<(std::ostream &os, const Rect<T> &rectangle);
+
     /**
      * @brief Overload that allows the user to check if 2 rect instances are identical
      *
@@ -173,4 +176,39 @@ namespace Recoded
      *
      */
     typedef Rect<double> DoubleRect;
+
+    /**
+     * @brief Converts a `Rect<T>` object to its string representation.
+     *
+     * This function formats a `Rect<T>` as
+     * `( x: <x>, y: <y>, width: <width>, height: <height> )`,
+     * where `<x>`, `<y>`, `<width>`, and `<height>` are the string representations
+     * of the rectangle's properties. The string representations of the properties
+     * are generated using `myToString`.
+     *
+     * Example:
+     * ```
+     * Rect<int> rect = {{10, 20}, {100, 50}};
+     * std::cout << myToString(rect);
+     * // Output: ( x: 10, y: 20, width: 100, height: 50 )
+     * ```
+     *
+     * @tparam RectType The type of the rectangle's properties (e.g., `int`, `float`).
+     *
+     * @param rectangle The `Rect<T>` object to convert to a string.
+     *
+     * @return A string representation of the rectangle in the format
+     *         `( x: <x>, y: <y>, width: <width>, height: <height> )`.
+     *
+     * @note Uses `Recoded::myToString` to convert elements to strings.
+     */
+    template <typename RectType>
+    const std::string myToString(const Rect<RectType> &rectangle)
+    {
+        std::string result = "( x: " + myToString(rectangle.position.first);
+        result += ", y: " + myToString(rectangle.position.second);
+        result += ", width: " + myToString(rectangle.size.first);
+        result += ", height: " + myToString(rectangle.size.second) + ")";
+        return result;
+    };
 }

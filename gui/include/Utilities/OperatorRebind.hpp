@@ -6,13 +6,19 @@
 */
 
 #pragma once
-#include <utility>
 #include <map>
 #include <set>
 #include <vector>
+#include <utility>
+#include <ostream>
 #include <unordered_set>
 #include <unordered_map>
 #include "Recoded/ToString.hpp"
+#include "GUI/ECS/GameComponents/Package.hpp"
+#include "GUI/ECS/GameComponents/ECSPackage.hpp"
+#include "GUI/ECS/GameComponents/EntityType.hpp"
+#include "GUI/ECS/GameComponents/EntityActions.hpp"
+#include "GUI/ECS/GameComponents/EntityActionType.hpp"
 
 namespace Utilities
 {

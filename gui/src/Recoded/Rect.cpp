@@ -66,6 +66,16 @@ std::pair<T, T> Recoded::Rect<T>::getCenter() const
 }
 
 template <typename T>
+std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<T> &rectangle)
+{
+    os << "( x: " << myToString(rectangle.position.first)
+        << ", y: " << myToString(rectangle.position.second)
+        << ", width: " << myToString(rectangle.size.first)
+        << ", height: " << myToString(rectangle.size.second) + ")";
+    return os;
+}
+
+template <typename T>
 constexpr bool Recoded::operator==(const Recoded::Rect<T> &lhs, const Recoded::Rect<T> &rhs)
 {
     return lhs.position == rhs.position && lhs.size == rhs.size;

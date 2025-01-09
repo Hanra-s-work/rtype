@@ -128,3 +128,4 @@ const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityActi
             break;
     }
 }
+
