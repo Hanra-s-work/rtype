@@ -66,16 +66,6 @@ std::pair<T, T> Recoded::Rect<T>::getCenter() const
 }
 
 template <typename T>
-std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<T> &rectangle)
-{
-    os << "( x: " << myToString(rectangle.position.first)
-        << ", y: " << myToString(rectangle.position.second)
-        << ", width: " << myToString(rectangle.size.first)
-        << ", height: " << myToString(rectangle.size.second) + ")";
-    return os;
-}
-
-template <typename T>
 constexpr bool Recoded::operator==(const Recoded::Rect<T> &lhs, const Recoded::Rect<T> &rhs)
 {
     return lhs.position == rhs.position && lhs.size == rhs.size;
@@ -90,31 +80,39 @@ constexpr bool Recoded::operator!=(const Recoded::Rect<T> &lhs, const Recoded::R
 template class Recoded::Rect<int>;
 template bool Recoded::operator==(const Recoded::Rect<int> &lhs, const Recoded::Rect<int> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<int> &lhs, const Recoded::Rect<int> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<int> &rhs);
 
 template class Recoded::Rect<long int>;
 template bool Recoded::operator==(const Recoded::Rect<long int> &lhs, const Recoded::Rect<long int> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<long int> &lhs, const Recoded::Rect<long int> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<long int> &rhs);
 
 template class Recoded::Rect<long long int>;
 template bool Recoded::operator==(const Recoded::Rect<long long int> &lhs, const Recoded::Rect<long long int> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<long long int> &lhs, const Recoded::Rect<long long int> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<long long int> &rhs);
 
 template class Recoded::Rect<unsigned int>;
 template bool Recoded::operator==(const Recoded::Rect<unsigned int> &lhs, const Recoded::Rect<unsigned int> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<unsigned int> &lhs, const Recoded::Rect<unsigned int> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<unsigned int> &rhs);
 
 template class Recoded::Rect<unsigned long int>;
 template bool Recoded::operator==(const Recoded::Rect<unsigned long int> &lhs, const Recoded::Rect<unsigned long int> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<unsigned long int> &lhs, const Recoded::Rect<unsigned long int> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<unsigned long int> &rhs);
 
 template class Recoded::Rect<unsigned long long int>;
 template bool Recoded::operator==(const Recoded::Rect<unsigned long long int> &lhs, const Recoded::Rect<unsigned long long int> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<unsigned long long int> &lhs, const Recoded::Rect<unsigned long long int> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<unsigned long long int> &rhs);
 
 template class Recoded::Rect<float>;
 template bool Recoded::operator==(const Recoded::Rect<float> &lhs, const Recoded::Rect<float> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<float> &lhs, const Recoded::Rect<float> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<float> &rhs);
 
 template class Recoded::Rect<double>;
 template bool Recoded::operator==(const Recoded::Rect<double> &lhs, const Recoded::Rect<double> &rhs);
 template bool Recoded::operator!=(const Recoded::Rect<double> &lhs, const Recoded::Rect<double> &rhs);
+template std::ostream &Recoded::operator<<(std::ostream &os, const Recoded::Rect<double> &rhs);

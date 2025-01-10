@@ -98,8 +98,25 @@ namespace Recoded
         std::pair<T, T> size{};     //!< The size of the rectangle (width, height)
     };
 
+    /**
+     * @brief Operator in charge of outputing the values contained in the _rect when it is passed through a << operator.
+     *
+     * @tparam T A template to accept any form of rectangle
+     *
+     * @param os The output stream
+     * @param rectangle The rectangle instance
+     *
+     * @return std::ostream& An instance of output stream with the content of the rectangle appended to it.
+     */
     template <typename T>
-    inline std::ostream &operator<<(std::ostream &os, const Rect<T> &rectangle);
+    inline std::ostream &operator<<(std::ostream &os, const Rect<T> &rectangle)
+    {
+        os << "( x: " << myToString(rectangle.position.first)
+            << ", y: " << myToString(rectangle.position.second)
+            << ", width: " << myToString(rectangle.size.first)
+            << ", height: " << myToString(rectangle.size.second) + ")";
+        return os;
+    };
 
     /**
      * @brief Overload that allows the user to check if 2 rect instances are identical
