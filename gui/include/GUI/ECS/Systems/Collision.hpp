@@ -20,6 +20,7 @@
 #include "Log.hpp"
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
+#include "Recoded/Rect.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/MouseInfo.hpp"
@@ -46,9 +47,11 @@ namespace GUI
                 void setPositionX(const float &posX);
                 void setPositionY(const float &posY);
 
-                void setPosition(const std::pair<int, int> &position);
+                void setPosition(const std::pair<float, float> &position);
 
                 void setDimension(const std::pair<float, float> &dimension);
+
+                void setGeometry(const Recoded::FloatRect &rect);
 
                 void setMousePosition(const std::pair<int, int> &position);
 
@@ -91,10 +94,7 @@ namespace GUI
                 void _updateMouseCollisionData();
                 bool _isHovered = false;
                 bool _isClicked = false;
-                float _posX = 0;
-                float _posY = 0;
-                float _width = 0;
-                float _height = 0;
+                Recoded::FloatRect _rect = { {0,0}, {0,0} };
                 GUI::ECS::Systems::MouseInfo _mouse;
             };
 

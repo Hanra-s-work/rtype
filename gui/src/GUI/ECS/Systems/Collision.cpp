@@ -22,7 +22,7 @@
   * @param positionY Y-coordinate of the component's position.
   */
 GUI::ECS::Systems::Collision::Collision(const std::uint32_t entityId, const float width, const float height, const float positionX, const float positionY)
-    : EntityNode(entityId), _width(width), _height(height), _posX(positionX), _posY(positionY)
+    : EntityNode(entityId), _rect({ {width, height}, {positionX, positionY} })
 {
     _updateMouseCollisionData();
 }
@@ -39,7 +39,7 @@ GUI::ECS::Systems::Collision::~Collision() {}
  */
 void GUI::ECS::Systems::Collision::setWidth(const float &width)
 {
-    _width = width;
+    _rect.size.first = width;
     _updateMouseCollisionData();
 }
 
@@ -50,7 +50,7 @@ void GUI::ECS::Systems::Collision::setWidth(const float &width)
  */
 void GUI::ECS::Systems::Collision::setHeight(const float &height)
 {
-    _height = height;
+    _rect.size.second = height;
     _updateMouseCollisionData();
 }
 
@@ -61,7 +61,7 @@ void GUI::ECS::Systems::Collision::setHeight(const float &height)
  */
 void GUI::ECS::Systems::Collision::setPositionX(const float &posX)
 {
-    _posX = posX;
+    _rect.position.first = posX;
     _updateMouseCollisionData();
 }
 
@@ -72,19 +72,18 @@ void GUI::ECS::Systems::Collision::setPositionX(const float &posX)
  */
 void GUI::ECS::Systems::Collision::setPositionY(const float &posY)
 {
-    _posY = posY;
+    _rect.position.second = posY;
     _updateMouseCollisionData();
 }
 
 /**
  * @brief Set the position of the object.
  *
- * @param position an std::pair<int, int> of the object's position.
+ * @param position an std::pair<float, float> of the object's position.
  */
-void GUI::ECS::Systems::Collision::setPosition(const std::pair<int, int> &position)
+void GUI::ECS::Systems::Collision::setPosition(const std::pair<float, float> &position)
 {
-    _posX = position.first;
-    _posY = position.second;
+    _rect.position = position;
     _updateMouseCollisionData();
 }
 
@@ -95,11 +94,20 @@ void GUI::ECS::Systems::Collision::setPosition(const std::pair<int, int> &positi
  */
 void GUI::ECS::Systems::Collision::setDimension(const std::pair<float, float> &dimension)
 {
-    _width = dimension.first;
-    _height = dimension.second;
+    _rect.size = dimension;
     _updateMouseCollisionData();
 }
 
+/**
+ * @brief Set the dimensions of the object using the FloatRect recode.
+ *
+ * @param rect a Recoded::FloatRect rectangle instance of the object's dimension and position.
+ */
+void GUI::ECS::Systems::Collision::setGeometry(const Recoded::FloatRect &rect)
+{
+    _rect = rect;
+    _updateMouseCollisionData();
+}
 
 /**
  * @brief Updates the mouse position for collision checks.
@@ -132,10 +140,7 @@ void GUI::ECS::Systems::Collision::update(const GUI::ECS::Systems::Collision &co
 {
     _isHovered = copy.isHovered();
     _isClicked = copy.isClicked();
-    _posX = copy.getPositionX();
-    _posY = copy.getPositionY();
-    _width = copy.getWidth();
-    _height = copy.getHeight();
+    setGeometry(copy.getGeometry());
     _mouse.update(copy.getMouseInfo());
 }
 
@@ -189,7 +194,7 @@ const bool GUI::ECS::Systems::Collision::isHovered() const
  */
 const float GUI::ECS::Systems::Collision::getWidth() const
 {
-    return _width;
+    return _rect.size.first;
 }
 
 /**
@@ -199,7 +204,7 @@ const float GUI::ECS::Systems::Collision::getWidth() const
  */
 const float GUI::ECS::Systems::Collision::getHeight() const
 {
-    return _height;
+    return _rect.size.second;
 }
 
 /**
@@ -209,7 +214,7 @@ const float GUI::ECS::Systems::Collision::getHeight() const
  */
 const float GUI::ECS::Systems::Collision::getPositionX() const
 {
-    return _posX;
+    return _rect.position.first;
 }
 
 /**
@@ -219,7 +224,7 @@ const float GUI::ECS::Systems::Collision::getPositionX() const
  */
 const float GUI::ECS::Systems::Collision::getPositionY() const
 {
-    return _posY;
+    return _rect.position.second;
 }
 
 /**
@@ -229,8 +234,7 @@ const float GUI::ECS::Systems::Collision::getPositionY() const
  */
 const Recoded::FloatRect GUI::ECS::Systems::Collision::getGeometry() const
 {
-    Recoded::FloatRect data({ 0, 0 }, { 0, 0 });
-    return data;
+    return _rect;
 }
 
 /**
@@ -240,10 +244,7 @@ const Recoded::FloatRect GUI::ECS::Systems::Collision::getGeometry() const
  */
 const std::pair<float, float> GUI::ECS::Systems::Collision::getPosition() const
 {
-    std::pair<float, float> position;
-    position.first = _posX;
-    position.second = _posY;
-    return position;
+    return _rect.position;
 }
 
 /**
@@ -253,10 +254,7 @@ const std::pair<float, float> GUI::ECS::Systems::Collision::getPosition() const
  */
 const std::pair<float, float> GUI::ECS::Systems::Collision::getDimension() const
 {
-    std::pair<float, float> dimension;
-    dimension.first = _width;
-    dimension.second = _height;
-    return dimension;
+    return _rect.size;
 }
 
 /**
@@ -278,10 +276,10 @@ const GUI::ECS::Systems::MouseInfo GUI::ECS::Systems::Collision::getMouseInfo() 
 const bool GUI::ECS::Systems::Collision::isColliding(const Collision &itemTwo) const
 {
     PRETTY_INFO << "Collision: Checking if 2 shapes are colliding" << std::endl;
-    const bool rightEdge = _posX + _width <= itemTwo._posX;
-    const bool leftEdge = _posX >= itemTwo._posX + itemTwo._width;
-    const bool bottomEdge = _posY + _height <= itemTwo._posY;
-    const bool topEdge = _posY >= itemTwo._posY + itemTwo._height;
+    const bool rightEdge = _rect.position.first + _rect.size.first <= itemTwo._rect.position.first;
+    const bool leftEdge = _rect.position.first >= itemTwo._rect.position.first + itemTwo._rect.size.first;
+    const bool bottomEdge = _rect.position.second + _rect.size.second <= itemTwo._rect.position.second;
+    const bool topEdge = _rect.position.second >= itemTwo._rect.position.second + itemTwo._rect.size.second;
     const bool noOverlap = (rightEdge || leftEdge || bottomEdge || topEdge);
     if (noOverlap) {
         return false;
@@ -300,8 +298,7 @@ const std::string GUI::ECS::Systems::Collision::getInfo(const unsigned int inden
     result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Hovered: " + Recoded::myToString(_isHovered) + "\n";
     result += indentation + "- Clicked: " + Recoded::myToString(_isClicked) + "\n";
-    result += indentation + "- Position: ( x: " + Recoded::myToString(_posX) + ", y: " + Recoded::myToString(_posY) + " )\n";
-    result += indentation + "- Dimensions: ( width: " + Recoded::myToString(_width) + ", height: " + Recoded::myToString(_height) + " )\n";
+    result += indentation + "- Float Rectangle:" + Recoded::myToString(_rect) + "\n";
     result += indentation + "- Mouse Info: {\n" + _mouse.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
@@ -338,8 +335,8 @@ void GUI::ECS::Systems::Collision::_updateMouseCollisionData()
     const bool inFocus = _mouse.isMouseInFocus();
 
     if (
-        mousePos.first >= _posX && mousePos.first <= _posX + _width
-        && mousePos.second >= _posY && mousePos.second <= _posY + _height
+        mousePos.first >= _rect.position.first && mousePos.first <= _rect.position.first + _rect.size.first
+        && mousePos.second >= _rect.position.second && mousePos.second <= _rect.position.second + _rect.size.second
         && inFocus
         ) {
         _isHovered = true;
