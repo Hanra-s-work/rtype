@@ -118,6 +118,48 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
     } else if (args[0] == "full-screen" || args[0] == "fs" || args[0] == "fullscreen") {
         PRETTY_INFO << "Full screen is activated" << std::endl;
         main.setWindowFullscreen(true);
+    } else if (args[0] == "position-x" || args[0] == "px" || args[0] == "positionx" || args[0] == "posx" || args[0] == "pos-x") {
+        unsigned int posx = 0;
+        PRETTY_INFO << "Position x is provided: '" << args[1] << "'" << std::endl;
+        if (args[1].empty()) {
+            std::cerr << "Error: position of x is required." << std::endl;
+            throw CustomExceptions::NoFlagParameter(args[0]);
+        }
+        try {
+            posx = static_cast<int>(std::stoul(args[1]));
+        }
+        catch (const std::invalid_argument &e) {
+            PRETTY_CRITICAL << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            throw CustomExceptions::InvalidWindowX(args[1]);
+        }
+        catch (const std::out_of_range &e) {
+            PRETTY_CRITICAL << "Out of range: '" << args[1] << "' is too large for an int." << std::endl;
+            std::cerr << "Out of range: '" << args[1] << "' is too large for an int." << std::endl;
+            throw CustomExceptions::InvalidWindowX(args[1]);
+        }
+        main.setWindowPositionX(posx);
+    } else if (args[0] == "position-y" || args[0] == "py" || args[0] == "positiony" || args[0] == "posy" || args[0] == "pos-y") {
+        unsigned int posy = 0;
+        PRETTY_INFO << "Position y is provided: '" << args[1] << "'" << std::endl;
+        if (args[1].empty()) {
+            std::cerr << "Error: position of x is required." << std::endl;
+            throw CustomExceptions::NoFlagParameter(args[0]);
+        }
+        try {
+            posy = static_cast<int>(std::stoul(args[1]));
+        }
+        catch (const std::invalid_argument &e) {
+            PRETTY_CRITICAL << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            std::cerr << "Invalid argument: '" << args[1] << "' is not a valid number." << std::endl;
+            throw CustomExceptions::InvalidWindowY(args[1]);
+        }
+        catch (const std::out_of_range &e) {
+            PRETTY_CRITICAL << "Out of range: '" << args[1] << "' is too large for an int." << std::endl;
+            std::cerr << "Out of range: '" << args[1] << "' is too large for an int." << std::endl;
+            throw CustomExceptions::InvalidWindowY(args[1]);
+        }
+        main.setWindowPositionY(posy);
     } else if (args[0] == "window-width" || args[0] == "ww" || args[0] == "windowwidth") {
         unsigned int windowWidth = 0;
         PRETTY_INFO << "Window width is provided: '" << args[1] << "'" << std::endl;
@@ -177,6 +219,13 @@ void process_given_argument(Main &main, const std::vector<std::string> &args, st
             throw CustomExceptions::InvalidFrameLimit(args[1]);
         }
         main.setFrameLimit(frameLimit);
+    } else if (args[0] == "window-title" || args[0] == "wt" || args[0] == "windowtitle") {
+        PRETTY_INFO << "Window title is provided: '" << args[1] << "'" << std::endl;
+        if (args[1].empty()) {
+            std::cerr << "Error: The title for the window is required." << std::endl;
+            throw CustomExceptions::NoFlagParameter(args[0]);
+        }
+        main.setWindowTitle(args[1]);
     } else if (args[0] == "config-file" || args[0] == "cf" || args[0] == "configfile") {
         PRETTY_INFO << "Config file is provided: '" << args[1] << "'" << std::endl;
         if (args[1].empty()) {
@@ -222,6 +271,7 @@ void process_arguments(Main &main, int argc, char **argv)
  *
  * @param argc The number of command-line arguments.
  * @param argv The array of command-line arguments as C-style strings.
+ *
  * @return An integer status code: SUCCESS (0) on successful execution, ERROR (non-zero) on failure.
  */
 int RealMain(int argc, char **argv)

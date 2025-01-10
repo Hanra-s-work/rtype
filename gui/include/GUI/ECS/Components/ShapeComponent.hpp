@@ -30,7 +30,8 @@
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/MouseInfo.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
+#include "GUI/ECS/Systems/ActiveShape.hpp"
 
 namespace GUI
 {
@@ -38,17 +39,6 @@ namespace GUI
     {
         namespace Components
         {
-            /**
-             * @enum ActiveShape
-             * @brief Enum representing different types of shapes managed by the ShapeComponent.
-             */
-            enum class ActiveShape {
-                NONE = -1,                                                      //!< No shape initialized
-                RECTANGLE = 0,                                                  //!< Rectangle shape
-                CIRCLE,                                                         //!< Circle shape
-                CONVEX                                                          //!< Convex shape
-            };
-
             /**
              * @class ShapeComponent
              *
@@ -217,7 +207,7 @@ namespace GUI
                  *
                  * @param type The type of the object
                  */
-                void setShape(const ActiveShape &type);
+                void setShape(const GUI::ECS::Systems::ActiveShape &type);
                 /**
                  * @brief Set the shape based on the type and an existing instance of a shape.
                  *
@@ -226,13 +216,13 @@ namespace GUI
                  *
                  * @throws CustomExceptions::InvalidShape if the provided shape was not found
                  */
-                void setShape(const ActiveShape &type, const std::any &shape);
+                void setShape(const GUI::ECS::Systems::ActiveShape &type, const std::any &shape);
                 /**
                  * @brief Set the Shape object based on a pair made of the shape type and shape instance
                  *
-                 * @param shape std::pair<ActiveShape, std::any>
+                 * @param shape std::pair<GUI::ECS::Systems::ActiveShape, std::any>
                  */
-                void setShape(const std::pair<ActiveShape, std::any> &shape);
+                void setShape(const std::pair<GUI::ECS::Systems::ActiveShape, std::any> &shape);
 
                 /**
                  * @brief Set the visible toggle informing the program if it should (or not) render the component.
@@ -258,7 +248,21 @@ namespace GUI
                  *
                  * @param collision The collision component to query the data from.
                  */
-                void setCollision(const CollisionComponent &collision);
+                void setCollision(const GUI::ECS::Systems::Collision &collision);
+
+                /**
+                 * @brief Set the Name of the component
+                 *
+                 * @param name
+                 */
+                void setName(const std::string &name);
+
+                /**
+                 * @brief Set the Application context of the component
+                 *
+                 * @param application
+                 */
+                void setApplication(const std::string &application);
 
                 /**
                  * @brief Toggles the visibility of the shape.
@@ -283,9 +287,9 @@ namespace GUI
                 /**
                  * @brief Get the Shape Type shape, none is returned if none are initialised.
                  *
-                 * @return const ActiveShape
+                 * @return const GUI::ECS::Systems::ActiveShape
                  */
-                const ActiveShape getShapeType() const;
+                const GUI::ECS::Systems::ActiveShape getShapeType() const;
                 /**
                  * @brief Get the Shape Type shape, none is returned if none are initialised.
                  *
@@ -295,9 +299,9 @@ namespace GUI
                 /**
                  * @brief Get the Active Shape and it's type all contained in an std::pair
                  *
-                 * @return const std::pair<ActiveShape, std::any>
+                 * @return const std::pair<GUI::ECS::Systems::ActiveShape, std::any>
                  */
-                const std::pair<ActiveShape, std::any> getActiveShape() const;
+                const std::pair<GUI::ECS::Systems::ActiveShape, std::any> getActiveShape() const;
 
                 /**
                  * @brief Get the Hover Color of the shape
@@ -333,17 +337,29 @@ namespace GUI
                 /**
                  * @brief Get the Shape and it's type all packaged in an std::pair
                  *
-                 * @return const std::pair<ActiveShape, std::any>
+                 * @return const std::pair<GUI::ECS::Systems::ActiveShape, std::any>
                  */
-                const std::pair<ActiveShape, std::any> getShape() const;
+                const std::pair<GUI::ECS::Systems::ActiveShape, std::any> getShape() const;
                 /**
                  * @brief Get the Collision Component of the object
                  *
-                 * @return const CollisionComponent
+                 * @return const Collision
                  *
                  * @note This is an internal function used by the update function.
                  */
-                const CollisionComponent getCollisionComponent() const;
+                const GUI::ECS::Systems::Collision getCollision() const;
+                /**
+                 * @brief Get the Name of the component
+                 *
+                 * @return const std::string
+                 */
+                const std::string getName() const;
+                /**
+                 * @brief Get the Application context of the component
+                 *
+                 * @return const std::string
+                 */
+                const std::string getApplication() const;
                 /**
                  * @brief This is a function meant for debugging purposes
                  * It will dump the current state of the variables upon call.
@@ -387,11 +403,11 @@ namespace GUI
                 /**
                  * @brief Get an optional std::pair of the object so that it can be displayed on screen
                  *
-                 * @return std::optional<std::pair<ActiveShape, std::any>>
+                 * @return std::optional<std::pair<GUI::ECS::Systems::ActiveShape, std::any>>
                  *
                  * @note This is an internal function meant to be called by the `draw` function from the `Window` component.
                  */
-                std::optional<std::pair<ActiveShape, std::any>> render() const;
+                std::optional<std::pair<GUI::ECS::Systems::ActiveShape, std::any>> render() const;
 
                 /**
                  * @brief '=' operator in charge of allowing the user to seamlessly assing the content of one ShapeComponent to another.
@@ -427,17 +443,20 @@ namespace GUI
 
                 bool _visible = true;                                           //!< A boolean operator in charge of tracking the visibility of the component
                 bool _inConstructor = true;                                     //!< A boolean operator in charge of tracking if we are or not in the constructor scope
-                ActiveShape _shape;                                             //!< An enum representing the type of the shape
+                GUI::ECS::Systems::ActiveShape _shape;                          //!< An enum representing the type of the shape
 
                 std::optional<sf::CircleShape> _sfShapeCircle;                  //!< An std::optional of the sf::CircleShape in charge of containing circle instances
                 std::optional<sf::ConvexShape> _sfShapeConvex;                  //!< An std::optional of the sf::ConvexShape in charge of containing convex shape instances
                 std::optional<sf::RectangleShape> _sfShapeRectangle;            //!< An std::optional of the sf::RectangleShape in charge of containing a rectangle instance
 
+                std::string _name = "";                                         //!< An std::string in charge of tracking the name of the component
+                std::string _application = "";                                  //!< An std::string in charge of tracking the application context of the component
+
                 GUI::ECS::Systems::Colour _hoverColor;                          //!< A Colour instance in charge of representing the colour when the component is hovered
                 GUI::ECS::Systems::Colour _normalColor;                         //!< A Colour instance in charge of representing the colour when the component is in it's default state
                 GUI::ECS::Systems::Colour _clickedColor;                        //!< A Colour instance in charge of representing the colour when the component is clicked
 
-                GUI::ECS::Components::CollisionComponent _collision;            //!< A component in charge of tracking the shapes collisions and position
+                GUI::ECS::Systems::Collision _collision;                        //!< A component in charge of tracking the shapes collisions and position
             };
 
             /**

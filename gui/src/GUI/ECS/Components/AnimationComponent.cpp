@@ -510,7 +510,7 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
     PRETTY_INFO << "Setting the _frame initial to the correct value" << std::endl;
     _frameInitial = initialFrame;
 
-    GUI::ECS::Components::CollisionComponent spritesheetSize;
+    GUI::ECS::Systems::Collision spritesheetSize;
     std::any textureCapsule = _baseTexture.getTexture();
     if (!textureCapsule.has_value()) {
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
@@ -678,7 +678,7 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
                 << ", _continueLoop(startLeft, posx, columns): " << Recoded::myToString(_continueLoop(startLeft, posx, columns))
                 << std::endl;
             PRETTY_DEBUG << "Processing frame: "
-                << Recoded::myToString<unsigned int>({ posx, posy })
+                << Recoded::myToString(std::pair<unsigned int, unsigned int>({ posx, posy }))
                 << ", index: " << Recoded::myToString(frameCounter)
                 << std::endl;
             std::pair<int, int> position = {

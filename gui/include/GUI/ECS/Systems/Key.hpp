@@ -177,6 +177,7 @@ namespace GUI
                 MediaPreviousTrack,
             };
 
+            extern const std::unordered_map<Key, std::string> keyCodeEquivalence;              //!< An unordered map to track the equivalence between the Key and the string representation
             class KeyMapper : public GUI::ECS::EntityNode {
                 public:
                 KeyMapper(const std::uint32_t EntityId = 0);
@@ -219,16 +220,27 @@ namespace GUI
                 private:
                 std::unordered_map<sf::Keyboard::Key, Key> _sfmlKeyToCustom;           //!< An unordered map to track the equivalence between the sf::Keyboard::Key and the Key
                 std::unordered_map<sf::Keyboard::Scancode, Key> _sfmlScanCodeToCustom; //!< An unordered map to track the equivalence between the sf::Keyboard::ScanCode and the Key
-                std::unordered_map<Key, std::string> _keyCodeEquivalence;              //!< An unordered map to track the equivalence between the Key and the string representation
             };
 
             /**
              * @brief Outputs the keyMapper's info to a stream.
+             *
              * @param os The output stream.
              * @param item The keyMapper to output.
+             *
              * @return The modified output stream.
              */
             std::ostream &operator<<(std::ostream &os, const KeyMapper &item);
+
+            /**
+             * @brief Outputs the keyMapper's info to a stream.
+             *
+             * @param os The output stream.
+             * @param item The Key enum to output.
+             *
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const Key &item);
 
         }
     }

@@ -184,10 +184,10 @@ void GUI::ECS::Components::ImageComponent::setImage(const std::string &path, con
     }
 };
 
-void GUI::ECS::Components::ImageComponent::setDimension(const std::pair<int, int> &dimension)
+void GUI::ECS::Components::ImageComponent::setDimension(const std::pair<float, float> &dimension)
 {
-    _collision.setDimension(dimension);
     _base.setSize(dimension);
+    _collision.setDimension(_base.getCollisionInfo().getDimension());
     _sizeAltered = true;
     if (!_inConstructor) {
         _processImageComponent();
@@ -209,6 +209,11 @@ void GUI::ECS::Components::ImageComponent::setVisible(const bool visible)
     _visible = visible;
 };
 
+void GUI::ECS::Components::ImageComponent::setLevelBackgroundCompatible(const bool levelBackground)
+{
+    _levelBackground = levelBackground;
+}
+
 void GUI::ECS::Components::ImageComponent::toggleVisibility()
 {
     if (_visible) {
@@ -221,6 +226,11 @@ void GUI::ECS::Components::ImageComponent::toggleVisibility()
 const bool GUI::ECS::Components::ImageComponent::isVisible() const
 {
     return _visible;
+}
+
+const bool GUI::ECS::Components::ImageComponent::isLevelBackgroundCompatible() const
+{
+    return _levelBackground;
 }
 
 const std::string GUI::ECS::Components::ImageComponent::getName() const
@@ -253,7 +263,7 @@ const GUI::ECS::Systems::Colour GUI::ECS::Components::ImageComponent::getClicked
     return _clickedColor;
 };
 
-const std::pair<int, int> GUI::ECS::Components::ImageComponent::getDimension() const
+const std::pair<float, float> GUI::ECS::Components::ImageComponent::getDimension() const
 {
     return _collision.getDimension();
 };
@@ -268,7 +278,7 @@ const bool GUI::ECS::Components::ImageComponent::getVisible() const
     return _visible;
 };
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::ImageComponent::getCollision() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::ImageComponent::getCollision() const
 {
     return _collision;
 }
@@ -296,6 +306,11 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
     result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
     return result;
 };
+
+const bool GUI::ECS::Components::ImageComponent::getLevelBackgroundCompatibility() const
+{
+    return isLevelBackgroundCompatible();
+}
 
 std::any GUI::ECS::Components::ImageComponent::render() const
 {
@@ -330,6 +345,8 @@ void GUI::ECS::Components::ImageComponent::update(const GUI::ECS::Components::Im
     setNormalColor(copy.getNormalColor());
     setClickedColor(copy.getClickedColor());
 
+    setLevelBackgroundCompatible(copy.getLevelBackgroundCompatibility());
+
     _inConstructor = false;
     _processImageComponent();
 };
@@ -356,6 +373,14 @@ void GUI::ECS::Components::ImageComponent::_initialiseImage()
                 throw CustomExceptions::NoTexture(errMsg);
             }
             _sfImage.emplace(*(texture.value()));
+            GUI::ECS::Systems::Collision node(_collision);
+            const sf::FloatRect bounds = _sfImage->getGlobalBounds();
+            const Recoded::FloatRect sysBounds = { {bounds.position.x, bounds.position.y}, {bounds.size.x, bounds.size.y} };
+            PRETTY_INFO << "Image dimensions = " << sysBounds << std::endl;
+            node.setGeometry(sysBounds);
+            PRETTY_INFO << "Collision node = " << node << std::endl;
+            _collision.update(node);
+            PRETTY_SUCCESS << "Collision updated" << std::endl;
         }
     }
 }

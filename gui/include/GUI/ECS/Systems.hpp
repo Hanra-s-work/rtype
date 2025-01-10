@@ -16,7 +16,9 @@
 #include "GUI/ECS/Systems/Clock.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/Window.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 #include "GUI/ECS/Systems/MouseInfo.hpp"
+#include "GUI/ECS/Systems/ActiveShape.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
 
 namespace GUI
@@ -27,13 +29,16 @@ namespace GUI
         {
             enum class Key;
             enum class MouseWheel;
-            class KeyMapper;
+            enum class ActiveShape;
+
             class Font;
             class Clock;
             class Colour;
-            class EventManager;
-            class MouseInfo;
             class Window;
+            class Collision;
+            class KeyMapper;
+            class MouseInfo;
+            class EventManager;
         }
     }
 }

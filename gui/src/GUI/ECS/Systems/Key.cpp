@@ -13,6 +13,153 @@
 
 #include "GUI/ECS/Systems/Key.hpp"
 
+const std::unordered_map<GUI::ECS::Systems::Key, std::string> GUI::ECS::Systems::keyCodeEquivalence = {
+    {GUI::ECS::Systems::Key::Unknown,  "Unknown"},
+    {GUI::ECS::Systems::Key::A,  "A"},
+    {GUI::ECS::Systems::Key::B,  "B"},
+    {GUI::ECS::Systems::Key::C,  "C"},
+    {GUI::ECS::Systems::Key::D,  "D"},
+    {GUI::ECS::Systems::Key::E,  "E"},
+    {GUI::ECS::Systems::Key::F,  "F"},
+    {GUI::ECS::Systems::Key::G,  "G"},
+    {GUI::ECS::Systems::Key::H,  "H"},
+    {GUI::ECS::Systems::Key::I,  "I"},
+    {GUI::ECS::Systems::Key::J,  "J"},
+    {GUI::ECS::Systems::Key::K,  "K"},
+    {GUI::ECS::Systems::Key::L,  "L"},
+    {GUI::ECS::Systems::Key::M,  "M"},
+    {GUI::ECS::Systems::Key::N,  "N"},
+    {GUI::ECS::Systems::Key::O,  "O"},
+    {GUI::ECS::Systems::Key::P,  "P"},
+    {GUI::ECS::Systems::Key::Q,  "Q"},
+    {GUI::ECS::Systems::Key::R,  "R"},
+    {GUI::ECS::Systems::Key::S,  "S"},
+    {GUI::ECS::Systems::Key::T,  "T"},
+    {GUI::ECS::Systems::Key::U,  "U"},
+    {GUI::ECS::Systems::Key::V,  "V"},
+    {GUI::ECS::Systems::Key::W,  "W"},
+    {GUI::ECS::Systems::Key::X,  "X"},
+    {GUI::ECS::Systems::Key::Y,  "Y"},
+    {GUI::ECS::Systems::Key::Z,  "Z"},
+    {GUI::ECS::Systems::Key::Up,  "Up"},
+    {GUI::ECS::Systems::Key::F1,  "F1"},
+    {GUI::ECS::Systems::Key::F2,  "F2"},
+    {GUI::ECS::Systems::Key::F3,  "F3"},
+    {GUI::ECS::Systems::Key::F4,  "F4"},
+    {GUI::ECS::Systems::Key::F5,  "F5"},
+    {GUI::ECS::Systems::Key::F6,  "F6"},
+    {GUI::ECS::Systems::Key::F7,  "F7"},
+    {GUI::ECS::Systems::Key::F8,  "F8"},
+    {GUI::ECS::Systems::Key::F9,  "F9"},
+    {GUI::ECS::Systems::Key::F10,  "F10"},
+    {GUI::ECS::Systems::Key::F11,  "F11"},
+    {GUI::ECS::Systems::Key::F12,  "F12"},
+    {GUI::ECS::Systems::Key::F13,  "F13"},
+    {GUI::ECS::Systems::Key::F14,  "F14"},
+    {GUI::ECS::Systems::Key::F15,  "F15"},
+    {GUI::ECS::Systems::Key::F16,  "F16"},
+    {GUI::ECS::Systems::Key::F17,  "F17"},
+    {GUI::ECS::Systems::Key::F18,  "F18"},
+    {GUI::ECS::Systems::Key::F19,  "F19"},
+    {GUI::ECS::Systems::Key::F20,  "F20"},
+    {GUI::ECS::Systems::Key::F21,  "F21"},
+    {GUI::ECS::Systems::Key::F22,  "F22"},
+    {GUI::ECS::Systems::Key::F23,  "F23"},
+    {GUI::ECS::Systems::Key::F24,  "F24"},
+    {GUI::ECS::Systems::Key::Tab,  "Tab"},
+    {GUI::ECS::Systems::Key::End,  "End"},
+    {GUI::ECS::Systems::Key::Add,  "Add"},
+    {GUI::ECS::Systems::Key::Cut,  "Cut"},
+    {GUI::ECS::Systems::Key::Num0,  "Num0"},
+    {GUI::ECS::Systems::Key::Num1,  "Num1"},
+    {GUI::ECS::Systems::Key::Num2,  "Num2"},
+    {GUI::ECS::Systems::Key::Num3,  "Num3"},
+    {GUI::ECS::Systems::Key::Num4,  "Num4"},
+    {GUI::ECS::Systems::Key::Num5,  "Num5"},
+    {GUI::ECS::Systems::Key::Num6,  "Num6"},
+    {GUI::ECS::Systems::Key::Num7,  "Num7"},
+    {GUI::ECS::Systems::Key::Num8,  "Num8"},
+    {GUI::ECS::Systems::Key::Num9,  "Num9"},
+    {GUI::ECS::Systems::Key::LAlt,  "LAlt"},
+    {GUI::ECS::Systems::Key::RAlt,  "RAlt"},
+    {GUI::ECS::Systems::Key::Menu,  "Menu"},
+    {GUI::ECS::Systems::Key::Home,  "Home"},
+    {GUI::ECS::Systems::Key::Down,  "Down"},
+    {GUI::ECS::Systems::Key::Left,  "Left"},
+    {GUI::ECS::Systems::Key::Copy,  "Copy"},
+    {GUI::ECS::Systems::Key::Redo,  "Redo"},
+    {GUI::ECS::Systems::Key::Undo,  "Undo"},
+    {GUI::ECS::Systems::Key::Help,  "Help"},
+    {GUI::ECS::Systems::Key::Back,  "Back"},
+    {GUI::ECS::Systems::Key::Stop,  "Stop"},
+    {GUI::ECS::Systems::Key::Comma,  "Comma"},
+    {GUI::ECS::Systems::Key::Enter,  "Enter"},
+    {GUI::ECS::Systems::Key::Slash,  "Slash"},
+    {GUI::ECS::Systems::Key::Grave,  "Grave"},
+    {GUI::ECS::Systems::Key::Equal,  "Equal"},
+    {GUI::ECS::Systems::Key::Space,  "Space"},
+    {GUI::ECS::Systems::Key::Right,  "Right"},
+    {GUI::ECS::Systems::Key::Pause,  "Pause"},
+    {GUI::ECS::Systems::Key::Paste,  "Paste"},
+    {GUI::ECS::Systems::Key::LShift,  "LShift"},
+    {GUI::ECS::Systems::Key::RShift,  "RShift"},
+    {GUI::ECS::Systems::Key::Escape,  "Escape"},
+    {GUI::ECS::Systems::Key::Period,  "Period"},
+    {GUI::ECS::Systems::Key::Hyphen,  "Hyphen"},
+    {GUI::ECS::Systems::Key::PageUp,  "PageUp"},
+    {GUI::ECS::Systems::Key::Insert,  "Insert"},
+    {GUI::ECS::Systems::Key::Delete,  "Delete"},
+    {GUI::ECS::Systems::Key::Divide,  "Divide"},
+    {GUI::ECS::Systems::Key::Search,  "Search"},
+    {GUI::ECS::Systems::Key::Select,  "Select"},
+    {GUI::ECS::Systems::Key::Forward,  "Forward"},
+    {GUI::ECS::Systems::Key::Refresh,  "Refresh"},
+    {GUI::ECS::Systems::Key::Execute,  "Execute"},
+    {GUI::ECS::Systems::Key::LSystem,  "LSystem"},
+    {GUI::ECS::Systems::Key::RSystem,  "RSystem"},
+    {GUI::ECS::Systems::Key::Numpad0,  "Numpad0"},
+    {GUI::ECS::Systems::Key::Numpad1,  "Numpad1"},
+    {GUI::ECS::Systems::Key::Numpad2,  "Numpad2"},
+    {GUI::ECS::Systems::Key::Numpad3,  "Numpad3"},
+    {GUI::ECS::Systems::Key::Numpad4,  "Numpad4"},
+    {GUI::ECS::Systems::Key::Numpad5,  "Numpad5"},
+    {GUI::ECS::Systems::Key::Numpad6,  "Numpad6"},
+    {GUI::ECS::Systems::Key::Numpad7,  "Numpad7"},
+    {GUI::ECS::Systems::Key::Numpad8,  "Numpad8"},
+    {GUI::ECS::Systems::Key::Numpad9,  "Numpad9"},
+    {GUI::ECS::Systems::Key::PageDown,  "PageDown"},
+    {GUI::ECS::Systems::Key::LControl,  "LControl"},
+    {GUI::ECS::Systems::Key::RControl,  "RControl"},
+    {GUI::ECS::Systems::Key::LBracket,  "LBracket"},
+    {GUI::ECS::Systems::Key::RBracket,  "RBracket"},
+    {GUI::ECS::Systems::Key::Subtract,  "Subtract"},
+    {GUI::ECS::Systems::Key::Multiply,  "Multiply"},
+    {GUI::ECS::Systems::Key::CapsLock,  "CapsLock"},
+    {GUI::ECS::Systems::Key::HomePage,  "HomePage"},
+    {GUI::ECS::Systems::Key::VolumeUp,  "VolumeUp"},
+    {GUI::ECS::Systems::Key::Semicolon,  "Semicolon"},
+    {GUI::ECS::Systems::Key::Backslash,  "Backslash"},
+    {GUI::ECS::Systems::Key::Backspace,  "Backspace"},
+    {GUI::ECS::Systems::Key::Favorites,  "Favorites"},
+    {GUI::ECS::Systems::Key::MediaStop,  "MediaStop"},
+    {GUI::ECS::Systems::Key::Apostrophe,  "Apostrophe"},
+    {GUI::ECS::Systems::Key::LaunchMail,  "LaunchMail"},
+    {GUI::ECS::Systems::Key::VolumeDown,  "VolumeDown"},
+    {GUI::ECS::Systems::Key::ModeChange,  "ModeChange"},
+    {GUI::ECS::Systems::Key::VolumeMute,  "VolumeMute"},
+    {GUI::ECS::Systems::Key::Application,  "Application"},
+    {GUI::ECS::Systems::Key::NumpadEqual,  "NumpadEqual"},
+    {GUI::ECS::Systems::Key::NumpadEnter,  "NumpadEnter"},
+    {GUI::ECS::Systems::Key::NumpadDecimal,  "NumpadDecimal"},
+    {GUI::ECS::Systems::Key::NonUsBackslash,  "NonUsBackslash"},
+    {GUI::ECS::Systems::Key::MediaPlayPause,  "MediaPlayPause"},
+    {GUI::ECS::Systems::Key::MediaNextTrack,  "MediaNextTrack"},
+    {GUI::ECS::Systems::Key::LaunchMediaSelect,  "LaunchMediaSelect"},
+    {GUI::ECS::Systems::Key::LaunchApplication1,  "LaunchApplication1"},
+    {GUI::ECS::Systems::Key::LaunchApplication2,  "LaunchApplication2"},
+    {GUI::ECS::Systems::Key::MediaPreviousTrack,  "MediaPreviousTrack"}
+};
+
 GUI::ECS::Systems::KeyMapper::KeyMapper(const std::uint32_t EntityId)
     : EntityNode(EntityId)
 {
@@ -264,151 +411,6 @@ GUI::ECS::Systems::KeyMapper::KeyMapper(const std::uint32_t EntityId)
     _sfmlScanCodeToCustom[sf::Keyboard::Scancode::LaunchApplication1] = Key::LaunchApplication1;
     _sfmlScanCodeToCustom[sf::Keyboard::Scancode::LaunchApplication2] = Key::LaunchApplication2;
     _sfmlScanCodeToCustom[sf::Keyboard::Scancode::MediaPreviousTrack] = Key::MediaPreviousTrack;
-
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Unknown] = "Unknown";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::A] = "A";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::B] = "B";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::C] = "C";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::D] = "D";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::E] = "E";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F] = "F";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::G] = "G";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::H] = "H";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::I] = "I";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::J] = "J";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::K] = "K";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::L] = "L";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::M] = "M";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::N] = "N";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::O] = "O";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::P] = "P";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Q] = "Q";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::R] = "R";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::S] = "S";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::T] = "T";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::U] = "U";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::V] = "V";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::W] = "W";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::X] = "X";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Y] = "Y";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Z] = "Z";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Up] = "Up";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F1] = "F1";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F2] = "F2";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F3] = "F3";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F4] = "F4";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F5] = "F5";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F6] = "F6";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F7] = "F7";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F8] = "F8";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F9] = "F9";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F10] = "F10";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F11] = "F11";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F12] = "F12";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F13] = "F13";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F14] = "F14";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F15] = "F15";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F16] = "F16";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F17] = "F17";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F18] = "F18";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F19] = "F19";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F20] = "F20";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F21] = "F21";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F22] = "F22";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F23] = "F23";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::F24] = "F24";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Tab] = "Tab";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::End] = "End";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Add] = "Add";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Cut] = "Cut";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num0] = "Num0";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num1] = "Num1";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num2] = "Num2";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num3] = "Num3";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num4] = "Num4";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num5] = "Num5";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num6] = "Num6";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num7] = "Num7";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num8] = "Num8";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Num9] = "Num9";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LAlt] = "LAlt";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::RAlt] = "RAlt";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Menu] = "Menu";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Home] = "Home";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Down] = "Down";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Left] = "Left";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Copy] = "Copy";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Redo] = "Redo";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Undo] = "Undo";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Help] = "Help";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Back] = "Back";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Stop] = "Stop";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Comma] = "Comma";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Enter] = "Enter";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Slash] = "Slash";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Grave] = "Grave";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Equal] = "Equal";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Space] = "Space";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Right] = "Right";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Pause] = "Pause";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Paste] = "Paste";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LShift] = "LShift";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::RShift] = "RShift";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Escape] = "Escape";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Period] = "Period";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Hyphen] = "Hyphen";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::PageUp] = "PageUp";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Insert] = "Insert";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Delete] = "Delete";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Divide] = "Divide";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Search] = "Search";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Select] = "Select";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Forward] = "Forward";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Refresh] = "Refresh";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Execute] = "Execute";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LSystem] = "LSystem";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::RSystem] = "RSystem";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad0] = "Numpad0";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad1] = "Numpad1";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad2] = "Numpad2";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad3] = "Numpad3";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad4] = "Numpad4";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad5] = "Numpad5";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad6] = "Numpad6";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad7] = "Numpad7";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad8] = "Numpad8";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Numpad9] = "Numpad9";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::PageDown] = "PageDown";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LControl] = "LControl";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::RControl] = "RControl";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LBracket] = "LBracket";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::RBracket] = "RBracket";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Subtract] = "Subtract";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Multiply] = "Multiply";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::CapsLock] = "CapsLock";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::HomePage] = "HomePage";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::VolumeUp] = "VolumeUp";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Semicolon] = "Semicolon";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Backslash] = "Backslash";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Backspace] = "Backspace";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Favorites] = "Favorites";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::MediaStop] = "MediaStop";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Apostrophe] = "Apostrophe";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LaunchMail] = "LaunchMail";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::VolumeDown] = "VolumeDown";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::ModeChange] = "ModeChange";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::VolumeMute] = "VolumeMute";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::Application] = "Application";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::NumpadEqual] = "NumpadEqual";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::NumpadEnter] = "NumpadEnter";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::NumpadDecimal] = "NumpadDecimal";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::NonUsBackslash] = "NonUsBackslash";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::MediaPlayPause] = "MediaPlayPause";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::MediaNextTrack] = "MediaNextTrack";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LaunchMediaSelect] = "LaunchMediaSelect";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LaunchApplication1] = "LaunchApplication1";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::LaunchApplication2] = "LaunchApplication2";
-    _keyCodeEquivalence[GUI::ECS::Systems::Key::MediaPreviousTrack] = "MediaPreviousTrack";
 };
 
 const GUI::ECS::Systems::Key GUI::ECS::Systems::KeyMapper::mapKey(const std::any &sfmlKey) const
@@ -442,8 +444,8 @@ const std::string GUI::ECS::Systems::KeyMapper::stringKey(const std::any &keyCod
 
 const std::string GUI::ECS::Systems::KeyMapper::stringKey(const GUI::ECS::Systems::Key &key) const
 {
-    auto it = _keyCodeEquivalence.find(key);
-    if (it != _keyCodeEquivalence.end()) {
+    std::unordered_map<Key, std::string>::const_iterator it = keyCodeEquivalence.find(key);
+    if (it != keyCodeEquivalence.end()) {
         return it->second;
     }
     return "Unknown";
@@ -478,7 +480,7 @@ const std::string GUI::ECS::Systems::KeyMapper::getInfo(const unsigned int inden
     result += indentation + "}\n";
     result += indentation + "- Key code Equivalence: {\n";
     if (SHOWKEYS) {
-        for (const auto &it : _keyCodeEquivalence) {
+        for (const std::pair<GUI::ECS::Systems::Key, std::string> &it : keyCodeEquivalence) {
             result += indentation + "\t- " + stringKey(it.first) + " -> " + it.second + "\n";
         }
     } else {
@@ -491,6 +493,17 @@ const std::string GUI::ECS::Systems::KeyMapper::getInfo(const unsigned int inden
 std::ostream &GUI::ECS::Systems::operator<<(std::ostream &os, const GUI::ECS::Systems::KeyMapper &item)
 {
     os << item.getInfo();
+    return os;
+}
+
+std::ostream &GUI::ECS::Systems::operator<<(std::ostream &os, const Key &item)
+{
+    std::unordered_map<Key, std::string>::const_iterator it = keyCodeEquivalence.find(item);
+    if (it != keyCodeEquivalence.end()) {
+        os << "'" << it->second << "'";
+    } else {
+        os << "'Unknown Key'";
+    }
     return os;
 }
 

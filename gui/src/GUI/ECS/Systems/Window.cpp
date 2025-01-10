@@ -25,6 +25,43 @@ GUI::ECS::Systems::Window::Window(const std::uint32_t entityId, const std::uint3
 
 GUI::ECS::Systems::Window::~Window() {}
 
+void GUI::ECS::Systems::Window::setPosition(const std::pair<int, int> &position)
+{
+    PRETTY_DEBUG << "Setting the position of the window to: " << Recoded::myToString(position) << std::endl;
+    _sfWindow.setPosition({ position.first, position.second });
+    PRETTY_SUCCESS << "Position set to: " << Recoded::myToString(position) << std::endl;
+}
+
+void GUI::ECS::Systems::Window::setIcon(const GUI::ECS::Components::ImageComponent &icon)
+{
+    PRETTY_DEBUG << "Setting window Icon" << std::endl;
+    const GUI::ECS::Components::TextureComponent iconTexture = icon.getImage();
+    const std::any textureCast = iconTexture.getTexture();
+    const std::optional<sf::Texture> textureCapsule = Utilities::unCast<sf::Texture, CustomExceptions::NoTexture>(textureCast, true, "<No instance of sf::Texture in the provided texture (extracted from ImageComponent>, system error: ");
+    if (!textureCapsule.has_value()) {
+        PRETTY_CRITICAL << "There is no texture to work with (gathered from ImageComponent)." << std::endl;
+        throw CustomExceptions::NoTexture("<No instance of sf::Texture in the provided texture (extracted from ImageComponent>");
+    }
+    const sf::Texture texture = textureCapsule.value();
+    const sf::Image image = texture.copyToImage();
+    if (image.getSize().x == 0 || image.getSize().y == 0) {
+        PRETTY_CRITICAL << "Image extracted from texture is invalid." << std::endl;
+        throw CustomExceptions::NoIcon("Invalid image size (extracted from sf::Texture for setting the icon of the window).");
+    }
+    const std::uint8_t *pixelData = image.getPixelsPtr();
+    const sf::Vector2u size = image.getSize();
+    _sfWindow.setIcon(size, pixelData);
+    PRETTY_SUCCESS << "Image icon set." << std::endl;
+}
+
+void GUI::ECS::Systems::Window::setTitle(const std::string &title)
+{
+    PRETTY_DEBUG << "Setting the window title to: '" << title << "'." << std::endl;
+    _sfWindow.setTitle(title);
+    _windowName = title;
+    PRETTY_SUCCESS << "Title set to: '" << title << "'" << std::endl;
+}
+
 void GUI::ECS::Systems::Window::clear(const GUI::ECS::Systems::Colour &color)
 {
     std::any systemColour = color.getRenderColour();
@@ -92,6 +129,23 @@ const bool GUI::ECS::Systems::Window::getFullScreen() const
     return _fullScreen;
 }
 
+const std::string GUI::ECS::Systems::Window::getTitle() const
+{
+    return _windowName;
+}
+
+const std::pair<int, int> GUI::ECS::Systems::Window::getDimensions() const
+{
+    sf::Vector2u dim = _sfWindow.getSize();
+    return std::make_pair<int>(dim.x, dim.y);
+}
+
+const std::pair<int, int> GUI::ECS::Systems::Window::getPosition() const
+{
+    sf::Vector2i pos = _sfWindow.getPosition();
+    return std::pair<int, int>(pos.x, pos.y);
+}
+
 const std::string GUI::ECS::Systems::Window::getInfo(const unsigned int indent) const
 {
 
@@ -127,27 +181,29 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::TextComponent &
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
 {
+    PRETTY_INFO << "Rendering a shape" << std::endl;
+    PRETTY_DEBUG << "Shape info:" << shape.getInfo() << std::endl;
     if (!shape.isVisible()) {
         PRETTY_WARNING << "Shape is hidden, id: '"
             << Recoded::myToString(shape.getEntityNodeId())
             << "', name: '" << shape.getShapeTypeString() << "'." << std::endl;
         return;
     }
-    const std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> shapeCapsule = shape.render();
+    const std::optional<std::pair<GUI::ECS::Systems::ActiveShape, std::any>> shapeCapsule = shape.render();
     if (!shapeCapsule.has_value()) {
         PRETTY_WARNING << "Shape is not renderable, id: '"
             << Recoded::myToString(shape.getEntityNodeId()) << "'" << std::endl;
         return;
         // throw CustomExceptions::NoRenderableShape("<std::pair not found in std::any, have you initialised the class with a shape?>");
     }
-    const std::pair<GUI::ECS::Components::ActiveShape, std::any> pairNode = shapeCapsule.value();
-    const GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
+    const std::pair<GUI::ECS::Systems::ActiveShape, std::any> pairNode = shapeCapsule.value();
+    const GUI::ECS::Systems::ActiveShape shapeType = pairNode.first;
     const std::any shapeData = pairNode.second;
-    if (shapeType == GUI::ECS::Components::ActiveShape::NONE) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::NONE) {
         PRETTY_WARNING << "There is no shape to render, skipping" << std::endl;
         return;
     };
-    if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::RECTANGLE) {
         const std::optional<sf::RectangleShape> renderableShape = Utilities::unCast<sf::RectangleShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a RectangleShape>, any_cast error: ");
         if (!renderableShape.has_value()) {
             PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
@@ -157,7 +213,7 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent 
         PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
-    if (shapeType == GUI::ECS::Components::ActiveShape::CIRCLE) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::CIRCLE) {
         const std::optional<sf::CircleShape> renderableShape = Utilities::unCast<sf::CircleShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a CircleShape>, any_cast error: ");
         if (!renderableShape.has_value()) {
             PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
@@ -167,7 +223,7 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent 
         PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
-    if (shapeType == GUI::ECS::Components::ActiveShape::CONVEX) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::CONVEX) {
         const std::optional<sf::ConvexShape> renderableShape = Utilities::unCast<sf::ConvexShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a ConvexShape>, any_cast error: ");
         if (!renderableShape.has_value()) {
             PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
@@ -241,8 +297,9 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent
         const std::optional<GUI::ECS::Components::ShapeComponent> shape = Utilities::unCast<GUI::ECS::Components::ShapeComponent, CustomExceptions::NoRenderableShape>(shapeCapsule, false, "<There is no ShapeComponent to render>");
         if (!shape.has_value()) {
             PRETTY_WARNING << "There is no shape to render for the button, skipping shape rendering." << std::endl;
+        } else {
+            draw(shape.value());
         }
-        draw(shape.value());
     }
 
     const std::any textCapsule = buttonCapsule[typeid(GUI::ECS::Components::TextComponent)];
@@ -250,8 +307,9 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ButtonComponent
         const std::optional<GUI::ECS::Components::TextComponent> text = Utilities::unCast<GUI::ECS::Components::TextComponent, CustomExceptions::NoRenderableShape>(textCapsule, false, "<There is no TextComponent to render>");
         if (!text.has_value()) {
             PRETTY_WARNING << "There is no text to render for the button, skipping text rendering." << std::endl;
+        } else {
+            draw(text.value());
         }
-        draw(text.value());
     }
 }
 

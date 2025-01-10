@@ -25,7 +25,7 @@ static void displayUsageSummary(const std::string binName)
     std::cout << "\t" << binName << " [--ip] [--port] [--log] [--debug] [--help]";
     std::cout << " [--version] [--full-screen] [--window-width] [--window-height]";
     std::cout << " [--frame-rate-limit] [--config-file]";
-    // std::cout << " [--position-x] [--position-y] [--window-title] [--cursor] ";
+    std::cout << " [--position-x] [--position-y] [--window-title]";// [--cursor] ";
     // std::cout << " [--cursor-icon] [--image-is-sprite] [--sprite-start-top] ";
     // std::cout << " [--sprite-start-left] [--sprite-width] [--sprite-height]";
     std::cout << std::endl;
@@ -49,16 +49,16 @@ static void displayDetailedUsage()
     std::cout << "\t--window-height=\"600\"       \tSet the height of the window. (Default value: 600)\n";
     std::cout << "\t--frame-rate-limit=\"60\"     \tSet the frame rate limit of the window. (Default value: 60)\n";
     std::cout << "\t--config-file=\"client_config.toml\" \tSet the path to the toml file that contains the sprites to load. (Default value: client_config.toml)\n";
-    // std::cout << "\t--position-x=\"0\"            \tSet the x position of the window. (Default value: 0)" << std::endl;
-    // std::cout << "\t--position-y=\"0\"            \tSet the y position of the window. (Default value: 0)" << std::endl;
-    // std::cout << "\t--window-title=\"R-Type\"     \tSet the title of the window. (Default value: \"R-Type\")" << std::endl;
-    // std::cout << "\t--cursor=\"true\"             \tShow/Hide the cursor. (Default value: true)" << std::endl;
-    // std::cout << "\t--cursor-icon=\"cursor.png\"  \tSet the path of the cursor icon. (Default value: \"null\")" << std::endl;
-    // std::cout << "\t--image-is-sprite=\"false\"   \tSet if the provided image is a spritesheet. (Default value: \"false\")" << std::endl;
-    // std::cout << "\t--sprite-start-top=\"true\"   \tAnimate by going from top to bottom (or bottom to top). (Default value: \"true\")" << std::endl;
-    // std::cout << "\t--sprite-start-left=\"true\"  \tAnimate by going from left to right (or right to left). (Default value: \"true\")" << std::endl;
-    // std::cout << "\t--sprite-width=\"20\"         \tSet the width of the sprite in the animation. (Default value: 20)" << std::endl;
-    // std::cout << "\t--sprite-height=\"20\"        \tSet the height of the sprite in the animation. (Default value: 20)" << std::endl;
+    std::cout << "\t--position-x=\"0\"            \tSet the x position of the window. (Default value: 0)\n";
+    std::cout << "\t--position-y=\"0\"            \tSet the y position of the window. (Default value: 0)\n";
+    std::cout << "\t--window-title=\"R-Type\"     \tSet the title of the window. (Default value: \"R-Type\")\n";
+    // std::cout << "\t--cursor=\"true\"             \tShow/Hide the cursor. (Default value: true)\n";
+    // std::cout << "\t--cursor-icon=\"cursor.png\"  \tSet the path of the cursor icon. (Default value: \"null\")\n";
+    // std::cout << "\t--image-is-sprite=\"false\"   \tSet if the provided image is a spritesheet. (Default value: \"false\")\n";
+    // std::cout << "\t--sprite-start-top=\"true\"   \tAnimate by going from top to bottom (or bottom to top). (Default value: \"true\")\n";
+    // std::cout << "\t--sprite-start-left=\"true\"  \tAnimate by going from left to right (or right to left). (Default value: \"true\")\n";
+    // std::cout << "\t--sprite-width=\"20\"         \tSet the width of the sprite in the animation. (Default value: 20)\n";
+    // std::cout << "\t--sprite-height=\"20\"        \tSet the height of the sprite in the animation. (Default value: 20)\n";
     std::cout << std::endl;
 }
 
