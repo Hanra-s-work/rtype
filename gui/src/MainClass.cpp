@@ -1349,12 +1349,20 @@ void Main::_mainMenuScreen()
 
     PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
     const int y = windowDimensions.second / 2;
+    PRETTY_DEBUG << "The coordinates are: " << std::pair<int, int>(x, y) << std::endl;
     icon->setPosition({ x, y });
+    PRETTY_DEBUG << "Icon position set" << std::endl;
+    PRETTY_DEBUG << "Setting the size of the background to that of the window" << std::endl;
+    background->setPosition({ 0, 0 });
+    background->setDimension({ windowDimensions.first, windowDimensions.second });
+    PRETTY_DEBUG << "Background position set" << std::endl;
 
 
     PRETTY_DEBUG << "Drawing the elements required for the main menu to be displayed." << std::endl;
     win.value()->draw(*background);
+    PRETTY_SUCCESS << "Main menu background drawn" << std::endl;
     win.value()->draw(*icon);
+    PRETTY_SUCCESS << "Icon drawn" << std::endl;
 }
 
 void Main::_bossFightScreen()
@@ -1832,22 +1840,39 @@ void Main::_mainLoop()
         }
         PRETTY_INFO << "Mouse position: " << Recoded::myToString(event->getMousePosition()) << std::endl;
         if (_activeScreen == ActiveScreen::MENU) {
+            PRETTY_DEBUG << "Menu screen components are going to be set to be displayed" << std::endl;
             _mainMenuScreen();
+            PRETTY_SUCCESS << "Menu screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::GAME) {
+            PRETTY_DEBUG << "Game screen components are going to be set to be displayed" << std::endl;
             _gameScreen();
+            PRETTY_SUCCESS << "Game screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::SETTINGS) {
+            PRETTY_DEBUG << "Settings screen components are going to be set to be displayed" << std::endl;
             _settingsMenu();
+            PRETTY_SUCCESS << "Settings screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::GAME_OVER) {
+            PRETTY_DEBUG << "Game Over screen components are going to be set to be displayed" << std::endl;
             _gameOverScreen();
+            PRETTY_SUCCESS << "Game Over screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::BOSS_FIGHT) {
+            PRETTY_DEBUG << "Boss Fight screen components are going to be set to be displayed" << std::endl;
             _bossFightScreen();
+            PRETTY_SUCCESS << "Boss Fight screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::CONNECTION_FAILED) {
+            PRETTY_DEBUG << "Connection Failed screen components are going to be set to be displayed" << std::endl;
             _connectionFailedScreen();
+            PRETTY_SUCCESS << "Connection Failed screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::DEMO) {
+            PRETTY_DEBUG << "Demo screen components are going to be set to be displayed" << std::endl;
             _demoScreen();
+            PRETTY_SUCCESS << "Demo screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::LOADING) {
+            PRETTY_DEBUG << "Update loading text screen components are going to be set to be displayed" << std::endl;
             _updateLoadingText("Apparently we are loading something...");
+            PRETTY_SUCCESS << "Update loading text screen components are set to be displayed" << std::endl;
         } else {
+            PRETTY_DEBUG << "Unknown screen components are set to be displayed" << std::endl;
             _unknownScreen();
             PRETTY_ERROR << "Unknown active screen: " << _activeScreen << std::endl;
         }
@@ -2125,27 +2150,27 @@ void Main::setActiveScreen(const ActiveScreen screen)
 {
     _activeScreen = screen;
     PRETTY_DEBUG << "Setting active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
-    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
-        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
-        _startMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-    } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
-        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
-        _stopMainMenuMusic();
-        _startGameLoopMusic();
-        _stopBossFightMusic();
-    } else if (screen == ActiveScreen::BOSS_FIGHT) {
-        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _startBossFightMusic();
-    } else {
-        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-    }
+    // if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
+    //     PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
+    //     _startMainMenuMusic();
+    //     _stopGameLoopMusic();
+    //     _stopBossFightMusic();
+    // } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
+    //     PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
+    //     _stopMainMenuMusic();
+    //     _startGameLoopMusic();
+    //     _stopBossFightMusic();
+    // } else if (screen == ActiveScreen::BOSS_FIGHT) {
+    //     PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
+    //     _stopMainMenuMusic();
+    //     _stopGameLoopMusic();
+    //     _startBossFightMusic();
+    // } else {
+    //     PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
+    //     _stopMainMenuMusic();
+    //     _stopGameLoopMusic();
+    //     _stopBossFightMusic();
+    // }
 }
 
 
