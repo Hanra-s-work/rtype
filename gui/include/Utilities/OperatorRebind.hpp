@@ -241,6 +241,23 @@ namespace Utilities
         os << Recoded::myToString(item);
         return os;
     };
+
+    /**
+     * @brief Outputs a the string value of the ActiveShape enum to the given output stream using a custom string representation.
+     *
+     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * and then inserts the result into the output stream.
+     *
+     * @param os The output stream to which the pair will be written.
+     * @param item The ActiveShape enum value to output.
+     *
+     * @return The modified output stream with the pair's string representation appended.
+     */
+    inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::Systems::ActiveShape &item)
+    {
+        os << Recoded::myToString(item);
+        return os;
+    };
 }
 
 /**
