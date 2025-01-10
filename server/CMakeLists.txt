@@ -10,9 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(multigame_server
     main.cpp
-    server/server.cpp
-    server/game_manager.cpp
-    server/client_manager.cpp
+    src/server.cpp
+    src/game_manager.cpp
+    src/client_manager.cpp
     # message.cpp if needed, etc.
 )
 

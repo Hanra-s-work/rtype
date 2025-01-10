@@ -32,3 +32,6 @@ dist/*
 
 # No editor config files
 .vscode
+
+server/build/dummy_client.cpp
+server/build/dummy_client
