@@ -25,6 +25,16 @@ set(SOURCES
     systems/WeaponSystem.cpp
 )
 
+# Create a library for the game logic
+add_library(game_source_lib STATIC
+    ${SOURCES}
+)
+
+# Expose the "manager/include" directory so other targets can #include "Game.hpp"
+target_include_directories(game_source_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/manager/include
+)
+
 # Unit tests
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode detected: Creating unit tests executable")

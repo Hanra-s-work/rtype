@@ -1,24 +1,33 @@
 cmake_minimum_required(VERSION 3.15)
-project(MultigameServer CXX)
+project(rtype_server CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# If using standalone Asio, find it or link it. Example:
-# find_package(Threads REQUIRED)
-# find_path(ASIO_INCLUDE_DIR asio.hpp)
+# find_package(Threads REQUIRED) if needed
 
-add_executable(multigame_server
+# Collect your .cpp files that make up the server
+set(SERVER_SOURCES
     main.cpp
     src/server.cpp
-    src/game_manager.cpp
     src/client_manager.cpp
-    # message.cpp if needed, etc.
+    src/game_manager.cpp
+    # ...
 )
 
-# E.g. for standalone Asio:
-# target_include_directories(multigame_server PRIVATE ${ASIO_INCLUDE_DIR})
-# target_link_libraries(multigame_server PRIVATE Threads::Threads)
+add_executable(rtype_server
+    ${SERVER_SOURCES}
+)
 
-# If you have "game_logic.cpp", add it or link it. 
-# This example assumes "GameLogic" is header-only or compiled elsewhere.
+# If your server needs includes from "server/src", do:
+target_include_directories(rtype_server PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+# Link the server to the library from game_source
+target_link_libraries(rtype_server
+    PRIVATE
+        game_source_lib       # from game_source/CMakeLists
+        # Threads::Threads    # if needed
+        # other libs (asio, etc.) if needed
+)
