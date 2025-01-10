@@ -137,20 +137,27 @@ void GUI::ECS::Components::TextureComponent::setPosition(const std::pair<int, in
 void GUI::ECS::Components::TextureComponent::setSize(const std::pair<float, float> &size)
 {
     if (!_textureSet) {
+        PRETTY_WARNING << "There are no textures set from wich to calculate the rescale factor." << std::endl;
         _collisionInfo.setDimension(size);
         return;
     }
     std::pair<float, float> result;
     sf::Vector2u originalSize = _texture->getSize();
 
+    PRETTY_DEBUG << "Converting the texture width and height to floats" << std::endl;
+    const float originalWidth = static_cast<float>(originalSize.x);
+    const float originalHeight = static_cast<float>(originalSize.y);
+    PRETTY_DEBUG << "The values of the converted texture are: width: '" << originalWidth << "', height: '" << originalHeight << "'" << std::endl;
+
     PRETTY_DEBUG << "Calculating the scale factors for the resulting image." << std::endl;
-    result.first = size.first / originalSize.x;
-    result.second = size.second / originalSize.y;
+    result.first = size.first / originalWidth;
+    result.second = size.second / originalHeight;
     PRETTY_SUCCESS << "The calculated scale is: " << result << std::endl;
 
 
     PRETTY_DEBUG << "Setting the scale factors for the resulting image." << std::endl;
     _collisionInfo.setDimension(result);
+    PRETTY_SUCCESS << "The dimensions for the collisionInfo is set." << std::endl;
 }
 
 void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy)

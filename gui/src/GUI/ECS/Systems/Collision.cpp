@@ -93,7 +93,7 @@ void GUI::ECS::Systems::Collision::setPosition(const std::pair<int, int> &positi
  *
  * @param dimension an std::pair<float, float> of the of the object's dimension.
  */
-void GUI::ECS::Systems::Collision::setDimension(const std::pair<int, int> &dimension)
+void GUI::ECS::Systems::Collision::setDimension(const std::pair<float, float> &dimension)
 {
     _width = dimension.first;
     _height = dimension.second;

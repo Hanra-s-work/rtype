@@ -48,7 +48,7 @@ namespace GUI
 
                 void setPosition(const std::pair<int, int> &position);
 
-                void setDimension(const std::pair<int, int> &position);
+                void setDimension(const std::pair<float, float> &dimension);
 
                 void setMousePosition(const std::pair<int, int> &position);
 
