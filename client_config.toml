@@ -119,8 +119,8 @@ volume = 100
 [icon]
 name = "R-type"
 path = "assets/icon/RtypeLogo.png"
-width = 256
-height = 256
+width = 150
+height = 150
 x = 0
 y = 0
 
