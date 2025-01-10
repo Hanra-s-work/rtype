@@ -50,7 +50,7 @@ namespace GUI
                 void setTexture(const std::any &texture);
                 void setCollisionInfo(const GUI::ECS::Systems::Collision &collisionInfo);
                 void setPosition(const std::pair<int, int> &position);
-                void setSize(const std::pair<int, int> &size);
+                void setSize(const std::pair<float, float> &size);
 
                 void update(const TextureComponent &copy);
 

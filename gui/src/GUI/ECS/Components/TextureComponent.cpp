@@ -134,9 +134,23 @@ void GUI::ECS::Components::TextureComponent::setPosition(const std::pair<int, in
     _collisionInfo.setPosition(position);
 }
 
-void GUI::ECS::Components::TextureComponent::setSize(const std::pair<int, int> &size)
+void GUI::ECS::Components::TextureComponent::setSize(const std::pair<float, float> &size)
 {
-    _collisionInfo.setDimension(size);
+    if (!_textureSet) {
+        _collisionInfo.setDimension(size);
+        return;
+    }
+    std::pair<float, float> result;
+    sf::Vector2u originalSize = _texture->getSize();
+
+    PRETTY_DEBUG << "Calculating the scale factors for the resulting image." << std::endl;
+    result.first = size.first / originalSize.x;
+    result.second = size.second / originalSize.y;
+    PRETTY_SUCCESS << "The calculated scale is: " << result << std::endl;
+
+
+    PRETTY_DEBUG << "Setting the scale factors for the resulting image." << std::endl;
+    _collisionInfo.setDimension(result);
 }
 
 void GUI::ECS::Components::TextureComponent::update(const TextureComponent &copy)

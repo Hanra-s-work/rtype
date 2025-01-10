@@ -521,6 +521,13 @@ namespace GUI
                 void setPosition(const std::pair<int, int> &pos);
 
                 /**
+                 * @brief Set the dimensions of the sprite
+                 *
+                 * @param dim
+                 */
+                void setDimension(const std::pair<float, float> &dim);
+
+                /**
                  * @brief Change the visibility of the sprite, if visible becomes invisible and vise versa
                  *
                  */

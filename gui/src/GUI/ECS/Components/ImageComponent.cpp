@@ -184,10 +184,10 @@ void GUI::ECS::Components::ImageComponent::setImage(const std::string &path, con
     }
 };
 
-void GUI::ECS::Components::ImageComponent::setDimension(const std::pair<int, int> &dimension)
+void GUI::ECS::Components::ImageComponent::setDimension(const std::pair<float, float> &dimension)
 {
-    _collision.setDimension(dimension);
     _base.setSize(dimension);
+    _collision.setDimension(_base.getCollisionInfo().getDimension());
     _sizeAltered = true;
     if (!_inConstructor) {
         _processImageComponent();

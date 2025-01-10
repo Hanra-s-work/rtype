@@ -206,7 +206,7 @@ namespace GUI
                  *
                  * @param dimension The new dimensions as a pair (width, height).
                  */
-                void setDimension(const std::pair<int, int> &dimension);
+                void setDimension(const std::pair<float, float> &dimension);
 
                 /**
                  * @brief Sets the position of the image.

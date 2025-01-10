@@ -443,6 +443,12 @@ void GUI::ECS::Components::SpriteComponent::setPosition(const std::pair<int, int
     _processCollision();
 }
 
+void GUI::ECS::Components::SpriteComponent::setDimension(const std::pair<float, float> &dim)
+{
+    _collision.setDimension(dim);
+    _processCollision();
+}
+
 void GUI::ECS::Components::SpriteComponent::toggleVisibility()
 {
     if (_visible) {
