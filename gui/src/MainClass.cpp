@@ -1028,7 +1028,7 @@ const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton
     const std::string errMsgFont = "<Required font not found for the text of the button>, system error: ";
     std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontInstance = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], true, errMsgFont);
     if (!fontInstance.has_value()) {
-        PRETTY_CRITICAL << "Failed to load the font for the button" << std::endl;
+        PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
         throw CustomExceptions::NoFont(errMsgFont);
     }
     std::shared_ptr<GUI::ECS::Components::ShapeComponent> shapeItem = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId);
@@ -1301,30 +1301,23 @@ void Main::_gameOverScreen()
         _baseId += 1;
     }
 
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
     if (!homeButtonFound) {
-        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], false);
-        if (!defaultFont.has_value()) {
-            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
-            return;
-        }
-        std::shared_ptr<GUI::ECS::Components::TextComponent> buttonText = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(defaultFont.value()), "It seems like you have landed on an unknown page.");
-        buttonText->setApplication(bodyKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(buttonText);
-        _baseId += 1;
-        Recoded::FloatRect rectangle;
-        rectangle.position.first = 0;
-        rectangle.position.second = 0;
-        rectangle.size.first = 20;
-        rectangle.size.second = 20;
-        std::shared_ptr<GUI::ECS::Components::ShapeComponent> buttonShape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId, rectangle, GUI::ECS::Systems::Colour::White);
-        buttonShape->setVisible(true);
-        _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(buttonShape);
-        _baseId += 1;
-        std::shared_ptr<GUI::ECS::Components::ButtonComponent> home = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *buttonShape, *buttonText);
-        home->setApplication(_mainMenuKey);
-        home->setCallback(std::bind(&Main::_mainMenuScreen, this), "_mainMenuScreen");
-        _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(home);
-        _baseId += 1;
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        home = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
     }
 
     unsigned int posx = _getScreenCenterX();
@@ -1343,6 +1336,7 @@ void Main::_gameOverScreen()
 void Main::_gameWonScreen()
 {
 
+
 }
 
 void Main::_mainMenuScreen()
@@ -1356,7 +1350,7 @@ void Main::_mainMenuScreen()
     const unsigned int buttonWidth = 200;
     const unsigned int buttonHeight = 30;
     const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::Black;
-    const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow;
+    const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::BlueViolet;
     const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::BlueViolet;
     const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::White;
 
