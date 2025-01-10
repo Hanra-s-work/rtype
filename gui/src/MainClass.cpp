@@ -2447,29 +2447,47 @@ void Main::setActiveScreen(const ActiveScreen screen)
 {
     _activeScreen = screen;
     PRETTY_DEBUG << "Setting active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
-    // if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
-    //     PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
-    //     _startMainMenuMusic();
-    //     _stopGameLoopMusic();
-    //     _stopBossFightMusic();
-    // } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
-    //     PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
-    //     _stopMainMenuMusic();
-    //     _startGameLoopMusic();
-    //     _stopBossFightMusic();
-    // } else if (screen == ActiveScreen::BOSS_FIGHT) {
-    //     PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
-    //     _stopMainMenuMusic();
-    //     _stopGameLoopMusic();
-    //     _startBossFightMusic();
-    // } else {
-    //     PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
-    //     _stopMainMenuMusic();
-    //     _stopGameLoopMusic();
-    //     _stopBossFightMusic();
-    // }
+    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
+        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
+        _startMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
+        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
+        _stopMainMenuMusic();
+        _startGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (screen == ActiveScreen::BOSS_FIGHT) {
+        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _startBossFightMusic();
+    } else if (screen == ActiveScreen::GAME_WON) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _winSound();
+    } else if (screen == ActiveScreen::GAME_OVER) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+        _gameOverSound();
+    } else if (screen == ActiveScreen::CONNECTION_FAILED) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+    } else {
+        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    }
 }
-
 
 /**
  * @brief Get the value of the ip that was set.
