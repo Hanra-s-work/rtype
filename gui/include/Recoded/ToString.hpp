@@ -24,6 +24,7 @@
 #include <unordered_map>
 
 #include "ActiveScreen.hpp"
+#include "GUI/ECS/Systems/ActiveShape.hpp"
 #include "GUI/ECS/GameComponents/Package.hpp"
 #include "GUI/ECS/GameComponents/ECSPackage.hpp"
 #include "GUI/ECS/GameComponents/EntityType.hpp"
@@ -354,4 +355,13 @@ namespace Recoded
      * @note Uses `Recoded::myToString` to convert elements to strings.
      */
     const std::string myToString(const GUI::ECS::GameComponents::EntityActionType &item);
+
+    /**
+     * @brief Overload for the Active Shape enum so that the user can just output the type of the shape they want.
+     *
+     * @param shape GUI::ECS::Systems::ActiveShape
+     *
+     * @return const std::string
+     */
+    const std::string myToString(const GUI::ECS::Systems::ActiveShape &shape);
 }

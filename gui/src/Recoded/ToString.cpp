@@ -36,11 +36,20 @@ const std::string Recoded::myToString(const ActiveScreen &item)
         case ActiveScreen::DEMO:
             return "DEMO";
             break;
+        case ActiveScreen::EXIT:
+            return "EXIT";
+            break;
+        case ActiveScreen::UNKNOWN:
+            return "UNKNOWN";
+            break;
         case ActiveScreen::SETTINGS:
             return "SETTINGS";
             break;
         case ActiveScreen::GAME_OVER:
             return "GAME OVER";
+            break;
+        case ActiveScreen::GAME_WON:
+            return "GAME WON";
             break;
         case ActiveScreen::BOSS_FIGHT:
             return "BOSS FIGHT";
@@ -126,6 +135,21 @@ const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityActi
         default:
             return "UNKNOWN";
             break;
+    }
+}
+
+const std::string Recoded::myToString(const GUI::ECS::Systems::ActiveShape &shape)
+{
+    if (shape == GUI::ECS::Systems::ActiveShape::NONE) {
+        return "None";
+    } else if (shape == GUI::ECS::Systems::ActiveShape::CIRCLE) {
+        return "Circle";
+    } else if (shape == GUI::ECS::Systems::ActiveShape::CONVEX) {
+        return "Convex";
+    } else if (shape == GUI::ECS::Systems::ActiveShape::RECTANGLE) {
+        return "Rectangle";
+    } else {
+        return "Unknown";
     }
 }
 
