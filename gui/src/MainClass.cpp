@@ -1005,6 +1005,17 @@ void Main::_processIncommingPackets()
 
 }
 
+// const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton(const std::string &application, const std::string &title, const int width, const int height, const int textSize, const GUI::ECS::Systems::Colour &bg, const GUI::ECS::Systems::Colour &fg, const GUI::ECS::Components::ActiveShape &shape)
+// {
+
+//     std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId);
+//     _baseId += 1;
+//     std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId);
+//     _baseId += 1;
+//     std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *shape, *text);
+//     _baseId += 1;
+// }
+
 /**
  * @brief Function in charge of getting the center X axis of the screen.
  *
@@ -1296,8 +1307,13 @@ void Main::_gameOverScreen()
 void Main::_mainMenuScreen()
 {
     const std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
     std::shared_ptr<GUI::ECS::Components::ImageComponent> background;
     std::shared_ptr<GUI::ECS::Components::ImageComponent> icon;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> startGame;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> onlineGame;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> settings;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> exitWindow;
 
     std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
@@ -1335,20 +1351,27 @@ void Main::_mainMenuScreen()
 
     PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
     const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    PRETTY_DEBUG << "The window dimensions are: " << windowDimensions << std::endl;
     if (windowDimensions.first == 0.0 || windowDimensions.second == 0.0) {
         PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
         throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
     }
 
-    PRETTY_DEBUG << "Calculating the left bound of the second sixth for the x coordinate" << std::endl;
-    const float xMin = windowDimensions.first / 6.0f;
-    PRETTY_DEBUG << "Calculating the right bound of the second sixth (end of the second sixth) for the x coordinate." << std::endl;
-    const float xMax = windowDimensions.first / 3.0f;
-    PRETTY_DEBUG << "Extracting the middle of the second sixth for the region and coordinate of where to render the asset." << std::endl;
-    const int x = xMin + (xMax - xMin) * 0.5f;
+    PRETTY_DEBUG << "Getting the icon dimensions" << std::endl;
+    const std::pair<float, float> iconDimensions = icon->getDimension();
+    PRETTY_DEBUG << "The icon dimensions are : " << iconDimensions << std::endl;
+    if (iconDimensions.first <= 0 || iconDimensions.second <= 0) {
+        PRETTY_WARNING << "Icon dimensions are zero, skipping position adjustment." << std::endl;
+        throw CustomExceptions::NoIcon("<Invalid icon dimensions>");
+    }
 
-    PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
-    const int y = windowDimensions.second / 2;
+    PRETTY_DEBUG << "Calculating the center of the window based on the image and the window dimensions." << std::endl;
+    const float xCenter = windowDimensions.first / 2.0f;
+    const int x = xCenter - (iconDimensions.first / 2);
+
+    PRETTY_DEBUG << "Calculating the y-coordinate (for the top position)." << std::endl;
+    const int y = (windowDimensions.second / 10);
+    PRETTY_DEBUG << "The adjusted coordinates for the icon are: " << std::pair<int, int>(x, y) << std::endl;
     PRETTY_DEBUG << "The coordinates are: " << std::pair<int, int>(x, y) << std::endl;
     icon->setPosition({ x, y });
     PRETTY_DEBUG << "Icon position set" << std::endl;

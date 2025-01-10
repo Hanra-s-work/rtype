@@ -202,6 +202,7 @@ class Main {
   void _sendAllPackets();
   void _processIncommingPackets();
 
+  // const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &fg = GUI::ECS::Systems::Colour::White, const GUI::ECS::Components::ActiveShape &shape = GUI::ECS::Components::ActiveShape::RECTANGLE);
 
   const unsigned int _getScreenCenterX();
   const unsigned int _getScreenCenterY();
