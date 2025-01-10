@@ -181,27 +181,29 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::TextComponent &
 
 void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent &shape)
 {
+    PRETTY_INFO << "Rendering a shape" << std::endl;
+    PRETTY_DEBUG << "Shape info:" << shape.getInfo() << std::endl;
     if (!shape.isVisible()) {
         PRETTY_WARNING << "Shape is hidden, id: '"
             << Recoded::myToString(shape.getEntityNodeId())
             << "', name: '" << shape.getShapeTypeString() << "'." << std::endl;
         return;
     }
-    const std::optional<std::pair<GUI::ECS::Components::ActiveShape, std::any>> shapeCapsule = shape.render();
+    const std::optional<std::pair<GUI::ECS::Systems::ActiveShape, std::any>> shapeCapsule = shape.render();
     if (!shapeCapsule.has_value()) {
         PRETTY_WARNING << "Shape is not renderable, id: '"
             << Recoded::myToString(shape.getEntityNodeId()) << "'" << std::endl;
         return;
         // throw CustomExceptions::NoRenderableShape("<std::pair not found in std::any, have you initialised the class with a shape?>");
     }
-    const std::pair<GUI::ECS::Components::ActiveShape, std::any> pairNode = shapeCapsule.value();
-    const GUI::ECS::Components::ActiveShape shapeType = pairNode.first;
+    const std::pair<GUI::ECS::Systems::ActiveShape, std::any> pairNode = shapeCapsule.value();
+    const GUI::ECS::Systems::ActiveShape shapeType = pairNode.first;
     const std::any shapeData = pairNode.second;
-    if (shapeType == GUI::ECS::Components::ActiveShape::NONE) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::NONE) {
         PRETTY_WARNING << "There is no shape to render, skipping" << std::endl;
         return;
     };
-    if (shapeType == GUI::ECS::Components::ActiveShape::RECTANGLE) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::RECTANGLE) {
         const std::optional<sf::RectangleShape> renderableShape = Utilities::unCast<sf::RectangleShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a RectangleShape>, any_cast error: ");
         if (!renderableShape.has_value()) {
             PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
@@ -211,7 +213,7 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent 
         PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
-    if (shapeType == GUI::ECS::Components::ActiveShape::CIRCLE) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::CIRCLE) {
         const std::optional<sf::CircleShape> renderableShape = Utilities::unCast<sf::CircleShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a CircleShape>, any_cast error: ");
         if (!renderableShape.has_value()) {
             PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
@@ -221,7 +223,7 @@ void GUI::ECS::Systems::Window::draw(const GUI::ECS::Components::ShapeComponent 
         PRETTY_SUCCESS << "Shape: '" << shape.getShapeTypeString() << "' is drawn." << std::endl;
         return;
     };
-    if (shapeType == GUI::ECS::Components::ActiveShape::CONVEX) {
+    if (shapeType == GUI::ECS::Systems::ActiveShape::CONVEX) {
         const std::optional<sf::ConvexShape> renderableShape = Utilities::unCast<sf::ConvexShape, CustomExceptions::NoRenderableShape>(shapeData, true, "<Unknown or empty shape, this is not a ConvexShape>, any_cast error: ");
         if (!renderableShape.has_value()) {
             PRETTY_CRITICAL << "Shape : '" << shape.getShapeTypeString() << "' could not be rendered.\n" << std::endl;
