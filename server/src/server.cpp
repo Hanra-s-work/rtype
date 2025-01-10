@@ -39,7 +39,7 @@ void Server::handleMessage(std::size_t bytesReceived) {
 
     // For demonstration, assume msg.type might match your messageType enum in GameMessage
     switch (msg.type) {
-    case CONNECT: {
+    case 1: {
         std::cout << "[Server] Client " << clientId 
                   << " connected from " << remoteEndpoint_ << "\n";
         // Assign them to a game
@@ -47,7 +47,7 @@ void Server::handleMessage(std::size_t bytesReceived) {
         // Possibly respond or do more logic
         break;
     }
-    case DISCONNECT: {
+    case 2: {
         std::cout << "[Server] Client " << clientId << " disconnected.\n";
         gameManager_.removeClientFromGame(clientId);
         clientManager_.removeClient(remoteEndpoint_);
