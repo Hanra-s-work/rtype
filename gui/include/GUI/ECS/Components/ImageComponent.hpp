@@ -21,6 +21,7 @@
 #include "Log.hpp"
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
+#include "Recoded/Rect.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/Collision.hpp"
@@ -295,14 +296,14 @@ namespace GUI
                 /**
                  * @brief Get the Size of the text
                  *
-                 * @return const std::uint32_t
+                 * @return const std::pair<float, float>
                  */
-                const std::pair<int, int> getDimension() const;
+                const std::pair<float, float> getDimension() const;
 
                 /**
-                 * @brief Get the Position of the text
+                 * @brief Get the Position of the image
                  *
-                 * @return const std::pair<unsigned int, unsigned int>
+                 * @return const std::pair<int, int>
                  */
                 const std::pair<int, int> getPosition() const;
 

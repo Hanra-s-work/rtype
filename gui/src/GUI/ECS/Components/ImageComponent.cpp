@@ -263,7 +263,7 @@ const GUI::ECS::Systems::Colour GUI::ECS::Components::ImageComponent::getClicked
     return _clickedColor;
 };
 
-const std::pair<int, int> GUI::ECS::Components::ImageComponent::getDimension() const
+const std::pair<float, float> GUI::ECS::Components::ImageComponent::getDimension() const
 {
     return _collision.getDimension();
 };
@@ -373,6 +373,14 @@ void GUI::ECS::Components::ImageComponent::_initialiseImage()
                 throw CustomExceptions::NoTexture(errMsg);
             }
             _sfImage.emplace(*(texture.value()));
+            GUI::ECS::Systems::Collision node(_collision);
+            const sf::FloatRect bounds = _sfImage->getGlobalBounds();
+            const Recoded::FloatRect sysBounds = { {bounds.position.x, bounds.position.y}, {bounds.size.x, bounds.size.y} };
+            PRETTY_INFO << "Image dimensions = " << sysBounds << std::endl;
+            node.setGeometry(sysBounds);
+            PRETTY_INFO << "Collision node = " << node << std::endl;
+            _collision.update(node);
+            PRETTY_SUCCESS << "Collision updated" << std::endl;
         }
     }
 }
