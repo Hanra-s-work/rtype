@@ -1005,16 +1005,52 @@ void Main::_processIncommingPackets()
 
 }
 
-// const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton(const std::string &application, const std::string &title, const int width, const int height, const int textSize, const GUI::ECS::Systems::Colour &bg, const GUI::ECS::Systems::Colour &fg, const GUI::ECS::Components::ActiveShape &shape)
-// {
 
-//     std::shared_ptr<GUI::ECS::Components::ShapeComponent> shape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId);
-//     _baseId += 1;
-//     std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId);
-//     _baseId += 1;
-//     std::shared_ptr<GUI::ECS::Components::ButtonComponent> button = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *shape, *text);
-//     _baseId += 1;
-// }
+/**
+ * @brief Function in charge of creating and adding a button component to the ecs system.
+ *
+ * @param application
+ * @param title
+ * @param callback
+ * @param callbackName
+ * @param width
+ * @param height
+ * @param textSize
+ * @param bg
+ * @param normal
+ * @param hover
+ * @param clicked
+ *
+ * @return const std::shared_ptr<GUI::ECS::Components::ButtonComponent>
+ */
+const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName, const int width, const int height, const int textSize, const GUI::ECS::Systems::Colour &bg, const GUI::ECS::Systems::Colour &normal, const GUI::ECS::Systems::Colour &hover, const GUI::ECS::Systems::Colour &clicked)
+{
+    const std::string errMsgFont = "<Required font not found for the text of the button>, system error: ";
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontInstance = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], true, errMsgFont);
+    if (!fontInstance.has_value()) {
+        PRETTY_CRITICAL << "Failed to load the font for the button" << std::endl;
+        throw CustomExceptions::NoFont(errMsgFont);
+    }
+    std::shared_ptr<GUI::ECS::Components::ShapeComponent> shapeItem = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId);
+    _baseId += 1;
+    shapeItem->setShape(std::pair<float, float>(width, height));
+    shapeItem->setNormalColor(bg);
+    shapeItem->setHoverColor(bg);
+    shapeItem->setClickedColor(bg);
+    shapeItem->setApplication(application);
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> textItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(fontInstance.value()), title, textSize, normal, hover, clicked);
+    textItem->setApplication(application);
+    _baseId += 1;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> buttonItem = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *shapeItem, *textItem);
+    buttonItem->setCallback(callback, callbackName);
+    buttonItem->setApplication(application);
+    _baseId += 1;
+    _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(textItem);
+    _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(shapeItem);
+    _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(buttonItem);
+    return buttonItem;
+}
 
 /**
  * @brief Function in charge of getting the center X axis of the screen.
@@ -1304,16 +1340,40 @@ void Main::_gameOverScreen()
     PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
+void Main::_gameWonScreen()
+{
+
+}
+
 void Main::_mainMenuScreen()
 {
+    const std::string startGameKey = "MainMenuStartGame";
+    const std::string onlineGameKey = "MainMenuOnlineGame";
+    const std::string settingsKey = "MainMenuSettings";
+    const std::string exitMenuKey = "MainMenuexitMenu";
+
+    const unsigned int textSize = 20;
+    const unsigned int buttonWidth = 200;
+    const unsigned int buttonHeight = 30;
+    const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow;
+    const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::White;
+
     const std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
     const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
     std::shared_ptr<GUI::ECS::Components::ImageComponent> background;
     std::shared_ptr<GUI::ECS::Components::ImageComponent> icon;
-    std::shared_ptr<GUI::ECS::Components::ButtonComponent> startGame;
-    std::shared_ptr<GUI::ECS::Components::ButtonComponent> onlineGame;
-    std::shared_ptr<GUI::ECS::Components::ButtonComponent> settings;
-    std::shared_ptr<GUI::ECS::Components::ButtonComponent> exitWindow;
+
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> startGame;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> onlineGame;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> settings;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> exitWindow;
+
+    unsigned int heightPos = 0;
+    const unsigned int heightStep = 40;
 
     std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
@@ -1345,6 +1405,39 @@ void Main::_mainMenuScreen()
             ) {
             PRETTY_INFO << "Icon found, assinning to variable" << std::endl;
             icon = nodeCapsule.value();
+        }
+    }
+
+    for (const std::any node : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> nodeCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(node, false);
+        if (!nodeCapsule.has_value()) {
+            PRETTY_WARNING << "The uncasting of a button component has failed." << std::endl;
+            continue;
+        }
+        if (
+            nodeCapsule.value()->getName() == startGameKey ||
+            nodeCapsule.value()->getApplication() == startGameKey
+            ) {
+            PRETTY_INFO << "Start Game found, assinning to variable" << std::endl;
+            startGame.emplace(nodeCapsule.value());
+        } else if (
+            nodeCapsule.value()->getName() == onlineGameKey ||
+            nodeCapsule.value()->getApplication() == onlineGameKey
+            ) {
+            PRETTY_INFO << "Online Game found, assinning to variable" << std::endl;
+            onlineGame.emplace(nodeCapsule.value());
+        } else if (
+            nodeCapsule.value()->getName() == settingsKey ||
+            nodeCapsule.value()->getApplication() == settingsKey
+            ) {
+            PRETTY_INFO << "Settings found, assinning to variable" << std::endl;
+            settings.emplace(nodeCapsule.value());
+        } else if (
+            nodeCapsule.value()->getName() == exitMenuKey ||
+            nodeCapsule.value()->getApplication() == exitMenuKey
+            ) {
+            PRETTY_INFO << "Exit Menu found, assinning to variable" << std::endl;
+            exitWindow.emplace(nodeCapsule.value());
         }
     }
 
@@ -1380,12 +1473,80 @@ void Main::_mainMenuScreen()
     background->setDimension({ windowDimensions.first, windowDimensions.second });
     PRETTY_DEBUG << "Background position set" << std::endl;
 
+    int verticalIconHeight = 0;
+    if (iconDimensions.second < 1) {
+        verticalIconHeight = static_cast<int>(std::round(iconDimensions.second * 1000)) + 100;
+        PRETTY_DEBUG << "Calculated converted icon height's value is: " << verticalIconHeight << std::endl;
+    } else {
+        verticalIconHeight = iconDimensions.second;
+    }
+    heightPos = y + verticalIconHeight;
+
+    PRETTY_DEBUG << "Checking if the Start game button exists." << std::endl;
+    if (!startGame.has_value()) {
+        PRETTY_WARNING << "Start Game button not found, creating" << std::endl;
+        startGame.emplace(
+            _createButton(
+                startGameKey, "Start Game", std::bind(&Main::_goDemo, this), "_goDemo", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "Start Button created" << std::endl;
+    }
+    startGame.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Checking if the Online game button exists." << std::endl;
+    if (!onlineGame.has_value()) {
+        PRETTY_WARNING << "Online Game button not found, creating" << std::endl;
+        onlineGame.emplace(
+            _createButton(
+                onlineGameKey, "Online Game", std::bind(&Main::_goPlay, this), "_goPlay", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "Start Button created" << std::endl;
+    }
+    onlineGame.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Checking if the settings button exists." << std::endl;
+    if (!settings.has_value()) {
+        PRETTY_WARNING << "Settings button not found, creating" << std::endl;
+        settings.emplace(
+            _createButton(
+                settingsKey, "Settings", std::bind(&Main::_goSettings, this), "_goSettings", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "Settings Button created" << std::endl;
+    }
+    settings.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Checking if the exit window game button exists." << std::endl;
+    if (!exitWindow.has_value()) {
+        PRETTY_WARNING << "Exit Window button not found, creating" << std::endl;
+        exitWindow.emplace(
+            _createButton(
+                exitMenuKey, "Exit Window", std::bind(&Main::_goExit, this), "_goExit", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "exit window Button created" << std::endl;
+    }
+    exitWindow.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
 
     PRETTY_DEBUG << "Drawing the elements required for the main menu to be displayed." << std::endl;
     win.value()->draw(*background);
     PRETTY_SUCCESS << "Main menu background drawn" << std::endl;
     win.value()->draw(*icon);
     PRETTY_SUCCESS << "Icon drawn" << std::endl;
+    win.value()->draw(*(startGame.value()));
+    PRETTY_SUCCESS << "Start game button drawn" << std::endl;
+    win.value()->draw(*(onlineGame.value()));
+    PRETTY_SUCCESS << "Online game button drawn" << std::endl;
+    win.value()->draw(*(settings.value()));
+    PRETTY_SUCCESS << "Settings button drawn" << std::endl;
+    win.value()->draw(*(exitWindow.value()));
+    PRETTY_SUCCESS << "Exit window button drawn" << std::endl;
 }
 
 void Main::_bossFightScreen()
@@ -1402,6 +1563,116 @@ void Main::_connectionAddressScreen()
 {
 
 }
+/**
+ * @brief Switches the active screen to the game screen for the online game version.
+ *
+ * Sets the active screen to @c ActiveScreen::GAME, indicating that
+ * the main gameplay screen should be displayed.
+ */
+void Main::_goPlay()
+{
+    setActiveScreen(ActiveScreen::GAME);
+};
+
+/**
+ * @brief Switches the active screen to the local game screen for the offline game version.
+ *
+ * Sets the active screen to @c ActiveScreen::DEMO, which displays a demo of the game.
+ */
+void Main::_goDemo()
+{
+    setActiveScreen(ActiveScreen::DEMO);
+};
+
+/**
+ * @brief Switches the active screen to the home screen (main menu).
+ *
+ * Sets the active screen to @c ActiveScreen::MENU, directing the user to the main menu.
+ */
+void Main::_goHome()
+{
+    setActiveScreen(ActiveScreen::MENU);
+};
+
+/**
+ * @brief Exits the application or transitions to an exit screen (closes the window).
+ *
+ * Sets the active screen to @c ActiveScreen::EXIT, initiating the exit sequence.
+ */
+void Main::_goExit()
+{
+    setActiveScreen(ActiveScreen::EXIT);
+};
+
+/**
+ * @brief Switches the active screen to the settings menu.
+ *
+ * Sets the active screen to @c ActiveScreen::SETTINGS, where users can adjust game or application settings.
+ */
+void Main::_goSettings()
+{
+    setActiveScreen(ActiveScreen::SETTINGS);
+};
+
+/**
+ * @brief Switches the active screen to the game over screen.
+ *
+ * Sets the active screen to @c ActiveScreen::GAME_OVER, displayed when the game ends unsuccessfully.
+ */
+void Main::_goGameOver()
+{
+    setActiveScreen(ActiveScreen::GAME_OVER);
+};
+
+/**
+ * @brief Switches the active screen to the game won screen.
+ *
+ * Sets the active screen to @c ActiveScreen::GAME_WON, shown when the game ends successfully.
+ */
+void Main::_goGameWon()
+{
+    setActiveScreen(ActiveScreen::GAME_WON);
+};
+
+/**
+ * @brief Switches the active screen to the boss fight screen.
+ *
+ * Sets the active screen to @c ActiveScreen::BOSS_FIGHT, transitioning to the boss battle section of the game.
+ */
+void Main::_goBossFight()
+{
+    setActiveScreen(ActiveScreen::BOSS_FIGHT);
+};
+
+/**
+ * @brief Switches the active screen to the unknown screen (this is when the screen that is supposed to be displayed could not be found).
+ *
+ * Sets the active screen to @c ActiveScreen::UNKNOWN. This is used when the screen state is undefined.
+ */
+void Main::_goUnknown()
+{
+    setActiveScreen(ActiveScreen::UNKNOWN);
+};
+
+/**
+ * @brief Switches the active screen to a connection failed screen.
+ *
+ * Sets the active screen to @c ActiveScreen::CONNECTION_FAILED, displayed when a connection attempt fails.
+ */
+void Main::_goConnectionFailed()
+{
+    setActiveScreen(ActiveScreen::CONNECTION_FAILED);
+};
+
+/**
+ * @brief Switches the active screen to a connection address input screen.
+ *
+ * Sets the active screen to @c ActiveScreen::CONNECTION_ADDRESS, allowing the user to input a connection address.
+ */
+void Main::_goConnectionAddress()
+{
+    setActiveScreen(ActiveScreen::CONNECTION_ADDRESS);
+};
 
 /**
  * @brief Starts the main menu music if it has not already started.
@@ -1878,6 +2149,10 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Game Over screen components are going to be set to be displayed" << std::endl;
             _gameOverScreen();
             PRETTY_SUCCESS << "Game Over screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::GAME_WON) {
+            PRETTY_DEBUG << "Game Won screen components are going to be set to be displayed" << std::endl;
+            _gameWonScreen();
+            PRETTY_SUCCESS << "Game Won screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::BOSS_FIGHT) {
             PRETTY_DEBUG << "Boss Fight screen components are going to be set to be displayed" << std::endl;
             _bossFightScreen();
@@ -1894,6 +2169,11 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Update loading text screen components are going to be set to be displayed" << std::endl;
             _updateLoadingText("Apparently we are loading something...");
             PRETTY_SUCCESS << "Update loading text screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::EXIT) {
+            PRETTY_INFO << "Exit choice detected, stopping" << std::endl;
+            window->close();
+            PRETTY_INFO << "The window is set to close" << std::endl;
+            continue;
         } else {
             PRETTY_DEBUG << "Unknown screen components are set to be displayed" << std::endl;
             _unknownScreen();

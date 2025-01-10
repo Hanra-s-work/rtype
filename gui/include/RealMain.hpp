@@ -202,7 +202,7 @@ class Main {
   void _sendAllPackets();
   void _processIncommingPackets();
 
-  // const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &fg = GUI::ECS::Systems::Colour::White, const GUI::ECS::Components::ActiveShape &shape = GUI::ECS::Components::ActiveShape::RECTANGLE);
+  const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName = "callback function", const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::AliceBlue);
 
   const unsigned int _getScreenCenterX();
   const unsigned int _getScreenCenterY();
@@ -213,6 +213,7 @@ class Main {
   void _settingsMenu();              //SETTINGS
   void _unknownScreen();             //when the enum does not cover it
   void _gameOverScreen();            //GAME_OVER
+  void _gameWonScreen();             //GAME_WON
   void _mainMenuScreen();            //MENU
   void _bossFightScreen();           //BOSS_FIGHT
   void _connectionFailedScreen();    //CONNECTION_FAILED
@@ -227,6 +228,7 @@ class Main {
   void _goExit();              // Exit program
   void _goSettings();          // Settings screen
   void _goGameOver();          // Game over screen
+  void _goGameWon();           // Game won screen
   void _goBossFight();         // Boss fight screen
   void _goUnknown();           // When the screen is unknown
   void _goConnectionFailed();  // Connection failed screen
