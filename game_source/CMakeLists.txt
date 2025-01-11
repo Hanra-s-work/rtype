@@ -14,6 +14,7 @@ set(SOURCES
     manager/Time.cpp
     manager/Random.cpp
     manager/Game.cpp
+    manager/GameMessage.cpp
     manager/Queue.cpp
     systems/AISystem.cpp
     systems/CollisionSystem.cpp
@@ -25,6 +26,9 @@ set(SOURCES
     systems/WeaponSystem.cpp
 )
 
+# Static library
+add_library(RTypeSource STATIC ${SOURCES})
+
 # Unit tests
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode detected: Creating unit tests executable")
@@ -32,6 +36,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     list(APPEND SOURCES tests/main.cpp)
     list(APPEND SOURCES tests/Tests.cpp)
 
-    add_executable(RTypeSource ${SOURCES})
+    add_executable(RTypeTests ${SOURCES})
     target_compile_options(${PROJECT_NAME} PRIVATE -g)
 endif()

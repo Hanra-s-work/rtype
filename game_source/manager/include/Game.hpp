@@ -73,28 +73,6 @@ public:
      */
     void onGameEventReceived(const GameMessage& event);
 
-    /**
-     * @brief Serializes a GameMessage object into a binary stream.
-     *
-     * This function writes the `GameMessage` object's data to the provided output stream in binary format.
-     * The serialized data can later be read using the `deserialize` function.
-     *
-     * @param message The `GameMessage` object to serialize.
-     * @param os The output stream to which the binary data will be written.
-     */
-    void serialize(const GameMessage& message, std::ostringstream& os);
-
-    /**
-     * @brief Deserializes a GameMessage object from a binary stream.
-     *
-     * This function reads binary data from the provided input stream and reconstructs a `GameMessage` object.
-     * The binary data should have been written using the `serialize` function.
-     *
-     * @param is The input stream from which the binary data will be read.
-     * @return GameMessage The reconstructed `GameMessage` object.
-     */
-    GameMessage deserialize(std::istringstream& is);
-
 private:
     /**
      * @brief The game's entity and component registry, used to manage game state.
