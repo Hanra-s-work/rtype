@@ -1,7 +1,7 @@
 #include "WeaponSystem.hpp"
 #include "Zipper.hpp"
 #include "SpawnSystem.hpp"
-#include "../ECS/include/Time.hpp"
+#include "Time.hpp"
 
 void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentContainer<Position> &positions, ComponentContainer<Type> &types)
 {
