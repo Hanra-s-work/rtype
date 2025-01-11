@@ -21,6 +21,7 @@ set(SOURCES
     systems/EventSystem.cpp
     systems/LifetimeSystem.cpp
     systems/MovementSystem.cpp
+    systems/PlayerMiscellaneous.cpp
     systems/SpawnSystem.cpp
     systems/Systems.cpp
     systems/WeaponSystem.cpp
