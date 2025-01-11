@@ -31,7 +31,7 @@ void spawn_obstacle_system(Registry &r)
     }
 }
 
-void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const std::string &username)
+void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uint32_t &client_id, const std::string &username)
 {
     Entity player = r.spawn_entity();
     r.add_component<Position>(player, {pos_x, pos_y});
@@ -41,8 +41,8 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const std
     r.add_component<Weapon>(player, {1, .5f, 0.f});
     r.add_component<PowerUp>(player, {false});
     r.add_component<Type>(player, {type_enum::PLAYER});
-    r.add_component<PlayerInfo>(player, {username});
-    GameMessage msg = {messageType::SPAWN, player, {0, image_enum::PLAYER_ASSET, "", {pos_x, pos_y}}};
+    r.add_component<PlayerInfo>(player, {client_id, username});
+    GameMessage msg = {messageType::SPAWN, player, {0, image_enum::PLAYER_ASSET, 0, "", {pos_x, pos_y}}};
     username.copy(msg.msg.username, 8, 0);
     r.dispatcher->notify(msg);
 }
@@ -60,7 +60,7 @@ void spawn_monster(Registry &r, const float &pos_x, const float &pos_y)
     r.add_component<Behaviour>(monster, {behaviour_enum::DEFAULT});
     r.add_component<LootDrop>(monster, {loot_enum::NONE});
     r.add_component<Lifetime>(monster, {35.f});
-    r.dispatcher->notify({messageType::SPAWN, monster, {0, image_enum::MONSTER1_ASSET, "", {pos_x, pos_y}}});
+    r.dispatcher->notify({messageType::SPAWN, monster, {0, image_enum::MONSTER1_ASSET, 0, "", {pos_x, pos_y}}});
 }
 
 void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y)
@@ -73,7 +73,7 @@ void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y)
     //optional r.add_component<Health>(obstacle, {3, 3});
     r.add_component<Type>(obstacle, {type_enum::OBSTACLE});
     r.add_component<Lifetime>(obstacle, {60.f});
-    r.dispatcher->notify({messageType::SPAWN, obstacle, {0, image_enum::OBSTACLE1_ASSET, "", {pos_x, pos_y}}});
+    r.dispatcher->notify({messageType::SPAWN, obstacle, {0, image_enum::OBSTACLE1_ASSET, 0, "", {pos_x, pos_y}}});
 }
 
 void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const type_enum &owner)
@@ -92,7 +92,7 @@ void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const ty
         r.add_component<Velocity>(missile, {-2.f, 0.f});
     }
     r.add_component<Lifetime>(missile, {10.f});
-    r.dispatcher->notify({messageType::SPAWN, missile, {0, image_enum::MISSILE1_ASSET, "", {pos_x, pos_y}}});
+    r.dispatcher->notify({messageType::SPAWN, missile, {0, image_enum::MISSILE1_ASSET, 0, "", {pos_x, pos_y}}});
 }
 
 void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum &type)
@@ -104,5 +104,5 @@ void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const lo
     r.add_component<Collider>(powerup, {10.f});
     r.add_component<Type>(powerup, {type_enum::POWERUP});
     r.add_component<LootDrop>(powerup, {type});
-    r.dispatcher->notify({messageType::SPAWN, powerup, {0, image_enum::POWERUP_ASSET, "", {pos_x, pos_y}}});
+    r.dispatcher->notify({messageType::SPAWN, powerup, {0, image_enum::POWERUP_ASSET, 0, "", {pos_x, pos_y}}});
 }

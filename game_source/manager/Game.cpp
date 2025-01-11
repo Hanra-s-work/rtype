@@ -1,7 +1,7 @@
 #include "Game.hpp"
 #include "Registry.hpp"
 #include "EventDispatcher.hpp"
-#include "Time.hpp"
+#include "../ECS/include/Time.hpp"
 #include "Queue.hpp"
 
 Game::Game()

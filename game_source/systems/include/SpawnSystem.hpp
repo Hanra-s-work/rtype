@@ -39,9 +39,10 @@ void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y);
  * @param r The `Registry` that contains all game entities and their components.
  * @param pos_x The X-coordinate for the player's initial position.
  * @param pos_y The Y-coordinate for the player's initial position.
+ * @param client_it The client id of the player.
  * @param username The username of the player.
  */
-void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const std::string &username);
+void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uint32_t &client_id, const std::string &username);
 
 /**
  * @brief Spawns a missile at the specified position.

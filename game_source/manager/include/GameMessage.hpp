@@ -45,7 +45,8 @@ struct coord {
 struct messageInfo {
     int status;         ///< Status of the event (e.g., success or failure).
     int asset_id;       ///< ID representing the game asset related to the event (e.g., entity or object).
-    char username[9];   ///< Username of player connecting
+    uint32_t cli_id;    ///< Id of the player's client.
+    char username[9];   ///< Username of player connecting.
     coord coords;       ///< Coordinates associated with the event, such as the position of an entity.
 };
 

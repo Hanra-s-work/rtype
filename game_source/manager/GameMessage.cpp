@@ -5,11 +5,12 @@ void serialize(const GameMessage &message, std::ostringstream &os) {
 
     switch (message.type) {
         case CONNECT: {
+            os.write(reinterpret_cast<const char*>(&message.msg.cli_id), sizeof(message.msg.cli_id));
             os.write(message.msg.username, 8);
             break;
         }
         case DISCONNECT: {
-            os.write(reinterpret_cast<const char*>(&message.id), sizeof(message.id));
+            os.write(reinterpret_cast<const char*>(&message.msg.cli_id), sizeof(message.msg.cli_id));
             break;
         }
         case MOVE: {
@@ -56,12 +57,13 @@ GameMessage deserialize(std::istringstream &is) {
 
     switch (message.type) {
         case CONNECT: {
+            is.read(reinterpret_cast<char*>(&message.msg.cli_id), sizeof(message.msg.cli_id));
             is.read(message.msg.username, 8);
             message.msg.username[8] = '\0';
             break;
         }
         case DISCONNECT: {
-            is.read(reinterpret_cast<char*>(&message.id), sizeof(message.id));
+            is.read(reinterpret_cast<char*>(&message.msg.cli_id), sizeof(message.msg.cli_id));
             break;
         }
         case MOVE: {

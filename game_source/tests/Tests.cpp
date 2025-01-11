@@ -182,7 +182,7 @@ int test_get_game_event(void)
 
 int test_send_msg(void)
 {
-    GameMessage msg = {messageType::CONNECT, 0, {0, 0, "Player1", {0, 0}}};
+    GameMessage msg = {messageType::CONNECT, 0, {0, 0, 0, "Player1", {0, 0}}};
     std::ostringstream oss;
     std::string s;
     try {
@@ -209,8 +209,8 @@ int test_send_msg(void)
 
 int test_stress(void)
 {
-    GameMessage msg1 = {messageType::CONNECT, 0, {0, 0, "Player1", {0, 0}}};
-    GameMessage msg2 = {messageType::CONNECT, 0, {0, 0, "Player2", {0, 0}}};
+    GameMessage msg1 = {messageType::CONNECT, 0, {0, 0, 0, "Player1", {0, 0}}};
+    GameMessage msg2 = {messageType::CONNECT, 0, {0, 0, 1, "Player2", {0, 0}}};
     try {
         Game newGame;
         std::ostringstream oss;
