@@ -1,6 +1,6 @@
 #include "AISystem.hpp"
 
-#include "Time.hpp"
+#include "../ECS/include/Time.hpp"
 #include "Zipper.hpp"
 
 void ai_system(Registry &r, ComponentContainer<Behaviour> &behaviours, ComponentContainer<Velocity> &velocities)

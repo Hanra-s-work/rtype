@@ -1,9 +1,9 @@
 #include "SpawnSystem.hpp"
 
 #include <iostream>
-#include "Random.hpp"
+#include "../ECS/include/Random.hpp"
 #include "Registry.hpp"
-#include "Time.hpp"
+#include "../ECS/include/Time.hpp"
 
 float spawn_timer = DEFAULT_TIMER;
 float spawn_obstacle_timer = DEFAULT_TIMER * 3;

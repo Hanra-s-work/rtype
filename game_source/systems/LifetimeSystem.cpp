@@ -1,7 +1,7 @@
 #include "LifetimeSystem.hpp"
 #include "IndexedZipper.hpp"
 
-#include "Time.hpp"
+#include "../ECS/include/Time.hpp"
 
 void lifetime_system(Registry &r, ComponentContainer<Lifetime> &lifetimes)
 {

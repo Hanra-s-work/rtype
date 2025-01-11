@@ -11,8 +11,8 @@ include_directories(systems/include)
 set(SOURCES
     ECS/Entity.cpp
     ECS/Registry.cpp
-    manager/Time.cpp
-    manager/Random.cpp
+    ECS/Random.cpp
+    ECS/Time.cpp
     manager/Game.cpp
     manager/GameMessage.cpp
     manager/Queue.cpp
