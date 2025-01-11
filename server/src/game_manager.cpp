@@ -25,7 +25,7 @@ uint32_t GameManager::assignClientToGame(uint32_t clientId) {
     // The Game class might have some method to handle a new player, or an event:
     // For example, create a spawn event or call onServerEventReceived(...).
     // We'll just illustrate:
-    std::string connectEvent = "Player connected ID=" + std::to_string(clientId);
+    std::string connectEvent = "\x01" + std::to_string(clientId);
     gInst.game->onServerEventReceived(connectEvent);
 
     return gid;
@@ -43,7 +43,7 @@ void GameManager::removeClientFromGame(uint32_t clientId) {
     cList.erase(std::remove(cList.begin(), cList.end(), clientId), cList.end());
 
     // Possibly notify the Game that this player left:
-    std::string disconnectEvent = "Player disconnected ID=" + std::to_string(clientId);
+    std::string disconnectEvent = "\x02" + std::to_string(clientId);
     gInst.game->onServerEventReceived(disconnectEvent);
 
     clientToGame_.erase(clientId);

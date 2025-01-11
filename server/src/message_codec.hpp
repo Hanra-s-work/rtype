@@ -11,20 +11,16 @@
  * @return true if successful, false if invalid format.
  */
 inline bool decodeMessage(const char* data, size_t length, Message& out) {
-    if (length < 4) return false;
-    uint16_t netType, netLen;
-    std::memcpy(&netType, data, 2);
-    std::memcpy(&netLen,  data + 2, 2);
+    uint8_t netType;
+    std::memcpy(&netType, data, 1);
 
     // If needed, do ntohs here:
     // netType = ntohs(netType);
     // netLen  = ntohs(netLen);
 
-    if (length < (4 + netLen)) return false;
-
     out.type = netType;
-    out.payload.resize(netLen);
-    std::memcpy(out.payload.data(), data + 4, netLen);
+    out.payload.resize(length - 1);
+    std::memcpy(out.payload.data(), data + 1, length - 1);
     return true;
 }
 
@@ -35,14 +31,13 @@ inline bool decodeMessage(const char* data, size_t length, Message& out) {
  */
 inline std::vector<uint8_t> encodeMessage(const Message& msg) {
     // If needed, do htons
-    uint16_t netType = msg.type;
-    uint16_t netLen  = static_cast<uint16_t>(msg.payload.size());
+    uint8_t netType = msg.type;
 
-    std::vector<uint8_t> buffer(4 + netLen);
-    std::memcpy(buffer.data(), &netType, 2);
-    std::memcpy(buffer.data() + 2, &netLen, 2);
-    if (netLen > 0) {
-        std::memcpy(buffer.data() + 4, msg.payload.data(), netLen);
+    size_t size = msg.payload.size();
+    std::vector<uint8_t> buffer(size + 1);
+    std::memcpy(buffer.data(), &netType, 1);
+    if (size > 0) {
+        std::memcpy(buffer.data() + 4, msg.payload.data(), size);
     }
     return buffer;
 }

@@ -7,7 +7,7 @@
  * @brief Minimal network message with a 4-byte header (type + length) and a payload.
  */
 struct Message {
-    uint16_t type; ///< Could map to messageType in GameMessage.hpp (CONNECT, DISCONNECT, etc.)
+    uint8_t type; ///< Could map to messageType in GameMessage.hpp (CONNECT, DISCONNECT, etc.)
     std::vector<uint8_t> payload; ///< Arbitrary payload bytes
 };
 

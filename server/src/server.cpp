@@ -36,7 +36,6 @@ void Server::handleMessage(std::size_t bytesReceived) {
 
     // Find or create clientId for this endpoint
     uint32_t clientId = clientManager_.resolveClientID(remoteEndpoint_);
-
     // For demonstration, assume msg.type might match your messageType enum in GameMessage
     switch (msg.type) {
     case 1: {
