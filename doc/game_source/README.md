@@ -38,6 +38,18 @@ The `Game Manager` diagram contains:
 
 - **Game**: Runs the game systems according to the deltaTime and receives events from the systems.
 - **EventDispatcher**: Dispatches the events to the `Game`.
+- **Queue**: Queues the events received by the server on a thread safe queue.
 - **GameMessage**: Data structure that holds the event's information.
 
 ![Game Manager Placeholder](./manager/r-type-Manager.png)
+
+---
+
+## Systems
+
+The `Systems` diagram contains:
+
+- **Systems**: Setup functions for components and systems.
+- **____System**: *Blank*System is a system that runs every game update, checking on various components to modify the state of the game (e.g. movement, shooting, collision...)
+
+![Game Manager Placeholder](./systems/r-type-Systems.png)
