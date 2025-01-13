@@ -96,7 +96,7 @@ void GameManager::handleGameMessage(uint32_t gameId, uint32_t clientId, const Me
         // Or use your 'deserialize' logic:
         std::istringstream iss(std::string(
             reinterpret_cast<const char*>(msg.payload.data()), msg.payload.size()));
-        GameMessage gm = gInst.game->deserialize(iss);
+        GameMessage gm = deserialize(iss);
 
         // Now pass this to the game:
         gInst.game->onGameEventReceived(gm);

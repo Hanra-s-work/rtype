@@ -27,7 +27,7 @@ target_include_directories(rtype_server PRIVATE
 # Link the server to the library from game_source
 target_link_libraries(rtype_server
     PRIVATE
-        game_source_lib       # from game_source/CMakeLists
+        RTypeSource       # from game_source/CMakeLists
         # Threads::Threads    # if needed
         # other libs (asio, etc.) if needed
 )
