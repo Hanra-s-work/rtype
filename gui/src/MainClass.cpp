@@ -1946,10 +1946,10 @@ void Main::_connectionFailedScreen()
 
     const std::string bodyKey = "ConnectionFailedScreenBody";
     const std::string titleKey = "ConnectionFailedScreenTitle";
-    const std::string backgroundKey = "ConnectionFailed";
+    const std::string backgroundKey = "connectionFailed";
     const std::string connectionButtonKey = "ConnectionFailedScreenConnectButton";
 
-    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Crimson;
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Firebrick;
 
     std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
     std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
@@ -2121,8 +2121,8 @@ void Main::_connectionFailedScreen()
     }
 
     PRETTY_DEBUG << "Checking the coordinates for the center of the x and y axis." << std::endl;
-    unsigned int posx = _getScreenCenterX();
-    unsigned int posy = _getScreenCenterY();
+    unsigned int posx = 40;
+    unsigned int posy = 30;
     PRETTY_DEBUG << "Center of the screen is at (" << posx << ", " << posy << ")" << std::endl;
 
     PRETTY_DEBUG << "The items that are currently loaded, are:\n- " << *titleItem << "\n- " << *bodyItem << "\n- " << *homeItem << std::endl;
