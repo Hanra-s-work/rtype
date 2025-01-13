@@ -1125,8 +1125,13 @@ void Main::_unknownScreen()
     const std::string titleKey = "unknownScreenTitle";
     const std::string bodyKey = "unknownScreenBody";
 
-    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
-    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
+    const unsigned int titleTextSize = 40;
+    const unsigned int bodyTextSize = 20;
+
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::CadetBlue;
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
     std::shared_ptr<GUI::ECS::Components::ButtonComponent> homeItem;
 
     std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
@@ -1144,10 +1149,12 @@ void Main::_unknownScreen()
         if (textCapsule) {
             if (textCapsule.value()->getApplication() == titleKey) {
                 titleTextFound = true;
-                title = textCapsule.value();
+                titleItem = textCapsule.value();
+                titleItem->setSize(titleTextSize);
             } else if (textCapsule.value()->getApplication() == bodyKey) {
                 bodyTextFound = true;
-                body = textCapsule.value();
+                bodyItem = textCapsule.value();
+                bodyItem->setSize(bodyTextSize);
             } else {
                 continue;
             }
@@ -1170,9 +1177,12 @@ void Main::_unknownScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
             return;
         }
-        title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
-        title->setApplication(titleKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
+        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!", titleTextSize);
+        titleItem->setApplication(titleKey);
+        titleItem->setNormalColor(textColour);
+        titleItem->setHoverColor(textColour);
+        titleItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(titleItem);
         _baseId += 1;
     }
 
@@ -1182,9 +1192,12 @@ void Main::_unknownScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
             return;
         }
-        body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
-        body->setApplication(bodyKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.", bodyTextSize);
+        bodyItem->setApplication(bodyKey);
+        bodyItem->setNormalColor(textColour);
+        bodyItem->setHoverColor(textColour);
+        bodyItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(bodyItem);
         _baseId += 1;
     }
 
@@ -1209,12 +1222,21 @@ void Main::_unknownScreen()
     unsigned int posx = _getScreenCenterX();
     unsigned int posy = _getScreenCenterY();
 
-    title->setPosition({ posx, posy });
-    body->setPosition({ posx, posy + 20 });
-    homeItem->setPosition({ posx, posy + 40 });
+    const unsigned int titleOffest = (2 * titleTextSize);
+    const unsigned int titleLength = (titleItem->getSize() + 1) / 2 + titleOffest;
+    const unsigned int bodyLength = ((bodyItem->getSize() + 1) / 2) + (17 * bodyTextSize);
+    const unsigned int homeItemLength = (homeItem->getTextSize() + 1) / 2 + titleOffest;
+
+    PRETTY_DEBUG << "Lengths:\n- titleLength: '" << titleLength << "'\n- bodyLength: '" << bodyLength << "'\n- homeItemLength: '" << homeItemLength << "'" << std::endl;
+    PRETTY_DEBUG << "Positions:\n- posx: '" << posx << "'\n- posy: '" << posy << "'" << std::endl;
+
+
+    titleItem->setPosition({ posx - titleLength, posy });
+    bodyItem->setPosition({ posx - bodyLength, posy + 60 });
+    homeItem->setPosition({ posx - homeItemLength, posy + 100 });
     PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
-    win.value()->draw(*title);
-    win.value()->draw(*body);
+    win.value()->draw(*titleItem);
+    win.value()->draw(*bodyItem);
     win.value()->draw(*homeItem);
     PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
@@ -2332,7 +2354,7 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     // setActiveScreen(ActiveScreen::MENU);
-    setActiveScreen(ActiveScreen::GAME_WON);
+    setActiveScreen(ActiveScreen::UNKNOWN);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
