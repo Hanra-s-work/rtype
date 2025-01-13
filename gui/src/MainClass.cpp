@@ -525,7 +525,7 @@ std::uint32_t Main::_initialiseFonts()
         PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
         std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
         PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
-        PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
+        PRETTY_DEBUG << "Storing in ecs entity" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
         if (application == titleFontNode) {
             _titleFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
@@ -539,7 +539,7 @@ std::uint32_t Main::_initialiseFonts()
         if (application == buttonFontNode) {
             _buttonFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
         }
-        PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
+        PRETTY_DEBUG << "Stored in ecs entity" << std::endl;
         _baseId++;
     }
     PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
@@ -846,7 +846,7 @@ void Main::_initialiseRessources()
         throw CustomExceptions::NoFont("<No fonts are loaded into the program>");
     }
 
-    PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
+    PRETTY_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
     std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], true);
     if (!firstFontCapsule.has_value()) {
         throw CustomExceptions::NoFont();
@@ -1104,16 +1104,82 @@ const unsigned int Main::_getScreenCenterY()
 void Main::_gameScreen()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 }
 
 void Main::_demoScreen()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 }
 
 void Main::_settingsMenu()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 }
 
 void Main::_unknownScreen()
@@ -1137,10 +1203,23 @@ void Main::_unknownScreen()
     std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
     std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
 
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
         PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
         throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
     }
 
 
@@ -1270,13 +1349,26 @@ void Main::_gameOverScreen()
     PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
     PRETTY_DEBUG << "vector backgrounds size: " << backgrounds.size() << std::endl;
 
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
         PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
         throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
     }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
 
-    PRECISE_DEBUG << "Fetching the text components if present." << std::endl;
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
     for (std::any textCast : texts) {
         std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
         if (textCapsule.has_value()) {
@@ -1293,7 +1385,7 @@ void Main::_gameOverScreen()
             }
         }
     }
-    PRECISE_DEBUG << "Fetched the text components that were present." << std::endl;
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
 
     PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
     for (std::any buttonCast : buttons) {
@@ -1443,13 +1535,26 @@ void Main::_gameWonScreen()
     PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
     PRETTY_DEBUG << "vector backgrounds size: " << backgrounds.size() << std::endl;
 
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
         PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
         throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
     }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
 
-    PRECISE_DEBUG << "Fetching the text components if present." << std::endl;
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
     for (std::any textCast : texts) {
         std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
         if (textCapsule.has_value()) {
@@ -1466,7 +1571,7 @@ void Main::_gameWonScreen()
             }
         }
     }
-    PRECISE_DEBUG << "Fetched the text components that were present." << std::endl;
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
 
     PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
     for (std::any buttonCast : buttons) {
@@ -1518,7 +1623,7 @@ void Main::_gameWonScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game won screen screen." << std::endl;
             return;
         }
-        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have won !", 20);
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have won!", 20);
         bodyItem->setApplication(bodyKey);
         bodyItem->setNormalColor(textColour);
         bodyItem->setHoverColor(textColour);
@@ -1617,10 +1722,24 @@ void Main::_mainMenuScreen()
     unsigned int heightPos = 0;
     const unsigned int heightStep = 40;
 
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
         PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
         throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goExit();
     }
 
     for (const std::any node : images) {
@@ -1794,11 +1913,220 @@ void Main::_mainMenuScreen()
 void Main::_bossFightScreen()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 }
 
 void Main::_connectionFailedScreen()
 {
 
+    PRETTY_DEBUG << "In the _connectionFailedScreen function." << std::endl;
+
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+    bool backgroundFound = false;
+    bool connectionScreen = false;
+    bool connectButtonFound = false;
+
+    const std::string bodyKey = "ConnectionFailedScreenBody";
+    const std::string titleKey = "ConnectionFailedScreenTitle";
+    const std::string backgroundKey = "ConnectionFailed";
+    const std::string connectionButtonKey = "ConnectionFailedScreenConnectButton";
+
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Crimson;
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> homeItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> connectItem;
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> backgroundItem;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
+    PRETTY_DEBUG << "vector texts size: " << texts.size() << std::endl;
+    PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
+    PRETTY_DEBUG << "vector backgrounds size: " << backgrounds.size() << std::endl;
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule.has_value()) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                titleItem = textCapsule.value();
+                PRETTY_DEBUG << "Text title found" << std::endl;
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                bodyItem = textCapsule.value();
+                PRETTY_DEBUG << "Text body found" << std::endl;
+            } else {
+                continue;
+            }
+        }
+    }
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule.has_value()) {
+            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
+                homeButtonFound = true;
+                homeItem = buttonCapsule.value();
+                PRETTY_DEBUG << "Home button found" << std::endl;
+            } else if (buttonCapsule.value()->getApplication() == connectionButtonKey) {
+                connectButtonFound = true;
+                connectItem = buttonCapsule.value();
+                PRETTY_DEBUG << "Connection button found" << std::endl;
+            }
+        }
+    }
+    PRETTY_DEBUG << "Fetched the button content." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the background." << std::endl;
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (backgroundCapsule.has_value() && backgroundCapsule.value()->getApplication() == backgroundKey) {
+            backgroundFound = true;
+            backgroundItem = backgroundCapsule.value();
+            PRETTY_DEBUG << "Background found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the background content." << std::endl;
+
+    PRETTY_DEBUG << "Values of the checker variables: \n- bodyTextFound: '" << Recoded::myToString(bodyTextFound) << "'\n- titleTextFound: '" << Recoded::myToString(titleTextFound) << "'\n- homeButtonFound: '" << Recoded::myToString(homeButtonFound) << "'" << std::endl;
+
+    PRETTY_DEBUG << "Checking the text for the title." << std::endl;
+    if (!titleTextFound) {
+        PRETTY_WARNING << "No title text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the game won screen screen." << std::endl;
+            return;
+        }
+        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Connection failed!");
+        titleItem->setApplication(titleKey);
+        titleItem->setNormalColor(textColour);
+        titleItem->setHoverColor(textColour);
+        titleItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(titleItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text for the title." << std::endl;
+
+    PRETTY_DEBUG << "Checking text content for the body." << std::endl;
+    if (!bodyTextFound) {
+        PRETTY_WARNING << "No body text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game won screen screen." << std::endl;
+            return;
+        }
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have won !", 20);
+        bodyItem->setApplication(bodyKey);
+        bodyItem->setNormalColor(textColour);
+        bodyItem->setHoverColor(textColour);
+        bodyItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(bodyItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text content for the body." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
+    if (!homeButtonFound) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        homeItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
+    if (!backgroundFound) {
+        PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::GreenYellow;
+        titleItem->setNormalColor(defaultColourForNoBackground);
+        titleItem->setHoverColor(defaultColourForNoBackground);
+        titleItem->setClickedColor(defaultColourForNoBackground);
+        titleItem->setNormalColor(defaultColourForNoBackground);
+        titleItem->setHoverColor(defaultColourForNoBackground);
+        titleItem->setClickedColor(defaultColourForNoBackground);
+    }
+
+    PRETTY_DEBUG << "Checking the coordinates for the center of the x and y axis." << std::endl;
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+    PRETTY_DEBUG << "Center of the screen is at (" << posx << ", " << posy << ")" << std::endl;
+
+    PRETTY_DEBUG << "The items that are currently loaded, are:\n- " << *titleItem << "\n- " << *bodyItem << "\n- " << *homeItem << std::endl;
+
+    PRETTY_DEBUG << "Setting the position of the components." << std::endl;
+    titleItem->setPosition({ posx, posy });
+    PRETTY_DEBUG << "Position for the title item is set." << std::endl;
+    bodyItem->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Position for the body item is set." << std::endl;
+    homeItem->setPosition({ posx, posy + 100 });
+    PRETTY_DEBUG << "Position for the home item is set." << std::endl;
+    if (backgroundFound) {
+        backgroundItem->setDimension({ _windowWidth, _windowHeight });
+        win.value()->draw(*backgroundItem);
+    }
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*titleItem);
+    PRETTY_DEBUG << "Title Item drawn." << std::endl;
+    win.value()->draw(*bodyItem);
+    PRETTY_DEBUG << "Body Item drawn." << std::endl;
+    win.value()->draw(*homeItem);
+    PRETTY_DEBUG << "Home Item drawn." << std::endl;
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
 void Main::_connectionAddressScreen()
@@ -2354,7 +2682,7 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     // setActiveScreen(ActiveScreen::MENU);
-    setActiveScreen(ActiveScreen::UNKNOWN);
+    setActiveScreen(ActiveScreen::CONNECTION_FAILED);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
@@ -2367,7 +2695,7 @@ void Main::_mainLoop()
         PRETTY_INFO << "Processing incoming packets" << std::endl;
         _processIncommingPackets();
         PRETTY_SUCCESS << "Processed incoming packets" << std::endl;
-        event->processEvents(*window);
+        event->processEvents(*window, getActiveScreen());
         PRETTY_SUCCESS << "Processed window events (user input basically)" << std::endl;
         _updateMouseForAllRendererables(event->getMouseInfo());
         PRETTY_SUCCESS << "Updated mouse position for all rendererables" << std::endl;
