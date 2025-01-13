@@ -166,6 +166,13 @@ x = 0
 y = 0
 allow_as_level_background = true
 
+[backgrounds.connectionAddress]
+name = "Connection Address"
+path = "assets/background/purple_sky.jpeg"
+x = 0
+y = 0
+allow_as_level_background = true
+
 [backgrounds.connectionFailed]
 name = "Connection Failed"
 path = "assets/background/connection_space.jpeg"
