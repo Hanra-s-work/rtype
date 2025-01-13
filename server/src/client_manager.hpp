@@ -1,34 +1,31 @@
 #pragma once
-
 #include <asio.hpp>
 #include <unordered_map>
 #include <mutex>
 #include <cstdint>
-#include "asio_hash.hpp"
 
 /**
- * ClientManager:
- *   - gives each (ip,port) client a stable uint32_t ID
- *   - can retrieve the endpoint for a given client ID
+ * @class ClientManager
+ * @brief Tracks (ip::udp::endpoint)->clientId for consistent identification of clients.
  */
 class ClientManager {
 public:
     /**
-     * resolveClientID:
-     *   - returns the client ID for (ip,port).
-     *   - if unknown, creates a new ID.
+     * @brief Resolves or creates a clientId for a given remote endpoint.
+     * @param ep The client's (IP,port) endpoint.
+     * @return The clientId assigned to that endpoint.
      */
     uint32_t resolveClientID(const asio::ip::udp::endpoint& ep);
 
     /**
-     * getEndpoint:
-     *   - returns the (ip,port) for a known client ID
+     * @brief Removes a client from the manager by endpoint.
+     * @param ep The endpoint to remove.
      */
-    asio::ip::udp::endpoint getEndpoint(uint32_t clientId);
+    void removeClient(const asio::ip::udp::endpoint& ep);
 
 private:
-    std::mutex mutex_;
-    std::unordered_map<asio::ip::udp::endpoint, uint32_t> endpointToId_;
-    std::unordered_map<uint32_t, asio::ip::udp::endpoint> idToEndpoint_;
-    uint32_t nextClientId_ = 1;
+    std::mutex mutex_; ///< Protects the maps below
+    std::unordered_map<asio::ip::udp::endpoint, uint32_t> epToId_;
+    std::unordered_map<uint32_t, asio::ip::udp::endpoint> idToEp_;
+    uint32_t nextId_ = 1;
 };

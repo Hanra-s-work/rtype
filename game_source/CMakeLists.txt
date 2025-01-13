@@ -30,6 +30,11 @@ set(SOURCES
 # Static library
 add_library(RTypeSource STATIC ${SOURCES})
 
+# Expose the "manager/include" directory so other targets can #include "Game.hpp"
+target_include_directories(RTypeSource PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/manager/include
+)
+
 # Unit tests
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Debug mode detected: Creating unit tests executable")

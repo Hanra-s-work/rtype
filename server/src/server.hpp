@@ -3,42 +3,57 @@
 #include <asio.hpp>
 #include <memory>
 #include <array>
-#include <iostream>
+#include "game_manager.hpp"
 #include "client_manager.hpp"
-#include "logic_manager.hpp"
 #include "message.hpp"
 #include "message_codec.hpp"
 
+/**
+ * @class Server
+ * @brief Asynchronous UDP server that accepts multiple clients and manages multiple Game instances.
+ *
+ * Binds to 0.0.0.0:<port> for LAN accessibility, uses async receive to handle client packets,
+ * and forwards messages to the GameManager and ClientManager.
+ */
 class Server : public std::enable_shared_from_this<Server> {
 public:
-    Server(asio::io_context& io,
-           unsigned short clientPort, // e.g. 9000
-           unsigned short logicPort); // e.g. 9001
+    /**
+     * @brief Constructs the Server with a bound UDP socket on the given port.
+     * @param io The Asio io_context for async I/O.
+     * @param port The UDP port (e.g., 9000) for listening to client messages.
+     */
+    Server(asio::io_context& io, unsigned short port);
+
+    /**
+     * @brief Accessor to retrieve the GameManager (manages multiple Game instances).
+     * @return Reference to the GameManager instance.
+     */
+    GameManager& getGameManager() { return gameManager_; }
 
 private:
-    // Start async receive from clients
-    void doReceiveFromClients();
-    void handleClientMessage(std::size_t bytes_recvd);
+    /**
+     * @brief Initiates an async receive operation for UDP packets.
+     */
+    void doReceive();
 
-    // Start async receive from logic
-    void doReceiveFromLogic();
-    void handleLogicMessage(std::size_t bytes_recvd);
+    /**
+     * @brief Callback that processes a received packet (decodes and routes to game logic).
+     * @param bytesReceived Number of bytes in the packet.
+     */
+    void handleMessage(std::size_t bytesReceived);
 
-private:
-    asio::io_context& io_context_;
+    /// UDP socket bound to 0.0.0.0:<port>.
+    asio::ip::udp::socket socket_;
 
-    // Sockets
-    asio::ip::udp::socket client_socket_;
-    asio::ip::udp::endpoint client_remote_endpoint_;
+    /// Endpoint of the remote client who sent the current packet.
+    asio::ip::udp::endpoint remoteEndpoint_;
 
-    asio::ip::udp::socket logic_socket_;
-    asio::ip::udp::endpoint logic_remote_endpoint_;
+    /// Buffer to store incoming packet data.
+    std::array<char, 2048> recvBuffer_;
 
-    // Receive buffers
-    std::array<char, 2048> client_recv_buffer_;
-    std::array<char, 2048> logic_recv_buffer_;
+    /// Tracks endpoint <-> clientId mapping.
+    ClientManager clientManager_;
 
-    // Managers
-    std::shared_ptr<ClientManager> client_manager_;
-    std::shared_ptr<LogicManager> logic_manager_;
+    /// Manages multiple Game instances.
+    GameManager gameManager_;
 };
