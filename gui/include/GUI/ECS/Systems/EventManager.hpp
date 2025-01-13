@@ -57,9 +57,17 @@ namespace GUI
                  */
                 ~EventManager();
                 /**
-                 * @brief Clears all currently stored events.
+                 * @brief Clears all currently stored events
+                 * if the counter has reached the delay, otherwise, increment it.
                  */
                 void clearEvents();
+                /**
+                 * @brief Forcefully clear all the stored events
+                 *
+                 * @note This function will set the counter to the target
+                 * delay then call clear events.
+                 */
+                void flushEvents();
                 /**
                  * @brief Processes events from the specified window.
                  *

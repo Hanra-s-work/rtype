@@ -121,6 +121,15 @@ void GUI::ECS::Systems::EventManager::clearEvents()
 }
 
 
+void GUI::ECS::Systems::EventManager::flushEvents()
+{
+    PRETTY_DEBUG << "Setting the counter to the reset delay value" << std::endl;
+    _resetIndex = _resetDelay;
+    PRETTY_DEBUG << "Calling the clearEvents function" << std::endl;
+    clearEvents();
+    PRETTY_DEBUG << "The events have been flushed" << std::endl;
+}
+
 void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &windowItem, const ActiveScreen &currentScreen)
 {
     int counter = 0;
