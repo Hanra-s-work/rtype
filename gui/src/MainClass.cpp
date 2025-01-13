@@ -1942,7 +1942,6 @@ void Main::_connectionFailedScreen()
     bool titleTextFound = false;
     bool homeButtonFound = false;
     bool backgroundFound = false;
-    bool connectionScreen = false;
     bool connectButtonFound = false;
 
     const std::string bodyKey = "ConnectionFailedScreenBody";
@@ -2032,7 +2031,7 @@ void Main::_connectionFailedScreen()
     }
     PRETTY_DEBUG << "Fetched the background content." << std::endl;
 
-    PRETTY_DEBUG << "Values of the checker variables: \n- bodyTextFound: '" << Recoded::myToString(bodyTextFound) << "'\n- titleTextFound: '" << Recoded::myToString(titleTextFound) << "'\n- homeButtonFound: '" << Recoded::myToString(homeButtonFound) << "'" << std::endl;
+    PRETTY_DEBUG << "Values of the checker variables: \n- bodyTextFound: '" << Recoded::myToString(bodyTextFound) << "'\n- titleTextFound: '" << Recoded::myToString(titleTextFound) << "'\n- homeButtonFound: '" << Recoded::myToString(homeButtonFound) << "'\n- backgroundFound: '" << Recoded::myToString(backgroundFound) << "'\n- connectButtonFound: '" << Recoded::myToString(connectButtonFound) << "'" << std::endl;
 
     PRETTY_DEBUG << "Checking the text for the title." << std::endl;
     if (!titleTextFound) {
@@ -2060,7 +2059,7 @@ void Main::_connectionFailedScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game won screen screen." << std::endl;
             return;
         }
-        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have won !", 20);
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You are not connected to the server!", 20);
         bodyItem->setApplication(bodyKey);
         bodyItem->setNormalColor(textColour);
         bodyItem->setHoverColor(textColour);
@@ -2090,15 +2089,35 @@ void Main::_connectionFailedScreen()
     }
     PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
 
+    PRETTY_DEBUG << "Checking if the Connect button exists." << std::endl;
+    if (!connectButtonFound) {
+        PRETTY_WARNING << "Connect button not found, creating" << std::endl;
+        connectItem = _createButton(
+            connectionButtonKey,
+            "Connection address",
+            std::bind(&Main::_goConnectionAddress, this),
+            "_goConnectionAddress",
+            300,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "connect Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
     if (!backgroundFound) {
         PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
-        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::GreenYellow;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::OrangeRed;
         titleItem->setNormalColor(defaultColourForNoBackground);
         titleItem->setHoverColor(defaultColourForNoBackground);
         titleItem->setClickedColor(defaultColourForNoBackground);
-        titleItem->setNormalColor(defaultColourForNoBackground);
-        titleItem->setHoverColor(defaultColourForNoBackground);
-        titleItem->setClickedColor(defaultColourForNoBackground);
+        bodyItem->setNormalColor(defaultColourForNoBackground);
+        bodyItem->setHoverColor(defaultColourForNoBackground);
+        bodyItem->setClickedColor(defaultColourForNoBackground);
     }
 
     PRETTY_DEBUG << "Checking the coordinates for the center of the x and y axis." << std::endl;
@@ -2115,6 +2134,8 @@ void Main::_connectionFailedScreen()
     PRETTY_DEBUG << "Position for the body item is set." << std::endl;
     homeItem->setPosition({ posx, posy + 100 });
     PRETTY_DEBUG << "Position for the home item is set." << std::endl;
+    connectItem->setPosition({ posx, posy + 160 });
+    PRETTY_DEBUG << "Position for the connect item is set." << std::endl;
     if (backgroundFound) {
         backgroundItem->setDimension({ _windowWidth, _windowHeight });
         win.value()->draw(*backgroundItem);
@@ -2126,11 +2147,32 @@ void Main::_connectionFailedScreen()
     PRETTY_DEBUG << "Body Item drawn." << std::endl;
     win.value()->draw(*homeItem);
     PRETTY_DEBUG << "Home Item drawn." << std::endl;
+    win.value()->draw(*connectItem);
+    PRETTY_DEBUG << "Connect Item drawn." << std::endl;
     PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
 void Main::_connectionAddressScreen()
 {
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 
 }
 /**
@@ -2712,6 +2754,10 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Game screen components are going to be set to be displayed" << std::endl;
             _gameScreen();
             PRETTY_SUCCESS << "Game screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::DEMO) {
+            PRETTY_DEBUG << "Demo screen components are going to be set to be displayed" << std::endl;
+            _demoScreen();
+            PRETTY_SUCCESS << "Demo screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::SETTINGS) {
             PRETTY_DEBUG << "Settings screen components are going to be set to be displayed" << std::endl;
             _settingsMenu();
@@ -2732,10 +2778,10 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Connection Failed screen components are going to be set to be displayed" << std::endl;
             _connectionFailedScreen();
             PRETTY_SUCCESS << "Connection Failed screen components are set to be displayed" << std::endl;
-        } else if (_activeScreen == ActiveScreen::DEMO) {
-            PRETTY_DEBUG << "Demo screen components are going to be set to be displayed" << std::endl;
-            _demoScreen();
-            PRETTY_SUCCESS << "Demo screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::CONNECTION_ADDRESS) {
+            PRETTY_DEBUG << "Connection Address screen components are going to be set to be displayed" << std::endl;
+            _connectionAddressScreen();
+            PRETTY_SUCCESS << "Connection Address screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::LOADING) {
             PRETTY_DEBUG << "Update loading text screen components are going to be set to be displayed" << std::endl;
             _updateLoadingText("Apparently we are loading something...");
@@ -3022,8 +3068,21 @@ void Main::setDebug(const bool debug)
  */
 void Main::setActiveScreen(const ActiveScreen screen)
 {
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    PRETTY_DEBUG << "Flushing stored events" << std::endl;
+    event_ptr.value()->flushEvents();
+    PRETTY_SUCCESS << "Events flushed" << std::endl;
+
+    PRETTY_DEBUG << "Setting active screen to: '" << Recoded::myToString(screen) << "'" << std::endl;
     _activeScreen = screen;
-    PRETTY_DEBUG << "Setting active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
+    PRETTY_DEBUG << "Set active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
+
+    PRETTY_DEBUG << "Updating the current music that is supposed to play." << std::endl;
     if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
         PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
         _startMainMenuMusic();
@@ -3064,6 +3123,7 @@ void Main::setActiveScreen(const ActiveScreen screen)
         _stopGameLoopMusic();
         _stopBossFightMusic();
     }
+    PRETTY_DEBUG << "Updated the current music that is supposed to play." << std::endl;
 }
 
 /**
