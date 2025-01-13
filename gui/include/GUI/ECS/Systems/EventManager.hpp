@@ -24,6 +24,7 @@
 #include "Log.hpp"
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
+#include "ActiveScreen.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Key.hpp"
 #include "GUI/ECS/Systems/Window.hpp"
@@ -63,8 +64,9 @@ namespace GUI
                  * @brief Processes events from the specified window.
                  *
                  * @param window The window from which events will be processed.
+                 * @param currentScreen The screen that is currently in use.
                  */
-                void processEvents(GUI::ECS::Systems::Window &window);
+                void processEvents(GUI::ECS::Systems::Window &window, const ActiveScreen &currentScreen = ActiveScreen::UNKNOWN);
 
                 /**
                  * @brief Checks if the mouse is in focus within the window.
@@ -140,8 +142,9 @@ namespace GUI
                  * @brief Updates the EventManager with events from a window.
                  *
                  * @param window The window to retrieve events from.
+                 * @param screen The screen that is currently in use.
                  */
-                void update(GUI::ECS::Systems::Window &window);
+                void update(GUI::ECS::Systems::Window &window, const ActiveScreen &screen = ActiveScreen::UNKNOWN);
                 /**
                  * @brief Updates the EventManager with new mouse information.
                  *
