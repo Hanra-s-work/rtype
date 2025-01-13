@@ -202,8 +202,14 @@ class Main {
   void _sendAllPackets();
   void _processIncommingPackets();
 
+  // Functions in charge of managing a node from an ipv4
+  const std::string _incrementIpV4Node(const std::string &v4Section);
+  const std::string _decrementIpV4Node(const std::string &v4Section);
+
+  // Function in charge of creating buttons
   const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName = "callback function", const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::AliceBlue);
 
+  // Functions in charge of extracting the x and y coordinates of the screen
   const unsigned int _getScreenCenterX();
   const unsigned int _getScreenCenterY();
 

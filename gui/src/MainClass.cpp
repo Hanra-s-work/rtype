@@ -1005,6 +1005,80 @@ void Main::_processIncommingPackets()
 
 }
 
+/**
+ * @brief Increments an IPv4 node value represented as a string.
+ *
+ * This function takes a string representing an IPv4 node (e.g., "0" to "255")
+ * and increments it by 1. If the input is invalid, it defaults to "0".
+ * If the input is "255", it wraps around to "0".
+ *
+ * @param v4Node The IPv4 node value as a string. Expected to be in the range "0" to "255".
+ *
+ * @return The incremented IPv4 node value as a string. Returns "0" for invalid
+ * input or when the input is "255".
+ *
+ * @warning Logs a warning message if the input is not a valid number.
+ *
+ * @note Leading zeros in the input are accepted but ignored
+ * (e.g., "000" is treated as "0").
+ */
+const std::string Main::_incrementIpV4Node(const std::string &v4Node)
+{
+    if (v4Node == "0" || v4Node == "000") {
+        return "1";
+    }
+    try {
+        const unsigned int v4int = std::max({ stoi(v4Node), 0 });
+        if (v4int < 255) {
+            return std::to_string(v4int + 1);
+        } else {
+            return "0";
+        }
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_WARNING << "The argument passed is not a number, you entered: '"
+            << v4Node << "', stoi error: '" << std::string(e.what()) << "'"
+            << ", defaulting to: '0'"
+            << std::endl;
+        return "0";
+    }
+}
+
+/**
+ * @brief Decrements an IPv4 node value represented as a string.
+ *
+ * This function takes a string representing an IPv4 node (e.g., "0" to "255")
+ * and decrements it by 1. If the input is invalid, it defaults to "0".
+ * If the input is "0", it wraps around to "255".
+ *
+ * @param v4Node The IPv4 node value as a string. Expected to be in the range "0" to "255".
+ *
+ * @return The decremented IPv4 node value as a string. Returns "0" for invalid input or
+ * when the input is "0".
+ *
+ * @warning Logs a warning message if the input is not a valid number.
+ *
+ * @note Leading zeros in the input are accepted but ignored
+ * (e.g., "000" is treated as "0").
+ */
+const std::string Main::_decrementIpV4Node(const std::string &v4Node)
+{
+    try {
+        const unsigned int v4int = std::max({ stoi(v4Node), 0 });
+        if (v4int > 0) {
+            return std::to_string(v4int - 1);
+        } else {
+            return "255";
+        }
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_WARNING << "The argument passed is not a number, you entered: '"
+            << v4Node << "', stoi error: '" << std::string(e.what()) << "'"
+            << ", defaulting to: '0'"
+            << std::endl;
+        return "0";
+    }
+}
 
 /**
  * @brief Function in charge of creating and adding a button component to the ecs system.
@@ -1957,9 +2031,9 @@ void Main::_connectionFailedScreen()
     std::shared_ptr<GUI::ECS::Components::ButtonComponent> connectItem;
     std::shared_ptr<GUI::ECS::Components::ImageComponent> backgroundItem;
 
-    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
-    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
-    std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    const std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    const std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
 
     PRETTY_DEBUG << "vector texts size: " << texts.size() << std::endl;
     PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
@@ -2155,6 +2229,85 @@ void Main::_connectionFailedScreen()
 void Main::_connectionAddressScreen()
 {
 
+    PRETTY_DEBUG << "In the _connectionAddressScreen" << std::endl;
+    PRETTY_DEBUG << "Initialising keys" << std::endl;
+    const std::string titleKey = "connectionAddressScreenTitle";
+    const std::string bodyKey = "connectionAddressScreenBody";
+    const std::string homeKey = "connectionAddressScreenHome";
+    const std::string connectKey = "connectionAddressScreenConnect";
+    const std::string backgroundKey = "connectionAddress";
+    const std::string ipV4FirstChunkKey = "connectionAddressScreenIpV4FirstChunk";
+    const std::string ipV4FirstDotKey = "connectionAddressScreenIpV4FirstDot";
+    const std::string ipV4SecondChunkKey = "connectionAddressScreenIpV4SecondChunk";
+    const std::string ipV4SecondDotKey = "connectionAddressScreenIpV4SecondDot";
+    const std::string ipV4ThirdChunkKey = "connectionAddressScreenIpV4ThirdChunk";
+    const std::string ipV4ThirdDotKey = "connectionAddressScreenIpV4ThirdDot";
+    const std::string ipV4FourthChunkKey = "connectionAddressScreenIpV4FourthChunk";
+    const std::string ipChunkOneUpKey = "connectionAddressScreenIpChunkOneUp";
+    const std::string ipChunkOneDownKey = "connectionAddressScreenIpChunkOneDown";
+    const std::string ipChunkTwoUpKey = "connectionAddressScreenIpChunkTwoUp";
+    const std::string ipChunkTwoDownKey = "connectionAddressScreenIpChunkTwoDown";
+    const std::string ipChunkThreeUpKey = "connectionAddressScreenIpChunkThreeUp";
+    const std::string ipChunkThreeDownKey = "connectionAddressScreenIpChunkThreeDown";
+    const std::string ipChunkFourUpKey = "connectionAddressScreenIpChunkFourUp";
+    const std::string ipChunkFourDownKey = "connectionAddressScreenIpChunkFourDown";
+    PRETTY_DEBUG << "Keys initialised" << std::endl;
+
+    PRETTY_DEBUG << "Fetching component lists from the entity list" << std::endl;
+    const std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    const std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    PRETTY_DEBUG << "Fetched component lists from the entity list" << std::endl;
+
+    PRETTY_DEBUG << "Setting the default colour for the text that will displayed" << std::endl;
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Wheat;
+    PRETTY_DEBUG << "Default colour set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the ip colour for the text that will displayed" << std::endl;
+    const GUI::ECS::Systems::Colour textColourIp = GUI::ECS::Systems::Colour::Blue;
+    const GUI::ECS::Systems::Colour textColourIpDot = GUI::ECS::Systems::Colour::Chartreuse;
+    PRETTY_DEBUG << "Ip text colour set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the ip colour for the buttons that will displayed" << std::endl;
+    const GUI::ECS::Systems::Colour buttonUpColourIp = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour buttonDownColourIp = GUI::ECS::Systems::Colour::BlueViolet;
+    PRETTY_DEBUG << "Ip button colour set" << std::endl;
+
+    PRETTY_DEBUG << "Holder for the background initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundItem;
+    PRETTY_DEBUG << "Background holder initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the title and body initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> titleItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> bodyItem;
+    PRETTY_DEBUG << "Holders for the title and body initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the homa and connect buttons initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> homeItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> connectItem;
+    PRETTY_DEBUG << "Holders for the home and connect buttons initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the ip text chunks initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4FirstChunkItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4FirstDotItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4SecondChunkItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4SecondDotItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4ThirdChunkItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4ThirdDotItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4FourthChunkItem;
+    PRETTY_DEBUG << "Holders for the ip text chunks initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the ip button chunks initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkOneUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkOneDownItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkTwoUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkTwoDownItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkThreeUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkThreeDownItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkFourUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkFourDownItem;
+    PRETTY_DEBUG << "Holders for the ip button chunks initialised" << std::endl;
+
     PRETTY_DEBUG << "Getting the window manager component" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
@@ -2169,11 +2322,15 @@ void Main::_connectionAddressScreen()
         throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
     }
     PRETTY_SUCCESS << "Event manager component found" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
     if (event_ptr.value()->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
         PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
         _goHome();
     }
+    PRETTY_SUCCESS << "Escape key wasn't pressed" << std::endl;
 
+    PRETTY_DEBUG << "Fetching beckground if present" << std::endl;
 }
 /**
  * @brief Switches the active screen to the game screen for the online game version.
