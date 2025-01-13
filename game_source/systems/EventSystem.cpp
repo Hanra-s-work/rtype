@@ -2,6 +2,7 @@
 #include "EventSystem.hpp"
 #include "SpawnSystem.hpp"
 #include "MovementSystem.hpp"
+#include "PlayerMiscellaneous.hpp"
 
 void event_system(Registry& r)
 {
@@ -35,10 +36,11 @@ bool performAction(const GameMessage& event, Registry& r)
     switch (event.type)
     {
     case CONNECT:
-        spawn_player(r, 120, 540, event.msg.username);
+        spawn_player(r, 120, 540, event.msg.cli_id, event.msg.username);
         break;
     case DISCONNECT:
-        r.kill_entity(Entity(event.id));
+        size_t id = getIdByClientId(r, event.msg.cli_id);
+        r.kill_entity(Entity(id));
         break;
     case MOVE:
         move_player(r, event.id, event.msg.coords.x, event.msg.coords.y);

@@ -381,7 +381,7 @@ const std::string GUI::ECS::Systems::MouseInfo::getInfo(const unsigned int inden
     }
     result += "\n";
     result += indentation + "\t- Delta: " + Recoded::myToString(_mouseWheel.delta) + "\n";
-    result += indentation + "\t- Position: " + Recoded::myToString<int>({ _mouseWheel.position.x, _mouseWheel.position.y }) + "\n";
+    result += indentation + "\t- Position: " + Recoded::myToString(std::pair<int, int>({ _mouseWheel.position.x, _mouseWheel.position.y })) + "\n";
     result += indentation + "}\n";
     return result;
 }

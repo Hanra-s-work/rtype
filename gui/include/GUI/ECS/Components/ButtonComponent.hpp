@@ -23,6 +23,7 @@
 #include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 #include "GUI/ECS/Components/TextComponent.hpp"
 #include "GUI/ECS/Components/ShapeComponent.hpp"
 #include "GUI/ECS/Components/SpriteComponent.hpp"
@@ -69,7 +70,7 @@ namespace GUI
                  * @param collisionItem The collision component of the button.
                  * @param textSize The size of the text. Default is 40.
                  */
-                ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize = 40);
+                ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize = 40);
                 /**
                  * @brief Constructor initializing with all button components.
                  *
@@ -79,7 +80,7 @@ namespace GUI
                  * @param collisionItem The collision component of the button.
                  * @param textSize The size of the text. Default is 40.
                  */
-                ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize = 40);
+                ButtonComponent(const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize = 40);
 
                 /**
                  * @brief Constructor initializing with shape and text components.
@@ -107,7 +108,7 @@ namespace GUI
                  * @param collisionItem The collision component of the button.
                  * @param textSize The size of the text. Default is 40.
                  */
-                ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize = 40);
+                ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize = 40);
                 /**
                  * @brief Constructor initializing with all button components.
                  *
@@ -118,7 +119,7 @@ namespace GUI
                  * @param collisionItem The collision component of the button.
                  * @param textSize The size of the text. Default is 40.
                  */
-                ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Components::CollisionComponent &collisionItem, const std::uint32_t textSize = 40);
+                ButtonComponent(const std::uint32_t entityId, const GUI::ECS::Components::ShapeComponent &shapeItem, const GUI::ECS::Components::TextComponent &textItem, std::function<void()> callback, const GUI::ECS::Systems::Collision &collisionItem, const std::uint32_t textSize = 40);
 
                 /**
                  * @brief Destructor for ButtonComponent.
@@ -205,7 +206,7 @@ namespace GUI
                  * @param collision The collision information
                  * @param textSize The size of the text
                  */
-                void setCollision(const GUI::ECS::Components::CollisionComponent &collision, const std::uint32_t textSize = 40);
+                void setCollision(const GUI::ECS::Systems::Collision &collision, const std::uint32_t textSize = 40);
 
                 /**
                  * @brief Set the Callback function for the the button is clicked
@@ -334,9 +335,9 @@ namespace GUI
                 /**
                  * @brief Get the button collision object
                  *
-                 * @return const GUI::ECS::Components::CollisionComponent
+                 * @return const GUI::ECS::Systems::Collision
                  */
-                const GUI::ECS::Components::CollisionComponent getCollision() const;
+                const GUI::ECS::Systems::Collision getCollision() const;
 
                 /**
                  * @brief Get the Callback Name of the callback function
@@ -448,11 +449,11 @@ namespace GUI
                 std::string _name = "Button";                                   //!< A string containing the name of the button
                 std::string _application = "Button";                            //!< A string containing the application context of the button
                 std::string _callbackName = "callback";                         //!< A string containing the name of the callback function
+                std::uint32_t _textSize = 40;                                   //!< An unsigned int 32 in charge of storing the size of the text component.
                 std::function<void()> _callback;                                //!< A function instance containing the callback function
                 GUI::ECS::Components::TextComponent _componentText;             //!< The text component instance in charge of displaying text.
                 GUI::ECS::Components::ShapeComponent _componentShape;           //!< The shape component instance in charge of displaying the shape behind the text.
-                std::uint32_t _textSize = 40;                                   //!< An unsigned int 32 in charge of storing the size of the text component.
-                GUI::ECS::Components::CollisionComponent _collision;            //!< The collision component in charge of tracking at a higher level the position of the components.
+                GUI::ECS::Systems::Collision _collision;                        //!< The collision component in charge of tracking at a higher level the position of the components.
 
             };
 

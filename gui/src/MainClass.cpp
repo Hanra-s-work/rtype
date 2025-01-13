@@ -18,6 +18,7 @@
 
  /**
   * @brief Constructor for the Main class.
+  *
   * @param ip The IP address to use for connections (default: "127.0.0.1").
   * @param port The port number to use for connections (default: 5000).
   * @param windowWidth The width of the application window (default: 800).
@@ -120,6 +121,7 @@ Main::~Main() {}
  * to their lowercase version.
  *
  * @param text The string to process
+ *
  * @return std::string A lowercased string.
  */
 std::string Main::_lowerText(const std::string &text)
@@ -143,6 +145,7 @@ std::string Main::_lowerText(const std::string &text)
  * @brief Checks if the ip provided is correct.
  *
  * @param ip
+ *
  * @return true The ip is correct
  * @return false The ip is incorrect
  */
@@ -175,6 +178,7 @@ const bool Main::_isIpInRange(const std::string &ip) const
  * @brief Checks if the provided port is correct.
  *
  * @param port
+ *
  * @return true The port is correct.
  * @return false The port is incorrect.
  */
@@ -187,6 +191,7 @@ const bool Main::_isPortCorrect(const unsigned int port) const
  * @brief Check if the provided file path is present and can be opened.
  *
  * @param filepath
+ *
  * @return true The path is present
  * @return false The path is not present
  */
@@ -199,8 +204,9 @@ const bool Main::_isFilePresent(const std::string &filepath) const
  * @brief The function in charge of checking if the provided frame limit is correct.
  *
  * @param frameLimit
- * @return true
- * @return false
+ *
+ * @return true The frame limit is correct
+ * @return false The frame limit is incorrect
  */
 const bool Main::_isFrameLimitCorrect(const unsigned int frameLimit) const
 {
@@ -214,8 +220,9 @@ const bool Main::_isFrameLimitCorrect(const unsigned int frameLimit) const
  * @brief Check if a font configuration is correct.
  *
  * @param node
- * @return true
- * @return false
+ *
+ * @return true The configuration is correct
+ * @return false The configuration is incorrect
  */
 const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
 {
@@ -230,11 +237,31 @@ const bool Main::_isFontConfigurationCorrect(const TOMLLoader &node) const
 }
 
 /**
+ * @brief A function to check that the Icon configuration is correct.
+ *
+ * @param node
+ *
+ * @return true The configuration is correct
+ * @return false The configuration is incorrect
+ */
+const bool Main::_isIconConfigurationCorrect(const TOMLLoader &node) const
+{
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string)
+        ) {
+        return false;
+    }
+    return true;
+}
+
+/**
  * @brief Check if a music configuration is correct.
  *
  * @param node
- * @return true
- * @return false
+ *
+ * @return true The configuration is correct
+ * @return false The configuration is incorrect
  */
 const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
 {
@@ -253,8 +280,9 @@ const bool Main::_isMusicConfigurationCorrect(const TOMLLoader &node) const
  * @brief Check if a sprite configuration is correct.
  *
  * @param node
- * @return true
- * @return false
+ *
+ * @return true The configuration is correct
+ * @return false The configuration is incorrect
  */
 const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
 {
@@ -271,6 +299,24 @@ const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
     return true;
 }
 
+/**
+ * @brief Check if a background image configuration is correct.
+ *
+ * @param node
+ *
+ * @return true The configuration is correct
+ * @return false The configuration is incorrect
+ */
+const bool Main::_isBackgroundConfigurationCorrect(const TOMLLoader &node) const
+{
+    if (
+        !_isKeyPresentAndOfCorrectType(node, "name", toml::node_type::string) ||
+        !_isKeyPresentAndOfCorrectType(node, "path", toml::node_type::string)
+        ) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * @brief This is a generic function that will check if a given key is present and that the type of the value is correct.
@@ -278,6 +324,7 @@ const bool Main::_isSpriteConfigurationCorrect(const TOMLLoader &node) const
  * @param node
  * @param key
  * @param valueType
+ *
  * @return true
  * @return false
  */
@@ -315,42 +362,265 @@ void Main::_closeConnection()
 
 }
 
-
 /**
- * @brief This is the function in charge of loading the Sprites and Spritesheets into the program.
+ * @brief This is the function in charge of loading the ²s into the program.
  *
+ * @return std::uint32_t
  */
-std::uint32_t Main::_initialiseSprites()
+std::uint32_t Main::_initialiseAudio()
 {
-    TOMLLoader sprites(_tomlContent);
     const std::string tomlPath = _tomlContent.getTOMLPath();
-    const std::string spriteSheetKey = "spritesheets";
-    const std::string spriteSheetKeyAlt = "spritesheet";
-    std::unordered_map<std::string, TOMLLoader> loadedSprites;
+    const std::string musicKey = "music";
+    const std::string musicKeyAlt = "musics";
+    std::vector<std::string> audios;
+    std::unordered_map<std::string, TOMLLoader> loadedAudios;
 
-    if (_tomlContent.hasKey(spriteSheetKey)) {
-        PRETTY_INFO << "Fetching the content for '" << spriteSheetKey << "'." << std::endl;
-        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKey) << "'." << std::endl;
-        if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
-            sprites = _tomlContent.getTable(spriteSheetKey);
-        } else {
-            throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKey, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+    const TOMLLoader audio = _getTOMLNodeContent<CustomExceptions::InvalidConfigurationMusicType, CustomExceptions::NoMusicInConfigFile>(_tomlContent, musicKey, musicKeyAlt);
+
+    TOMLLoader tempNode(audio);
+
+    audios.push_back("mainMenu");
+    audios.push_back("bossFight");
+    audios.push_back("gameLoop");
+    audios.push_back("shooting");
+    audios.push_back("damage");
+    audios.push_back("dead");
+    audios.push_back("button");
+    audios.push_back("gameOver");
+    audios.push_back("success");
+
+    const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
+
+    PRETTY_INFO << "Getting the music configuration chunks" << std::endl;
+
+    for (std::string &iterator : audios) {
+        _updateLoadingText("Processing music '" + iterator + "'...");
+        if (!audio.hasKey(iterator)) {
+            throw CustomExceptions::NoTOMLKey(tomlPath, iterator);
         }
-    } else if (_tomlContent.hasKey(spriteSheetKeyAlt)) {
-        PRETTY_INFO << "Fetching the content for '" << spriteSheetKeyAlt << "'." << std::endl;
-        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(spriteSheetKeyAlt) << "'." << std::endl;
-        if (_tomlContent.getValueType(spriteSheetKey) == toml::node_type::table) {
-            sprites = _tomlContent.getTable(spriteSheetKey);
-        } else {
-            throw CustomExceptions::InvalidConfigurationSpritesheetType(tomlPath, spriteSheetKeyAlt, _tomlContent.getValueTypeAsString(spriteSheetKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        loadedAudios[iterator] = tempNode;
+        if (audio.getValueType(iterator) != toml::node_type::table) {
+            throw CustomExceptions::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
         }
-    } else {
-        PRETTY_CRITICAL << "The key " << spriteSheetKey << " is missing from the config file, " <<
-            "the other supported key " << spriteSheetKeyAlt << " wasn't found in the config file." << std::endl;
-        throw CustomExceptions::NoSpritesInConfigFile(_tomlContent.getTOMLPath(), spriteSheetKey);
+        loadedAudios[iterator].update(audio.getTable(iterator));
+        if (!_isMusicConfigurationCorrect(loadedAudios[iterator])) {
+            std::string userConfig = loadedAudios[iterator].getTOMLString();
+            throw CustomExceptions::InvalidMusicConfiguration(userConfig, iterator);
+        }
+        _updateLoadingText("Processing music '" + iterator + "'...[OK]");
     }
 
-    PRETTY_INFO << "Table data fetched: '" << sprites.getRawTOML() << "'." << std::endl;
+    PRETTY_INFO << "Initialising the musics" << std::endl;
+
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedAudios.begin(); it != loadedAudios.end(); ++it) {
+        std::string application = it->first;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int volume = 100;
+        bool loop = false;
+
+        _updateLoadingText("Loading music '" + name + "'...");
+
+        if (_isKeyPresentAndOfCorrectType(it->second, "volume", toml::node_type::integer)) {
+            volume = it->second.getValue<int>("volume");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "loop", toml::node_type::boolean)) {
+            loop = it->second.getValue<bool>("loop");
+        }
+        std::shared_ptr<GUI::ECS::Components::MusicComponent> node = std::make_shared<GUI::ECS::Components::MusicComponent>(_baseId, path, name, application, volume, loop);
+        _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)].push_back(node);
+        _baseId++;
+        _updateLoadingText("Loading music '" + name + "'...[OK]");
+    }
+
+    PRETTY_SUCCESS << "The musics are loaded." << std::endl;
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
+}
+
+/**
+ *@brief This function is in charge of loading the fonts into the program.
+ *
+* @return std::uint32_t
+*/
+std::uint32_t Main::_initialiseFonts()
+{
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    const std::string fontKey = "font";
+    const std::string fontKeyAlt = "fonts";
+    const TOMLLoader font = _getTOMLNodeContent<CustomExceptions::InvalidConfigurationFontType, CustomExceptions::NoFontInConfigFile>(_tomlContent, fontKey, fontKeyAlt);
+    std::unordered_map<std::string, TOMLLoader> loadedFonts;
+
+    const std::string titleFontNode = "title";
+    const std::string bodyFontNode = "body";
+    const std::string defaultFontNode = "default";
+    const std::string buttonFontNode = "button";
+
+    if (!font.hasKey(titleFontNode)) {
+        throw CustomExceptions::NoTitleFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(bodyFontNode)) {
+        throw CustomExceptions::NoBodyFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(defaultFontNode)) {
+        throw CustomExceptions::NoDefaultFontConfiguration(tomlPath);
+    }
+    if (!font.hasKey(buttonFontNode)) {
+        throw CustomExceptions::NoButtonFontConfiguration(tomlPath);
+    }
+
+    TOMLLoader tempNode(font);
+
+    loadedFonts["title"] = tempNode;
+    loadedFonts["body"] = tempNode;
+    loadedFonts["default"] = tempNode;
+    loadedFonts["button"] = tempNode;
+
+
+    loadedFonts["body"].update(font.getTable(titleFontNode));
+    loadedFonts["title"].update(font.getTable(bodyFontNode));
+    loadedFonts["default"].update(font.getTable(defaultFontNode));
+    loadedFonts["button"].update(font.getTable(buttonFontNode));
+
+    if (!_isFontConfigurationCorrect(loadedFonts["title"])) {
+        const std::string userConfig = loadedFonts["title"].getTOMLString();
+        const std::string fontName = titleFontNode;
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(loadedFonts["body"])) {
+        const std::string userConfig = loadedFonts["body"].getTOMLString();
+        const std::string fontName = bodyFontNode;
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(loadedFonts["default"])) {
+        const std::string userConfig = loadedFonts["default"].getTOMLString();
+        const std::string fontName = defaultFontNode;
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
+    }
+    if (!_isFontConfigurationCorrect(loadedFonts["button"])) {
+        const std::string userConfig = loadedFonts["button"].getTOMLString();
+        const std::string fontName = buttonFontNode;
+        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
+    }
+
+
+    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
+        std::string application = it->first;
+        PRETTY_INFO << "Font application = '" + application + "'" << std::endl;
+        std::string name = it->second.getValue<std::string>("name");
+        std::string path = it->second.getValue<std::string>("path");
+        int defaultSize = 50;
+        bool bold = false;
+        bool italic = false;
+
+        if (_isKeyPresentAndOfCorrectType(it->second, "default_size", toml::node_type::integer)) {
+            defaultSize = it->second.getValue<int>("default_size");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "bold", toml::node_type::boolean)) {
+            bold = it->second.getValue<bool>("bold");
+        }
+        if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
+            italic = it->second.getValue<bool>("italic");
+        }
+        PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
+        std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
+        PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
+        PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
+        _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
+        if (application == titleFontNode) {
+            _titleFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
+        if (application == bodyFontNode) {
+            _bodyFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
+        if (application == defaultFontNode) {
+            _defaultFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
+        if (application == buttonFontNode) {
+            _buttonFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
+        }
+        PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
+        _baseId++;
+    }
+    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
+    return _baseId;
+}
+
+
+std::uint32_t Main::_initialiseIcon()
+{
+    const std::string iconKey = "icon";
+    const std::string iconKeyAlt = "icons";
+    const TOMLLoader sprites = _getTOMLNodeContent<CustomExceptions::InvalidIconConfiguration, CustomExceptions::NoIconInConfigFile>(_tomlContent, iconKey, iconKeyAlt);
+    std::unordered_map<std::string, TOMLLoader> loadedSprites;
+
+    PRETTY_INFO << "Getting the icon configuration chunks" << std::endl;
+
+    if (!_isIconConfigurationCorrect(sprites)) {
+        std::string iconName = "";
+        if (_isKeyPresentAndOfCorrectType(sprites, "name", toml::node_type::string)) {
+            iconName = sprites.getValue<std::string>("name");
+        }
+        throw CustomExceptions::InvalidIconConfiguration(sprites.getTOMLPath(), "", iconName, "");
+    }
+
+    _updateLoadingText("Getting icon information...");
+    const std::string name = sprites.getValue<std::string>("name");
+    const std::string path = sprites.getValue<std::string>("path");
+    int width = 256;
+    int height = 256;
+    int x = 0;
+    int y = 0;
+
+    if (_isKeyPresentAndOfCorrectType(sprites, "width", toml::node_type::integer)) {
+        const int tmpWidth = sprites.getValue<int>("width");
+        if (tmpWidth > 0) {
+            width = tmpWidth;
+        }
+    }
+    if (_isKeyPresentAndOfCorrectType(sprites, "height", toml::node_type::integer)) {
+        const int tmpHeight = sprites.getValue<int>("height");
+        if (tmpHeight > 0) {
+            height = tmpHeight;
+        }
+    }
+    if (_isKeyPresentAndOfCorrectType(sprites, "x", toml::node_type::integer)) {
+        const int tmpX = sprites.getValue<int>("x");
+        if (tmpX > 0) {
+            x = tmpX;
+        }
+    }
+    if (_isKeyPresentAndOfCorrectType(sprites, "y", toml::node_type::integer)) {
+        const int tmpY = sprites.getValue<int>("y");
+        if (tmpY > 0) {
+            y = tmpY;
+        }
+    }
+    _updateLoadingText("Getting icon information...[OK]");
+    _updateLoadingText("Loading icon...");
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> icon = std::make_shared<GUI::ECS::Components::ImageComponent>(_baseId, path, name);
+    icon->setDimension({ width, height });
+    icon->setPosition({ x,y });
+    _baseId++;
+    _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)].push_back(icon);
+    _iconIndex = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)].size() - 1;
+    _updateLoadingText("Loading icon...[OK]");
+
+    return _baseId;
+}
+
+/**
+ *@brief This is the function in charge of loading the Sprites and Spritesheets into the program.
+ *
+* @return std::uint32_t
+*/
+std::uint32_t Main::_initialiseSprites()
+{
+    const std::string spriteSheetKey = "spritesheets";
+    const std::string spriteSheetKeyAlt = "spritesheet";
+    const TOMLLoader sprites = _getTOMLNodeContent<CustomExceptions::InvalidConfigurationSpritesheetType, CustomExceptions::NoSpritesInConfigFile>(_tomlContent, spriteSheetKey, spriteSheetKeyAlt);
+    const std::string tomlPath = _tomlContent.getTOMLPath();
+    std::unordered_map<std::string, TOMLLoader> loadedSprites;
 
     TOMLLoader tempNode(sprites);
 
@@ -460,209 +730,82 @@ std::uint32_t Main::_initialiseSprites()
 }
 
 /**
- * @brief This is the function in charge of loading the ²s into the program.
+ * @brief This is the function in charge of initialising the different backgrounds used throughout the game
  *
+ * @return std::uint32_t
  */
-std::uint32_t Main::_initialiseAudio()
+std::uint32_t Main::_initialiseBackgrounds()
 {
-    TOMLLoader audio(_tomlContent);
-    const std::string tomlPath = _tomlContent.getTOMLPath();
-    const std::string musicKey = "music";
-    const std::string musicKeyAlt = "musics";
-    std::vector<std::string> audios;
-    std::unordered_map<std::string, TOMLLoader> loadedAudios;
+    const std::string iconKey = "backgrounds";
+    const std::string iconKeyAlt = "background";
+    const std::string path = _tomlContent.getTOMLPath();
+    const TOMLLoader backgrounds = _getTOMLNodeContent<CustomExceptions::InvalidBackgroundConfiguration, CustomExceptions::NoBackgroundInConfigFile>(_tomlContent, iconKey, iconKeyAlt);
+    std::unordered_map<std::string, TOMLLoader> loadedBackgrounds;
+    std::vector<std::string> systemBackgrounds;
 
-    if (_tomlContent.hasKey(musicKey)) {
-        PRETTY_INFO << "Fetching the content for '" << musicKey << "'." << std::endl;
-        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKey) << "'." << std::endl;
-        if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
-            audio = _tomlContent.getTable(musicKey);
-        } else {
-            throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKey, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+    systemBackgrounds.push_back("mainMenu");
+    systemBackgrounds.push_back("settings");
+    systemBackgrounds.push_back("gameOver");
+    systemBackgrounds.push_back("connectionFailed");
+
+    PRETTY_INFO << "Getting the background configuration chunks" << std::endl;
+
+    for (std::string &item : backgrounds.getKeys()) {
+        std::string checkMsg = "Checking for the presence of '" + item + "' in the config file...";
+        _updateLoadingText(checkMsg);
+        if (std::find(systemBackgrounds.begin(), systemBackgrounds.end(), item) != systemBackgrounds.end() && !backgrounds.hasKey(item)) {
+            PRETTY_CRITICAL << "No TOML key '" << item << "' in the file path '" << path << "'." << std::endl;
+            throw CustomExceptions::NoBackgroundInConfigFile(path, item);
         }
-    } else if (_tomlContent.hasKey(musicKeyAlt)) {
-        PRETTY_INFO << "Fetching the content for '" << musicKeyAlt << "'." << std::endl;
-        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(musicKeyAlt) << "'." << std::endl;
-        if (_tomlContent.getValueType(musicKey) == toml::node_type::table) {
-            audio = _tomlContent.getTable(musicKey);
-        } else {
-            throw CustomExceptions::InvalidConfigurationMusicType(tomlPath, musicKeyAlt, _tomlContent.getValueTypeAsString(musicKey), _tomlContent.getTypeAsString(toml::node_type::table));
+        if (!_isKeyPresentAndOfCorrectType(backgrounds, item, toml::node_type::table)) {
+            PRETTY_CRITICAL << "The key '" << item << "' is not a table in the file." << std::endl;
+            throw CustomExceptions::InvalidBackgroundConfiguration(path, item);
         }
-    } else {
-        PRETTY_CRITICAL << "The key " << musicKey << " is missing from the config file, " <<
-            "the other supported key " << musicKeyAlt << " wasn't found in the config file." << std::endl;
-        throw CustomExceptions::NoMusicInConfigFile(_tomlContent.getTOMLPath(), musicKey);
+        loadedBackgrounds[item] = backgrounds.getTable(item);
+        _updateLoadingText(checkMsg + "[OK]");
     }
 
-    PRETTY_INFO << audio.getRawTOML() << std::endl;
+    std::unordered_map<std::string, TOMLLoader>::iterator it;
 
-
-    TOMLLoader tempNode(audio);
-
-    audios.push_back("mainMenu");
-    audios.push_back("bossFight");
-    audios.push_back("gameLoop");
-    audios.push_back("shooting");
-    audios.push_back("damage");
-    audios.push_back("dead");
-    audios.push_back("button");
-    audios.push_back("gameOver");
-    audios.push_back("success");
-
-    const std::string &expectedStringType = _tomlContent.getTypeAsString(toml::node_type::table);
-
-    PRETTY_INFO << "Getting the music configuration chunks" << std::endl;
-
-    for (std::string &iterator : audios) {
-        _updateLoadingText("Processing music '" + iterator + "'...");
-        if (!audio.hasKey(iterator)) {
-            throw CustomExceptions::NoTOMLKey(tomlPath, iterator);
-        }
-        loadedAudios[iterator] = tempNode;
-        if (audio.getValueType(iterator) != toml::node_type::table) {
-            throw CustomExceptions::InvalidTOMLKeyType(tomlPath, iterator, audio.getTypeAsString(iterator), expectedStringType);
-        }
-        loadedAudios[iterator].update(audio.getTable(iterator));
-        if (!_isMusicConfigurationCorrect(loadedAudios[iterator])) {
-            std::string userConfig = loadedAudios[iterator].getTOMLString();
-            throw CustomExceptions::InvalidMusicConfiguration(userConfig, iterator);
-        }
-        _updateLoadingText("Processing music '" + iterator + "'...[OK]");
-    }
-
-    PRETTY_INFO << "Initialising the musics" << std::endl;
-
-    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedAudios.begin(); it != loadedAudios.end(); ++it) {
-        std::string application = it->first;
+    for (it = loadedBackgrounds.begin(); it != loadedBackgrounds.end(); it++) {
+        PRETTY_INFO << "Loading background: " << it->first << std::endl;
+        _updateLoadingText("Loading background '" + it->first + "'...");
         std::string name = it->second.getValue<std::string>("name");
         std::string path = it->second.getValue<std::string>("path");
-        int volume = 100;
-        bool loop = false;
-
-        _updateLoadingText("Loading music '" + name + "'...");
-
-        if (_isKeyPresentAndOfCorrectType(it->second, "volume", toml::node_type::integer)) {
-            volume = it->second.getValue<int>("volume");
+        int x = 0;
+        int y = 0;
+        bool allowAsLevelBackground = false;
+        if (_isKeyPresentAndOfCorrectType(it->second, "x", toml::node_type::integer)) {
+            int tmpX = it->second.getValue<int>("x");
+            if (tmpX < 0) {
+                PRETTY_CRITICAL << "The value of 'x' for the background '" << name << "'." << std::endl;
+                throw CustomExceptions::InvalidBackgroundConfiguration(path, name, "x", "<The x value must be a number greater or equal to 0>");
+            }
+            x = tmpX;
         }
-        if (_isKeyPresentAndOfCorrectType(it->second, "loop", toml::node_type::boolean)) {
-            loop = it->second.getValue<bool>("loop");
+        if (_isKeyPresentAndOfCorrectType(it->second, "y", toml::node_type::integer)) {
+            int tmpY = it->second.getValue<int>("y");
+            if (tmpY < 0) {
+                PRETTY_CRITICAL << "The value of 'y' for the background '" << name << "'." << std::endl;
+                throw CustomExceptions::InvalidBackgroundConfiguration(path, name, "y", "<The y value must be a number greater or equal to 0>");
+            }
+            y = tmpY;
         }
-        std::shared_ptr<GUI::ECS::Components::MusicComponent> node = std::make_shared<GUI::ECS::Components::MusicComponent>(_baseId, path, name, application, volume, loop);
-        _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)].push_back(node);
+        if (_isKeyPresentAndOfCorrectType(it->second, "allow_as_level_background", toml::node_type::boolean)) {
+            bool allowAsLevelBackground = it->second.getValue<bool>("allow_as_level_background");
+        }
+        std::shared_ptr<GUI::ECS::Components::ImageComponent> node = std::make_shared<GUI::ECS::Components::ImageComponent>(_baseId, path, name, it->first);
         _baseId++;
-        _updateLoadingText("Loading music '" + name + "'...[OK]");
+        node->setPosition({ x, y });
+        node->setLevelBackgroundCompatible(allowAsLevelBackground);
+        _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)].push_back(node);
+        _updateLoadingText("Loading background '" + it->first + "'...[OK]");
+        PRETTY_INFO << "buffer line1 between two background loads" << std::endl;
+        PRETTY_INFO << "buffer line2 between two background loads" << std::endl;
+        PRETTY_INFO << "buffer line3 between two background loads" << std::endl;
+        PRETTY_INFO << "buffer line4 between two background loads" << std::endl;
     }
 
-    PRETTY_SUCCESS << "The musics are loaded." << std::endl;
-    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
-    return _baseId;
-}
-
-/**
- * @brief This is the function in charge of loading the fonts into the program.
- *
- */
-std::uint32_t Main::_initialiseFonts()
-{
-    TOMLLoader font(_tomlContent);
-    const std::string tomlPath = _tomlContent.getTOMLPath();
-    const std::string fontKey = "font";
-    const std::string fontKeyAlt = "fonts";
-    std::unordered_map<std::string, TOMLLoader> loadedFonts;
-
-    if (_tomlContent.hasKey(fontKey)) {
-        PRETTY_INFO << "Fetching the content for '" << fontKey << "'." << std::endl;
-        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKey) << "'." << std::endl;
-        if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
-            font = _tomlContent.getTable(fontKey);
-        } else {
-            throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKey, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
-        }
-    } else if (_tomlContent.hasKey(fontKeyAlt)) {
-        PRETTY_INFO << "Fetching the content for '" << fontKeyAlt << "'." << std::endl;
-        PRETTY_INFO << "Fetching the type of the content '" << _tomlContent.getValueTypeAsString(fontKeyAlt) << "'." << std::endl;
-        if (_tomlContent.getValueType(fontKey) == toml::node_type::table) {
-            font = _tomlContent.getTable(fontKey);
-        } else {
-            throw CustomExceptions::InvalidConfigurationFontType(tomlPath, fontKeyAlt, _tomlContent.getValueTypeAsString(fontKey), _tomlContent.getTypeAsString(toml::node_type::table));
-        }
-    } else {
-        PRETTY_CRITICAL << "The key " << fontKey << " is missing from the config file, " <<
-            "the other supported key " << fontKeyAlt << " wasn't found in the config file." << std::endl;
-        throw CustomExceptions::NoFontInConfigFile(_tomlContent.getTOMLPath(), fontKey);
-    }
-
-    PRETTY_INFO << font.getRawTOML() << std::endl;
-
-    const std::string titleFontNode = "title";
-    const std::string bodyFontNode = "body";
-    const std::string defaultFontNode = "default";
-
-    if (!font.hasKey(titleFontNode)) {
-        throw CustomExceptions::NoTitleFontConfiguration(tomlPath);
-    }
-    if (!font.hasKey(bodyFontNode)) {
-        throw CustomExceptions::NoBodyFontConfiguration(tomlPath);
-    }
-    if (!font.hasKey(defaultFontNode)) {
-        throw CustomExceptions::NoDefaultFontConfiguration(tomlPath);
-    }
-
-    TOMLLoader tempNode(font);
-
-    loadedFonts["title"] = tempNode;
-    loadedFonts["body"] = tempNode;
-    loadedFonts["default"] = tempNode;
-
-
-    loadedFonts["body"].update(font.getTable(titleFontNode));
-    loadedFonts["title"].update(font.getTable(bodyFontNode));
-    loadedFonts["default"].update(font.getTable(defaultFontNode));
-
-    if (!_isFontConfigurationCorrect(loadedFonts["title"])) {
-        const std::string userConfig = loadedFonts["title"].getTOMLString();
-        const std::string fontName = titleFontNode;
-        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
-    }
-    if (!_isFontConfigurationCorrect(loadedFonts["body"])) {
-        const std::string userConfig = loadedFonts["body"].getTOMLString();
-        const std::string fontName = bodyFontNode;
-        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
-    }
-    if (!_isFontConfigurationCorrect(loadedFonts["default"])) {
-        const std::string userConfig = loadedFonts["default"].getTOMLString();
-        const std::string fontName = defaultFontNode;
-        throw CustomExceptions::InvalidFontConfiguration(userConfig, fontName);
-    }
-
-
-    for (std::unordered_map<std::string, TOMLLoader>::iterator it = loadedFonts.begin(); it != loadedFonts.end(); ++it) {
-        std::string application = it->first;
-        PRETTY_INFO << "Font application = '" + application + "'" << std::endl;
-        std::string name = it->second.getValue<std::string>("name");
-        std::string path = it->second.getValue<std::string>("path");
-        int defaultSize = 50;
-        bool bold = false;
-        bool italic = false;
-
-        if (_isKeyPresentAndOfCorrectType(it->second, "default_size", toml::node_type::integer)) {
-            defaultSize = it->second.getValue<int>("default_size");
-        }
-        if (_isKeyPresentAndOfCorrectType(it->second, "bold", toml::node_type::boolean)) {
-            bold = it->second.getValue<bool>("bold");
-        }
-        if (_isKeyPresentAndOfCorrectType(it->second, "italic", toml::node_type::boolean)) {
-            italic = it->second.getValue<bool>("italic");
-        }
-        PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
-        std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
-        PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
-        PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
-        _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
-        PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
-        _baseId++;
-    }
-    PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
     return _baseId;
 }
 
@@ -680,6 +823,8 @@ void Main::_initialiseRessources()
     PRETTY_SUCCESS << "========================== Displayed loaded toml data.  ==========================" << std::endl;
 
     std::shared_ptr<GUI::ECS::Systems::Window> window = std::make_shared<GUI::ECS::Systems::Window>(_baseId, _windowWidth, _windowHeight, _windowTitle);
+    PRETTY_DEBUG << "Setting the window position to : " << std::pair<int, int>({ _windowX, _windowY }) << std::endl;
+    window->setPosition({ _windowX, _windowY });
     _baseId++;
     std::shared_ptr<GUI::ECS::Systems::EventManager> event = std::make_shared<GUI::ECS::Systems::EventManager>(_baseId);
     _baseId++;
@@ -696,8 +841,13 @@ void Main::_initialiseRessources()
 
     _baseId = _initialiseFonts();
 
+    if (_baseId == 0 || _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() == 0) {
+        PRETTY_CRITICAL << "There are no fonts that were loaded in the program, aborting." << std::endl;
+        throw CustomExceptions::NoFont("<No fonts are loaded into the program>");
+    }
+
     PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], true);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], true);
     if (!firstFontCapsule.has_value()) {
         throw CustomExceptions::NoFont();
     }
@@ -710,6 +860,8 @@ void Main::_initialiseRessources()
     window->display();
     _loadingIndex = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size() - 1;
 
+    _baseId = _initialiseIcon();
+    _baseId = _initialiseBackgrounds();
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
     PRETTY_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
@@ -834,6 +986,1049 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
 }
 
 /**
+ * @brief Function in charge of sending all the packets that are
+ * located in the outgoing buffer
+ *
+ */
+void Main::_sendAllPackets()
+{
+
+};
+
+/**
+ * @brief Function in charge of processing (treating) all the packets that have
+ * been received into actions that can be understood by the program.
+ *
+ */
+void Main::_processIncommingPackets()
+{
+
+}
+
+
+/**
+ * @brief Function in charge of creating and adding a button component to the ecs system.
+ *
+ * @param application
+ * @param title
+ * @param callback
+ * @param callbackName
+ * @param width
+ * @param height
+ * @param textSize
+ * @param bg
+ * @param normal
+ * @param hover
+ * @param clicked
+ *
+ * @return const std::shared_ptr<GUI::ECS::Components::ButtonComponent>
+ */
+const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName, const int width, const int height, const int textSize, const GUI::ECS::Systems::Colour &bg, const GUI::ECS::Systems::Colour &normal, const GUI::ECS::Systems::Colour &hover, const GUI::ECS::Systems::Colour &clicked)
+{
+    const std::string errMsgFont = "<Required font not found for the text of the button>, system error: ";
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontInstance = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], true, errMsgFont);
+    if (!fontInstance.has_value()) {
+        PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+        throw CustomExceptions::NoFont(errMsgFont);
+    }
+    std::shared_ptr<GUI::ECS::Components::ShapeComponent> shapeItem = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId);
+    _baseId += 1;
+    shapeItem->setShape(std::pair<float, float>(width, height));
+    shapeItem->setNormalColor(bg);
+    shapeItem->setHoverColor(bg);
+    shapeItem->setClickedColor(bg);
+    shapeItem->setApplication(application);
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> textItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(fontInstance.value()), title, textSize, normal, hover, clicked);
+    textItem->setApplication(application);
+    _baseId += 1;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> buttonItem = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *shapeItem, *textItem);
+    buttonItem->setCallback(callback, callbackName);
+    buttonItem->setApplication(application);
+    _baseId += 1;
+    _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(textItem);
+    _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(shapeItem);
+    _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(buttonItem);
+    return buttonItem;
+}
+
+/**
+ * @brief Function in charge of getting the center X axis of the screen.
+ *
+ * @return unsigned int
+ *
+ * @throws CustomExceptions::NoWindow if there is no window instance to gather the information from.
+ */
+const unsigned int Main::_getScreenCenterX()
+{
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
+    const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    if (windowDimensions.first == 0.0) {
+        PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
+        throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
+    }
+    PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
+    return windowDimensions.first / 2;
+}
+
+
+/**
+ * @brief Function in charge of getting the center Y axis of the screen.
+ *
+ * @return unsigned int
+ *
+ * @throws CustomExceptions::NoWindow if there is no window instance to gather the information from.
+ */
+const unsigned int Main::_getScreenCenterY()
+{
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
+    const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    if (windowDimensions.second == 0.0) {
+        PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
+        throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
+    }
+    PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
+    return windowDimensions.second / 2;
+}
+
+void Main::_gameScreen()
+{
+
+}
+
+void Main::_demoScreen()
+{
+
+}
+
+void Main::_settingsMenu()
+{
+
+}
+
+void Main::_unknownScreen()
+{
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+
+    const std::string titleKey = "unknownScreenTitle";
+    const std::string bodyKey = "unknownScreenBody";
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> home;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+
+
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                title = textCapsule.value();
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                body = textCapsule.value();
+            } else {
+                continue;
+            }
+        }
+    }
+
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule) {
+            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
+                homeButtonFound = true;
+                home = buttonCapsule.value();
+            }
+        }
+    }
+
+    if (!titleTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
+        title->setApplication(titleKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
+        _baseId += 1;
+    }
+
+    if (!bodyTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
+        body->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
+        _baseId += 1;
+    }
+
+    if (!homeButtonFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], false);
+        if (!defaultFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> buttonText = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(defaultFont.value()), "It seems like you have landed on an unknown page.");
+        buttonText->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(buttonText);
+        _baseId += 1;
+        Recoded::FloatRect rectangle;
+        rectangle.position.first = 0;
+        rectangle.position.second = 0;
+        rectangle.size.first = 20;
+        rectangle.size.second = 20;
+        std::shared_ptr<GUI::ECS::Components::ShapeComponent> buttonShape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId, rectangle, GUI::ECS::Systems::Colour::White);
+        buttonShape->setVisible(true);
+        _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(buttonShape);
+        _baseId += 1;
+        std::shared_ptr<GUI::ECS::Components::ButtonComponent> home = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *buttonShape, *buttonText);
+        home->setApplication(_mainMenuKey);
+        home->setCallback(std::bind(&Main::_mainMenuScreen, this), "_mainMenuScreen");
+        _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(home);
+        _baseId += 1;
+    }
+
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+
+    title->setPosition({ posx, posy });
+    body->setPosition({ posx, posy + 20 });
+    home->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*title);
+    win.value()->draw(*body);
+    win.value()->draw(*home);
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
+}
+
+void Main::_gameOverScreen()
+{
+
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+
+    const std::string titleKey = "GameOverScreenTitle";
+    const std::string bodyKey = "GameOverScreenBody";
+    const std::string backgroundKey = "gameOver";
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> home;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+
+
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                title = textCapsule.value();
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                body = textCapsule.value();
+            } else {
+                continue;
+            }
+        }
+    }
+
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule) {
+            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
+                homeButtonFound = true;
+                home = buttonCapsule.value();
+            }
+        }
+    }
+
+    if (!titleTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
+        title->setApplication(titleKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
+        _baseId += 1;
+    }
+
+    if (!bodyTextFound) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            return;
+        }
+        std::shared_ptr<GUI::ECS::Components::TextComponent> body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
+        body->setApplication(bodyKey);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
+        _baseId += 1;
+    }
+
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
+    if (!homeButtonFound) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        home = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+
+    title->setPosition({ posx, posy });
+    body->setPosition({ posx, posy + 20 });
+    home->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*title);
+    win.value()->draw(*body);
+    win.value()->draw(*home);
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
+}
+
+void Main::_gameWonScreen()
+{
+
+
+}
+
+void Main::_mainMenuScreen()
+{
+    const std::string startGameKey = "MainMenuStartGame";
+    const std::string onlineGameKey = "MainMenuOnlineGame";
+    const std::string settingsKey = "MainMenuSettings";
+    const std::string exitMenuKey = "MainMenuexitMenu";
+
+    const unsigned int textSize = 20;
+    const unsigned int buttonWidth = 200;
+    const unsigned int buttonHeight = 30;
+    const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::White;
+
+    const std::vector<std::any> images = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
+    const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> background;
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> icon;
+
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> startGame;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> onlineGame;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> settings;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> exitWindow;
+
+    unsigned int heightPos = 0;
+    const unsigned int heightStep = 40;
+
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+
+    for (const std::any node : images) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> nodeCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(node, false);
+        if (!nodeCapsule.has_value()) {
+            PRETTY_WARNING << "The uncasting of an image component has failed." << std::endl;
+            continue;
+        }
+        if (
+            nodeCapsule.value()->getName() == "mainMenu" ||
+            nodeCapsule.value()->getApplication() == "mainMenu" ||
+            nodeCapsule.value()->getName() == "Main Menu" ||
+            nodeCapsule.value()->getApplication() == "Main Menu"
+            ) {
+            PRETTY_INFO << "Background found, assinning to variable" << std::endl;
+            background = nodeCapsule.value();
+        } else if (
+            nodeCapsule.value()->getName() == "icon" ||
+            nodeCapsule.value()->getApplication() == "icon" ||
+            nodeCapsule.value()->getName() == "Main Icon" ||
+            nodeCapsule.value()->getApplication() == "Main Icon" ||
+            nodeCapsule.value()->getName() == "R-type" ||
+            nodeCapsule.value()->getApplication() == "R-type"
+            ) {
+            PRETTY_INFO << "Icon found, assinning to variable" << std::endl;
+            icon = nodeCapsule.value();
+        }
+    }
+
+    for (const std::any node : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> nodeCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(node, false);
+        if (!nodeCapsule.has_value()) {
+            PRETTY_WARNING << "The uncasting of a button component has failed." << std::endl;
+            continue;
+        }
+        if (
+            nodeCapsule.value()->getName() == startGameKey ||
+            nodeCapsule.value()->getApplication() == startGameKey
+            ) {
+            PRETTY_INFO << "Start Game found, assinning to variable" << std::endl;
+            startGame.emplace(nodeCapsule.value());
+        } else if (
+            nodeCapsule.value()->getName() == onlineGameKey ||
+            nodeCapsule.value()->getApplication() == onlineGameKey
+            ) {
+            PRETTY_INFO << "Online Game found, assinning to variable" << std::endl;
+            onlineGame.emplace(nodeCapsule.value());
+        } else if (
+            nodeCapsule.value()->getName() == settingsKey ||
+            nodeCapsule.value()->getApplication() == settingsKey
+            ) {
+            PRETTY_INFO << "Settings found, assinning to variable" << std::endl;
+            settings.emplace(nodeCapsule.value());
+        } else if (
+            nodeCapsule.value()->getName() == exitMenuKey ||
+            nodeCapsule.value()->getApplication() == exitMenuKey
+            ) {
+            PRETTY_INFO << "Exit Menu found, assinning to variable" << std::endl;
+            exitWindow.emplace(nodeCapsule.value());
+        }
+    }
+
+
+    PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
+    const std::pair<int, int> windowDimensions = win.value()->getDimensions();
+    PRETTY_DEBUG << "The window dimensions are: " << windowDimensions << std::endl;
+    if (windowDimensions.first == 0.0 || windowDimensions.second == 0.0) {
+        PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
+        throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
+    }
+
+    PRETTY_DEBUG << "Getting the icon dimensions" << std::endl;
+    const std::pair<float, float> iconDimensions = icon->getDimension();
+    PRETTY_DEBUG << "The icon dimensions are : " << iconDimensions << std::endl;
+    if (iconDimensions.first <= 0 || iconDimensions.second <= 0) {
+        PRETTY_WARNING << "Icon dimensions are zero, skipping position adjustment." << std::endl;
+        throw CustomExceptions::NoIcon("<Invalid icon dimensions>");
+    }
+
+    PRETTY_DEBUG << "Calculating the center of the window based on the image and the window dimensions." << std::endl;
+    const float xCenter = windowDimensions.first / 2.0f;
+    const int x = xCenter - (iconDimensions.first / 2);
+
+    PRETTY_DEBUG << "Calculating the y-coordinate (for the top position)." << std::endl;
+    const int y = (windowDimensions.second / 10);
+    PRETTY_DEBUG << "The adjusted coordinates for the icon are: " << std::pair<int, int>(x, y) << std::endl;
+    PRETTY_DEBUG << "The coordinates are: " << std::pair<int, int>(x, y) << std::endl;
+    icon->setPosition({ x, y });
+    PRETTY_DEBUG << "Icon position set" << std::endl;
+    PRETTY_DEBUG << "Setting the size of the background to that of the window" << std::endl;
+    background->setPosition({ 0, 0 });
+    background->setDimension({ windowDimensions.first, windowDimensions.second });
+    PRETTY_DEBUG << "Background position set" << std::endl;
+
+    int verticalIconHeight = 0;
+    if (iconDimensions.second < 1) {
+        verticalIconHeight = static_cast<int>(std::round(iconDimensions.second * 1000)) + 100;
+        PRETTY_DEBUG << "Calculated converted icon height's value is: " << verticalIconHeight << std::endl;
+    } else {
+        verticalIconHeight = iconDimensions.second;
+    }
+    heightPos = y + verticalIconHeight;
+
+    PRETTY_DEBUG << "Checking if the Start game button exists." << std::endl;
+    if (!startGame.has_value()) {
+        PRETTY_WARNING << "Start Game button not found, creating" << std::endl;
+        startGame.emplace(
+            _createButton(
+                startGameKey, "Start Game", std::bind(&Main::_goDemo, this), "_goDemo", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "Start Button created" << std::endl;
+    }
+    startGame.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Checking if the Online game button exists." << std::endl;
+    if (!onlineGame.has_value()) {
+        PRETTY_WARNING << "Online Game button not found, creating" << std::endl;
+        onlineGame.emplace(
+            _createButton(
+                onlineGameKey, "Online Game", std::bind(&Main::_goPlay, this), "_goPlay", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "Start Button created" << std::endl;
+    }
+    onlineGame.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Checking if the settings button exists." << std::endl;
+    if (!settings.has_value()) {
+        PRETTY_WARNING << "Settings button not found, creating" << std::endl;
+        settings.emplace(
+            _createButton(
+                settingsKey, "Settings", std::bind(&Main::_goSettings, this), "_goSettings", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "Settings Button created" << std::endl;
+    }
+    settings.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Checking if the exit window game button exists." << std::endl;
+    if (!exitWindow.has_value()) {
+        PRETTY_WARNING << "Exit Window button not found, creating" << std::endl;
+        exitWindow.emplace(
+            _createButton(
+                exitMenuKey, "Exit Window", std::bind(&Main::_goExit, this), "_goExit", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+            )
+        );
+        PRETTY_SUCCESS << "exit window Button created" << std::endl;
+    }
+    exitWindow.value()->setPosition({ x, heightPos });
+    heightPos += heightStep;
+
+    PRETTY_DEBUG << "Drawing the elements required for the main menu to be displayed." << std::endl;
+    win.value()->draw(*background);
+    PRETTY_SUCCESS << "Main menu background drawn" << std::endl;
+    win.value()->draw(*icon);
+    PRETTY_SUCCESS << "Icon drawn" << std::endl;
+    win.value()->draw(*(startGame.value()));
+    PRETTY_SUCCESS << "Start game button drawn" << std::endl;
+    win.value()->draw(*(onlineGame.value()));
+    PRETTY_SUCCESS << "Online game button drawn" << std::endl;
+    win.value()->draw(*(settings.value()));
+    PRETTY_SUCCESS << "Settings button drawn" << std::endl;
+    win.value()->draw(*(exitWindow.value()));
+    PRETTY_SUCCESS << "Exit window button drawn" << std::endl;
+}
+
+void Main::_bossFightScreen()
+{
+
+}
+
+void Main::_connectionFailedScreen()
+{
+
+}
+
+void Main::_connectionAddressScreen()
+{
+
+}
+/**
+ * @brief Switches the active screen to the game screen for the online game version.
+ *
+ * Sets the active screen to @c ActiveScreen::GAME, indicating that
+ * the main gameplay screen should be displayed.
+ */
+void Main::_goPlay()
+{
+    setActiveScreen(ActiveScreen::GAME);
+};
+
+/**
+ * @brief Switches the active screen to the local game screen for the offline game version.
+ *
+ * Sets the active screen to @c ActiveScreen::DEMO, which displays a demo of the game.
+ */
+void Main::_goDemo()
+{
+    setActiveScreen(ActiveScreen::DEMO);
+};
+
+/**
+ * @brief Switches the active screen to the home screen (main menu).
+ *
+ * Sets the active screen to @c ActiveScreen::MENU, directing the user to the main menu.
+ */
+void Main::_goHome()
+{
+    setActiveScreen(ActiveScreen::MENU);
+};
+
+/**
+ * @brief Exits the application or transitions to an exit screen (closes the window).
+ *
+ * Sets the active screen to @c ActiveScreen::EXIT, initiating the exit sequence.
+ */
+void Main::_goExit()
+{
+    setActiveScreen(ActiveScreen::EXIT);
+};
+
+/**
+ * @brief Switches the active screen to the settings menu.
+ *
+ * Sets the active screen to @c ActiveScreen::SETTINGS, where users can adjust game or application settings.
+ */
+void Main::_goSettings()
+{
+    setActiveScreen(ActiveScreen::SETTINGS);
+};
+
+/**
+ * @brief Switches the active screen to the game over screen.
+ *
+ * Sets the active screen to @c ActiveScreen::GAME_OVER, displayed when the game ends unsuccessfully.
+ */
+void Main::_goGameOver()
+{
+    setActiveScreen(ActiveScreen::GAME_OVER);
+};
+
+/**
+ * @brief Switches the active screen to the game won screen.
+ *
+ * Sets the active screen to @c ActiveScreen::GAME_WON, shown when the game ends successfully.
+ */
+void Main::_goGameWon()
+{
+    setActiveScreen(ActiveScreen::GAME_WON);
+};
+
+/**
+ * @brief Switches the active screen to the boss fight screen.
+ *
+ * Sets the active screen to @c ActiveScreen::BOSS_FIGHT, transitioning to the boss battle section of the game.
+ */
+void Main::_goBossFight()
+{
+    setActiveScreen(ActiveScreen::BOSS_FIGHT);
+};
+
+/**
+ * @brief Switches the active screen to the unknown screen (this is when the screen that is supposed to be displayed could not be found).
+ *
+ * Sets the active screen to @c ActiveScreen::UNKNOWN. This is used when the screen state is undefined.
+ */
+void Main::_goUnknown()
+{
+    setActiveScreen(ActiveScreen::UNKNOWN);
+};
+
+/**
+ * @brief Switches the active screen to a connection failed screen.
+ *
+ * Sets the active screen to @c ActiveScreen::CONNECTION_FAILED, displayed when a connection attempt fails.
+ */
+void Main::_goConnectionFailed()
+{
+    setActiveScreen(ActiveScreen::CONNECTION_FAILED);
+};
+
+/**
+ * @brief Switches the active screen to a connection address input screen.
+ *
+ * Sets the active screen to @c ActiveScreen::CONNECTION_ADDRESS, allowing the user to input a connection address.
+ */
+void Main::_goConnectionAddress()
+{
+    setActiveScreen(ActiveScreen::CONNECTION_ADDRESS);
+};
+
+/**
+ * @brief Starts the main menu music if it has not already started.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the music associated with the main menu, sets it to loop, and plays it.
+ * Ensures that the main menu music is started only once.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_startMainMenuMusic()
+{
+    if (_mainMenuMusicStarted) {
+        return;
+    }
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (node.value()->getApplication() == "mainMenu" || node.value()->getMusicName() == "mainMenu") {
+            node.value()->setLoopMusic(true);
+            node.value()->play();
+            _mainMenuMusicStarted = true;
+        }
+    }
+}
+
+/**
+ * @brief Stops the main menu music if it is currently playing.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the music associated with the main menu, and stops it.
+ * Ensures that the main menu music is stopped only when it is playing.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_stopMainMenuMusic()
+{
+    if (!_mainMenuMusicStarted) {
+        return;
+    }
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "mainMenu" ||
+            node.value()->getMusicName() == "mainMenu" ||
+            node.value()->getApplication() == "Main Menu" ||
+            node.value()->getMusicName() == "Main Menu"
+            ) {
+            node.value()->stop();
+            _mainMenuMusicStarted = false;
+        }
+    }
+}
+
+/**
+ * @brief Starts the game loop music if it has not already started.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the music associated with the game loop, sets it to loop, and plays it.
+ * Ensures that the game loop music is started only once.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_startGameLoopMusic()
+{
+    if (_gameMusicStarted) {
+        return;
+    }
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "gameLoop" ||
+            node.value()->getMusicName() == "gameLoop" ||
+            node.value()->getApplication() == "Game Loop" ||
+            node.value()->getMusicName() == "Game Loop"
+            ) {
+            node.value()->setLoopMusic(true);
+            node.value()->play();
+            _gameMusicStarted = true;
+        }
+    }
+}
+
+
+/**
+ * @brief Stops the game loop music if it is currently playing.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the music associated with the game loop, and stops it.
+ * Ensures that the game loop music is stopped only when it is playing.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_stopGameLoopMusic()
+{
+    if (!_gameMusicStarted) {
+        return;
+    }
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "gameLoop" ||
+            node.value()->getMusicName() == "gameLoop" ||
+            node.value()->getApplication() == "Game Loop" ||
+            node.value()->getMusicName() == "Game Loop"
+            ) {
+            node.value()->stop();
+            _gameMusicStarted = false;
+        }
+    }
+}
+
+/**
+ * @brief Starts the boss fight music if it has not already started.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the music associated with the boss fight, sets it to loop, and plays it.
+ * Ensures that the boss fight music is started only once.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_startBossFightMusic()
+{
+    if (_bossFightMusicStarted) {
+        return;
+    }
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "bossFight" ||
+            node.value()->getMusicName() == "bossFight" ||
+            node.value()->getApplication() == "Boss Fight" ||
+            node.value()->getMusicName() == "Boss Fight"
+            ) {
+            node.value()->setLoopMusic(true);
+            node.value()->play();
+            _bossFightMusicStarted = true;
+        }
+    }
+}
+
+/**
+ * @brief Stops the boss fight music if it is currently playing.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the music associated with the boss fight, and stops it.
+ * Ensures that the boss fight music is stopped only when it is playing.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_stopBossFightMusic()
+{
+    if (!_bossFightMusicStarted) {
+        return;
+    }
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "bossFight" ||
+            node.value()->getMusicName() == "bossFight" ||
+            node.value()->getApplication() == "Boss Fight" ||
+            node.value()->getMusicName() == "Boss Fight"
+            ) {
+            node.value()->stop();
+            _bossFightMusicStarted = false;
+        }
+    }
+}
+
+/**
+ * @brief Plays the shooting sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with shooting, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_shootSound()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "shooting" ||
+            node.value()->getMusicName() == "shooting" ||
+            node.value()->getApplication() == "Shooting" ||
+            node.value()->getMusicName() == "Shooting"
+            ) {
+            node.value()->setLoopMusic(false);
+            node.value()->play();
+        }
+    }
+}
+
+/**
+ * @brief Plays the damage sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with damage, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_damageSound()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "damage" ||
+            node.value()->getMusicName() == "damage" ||
+            node.value()->getApplication() == "Damage" ||
+            node.value()->getMusicName() == "Damage"
+            ) {
+            node.value()->setLoopMusic(false);
+            node.value()->play();
+        }
+    }
+}
+
+/**
+ * @brief Plays the death sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with the player or entity death, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_deadSound()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "dead" ||
+            node.value()->getMusicName() == "dead" ||
+            node.value()->getApplication() == "Dead" ||
+            node.value()->getMusicName() == "Dead"
+            ) {
+            node.value()->setLoopMusic(false);
+            node.value()->play();
+        }
+    }
+}
+
+
+/**
+ * @brief Plays the button click sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with button interactions, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_buttonSound()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "button" ||
+            node.value()->getMusicName() == "button" ||
+            node.value()->getApplication() == "Button" ||
+            node.value()->getMusicName() == "Button"
+            ) {
+            node.value()->setLoopMusic(false);
+            node.value()->play();
+        }
+    }
+}
+
+/**
+ * @brief Plays the game over sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with the game over event, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_gameOverSound()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "gameOver" ||
+            node.value()->getMusicName() == "gameOver" ||
+            node.value()->getApplication() == "Game Over" ||
+            node.value()->getMusicName() == "Game Over"
+            ) {
+            node.value()->setLoopMusic(false);
+            node.value()->play();
+        }
+    }
+}
+
+/**
+ * @brief Plays the win sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with success or game completion, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void Main::_winSound()
+{
+    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    for (std::any music : musics) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        if (!node.has_value()) {
+            continue;
+        }
+        if (
+            node.value()->getApplication() == "success" ||
+            node.value()->getMusicName() == "success" ||
+            node.value()->getApplication() == "Success" ||
+            node.value()->getMusicName() == "Success"
+            ) {
+            node.value()->setLoopMusic(false);
+            node.value()->play();
+        }
+    }
+}
+
+/**
  * @brief Small function in charge of launching all the loaded musics.
  *
  */
@@ -853,23 +2048,7 @@ void Main::_testContent()
     }
 }
 
-/**
- * @brief Function in charge of displaying the main menu to the user before launching them into the game.
- *
- */
-void Main::_mainMenu()
-{
 
-};
-
-/**
- *@brief This is a orphan function in charge of testing the button component.
- *
- */
-void helloWorld()
-{
-    std::cout << "Hello world" << std::endl;
-}
 
 /**
  * @brief This is the function in charge of running the program's graphic logic.
@@ -878,24 +2057,30 @@ void helloWorld()
  */
 void Main::_mainLoop()
 {
+    // Create the clock component for the ecs function.
+    std::int64_t elapsedTime = 0;
+    std::shared_ptr<GUI::ECS::Systems::Clock> ECSClock = std::make_shared<GUI::ECS::Systems::Clock>(_baseId);
+    _ecsEntities[typeid(GUI::ECS::Systems::Clock)].push_back(ECSClock);
+
     // Get the window and event
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> window_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][0], false);
-    std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> window_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][0], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
 
     if (!window_ptr.has_value()) {
         throw CustomExceptions::NoWindow("<std::any un-casting failed>");
     }
-    GUI::ECS::Systems::Window &window = *window_ptr.value();
+    std::shared_ptr<GUI::ECS::Systems::Window> window = window_ptr.value();
+
     if (!event_ptr.has_value()) {
         throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
     }
-    GUI::ECS::Systems::EventManager &event = *event_ptr.value();
+    std::shared_ptr<GUI::ECS::Systems::EventManager> event = event_ptr.value();
 
     // Get the fonts
-
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_title_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], false);
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_body_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][1], false);
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_default_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][2], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_title_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][0], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_body_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][1], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_default_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][2], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> font_button_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][3], false);
 
     if (!font_title_ptr.has_value()) {
         throw CustomExceptions::NoFont("Title font", "<std::any un-casting failed>");
@@ -906,76 +2091,90 @@ void Main::_mainLoop()
     if (!font_default_ptr.has_value()) {
         throw CustomExceptions::NoFont("Default font", "<std::any un-casting failed>");
     }
-    GUI::ECS::Systems::Font &font_title = *font_title_ptr.value();
-    GUI::ECS::Systems::Font &font_body = *font_body_ptr.value();
-    GUI::ECS::Systems::Font &font_default = *font_default_ptr.value();
+    if (!font_button_ptr.has_value()) {
+        throw CustomExceptions::NoFont("Button font", "<std::any un-casting failed>");
+    }
 
-    std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
+    const std::shared_ptr<GUI::ECS::Systems::Font> font_title = font_title_ptr.value();
+    const std::shared_ptr<GUI::ECS::Systems::Font> font_body = font_body_ptr.value();
+    const std::shared_ptr<GUI::ECS::Systems::Font> font_default = font_default_ptr.value();
+    const std::shared_ptr<GUI::ECS::Systems::Font> font_button = font_button_ptr.value();
 
-    // Create a test text
-
-    GUI::ECS::Components::TextComponent text(_baseId, font_body, "Sample Text", 40, GUI::ECS::Systems::Colour::Pink, GUI::ECS::Systems::Colour::Cyan, GUI::ECS::Systems::Colour::Yellow, { 20, 50 });
-    _baseId++;
-
-    // Create a test button
-    Recoded::FloatRect buttonShapeRect({ {200, 80}, {80,50} });
-    GUI::ECS::Components::ShapeComponent buttonRectangle(_baseId, buttonShapeRect);
-    buttonRectangle.setNormalColor(GUI::ECS::Systems::Colour::White);
-    _baseId++;
-    GUI::ECS::Components::TextComponent buttonText(_baseId, font_body, "Sample Button", 40, GUI::ECS::Systems::Colour::BlueViolet, GUI::ECS::Systems::Colour::Azure2, GUI::ECS::Systems::Colour::Coral1, { 20, 50 });
-    _baseId++;
-    GUI::ECS::Components::ButtonComponent button(_baseId, buttonRectangle, buttonText);
-    button.setCallback(helloWorld);
-    button.setPosition({ 200,200 });
-    button.setTextSize(20);
-    button.setVisible(true);
-    _baseId++;
-
-    // Create an image 
-    GUI::ECS::Components::CollisionComponent col(10, 10, 10, 10, 10);
-    GUI::ECS::Components::TextureComponent MyTexture(_baseId, std::string("./assets/img/r-typesheet2.gif"), col);
-    GUI::ECS::Components::ImageComponent Image(_baseId, MyTexture, "testName", "application name");
-    Image.setVisible(true);
-    Image.setPosition({ 0, 0 });
-
+    // Update the loading text a final time to say that everything has been loaded (yes, even if it will only appear for a fraction of a second).
     PRETTY_INFO << "Updating loading text to 'All the ressources have been loaded'." << std::endl;
     _updateLoadingText("All the ressources have been loaded.");
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
-    while (window.isOpen()) {
-        event.processEvents(window);
-        _updateMouseForAllRendererables(event.getMouseInfo());
-        if (event.isKeyPressed(GUI::ECS::Systems::Key::CapsLock)) {
+    setActiveScreen(ActiveScreen::MENU);
+
+    PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
+    while (window->isOpen()) {
+        PRETTY_DEBUG << "The active screen is: '" << _activeScreen << "'" << std::endl;
+        elapsedTime = ECSClock->reset();
+        PRETTY_DEBUG << "Since the last clock reset, the time that has elapsed is: '" << elapsedTime << "'" << std::endl;
+        PRETTY_INFO << "Sending all the packets" << std::endl;
+        _sendAllPackets();
+        PRETTY_INFO << "All the packets have been sent" << std::endl;
+        PRETTY_INFO << "Processing incoming packets" << std::endl;
+        _processIncommingPackets();
+        PRETTY_SUCCESS << "Processed incoming packets" << std::endl;
+        event->processEvents(*window);
+        PRETTY_SUCCESS << "Processed window events (user input basically)" << std::endl;
+        _updateMouseForAllRendererables(event->getMouseInfo());
+        PRETTY_SUCCESS << "Updated mouse position for all rendererables" << std::endl;
+        if (event->isKeyPressed(GUI::ECS::Systems::Key::End)) {
+            PRETTY_INFO << "Caps lock is pressed, switching to debug mode" << std::endl;
             _testContent();
         }
-        text.update(event.getMouseInfo());
-        button.update(event.getMouseInfo());
-        PRETTY_INFO << "Mouse position: " << Recoded::myToString(event.getMousePosition()) << std::endl;
-        window.draw(text);
-        window.draw(button);
-        window.draw(Image);
-        int index = 0;
-        for (std::any spriteItem : sprites) {
-            PRETTY_INFO << "Displaying sprite " << index << std::endl;
-            std::optional<std::shared_ptr<GUI::ECS::Components::SpriteComponent>> spriteCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(spriteItem, false);
-            if (!spriteCapsule.has_value()) {
-                PRETTY_WARNING << "No sprite entity" << std::endl;
-            } else {
-                PRETTY_SUCCESS << "Sprite entity found" << std::endl;
-                std::shared_ptr<GUI::ECS::Components::SpriteComponent> sprite = spriteCapsule.value();
-                PRETTY_INFO << "Sprite component decapsulated" << std::endl;
-                sprite->checkTick();
-                PRETTY_INFO << "Ticked the sprite animation" << std::endl;
-                sprite->setPosition({ index, index });
-                PRETTY_INFO << "Moved the sprite to position " << Recoded::myToString<int>({ index, index }) << std::endl;
-                window.draw(*sprite);
-                PRETTY_SUCCESS << "Sprite added to the render" << std::endl;
-                index++;
-            }
-            break;
+        PRETTY_INFO << "Mouse position: " << Recoded::myToString(event->getMousePosition()) << std::endl;
+        if (_activeScreen == ActiveScreen::MENU) {
+            PRETTY_DEBUG << "Menu screen components are going to be set to be displayed" << std::endl;
+            _mainMenuScreen();
+            PRETTY_SUCCESS << "Menu screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::GAME) {
+            PRETTY_DEBUG << "Game screen components are going to be set to be displayed" << std::endl;
+            _gameScreen();
+            PRETTY_SUCCESS << "Game screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::SETTINGS) {
+            PRETTY_DEBUG << "Settings screen components are going to be set to be displayed" << std::endl;
+            _settingsMenu();
+            PRETTY_SUCCESS << "Settings screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::GAME_OVER) {
+            PRETTY_DEBUG << "Game Over screen components are going to be set to be displayed" << std::endl;
+            _gameOverScreen();
+            PRETTY_SUCCESS << "Game Over screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::GAME_WON) {
+            PRETTY_DEBUG << "Game Won screen components are going to be set to be displayed" << std::endl;
+            _gameWonScreen();
+            PRETTY_SUCCESS << "Game Won screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::BOSS_FIGHT) {
+            PRETTY_DEBUG << "Boss Fight screen components are going to be set to be displayed" << std::endl;
+            _bossFightScreen();
+            PRETTY_SUCCESS << "Boss Fight screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::CONNECTION_FAILED) {
+            PRETTY_DEBUG << "Connection Failed screen components are going to be set to be displayed" << std::endl;
+            _connectionFailedScreen();
+            PRETTY_SUCCESS << "Connection Failed screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::DEMO) {
+            PRETTY_DEBUG << "Demo screen components are going to be set to be displayed" << std::endl;
+            _demoScreen();
+            PRETTY_SUCCESS << "Demo screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::LOADING) {
+            PRETTY_DEBUG << "Update loading text screen components are going to be set to be displayed" << std::endl;
+            _updateLoadingText("Apparently we are loading something...");
+            PRETTY_SUCCESS << "Update loading text screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::EXIT) {
+            PRETTY_INFO << "Exit choice detected, stopping" << std::endl;
+            window->close();
+            PRETTY_INFO << "The window is set to close" << std::endl;
+            continue;
+        } else {
+            PRETTY_DEBUG << "Unknown screen components are set to be displayed" << std::endl;
+            _unknownScreen();
+            PRETTY_ERROR << "Unknown active screen: " << _activeScreen << std::endl;
         }
-        window.display();
-        window.clear(GUI::ECS::Systems::Colour::Aqua);
+        window->display();
+        window->clear(GUI::ECS::Systems::Colour::Black);
     }
 }
 
@@ -1085,6 +2284,26 @@ void Main::setWindowTitle(const std::string &title)
 void Main::setWindowPosition(unsigned int x, unsigned int y)
 {
     _windowX = x;
+    _windowY = y;
+}
+
+/**
+ * @brief Set the X position of the window.
+ *
+ * @param x The x position of the window.
+ */
+void Main::setWindowPositionX(unsigned int x)
+{
+    _windowX = x;
+}
+
+/**
+ * @brief Set the Y position of the window.
+ *
+ * @param y The y position of the window.
+ */
+void Main::setWindowPositionY(unsigned int y)
+{
     _windowY = y;
 }
 
@@ -1215,6 +2434,59 @@ void Main::setDebug(const bool debug)
 {
     _debug = debug;
     Logging::Log::getInstance().setDebugEnabled(debug);
+}
+
+/**
+ * @brief Function in charge of updating the type of screen that is supposed
+ * to be displayed as well as change the music based on the active screen.
+ *
+ * @param screen of type Active screen which informs the program of the current
+ * screen type that needs to be processed.
+ */
+void Main::setActiveScreen(const ActiveScreen screen)
+{
+    _activeScreen = screen;
+    PRETTY_DEBUG << "Setting active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
+    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
+        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
+        _startMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
+        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
+        _stopMainMenuMusic();
+        _startGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (screen == ActiveScreen::BOSS_FIGHT) {
+        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _startBossFightMusic();
+    } else if (screen == ActiveScreen::GAME_WON) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _winSound();
+    } else if (screen == ActiveScreen::GAME_OVER) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+        _gameOverSound();
+    } else if (screen == ActiveScreen::CONNECTION_FAILED) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+    } else {
+        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    }
 }
 
 /**
@@ -1424,6 +2696,28 @@ std::tuple<unsigned int, unsigned int> Main::getWindowSize()
     std::tuple<unsigned int, unsigned int> dimension;
     dimension = std::make_tuple(_windowWidth, _windowHeight);
     return dimension;
+}
+
+/**
+ * @brief Function in charge of returning the screen that is currently active
+ *
+ * @return const ActiveScreen
+ */
+const ActiveScreen Main::getActiveScreen() const
+{
+    return _activeScreen;
+}
+
+/**
+ * @brief Function in charge of returning the screen that is currently active
+ * but here, the type will be converted to the human readable version
+ * of the screen type.
+ *
+ * @return const std::string
+ */
+const std::string Main::getActiveScreenAsString() const
+{
+    return Recoded::myToString(_activeScreen);
 }
 
 /**

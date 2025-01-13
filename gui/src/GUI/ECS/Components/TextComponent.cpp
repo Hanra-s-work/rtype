@@ -300,6 +300,16 @@ void GUI::ECS::Components::TextComponent::setVisible(const bool visible)
     _visible = visible;
 }
 
+void GUI::ECS::Components::TextComponent::setName(const std::string &name)
+{
+    _textName = name;
+}
+
+void GUI::ECS::Components::TextComponent::setApplication(const std::string &application)
+{
+    _textApplication = application;
+}
+
 void GUI::ECS::Components::TextComponent::toggleVisibility()
 {
     if (_visible) {
@@ -396,9 +406,19 @@ std::any GUI::ECS::Components::TextComponent::render() const
     return std::make_any<sf::Text>(_sfTextComponent.value());
 };
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::TextComponent::getCollisionComponent() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::TextComponent::getCollision() const
 {
     return _textPos;
+}
+
+const std::string GUI::ECS::Components::TextComponent::getName() const
+{
+    return _textName;
+}
+
+const std::string GUI::ECS::Components::TextComponent::getApplication() const
+{
+    return _textApplication;
 }
 
 void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Systems::MouseInfo &mouse)
@@ -420,7 +440,9 @@ void GUI::ECS::Components::TextComponent::update(const GUI::ECS::Components::Tex
     setHoverColor(copy.getHoverColor());
     setNormalColor(copy.getNormalColor());
     setClickedColor(copy.getClickedColor());
-    _textPos = copy.getCollisionComponent();
+    setApplication(copy.getApplication());
+    setName(copy.getName());
+    _textPos = copy.getCollision();
     _fontAltered = true;
     _inConstructor = false;
     _processTextComponent();

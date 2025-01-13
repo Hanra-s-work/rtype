@@ -8,6 +8,7 @@
 #include "Zipper.hpp"
 #include "IndexedZipper.hpp"
 #include "Game.hpp"
+#include "GameMessage.hpp"
 #include "Registry.hpp"
 #include "Components.hpp"
 #include "Systems.hpp"
@@ -105,6 +106,15 @@ int test_get_game_event(void);
 int test_send_msg(void);
 
 /**
+ * @brief Test for stress and performance.
+ * 
+ * This test verifies if the game loop doesn't break or is too slow.
+ * 
+ * @return An integer indicating the result of the test (e.g., 0 for success, non-zero for failure)...
+ */
+int test_stress(void);
+
+/**
  * @brief A collection of test functions to be executed.
  * 
  * The `tests` vector holds a collection of test functions that will be run sequentially. Each function 
@@ -119,5 +129,6 @@ const std::vector<std::function<int(void)>> tests = {
     test_create_game,      ///< Test for creating a game.
     test_run_update,       ///< Test for running the game's update cycle.
     test_get_game_event,   ///< Test for getting in-game events
-    test_send_msg          ///< Test for sending game changes
+    test_send_msg,         ///< Test for sending game changes
+    test_stress            ///< Test for stress and performance 
 };

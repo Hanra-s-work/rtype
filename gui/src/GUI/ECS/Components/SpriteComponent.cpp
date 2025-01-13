@@ -26,7 +26,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name)
     setName(name);
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Components::CollisionComponent &collision)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const GUI::ECS::Systems::Collision &collision)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0, GUI::ECS::Systems::Colour::White), _normalColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
@@ -59,7 +59,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0), _normalColor(0), _clickedColor(0)
 {
@@ -86,7 +86,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0, GUI::ECS::Systems::Colour::White), _normalColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
@@ -96,7 +96,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0, GUI::ECS::Systems::Colour::White), _normalColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
@@ -117,7 +117,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0, GUI::ECS::Systems::Colour::White), _normalColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
@@ -153,7 +153,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0, GUI::ECS::Systems::Colour::White), _normalColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
@@ -166,7 +166,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, 
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
     : EntityNode(0), _spritesheet(0), _collision(0), _animation(0),
     _hoverColor(0, GUI::ECS::Systems::Colour::White), _normalColor(0, GUI::ECS::Systems::Colour::White), _clickedColor(0, GUI::ECS::Systems::Colour::White)
 {
@@ -195,7 +195,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Components::CollisionComponent &collision)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Collision &collision)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -228,7 +228,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -257,7 +257,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -267,7 +267,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -288,7 +288,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -324,7 +324,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -337,7 +337,7 @@ GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entit
     _processSprite();
 };
 
-GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
+GUI::ECS::Components::SpriteComponent::SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor)
     : EntityNode(entityId), _spritesheet(entityId), _collision(entityId), _animation(entityId),
     _hoverColor(entityId, GUI::ECS::Systems::Colour::White), _normalColor(entityId, GUI::ECS::Systems::Colour::White), _clickedColor(entityId, GUI::ECS::Systems::Colour::White)
 {
@@ -365,7 +365,7 @@ void GUI::ECS::Components::SpriteComponent::setApplication(const std::string &ap
     _application = application;
 }
 
-void GUI::ECS::Components::SpriteComponent::setCollision(const GUI::ECS::Components::CollisionComponent &copy)
+void GUI::ECS::Components::SpriteComponent::setCollision(const GUI::ECS::Systems::Collision &copy)
 {
     _collision.update(copy);
     _processCollision();
@@ -440,6 +440,12 @@ void GUI::ECS::Components::SpriteComponent::setVisible(const bool visible)
 void GUI::ECS::Components::SpriteComponent::setPosition(const std::pair<int, int> &pos)
 {
     _collision.setPosition(pos);
+    _processCollision();
+}
+
+void GUI::ECS::Components::SpriteComponent::setDimension(const std::pair<float, float> &dim)
+{
+    _collision.setDimension(dim);
     _processCollision();
 }
 
@@ -622,7 +628,7 @@ const GUI::ECS::Components::TextureComponent GUI::ECS::Components::SpriteCompone
     return _spritesheet;
 }
 
-const GUI::ECS::Components::CollisionComponent GUI::ECS::Components::SpriteComponent::getCollision() const
+const GUI::ECS::Systems::Collision GUI::ECS::Components::SpriteComponent::getCollision() const
 {
     if (!_collisionSet) {
         throw CustomExceptions::NoCollision();

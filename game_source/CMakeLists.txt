@@ -11,29 +11,24 @@ include_directories(systems/include)
 set(SOURCES
     ECS/Entity.cpp
     ECS/Registry.cpp
-    manager/Time.cpp
-    manager/Random.cpp
+    ECS/Random.cpp
+    ECS/Time.cpp
     manager/Game.cpp
+    manager/GameMessage.cpp
     manager/Queue.cpp
     systems/AISystem.cpp
     systems/CollisionSystem.cpp
     systems/EventSystem.cpp
     systems/LifetimeSystem.cpp
     systems/MovementSystem.cpp
+    systems/PlayerMiscellaneous.cpp
     systems/SpawnSystem.cpp
     systems/Systems.cpp
     systems/WeaponSystem.cpp
 )
 
-# Create a library for the game logic
-add_library(game_source_lib STATIC
-    ${SOURCES}
-)
-
-# Expose the "manager/include" directory so other targets can #include "Game.hpp"
-target_include_directories(game_source_lib PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/manager/include
-)
+# Static library
+add_library(RTypeSource STATIC ${SOURCES})
 
 # Unit tests
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -42,6 +37,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     list(APPEND SOURCES tests/main.cpp)
     list(APPEND SOURCES tests/Tests.cpp)
 
-    add_executable(RTypeSource ${SOURCES})
+    add_executable(RTypeTests ${SOURCES})
     target_compile_options(${PROJECT_NAME} PRIVATE -g)
 endif()

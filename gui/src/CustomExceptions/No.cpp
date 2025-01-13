@@ -81,6 +81,42 @@ namespace CustomExceptions
         return _buffer;
     }
 
+    NoIcon::NoIcon(const std::string &exceptionDetail)
+    {
+        _msg = "Error: There is no icon set.\n";
+        _msg += "The icon class cannot be called if there is ";
+        _msg += "no icon to display.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoIcon::~NoIcon() {};
+
+    const char *NoIcon::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoBackground::NoBackground(const std::string &exceptionDetail)
+    {
+        _msg = "Error: There is no background set.\n";
+        _msg += "The Image component class cannot be called if there is ";
+        _msg += "no background to display.";
+        if (!exceptionDetail.empty()) {
+            _msg += "\n(" + exceptionDetail + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoBackground::~NoBackground() {};
+
+    const char *NoBackground::what() const noexcept
+    {
+        return _buffer;
+    }
+
     NoCollision::NoCollision(const std::string &exceptionDetail)
     {
         _msg = "Error: There is no collision set to be called.";
@@ -345,17 +381,34 @@ namespace CustomExceptions
 
     NoDefaultFontConfiguration::NoDefaultFontConfiguration(const std::string &tomlPath)
     {
-        _msg = "Error: There is no toml ";
+        _msg = "Error: There is no configuration for the default font in the toml's configuration file ";
         if (!tomlPath.empty()) {
             _msg += "path " + tomlPath + " ";
         }
-        _msg += "set to be used.";
+        _msg += "that is set to be used.";
         _buffer = _msg.c_str();
     };
 
     NoDefaultFontConfiguration::~NoDefaultFontConfiguration() {};
 
     const char *NoDefaultFontConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoButtonFontConfiguration::NoButtonFontConfiguration(const std::string &tomlPath)
+    {
+        _msg = "Error: There is no configuration for the button font in the toml's configuration file ";
+        if (!tomlPath.empty()) {
+            _msg += "path " + tomlPath + " ";
+        }
+        _msg += "that is set to be used.";
+        _buffer = _msg.c_str();
+    };
+
+    NoButtonFontConfiguration::~NoButtonFontConfiguration() {};
+
+    const char *NoButtonFontConfiguration::what() const noexcept
     {
         return _buffer;
     }
@@ -450,6 +503,44 @@ namespace CustomExceptions
     NoFontInConfigFile::~NoFontInConfigFile() {};
 
     const char *NoFontInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoIconInConfigFile::NoIconInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There are no icons in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoIconInConfigFile::~NoIconInConfigFile() {};
+
+    const char *NoIconInConfigFile::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    NoBackgroundInConfigFile::NoBackgroundInConfigFile(const std::string &tomlPath, const std::string &tomlKey)
+    {
+        _msg = "Error: There are no backgrounds in the provided configuration file.\n";
+        if (!tomlKey.empty()) {
+            _msg += "The key '" + tomlKey + "'";
+            if (!tomlPath.empty()) {
+                _msg += " was not found in the toml file path " + tomlPath + ".";
+            }
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoBackgroundInConfigFile::~NoBackgroundInConfigFile() {};
+
+    const char *NoBackgroundInConfigFile::what() const noexcept
     {
         return _buffer;
     }

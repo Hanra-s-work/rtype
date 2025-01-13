@@ -118,10 +118,61 @@ namespace CustomExceptions
         return _buffer;
     }
 
-    InvalidWindowWidth::InvalidWindowWidth(const std::string &arguemnt)
+    InvalidIconConfiguration::InvalidIconConfiguration(const std::string &tomlPath, const std::string &userConfiguration, const std::string &spriteName, const std::string &exceptionDetail)
+    {
+        _msg = "Error: The configuration you provided for the icon '" + spriteName + "' in path '" + tomlPath + "'is incorrect.\n";
+        _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
+        _msg += "You provided:\n" + userConfiguration + "\n";
+        if (!exceptionDetail.empty()) {
+            _msg += "Additional details about the error: (" + exceptionDetail + ")\n";
+        }
+        _msg += "When the following structure was expected:\n";
+        _msg += "[icon] (this is the loaded version, in the file it should be [icon]) : the section containing the logo (unique identifier)\n";
+        _msg += "name = \"Logo Name\"                                                 : the name of the logo\n";
+        _msg += "path = \"<path to the logo>\"                                        : set the path to the logo image\n";
+        _msg += "width = <width>                                                      : (0 to 1000) set the initial width of the logo (Default: 256)\n";
+        _msg += "height = <height>                                                    : (0 to 1000) set the initial height of the logo (Default: 256)\n";
+        _msg += "x = <x>                                                              : (0 to 2147483647) set the initial x position of the logo (Default: 0)\n";
+        _msg += "y = <y>                                                              : (0 to 2147483647) set the initial y position of the logo (Default: 0)\n";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidIconConfiguration::~InvalidIconConfiguration() {};
+
+    const char *InvalidIconConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidBackgroundConfiguration::InvalidBackgroundConfiguration(const std::string &tomlPath, const std::string &userConfiguration, const std::string &spriteName, const std::string &exceptionDetail)
+    {
+        _msg = "Error: The configuration you provided for the background '" + spriteName + "' in path '" + tomlPath + "' is incorrect.\n";
+        _msg += "Below is a crude explanation of the structure, for more detailed information, please refer to the online documentation at: https://rtype.pingpal.news\n";
+        _msg += "You provided:\n" + userConfiguration + "\n";
+        if (!exceptionDetail.empty()) {
+            _msg += "Additional details about the error: (" + exceptionDetail + ")\n";
+        }
+        _msg += "When the following structure was expected:\n";
+        _msg += "[<background_name>]  (this is the loaded version, in the file it should be [backgrounds.<background_name>]) : the name of the background (unique identifier)\n";
+        _msg += "name = \"<name of the background>\"                                                                         : set the name of the background(a human readable name)\n";
+        _msg += "path = \"<path to the background>\"                                                                         : set the path to the background image\n";
+        _msg += "x = <x>                                                                                                     : (0 to 2147483647) set the x position of the background (Default: 0)\n";
+        _msg += "y = <y>                                                                                                     : (0 to 2147483647) set the y position of the background (Default: 0)\n";
+        _msg += "allow_as_level_background = true                                                                            : (or false) allow the background to be used as a level background (Default: true)\n";
+        _buffer = _msg.c_str();
+    };
+
+    InvalidBackgroundConfiguration::~InvalidBackgroundConfiguration() {};
+
+    const char *InvalidBackgroundConfiguration::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWindowWidth::InvalidWindowWidth(const std::string &argument)
     {
         _msg = "Error: The width you provided for the window is incorrect.\n";
-        _msg += "You provided: " + arguemnt + "\n";
+        _msg += "You provided: " + argument + "\n";
         _msg += "When the following structure was expected:\n";
         _msg += "A positive integer, for example: 800\n";
         _buffer = _msg.c_str();
@@ -130,6 +181,38 @@ namespace CustomExceptions
     InvalidWindowWidth::~InvalidWindowWidth() {};
 
     const char *InvalidWindowWidth::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWindowX::InvalidWindowX(const std::string &argument)
+    {
+        _msg = "Error: The X position you provided for the window is incorrect.\n";
+        _msg += "You provided: " + argument + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "An integer, for example: 10\n";
+        _buffer = _msg.c_str();
+    }
+
+    InvalidWindowX::~InvalidWindowX() {};
+
+    const char *InvalidWindowX::what() const noexcept
+    {
+        return _buffer;
+    }
+
+    InvalidWindowY::InvalidWindowY(const std::string &argument)
+    {
+        _msg = "Error: The Y position you provided for the window is incorrect.\n";
+        _msg += "You provided: " + argument + "\n";
+        _msg += "When the following structure was expected:\n";
+        _msg += "An integer, for example: 10\n";
+        _buffer = _msg.c_str();
+    }
+
+    InvalidWindowY::~InvalidWindowY() {};
+
+    const char *InvalidWindowY::what() const noexcept
     {
         return _buffer;
     }

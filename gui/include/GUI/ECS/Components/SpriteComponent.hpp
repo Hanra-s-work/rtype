@@ -23,9 +23,9 @@
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Systems/Colour.hpp"
+#include "GUI/ECS/Systems/Collision.hpp"
 #include "GUI/ECS/Components/TextureComponent.hpp"
 #include "GUI/ECS/Components/AnimationComponent.hpp"
-#include "GUI/ECS/Components/CollisionComponent.hpp"
 
 namespace GUI
 {
@@ -60,7 +60,7 @@ namespace GUI
                  *
                  * @param collision Collision data to associate with the sprite.
                  */
-                SpriteComponent(const GUI::ECS::Components::CollisionComponent &collision);
+                SpriteComponent(const GUI::ECS::Systems::Collision &collision);
                 /**
                  * @brief Constructs a sprite component from an animation component.
                  *
@@ -90,7 +90,7 @@ namespace GUI
                  * @param name Name of the sprite
                  * @param collision Collision instance
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -119,7 +119,7 @@ namespace GUI
                  * @param collision Collision instance
                  * @param animation Animation instance
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -130,7 +130,7 @@ namespace GUI
                  * @param collision Collision instance
                  * @param spritesheetTexture Texture instance containing a spritesheet
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -158,7 +158,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -205,7 +205,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a name
@@ -222,7 +222,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
+                SpriteComponent(const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
 
                 /**
                  * @brief Construct a new Sprite Component object and assing a specific entity id
@@ -247,7 +247,7 @@ namespace GUI
                  * @param entityId The id of the class instance
                  * @param collision Collision data to associate with the sprite.
                  */
-                SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Components::CollisionComponent &collision);
+                SpriteComponent(const std::uint32_t entityId, const GUI::ECS::Systems::Collision &collision);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -287,7 +287,7 @@ namespace GUI
                  * @param name Name of the sprite
                  * @param collision Collision instance
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -322,7 +322,7 @@ namespace GUI
                  * @param collision Collision instance
                  * @param animation Animation instance
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -335,7 +335,7 @@ namespace GUI
                  * @param collision Collision instance
                  * @param spritesheetTexture Texture instance containing a spritesheet
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -367,7 +367,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -420,7 +420,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::AnimationComponent &animation, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
                 /**
                  * @brief Constructs a sprite component with:
                  * @li a specific id
@@ -439,7 +439,7 @@ namespace GUI
                  * @param hoverColor Hover colour
                  * @param clickedColor Clicked colour
                  */
-                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Components::CollisionComponent &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
+                SpriteComponent(const std::uint32_t entityId, const std::string &name, const GUI::ECS::Systems::Collision &collision, const GUI::ECS::Components::TextureComponent &spritesheetTexture, const GUI::ECS::Systems::Colour &normalColor, const GUI::ECS::Systems::Colour &hoverColor, const GUI::ECS::Systems::Colour &clickedColor);
 
                 /**
                  * @brief Destructor.
@@ -465,7 +465,7 @@ namespace GUI
                  *
                  * Updates the collision data and recalculates the sprite's position and scale.
                  */
-                void setCollision(const GUI::ECS::Components::CollisionComponent &copy);
+                void setCollision(const GUI::ECS::Systems::Collision &copy);
 
                 /**
                  * @brief Set the default colour of the sprite
@@ -519,6 +519,13 @@ namespace GUI
                  * @param pos
                  */
                 void setPosition(const std::pair<int, int> &pos);
+
+                /**
+                 * @brief Set the dimensions of the sprite
+                 *
+                 * @param dim
+                 */
+                void setDimension(const std::pair<float, float> &dim);
 
                 /**
                  * @brief Change the visibility of the sprite, if visible becomes invisible and vise versa
@@ -699,7 +706,7 @@ namespace GUI
                  *
                  * @throws CustomExceptions::NoCollision If no collision is set.
                  */
-                const GUI::ECS::Components::CollisionComponent getCollision() const;
+                const GUI::ECS::Systems::Collision getCollision() const;
                 /**
                  * @brief Gets the animation component associated with the sprite.
                  *
@@ -768,20 +775,20 @@ namespace GUI
                  */
                 void _processSpriteColor();
 
-                bool _visible = true;                                                                 //!< A boolean to inform the class if it should render the sprite or not
-                std::string _application = "";                                                        //!< The application name (defined in the file configuration)
-                std::string _spriteName = "";                                                         //!< The name the user assigned to the sprite (configuration wise, section: name)
-                bool _spritesheetSet = false;                                                         //!< A boolean to inform the class if the spritesheet texture is set
-                GUI::ECS::Components::TextureComponent _spritesheet;                                  //!< The texture component class containing the spritesheet
-                bool _collisionSet = false;                                                           //!< A boolean to inform the class if the collision class is set
-                GUI::ECS::Components::CollisionComponent _collision;                                  //!< The collision component class containing information and overloads for collision calculations
-                bool _animationSet = false;                                                           //!< A boolean to inform the class if the animation class if set
-                GUI::ECS::Components::AnimationComponent _animation;                                  //!< The animation component class containing the sprite's animations
-                bool _spriteSet = false;                                                              //!< A boolean to inform the class if the sprite instance is set
-                std::optional<sf::Sprite> _sfSprite;                                                  //!< An std::optional of sf::Sprite to allow the class to manage the sprite to render.
-                GUI::ECS::Systems::Colour _hoverColor;                                                //!< An instance holding the hover colour of the sprite
-                GUI::ECS::Systems::Colour _normalColor;                                               //!< An instance holding the default colour of the sprite
-                GUI::ECS::Systems::Colour _clickedColor;                                              //!< An instance holding the clicked colour of the sprite
+                bool _visible = true;                                           //!< A boolean to inform the class if it should render the sprite or not
+                std::string _application = "";                                  //!< The application name (defined in the file configuration)
+                std::string _spriteName = "";                                   //!< The name the user assigned to the sprite (configuration wise, section: name)
+                bool _spritesheetSet = false;                                   //!< A boolean to inform the class if the spritesheet texture is set
+                GUI::ECS::Components::TextureComponent _spritesheet;            //!< The texture component class containing the spritesheet
+                bool _collisionSet = false;                                     //!< A boolean to inform the class if the collision class is set
+                GUI::ECS::Systems::Collision _collision;                        //!< The collision component class containing information and overloads for collision calculations
+                bool _animationSet = false;                                     //!< A boolean to inform the class if the animation class if set
+                GUI::ECS::Components::AnimationComponent _animation;            //!< The animation component class containing the sprite's animations
+                bool _spriteSet = false;                                        //!< A boolean to inform the class if the sprite instance is set
+                std::optional<sf::Sprite> _sfSprite;                            //!< An std::optional of sf::Sprite to allow the class to manage the sprite to render.
+                GUI::ECS::Systems::Colour _hoverColor;                          //!< An instance holding the hover colour of the sprite
+                GUI::ECS::Systems::Colour _normalColor;                         //!< An instance holding the default colour of the sprite
+                GUI::ECS::Systems::Colour _clickedColor;                        //!< An instance holding the clicked colour of the sprite
             };
 
             /**
