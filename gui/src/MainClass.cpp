@@ -1323,7 +1323,7 @@ void Main::_gameOverScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game over screen screen." << std::endl;
             return;
         }
-        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have died!");
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have died!", 20);
         bodyItem->setApplication(bodyKey);
         bodyItem->setNormalColor(textColour);
         bodyItem->setHoverColor(textColour);
@@ -1475,10 +1475,10 @@ void Main::_gameWonScreen()
         PRETTY_WARNING << "No title text instance found, creating instance." << std::endl;
         std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
         if (!titleFont.has_value()) {
-            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the game over screen screen." << std::endl;
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the game won screen screen." << std::endl;
             return;
         }
-        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Game Over!");
+        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Game Won!");
         titleItem->setApplication(titleKey);
         titleItem->setNormalColor(textColour);
         titleItem->setHoverColor(textColour);
@@ -1493,10 +1493,10 @@ void Main::_gameWonScreen()
         PRETTY_WARNING << "No body text instance found, creating instance." << std::endl;
         std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
         if (!bodyFont.has_value()) {
-            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game over screen screen." << std::endl;
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game won screen screen." << std::endl;
             return;
         }
-        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have died!");
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have won !", 20);
         bodyItem->setApplication(bodyKey);
         bodyItem->setNormalColor(textColour);
         bodyItem->setHoverColor(textColour);
@@ -1528,7 +1528,7 @@ void Main::_gameWonScreen()
 
     if (!backgroundFound) {
         PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
-        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::Red;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::GreenYellow;
         titleItem->setNormalColor(defaultColourForNoBackground);
         titleItem->setHoverColor(defaultColourForNoBackground);
         titleItem->setClickedColor(defaultColourForNoBackground);
@@ -2332,7 +2332,7 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     // setActiveScreen(ActiveScreen::MENU);
-    setActiveScreen(ActiveScreen::GAME_OVER);
+    setActiveScreen(ActiveScreen::GAME_WON);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
