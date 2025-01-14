@@ -72,7 +72,7 @@ class Main {
    * @param log Inform the program if it needs to output logs or not (default: false).
    * @param debug Whether debug mode is enabled (default: false).
    */
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 9000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 9000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false, const std::string &player = "Player");
   ~Main();
 
   void run();
@@ -100,6 +100,7 @@ class Main {
   void setLog(const bool debug);
   void setDebug(const bool debug);
   void setActiveScreen(const ActiveScreen screen);
+  void setPlayer(const std::string &player);
 
   // Getters
   const std::string getIp();
@@ -123,6 +124,7 @@ class Main {
   std::tuple<unsigned int, unsigned int> getWindowSize();
   const ActiveScreen getActiveScreen() const;
   const std::string getActiveScreenAsString() const;
+  const std::string getPlayer() const;
 
   private:
   // Private helper methods
@@ -326,6 +328,7 @@ class Main {
   bool _spriteStartLeft;
   bool _log;
   bool _debug;
+  std::string _player;
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;

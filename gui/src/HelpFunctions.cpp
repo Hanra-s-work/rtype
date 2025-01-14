@@ -24,7 +24,7 @@ static void displayUsageSummary(const std::string binName)
     std::cout << "USAGE:\n";
     std::cout << "\t" << binName << " [--ip] [--port] [--log] [--debug] [--help]";
     std::cout << " [--version] [--full-screen] [--window-width] [--window-height]";
-    std::cout << " [--frame-rate-limit] [--config-file]";
+    std::cout << " [--frame-rate-limit] [--config-file] [--username]";
     std::cout << " [--position-x] [--position-y] [--window-title]";// [--cursor] ";
     // std::cout << " [--cursor-icon] [--image-is-sprite] [--sprite-start-top] ";
     // std::cout << " [--sprite-start-left] [--sprite-width] [--sprite-height]";
@@ -52,6 +52,7 @@ static void displayDetailedUsage()
     std::cout << "\t--position-x=\"0\"            \tSet the x position of the window. (Default value: 0)\n";
     std::cout << "\t--position-y=\"0\"            \tSet the y position of the window. (Default value: 0)\n";
     std::cout << "\t--window-title=\"R-Type\"     \tSet the title of the window. (Default value: \"R-Type\")\n";
+    std::cout << "\t--username=\"Player\"         \tSet the name of the player that is going to connect (Default value: \"Player\")\n";
     // std::cout << "\t--cursor=\"true\"             \tShow/Hide the cursor. (Default value: true)\n";
     // std::cout << "\t--cursor-icon=\"cursor.png\"  \tSet the path of the cursor icon. (Default value: \"null\")\n";
     // std::cout << "\t--image-is-sprite=\"false\"   \tSet if the provided image is a spritesheet. (Default value: \"false\")\n";

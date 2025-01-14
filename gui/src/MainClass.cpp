@@ -38,6 +38,7 @@
   * @param configFilePath Path to the configuration file (default: "client_config.toml").
   * @param log Inform the program if it needs to output logs or not (default: false).
   * @param debug Whether debug mode is enabled (default: false).
+  * @param username The name of the user that is going to play (default: player)
   */
 Main::Main(
     const std::string &ip,
@@ -58,22 +59,24 @@ Main::Main(
     unsigned int frameLimit,
     const std::string &configFilePath,
     const bool log,
-    const bool debug
+    const bool debug,
+    const std::string &player
 ) :
-    _windowWidth(windowWidth),
-    _windowHeight(windowHeight),
-    _windowCursor(windowCursor),
-    _windowFullscreen(windowFullscreen),
-    _windowTitle(windowTitle),
-    _windowX(windowX),
-    _windowY(windowY),
-    _imageIsSprite(imageIsSprite),
-    _spriteStartTop(spriteStartTop),
-    _spriteStartLeft(spriteStartLeft),
-    _spriteWidth(spriteWidth),
-    _configFilePath(configFilePath),
-    _spriteHeight(spriteHeight),
-    _networkManager()
+_windowWidth(windowWidth),
+_windowHeight(windowHeight),
+_windowCursor(windowCursor),
+_windowFullscreen(windowFullscreen),
+_windowTitle(windowTitle),
+_windowX(windowX),
+_windowY(windowY),
+_imageIsSprite(imageIsSprite),
+_spriteStartTop(spriteStartTop),
+_spriteStartLeft(spriteStartLeft),
+_spriteWidth(spriteWidth),
+_configFilePath(configFilePath),
+_spriteHeight(spriteHeight),
+_networkManager(),
+_player(player)
 {
     _log = log;
     Logging::Log::getInstance().setLogEnabled(log);
@@ -108,6 +111,8 @@ Main::Main(
     } else {
         throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
+    PRETTY_INFO << "Setting the player name" << std::endl;
+    _networkManager.setPlayerName(_player);
     PRETTY_INFO << "End of processing" << std::endl;
     PRETTY_INFO << "Initialising the connection with the server" << std::endl;
     _networkManager.setAddress(_ip, _port);
@@ -3715,6 +3720,24 @@ void Main::_goPlay()
 };
 
 /**
+ * @brief Sets the player's name.
+ *
+ * This function assigns a name to the player. If the provided name is empty,
+ * it defaults the player's name to "Player" and logs a warning message.
+ *
+ * @param player The name of the player to set. If empty, the default name "Player" is used.
+ */
+void Main::setPlayer(const std::string &player)
+{
+    if (player == "") {
+        PRETTY_WARNING << "Player name is empty, defaulting to 'Player'" << std::endl;
+        _player = "Player";
+    }
+    _player = player;
+    _networkManager.setPlayerName(_player);
+}
+
+/**
  * @brief Switches the active screen to the local game screen for the offline game version.
  *
  * Sets the active screen to @c ActiveScreen::DEMO, which displays a demo of the game.
@@ -4991,6 +5014,18 @@ const ActiveScreen Main::getActiveScreen() const
 const std::string Main::getActiveScreenAsString() const
 {
     return Recoded::myToString(_activeScreen);
+}
+
+/**
+*@brief Retrieves the player's name.
+*
+*This function returns the name of the current player.
+*
+*@return A string containing the player's name.
+*/
+const std::string Main::getPlayer() const
+{
+    return _player;
 }
 
 /**

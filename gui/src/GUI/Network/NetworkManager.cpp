@@ -102,6 +102,15 @@ void NetworkManager::setIp(const std::string &ip)
     _connect();
 }
 
+void NetworkManager::setPlayerName(const std::string &playerName)
+{
+    if (_playerName == playerName) {
+        return;
+    }
+    PRETTY_SUCCESS << "Setting player name" << std::endl;
+    _playerName = playerName;
+}
+
 void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
 {
     std::cerr << "Setting address" << std::endl;
@@ -137,7 +146,23 @@ void NetworkManager::_connect()
         socket.bind(localEndpoint);
 
         PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
-        SendMessage("hello");
+        std::string username = _playerName;
+        std::vector<uint8_t> payload(username.begin(), username.end());
+        if (payload.size() < 8) {
+            payload.resize(8, 0x00);
+        }
+        Packet connectPacket(Packet::MessageType::CONNECT, payload);
+        std::vector<uint8_t> serializedData = Packet::serialize(connectPacket);
+
+        try {
+            asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
+            socket.send_to(asio::buffer(serializedData), remoteEndpoint);
+            std::cerr << "CONNECT packet sent to " << _ip << ":" << _port << std::endl;
+        }
+        catch (const std::exception &e) {
+            std::cerr << "Error sending CONNECT packet: " << e.what() << std::endl;
+        }
+
         _connectionActive = true;
     }
     catch (const std::exception &e) {
