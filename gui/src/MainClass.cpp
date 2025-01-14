@@ -1008,7 +1008,7 @@ void Main::_sendAllPackets()
  */
 void Main::_processIncommingPackets()
 {
-
+    std::cerr << "Received: " << _networkManager.receiveMessage() << std::endl;
 }
 
 /**
