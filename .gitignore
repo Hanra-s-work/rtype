@@ -32,3 +32,9 @@ dist/*
 
 # No editor config files
 .vscode
+
+server/build/dummy_client.cpp
+server/build/dummy_client
+
+game_source/libgame_source_lib.a
+game_source/libRTypeSource.a

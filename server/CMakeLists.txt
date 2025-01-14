@@ -1,34 +1,33 @@
-cmake_minimum_required(VERSION 3.28)
-project(RTypeServer VERSION 1.0.0)
+cmake_minimum_required(VERSION 3.15)
+project(rtype_server CXX)
 
-# Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/src/includes)
+# find_package(Threads REQUIRED) if needed
 
-# Include the CMakeLists.txt from the Lib folder to inherit the desired libraries
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib)
-
-set(SOURCES
-    src/GameManager.cpp
-    src/main.cpp
-    src/NetworkManager.cpp
-    src/ProtocolHandler.cpp
-    src/Server.cpp
-    src/ThreadPool.cpp
+# Collect your .cpp files that make up the server
+set(SERVER_SOURCES
+    main.cpp
+    src/server.cpp
+    src/client_manager.cpp
+    src/game_manager.cpp
+    # ...
 )
 
-# Check for threads
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
+add_executable(rtype_server
+    ${SERVER_SOURCES}
+)
 
-# Create the server executable
-add_executable(r-type_server ${SOURCES})
+# If your server needs includes from "server/src", do:
+target_include_directories(rtype_server PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
-# Link libraries needed by the server (asio and toml++)
-target_link_libraries(r-type_server
+# Link the server to the library from game_source
+target_link_libraries(rtype_server
     PRIVATE
-    rtype_server_libraries
-    Threads::Threads
+        RTypeSource       # from game_source/CMakeLists
+        # Threads::Threads    # if needed
+        # other libs (asio, etc.) if needed
 )

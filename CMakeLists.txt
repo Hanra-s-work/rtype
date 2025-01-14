@@ -15,6 +15,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 # Include first-level subdirectories (project binaries)
 add_subdirectory(gui)
 add_subdirectory(server)
+add_subdirectory(game_source)
 
 # Secondary output directory: source folder
 set(SECONDARY_OUTPUT_DIR ${CMAKE_SOURCE_DIR})
@@ -28,4 +29,4 @@ add_custom_target(copy_binaries ALL
 
 # Ensure the custom target depends on all subdirectories
 # This is now safe to do after defining the targets.
-add_dependencies(copy_binaries r-type_client r-type_server)
+add_dependencies(copy_binaries r-type_client rtype_server)

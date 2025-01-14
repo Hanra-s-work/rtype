@@ -1,20 +1,24 @@
 #include "MovementSystem.hpp"
+#include "IndexedZipper.hpp"
+#include "Time.hpp"
 
-#include "Registry.hpp"
-#include "Zipper.hpp"
-#include "Position.hpp"
-#include "Velocity.hpp"
-
-void movement_system(Registry &r)
+void move_player(Registry &r, size_t id, float x, float y)
 {
-    auto &positions = r.get_components<Position>();
-    auto &velocities = r.get_components<Velocity>();
+    auto &position = r.get_components<Position>();
 
-    for (auto &&[pos, vel] : Zipper(positions, velocities)) {
+    position[id]->X = x;
+    position[id]->Y = y;
+
+    r.dispatcher->notify({MOVE, id, {0, 0, 0, "", {x, y}}});
+}
+
+void movement_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Velocity> &velocities)
+{
+    for (auto &&[idx, pos, vel] : IndexedZipper(positions, velocities)) {
         if (pos && vel) {
-            std::cout << "My position is: (" << pos->X << ", " << pos->Y << ")" << std::endl;
-            pos->X += vel->vX;
-            pos->Y += vel->vY;
+            pos->X += vel->vX * Time::deltaTime;
+            pos->Y += vel->vY * Time::deltaTime;
+            r.dispatcher->notify({MOVE, idx, {0, 0, 0, "", {pos->X, pos->Y}}});
         }
     }
 }

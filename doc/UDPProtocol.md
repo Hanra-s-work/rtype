@@ -11,7 +11,9 @@
     * [MOVE (0x03)](#move-0x03)
     * [SHOOT (0x04)](#shoot-0x04)
     * [SPAWN (0x05)](#spawn-0x05)
-    * [UPDATE (0x06)](#update-0x06)
+    * [KILL (0x06)](#kill-0x06)
+    * [DAMAGE (0x07)](#damage-0x07)
+    * [STATUS (0x0A)](#status-0x0a)
     * [ERROR (0xFF)](#error-0xff)
   * [Error Handling](#error-handling)
   * [Use cases in game logic and GUI](#use-cases-in-game-logic-and-gui)
@@ -32,7 +34,6 @@ Each UDP message exchanged between the client and the server follows a specific 
 | Field | Size (bits) | Description |
 | --- | --- | --- |
 | Message Type | 8 | Identifies the type of message (i.e., MOVE, SHOOT). |
-| Message Size | 16 | Specifies the payload size in bytes. |
 | Payload | Variable | Contains data specific to the message type. Optional depending on the type. |
 
 ### **Types of Messages the Server Expects and Sends**
@@ -44,13 +45,13 @@ Types of messages sent by the client to the server:
 * **Description**: The client connects to the server.
 * **Format**:
 
-      | \[0x01\]\[0x00\]\[0x08\]\[username...\] |
+      | \[0x01\]\[username...\] |
       | :---- |
 
 * **Payload**: `username` (8 characters max, padded with null bytes if shorter) is the name of the player.
 * **Example**: A client connecting with the username "Player1" sends:
 
-      | 0x01 0x00 0x08 50 6c 61 79 65 72 31 00 |
+      | 0x01 50 6c 61 79 65 72 31 00 |
       | :---- |
 
 #### **DISCONNECT (0x02)**
@@ -59,65 +60,88 @@ Types of messages sent by the client to the server:
 
 * **Format**:
 
-      | \[0x02\]\[0x00\]\[0x00\] |
+      | \[0x02\]\[id...\]|
       | :---- |
+
+* **Payload**: `id` (size_t) is the entity id on the ECS.
 
 #### **MOVE (0x03)**
 
-* **Description**: Informs the server of player movement direction.
+* **Description**: Informs an entity movement.
 * **Format**:
 
-        | \[0x03\]\[0x00\]\[0x01\]\[direction\] |
+        | \[0x03\]\[id...\]\[x...\]\[y...\] |
         | :---- |
 
-* **Payload**:
-  * `0x01` \= UP
-  * `0x02` \= DOWN
-  * `0x03` \= LEFT
-  * `0x04` \= RIGHT
+* **Payload**: 
+  * `id` (size_t) is the entity id on the ECS.
+  * `x` (float) is the X coordinate
+  * `y` (float) is the Y coordinate
 
-* **Example**: A player moving `UP`:
+* **Example**: A player `1` moving to `(16, 8)`:
 
-    | 0x03 0x00 0x01 0x01 |
+    | 0x03 0x00 ... 0x01 0x00 ... 0x10 0x00 ... 0x08 |
     | :---- |
 
 #### **SHOOT (0x04)**
 
-* **Description**: The player shoots.
+* **Description**: An entity shoots.
 * **Format**:
 
-    | \[0x04\]\[0x00\]\[0x02\]\[angleX\]\[angleY\] |
+    | \[0x04\]\[id...\] |
     | :---- |
 
-* **Payload**: 0x01 0x02 (for example, for a shooting angle in binary coordinates).
+* **Payload**: `id` (size_t) is the entity id on the ECS.
 
 #### **SPAWN (0x05)**
 
 * **Description**: Notifies the client of a new entity (enemy, object) in the game world.
 * **Format**:
 
-    | \[0x05\]\[0x00\]\[size\]\[id\]\[x\]\[y\]\[type\] |
+    | \[0x05\]\[id...\]\[asset...\]\[x...\]\[y...\] |
     | :---- |
 
-* **Payload**: [ID, x, y, type] of the entity to spawn.
+* **Payload**: [ID, asset, x, y] of the entity to spawn.
 
-  * `id` (1 byte): Unique entity ID.
-  * `x`, `y` (2 bytes each): Coordinates.
-  * `type` (1 byte): Entity type (e.g., enemy, collectible).
+  * `id` (size_t): Unique entity ID.
+  * `asset` (short): Asset ID.
+  * `x`, `y` (4 bytes each): Coordinates.
 
-#### **UPDATE (0x06)**
+#### **KILL (0x06)**
 
-* **Description**: The server sends updated information on the game state to the clients.
+* **Description**: The server tells the client to remove an entity.
 
 * **Format**:
 
-  | \[0x06\]\[0x00\]\[size\]\[entity1\_data\]\[entity2\_data\]... |
+  | \[0x06\]\[id...\] |
   | :---- |
 
-* **Payload**: A series of entity data blocks, each formatted as:
+* **Payload**: `id` (size_t) is the entity id on the ECS.
 
-  | \[id\]\[x\]\[y\]\[type\] |
+#### **DAMAGE (0x07)**
+
+* **Description**: The server tells an entity was damaged (for client to show animations)
+
+* **Format**:
+
+  | \[0x07\]\[id...\] |
   | :---- |
+
+* **Payload**: `id` (size_t) is the entity id on the ECS.
+
+#### **STATUS (0x0A)**
+
+* **Description**: The server tells the client the current game status.
+
+* **Format**:
+
+  | \[0x08\]\[status\] |
+  | :---- |
+
+* **Payload**: `status` (1 byte)
+  * `0x00`: On going.
+  * `0x01`: Victory. 
+  * `0xFF`: Defeat.
 
 #### **ERROR (0xFF)**
 
@@ -137,7 +161,7 @@ Types of messages sent by the client to the server:
 * **Client Errors**
   If a client sends an invalid request (e.g., moving out of bounds), an error packet is returned:
 
-  | 0xFF 0x00 0x01 0x01 |
+  | 0xFF 0x01 |
   | :---- |
 
 * **Code:**
@@ -146,11 +170,11 @@ Types of messages sent by the client to the server:
 * **Server Errors:**
   Malformed packets or server-side issues result in an error response:
 
-  | 0xFF 0x00 0x02 0x00 0x01 |
+  | 0xFF 0x02 |
   | :---- |
 
 * **Error Code:**
-  * `0x00 0x01`: Malformed packet
+  * `0x02`: Malformed packet
 
 ---
 
@@ -158,13 +182,13 @@ Types of messages sent by the client to the server:
 
 * **Game Logic**:
 
-* **MOVE** and **SHOOT:** Update player states and synchronize actions.
-* **SPAWN:** Trigger in-game events like enemy appearances.
-* **UPDATE:** Reconcile server-authoritative state with client predictions.
+* **MOVE**, **KILL** and **DAMAGE:** Update entities states and synchronize actions.
+* **SHOOT** and **SPAWN:** Trigger in-game events like enemy and bullets appearances.
+* **STATUS:** Updates game state.
 
 * **GUI**:
 
-* Render **SPAWN** and **UPDATE** messages for real-time feedback.
+* Render **SPAWN**, **MOVE**, **SHOOT**, **DAMAGE** and **KILL** messages for real-time feedback.
 * Display error messages from **ERROR** packets.
 
 ---

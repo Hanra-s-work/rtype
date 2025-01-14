@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
 
 /**
  * @struct PlayerInfo
@@ -10,5 +11,6 @@
  * It can be expanded in the future to include additional player-related data if needed.
  */
 struct PlayerInfo {
+    uint32_t id;  /**< The client id of the player */
     std::string username; /**< The username of the player. */
 };
