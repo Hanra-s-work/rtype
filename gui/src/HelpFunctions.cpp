@@ -39,7 +39,7 @@ static void displayDetailedUsage()
 {
     std::cout << "OPTIONS:\n";
     std::cout << "\t--ip=\"127.0.0.1\"            \tSet the value of the ip on which the program will communicate. (Default value: 127.0.0.1)\n";
-    std::cout << "\t--port=\"5000\"               \tSet the value of the port on which the program will communicate. (Default value: 5000)\n";
+    std::cout << "\t--port=\"9000\"               \tSet the value of the port on which the program will communicate. (Default value: 9000)\n";
     std::cout << "\t--log                         \tEnable logging.\n";
     std::cout << "\t--debug                       \tEnable debug logging. (if this option is provided, the --log flag becomes forced regardless of it being provided or not)\n";
     std::cout << "\t--help                        \tDisplay this help message and exit.\n\n";

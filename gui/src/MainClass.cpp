@@ -20,7 +20,7 @@
   * @brief Constructor for the Main class.
   *
   * @param ip The IP address to use for connections (default: "127.0.0.1").
-  * @param port The port number to use for connections (default: 5000).
+  * @param port The port number to use for connections (default: 9000).
   * @param windowWidth The width of the application window (default: 800).
   * @param windowHeight The height of the application window (default: 600).
   * @param windowCursor Whether the cursor should be visible (default: true).
@@ -72,7 +72,8 @@ Main::Main(
     _spriteStartLeft(spriteStartLeft),
     _spriteWidth(spriteWidth),
     _configFilePath(configFilePath),
-    _spriteHeight(spriteHeight)
+    _spriteHeight(spriteHeight),
+    _networkManager()
 {
     _log = log;
     Logging::Log::getInstance().setLogEnabled(log);
@@ -108,6 +109,9 @@ Main::Main(
         throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
     PRETTY_INFO << "End of processing" << std::endl;
+    PRETTY_INFO << "Initialising the connection with the server" << std::endl;
+    _networkManager.setAddress(_ip, _port);
+    PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
 }
 
 /**
@@ -347,10 +351,7 @@ const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std
 void Main::_initialiseConnection()
 {
     std::string address = _ip + ":" + std::to_string(_port);
-
-    if (SUCCESS != SUCCESS) {
-        throw CustomExceptions::ConnectionFailed(address);
-    }
+    _networkManager.setAddress(_ip, _port);
 }
 
 /**
@@ -992,7 +993,7 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
  */
 void Main::_sendAllPackets()
 {
-
+    _networkManager.SendMessage("Yolo");
 };
 
 /**
@@ -2409,7 +2410,7 @@ void Main::_mainMenuScreen()
         PRETTY_WARNING << "Online Game button not found, creating" << std::endl;
         onlineGame.emplace(
             _createButton(
-                onlineGameKey, "Online Game", std::bind(&Main::_goConnect, this), "_goConnect", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+                onlineGameKey, "Online Game", std::bind(&Main::_goConnectionAddress, this), "_goConnectionAddress", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
             )
         );
         PRETTY_SUCCESS << "Start Button created" << std::endl;
@@ -3664,6 +3665,44 @@ void Main::_connectionAddressScreen()
     PRETTY_DEBUG << "Base id: " << Recoded::myToString(_baseId) << std::endl;
 }
 
+void Main::_lobbyList()
+{
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+}
+
+void Main::_lobbyRoom()
+{
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+}
+
 /**
  * @brief Switches the active screen to the game screen for the online game version.
  *
@@ -3779,53 +3818,64 @@ void Main::_goConnectionFailed()
 void Main::_goConnect()
 {
     PRETTY_DEBUG << "Reconstructing ip" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 1" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkOne = _getTextComponent(_ipV4FirstChunkKey);
     if (!chunkOne.has_value()) {
         PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
         _goConnectionFailed();
         return;
     }
+    PRETTY_DEBUG << "Got the chunk 1" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 2" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkTwo = _getTextComponent(_ipV4SecondChunkKey);
     if (!chunkTwo.has_value()) {
         PRETTY_ERROR << "Could not find the text component for the second IP chunk." << std::endl;
         _goConnectionFailed();
         return;
     }
+    PRETTY_DEBUG << "Got the chunk 2" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 3" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkThree = _getTextComponent(_ipV4ThirdChunkKey);
     if (!chunkThree.has_value()) {
         PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
         _goConnectionFailed();
         return;
     }
+    PRETTY_DEBUG << "Got the chunk 3" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 4" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkFour = _getTextComponent(_ipV4FourthChunkKey);
     if (!chunkFour.has_value()) {
         PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
         _goConnectionFailed();
         return;
     }
+    PRETTY_DEBUG << "Got the chunk 4" << std::endl;
     _ip = chunkOne.value()->getText() + ".";
     _ip += chunkTwo.value()->getText() + ".";
     _ip += chunkThree.value()->getText() + ".";
     _ip += chunkFour.value()->getText();
     PRETTY_DEBUG << "Reconstructing port" << std::endl;
-    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> port = _getTextComponent(_ipV4FourthChunkKey);
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> port = _getTextComponent(_portV4ChunkKey);
     if (!port.has_value()) {
         PRETTY_ERROR << "Could not find the text component for the port chunk." << std::endl;
         _goConnectionFailed();
         return;
     }
     try {
+        PRETTY_DEBUG << "The text port is: " << port.value()->getText() << std::endl;
         _port = std::stoi(port.value()->getText());
+        PRETTY_DEBUG << "The port is" << Recoded::myToString(_port) << std::endl;
     }
     catch (std::invalid_argument &e) {
         PRETTY_ERROR << "Could not convert the port to an integer." << std::endl;
         _goConnectionFailed();
         return;
     }
+    PRETTY_DEBUG << "Current address: " << _ip << ":" << Recoded::myToString(_port) << std::endl;
     PRETTY_DEBUG << "Attempting to connect" << std::endl;
     _initialiseConnection();
     PRETTY_DEBUG << "Checking if we are connected" << std::endl;
-    if (!_connected) {
+    if (!_networkManager.isConnected()) {
         PRETTY_DEBUG << "We are not connected" << std::endl;
         _goConnectionFailed();
     } else {
@@ -3843,6 +3893,26 @@ void Main::_goConnectionAddress()
 {
     setActiveScreen(ActiveScreen::CONNECTION_ADDRESS);
 };
+
+/**
+ * @brief Switches the active screen to a lobby list  screen.
+ *
+ * Sets the active screen to @c ActiveScreen::LOBBY_LIST, allowing the user to choose the game they want to play.
+ */
+void Main::_goLobbyList()
+{
+    setActiveScreen(ActiveScreen::LOBBY_LIST);
+}
+
+/**
+ * @brief Switches the active screen to a lobby room input screen.
+ *
+ * Sets the active screen to @c ActiveScreen::LOBBY_ROOM, allowing the user to wait for other user's to connect.
+ */
+void Main::_goLobbyRoom()
+{
+    setActiveScreen(ActiveScreen::LOBBY_ROOM);
+}
 
 /**
  * @brief Starts the main menu music if it has not already started.
@@ -4339,6 +4409,14 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Connection Address screen components are going to be set to be displayed" << std::endl;
             _connectionAddressScreen();
             PRETTY_SUCCESS << "Connection Address screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::LOBBY_LIST) {
+            PRETTY_DEBUG << "Lobby list screen components are going to be set to be displayed" << std::endl;
+            _lobbyList();
+            PRETTY_SUCCESS << "Lobby list screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::LOBBY_ROOM) {
+            PRETTY_DEBUG << "Lobby room screen components are going to be set to be displayed" << std::endl;
+            _lobbyRoom();
+            PRETTY_SUCCESS << "Lobby room screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::LOADING) {
             PRETTY_DEBUG << "Update loading text screen components are going to be set to be displayed" << std::endl;
             _updateLoadingText("Apparently we are loading something...");
@@ -4383,6 +4461,7 @@ void Main::setIp(const std::string &ip)
 {
     if (_isIpInRange(ip) == true) {
         _ip = ip;
+        _networkManager.setIp(ip);
     } else {
         throw CustomExceptions::InvalidIp(ip);
     }
@@ -4399,6 +4478,7 @@ void Main::setPort(const unsigned int port)
 {
     if (_isPortCorrect(port) == true) {
         _port = port;
+        _networkManager.setPort(_port);
     } else {
         throw CustomExceptions::InvalidPort(std::to_string(port));
     }
@@ -4639,7 +4719,7 @@ void Main::setActiveScreen(const ActiveScreen screen)
     PRETTY_DEBUG << "Set active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
 
     PRETTY_DEBUG << "Updating the current music that is supposed to play." << std::endl;
-    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
+    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS || screen == ActiveScreen::LOBBY_LIST || screen == ActiveScreen::LOBBY_ROOM) {
         PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
         _startMainMenuMusic();
         _stopGameLoopMusic();
@@ -4914,9 +4994,9 @@ const std::string Main::getActiveScreenAsString() const
 }
 
 /**
- * @brief Load a toml file into the program if it is present.
- *
- */
+*@brief Load a toml file into the program if it is present.
+*
+*/
 void Main::_loadToml()
 {
     _tomlContent.setTOMLPath(_configFilePath);
