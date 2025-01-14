@@ -59,6 +59,10 @@ public:
      */
     void handleGameMessage(uint32_t gameId, uint32_t clientId, const Message& msg);
 
+    /**
+    * @brief Returns the list of games.
+    */
+    std::unordered_map<uint32_t, GameInstance> getGames();
 private:
     /**
      * @brief Finds a game that isn't full or creates a new one.

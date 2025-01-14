@@ -133,3 +133,7 @@ uint32_t GameManager::findOrCreateGame() {
     std::cout << "[GameManager] Created new game " << gid << "\n";
     return gid;
 }
+
+std::unordered_map<uint32_t, GameInstance> GameManager::getGames() {
+    return this->games_;
+}

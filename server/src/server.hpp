@@ -34,6 +34,16 @@ public:
      */
     void sendToClient(uint32_t clientId, const Message& msg);
 
+    /**
+     * @brief Sends the list of all games to the client.
+     */
+     void sendGameList(uint32_t clientId);
+
+     /**
+      * @brief Creates a game lobby.
+      */
+      void createGameLobby();
+
 private:
     /**
      * @brief Initiates an asynchronous receive operation.

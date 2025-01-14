@@ -1,5 +1,7 @@
 #include "server.hpp"
 #include <iostream>
+#include <unistd.h>
+#include <cstdlib>
 
 Server::Server(asio::io_context& io, unsigned short port)
   : socket_(io, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
@@ -38,16 +40,21 @@ void Server::handleMessage(std::size_t bytesReceived) {
 
     // Example simple switch:
     switch (msg.type) {
-    case 1: { // CONNECT
+    case 0x01: { // CONNECT
         std::cout << "[Server] Client " << clientId 
                   << " connected from " << remoteEndpoint_ << "\n";
         gameManager_.assignClientToGame(clientId);
         break;
     }
-    case 2: { // DISCONNECT
+    case 0x02: { // DISCONNECT
         std::cout << "[Server] Client " << clientId << " disconnected.\n";
         gameManager_.removeClientFromGame(clientId);
         clientManager_.removeClient(remoteEndpoint_);
+        break;
+    }
+    case 0xA0: {
+        std::cout << "[Server] Sending Games to Client " << clientId << ".\n";
+        sendGameList(clientId);
         break;
     }
     default: {
@@ -82,4 +89,38 @@ void Server::sendToClient(uint32_t clientId, const Message& msg) {
             }
         }
     );
+}
+
+void Server::sendGameList(uint32_t clientId) {
+    auto games = gameManager_.getGames();
+    const std::string response = "Start of game list...";
+
+    Message msg = createMessage(0xA0, response, response.length());
+    sendToClient(clientId, msg);
+
+    pid_t pid = fork();
+    if (pid < 0) {
+        std::cerr << "Fork failed!" << std::endl;
+        return;
+    }
+    else if (pid == 0) {
+        for (auto game : games) {
+            std::vector<uint8_t> serializedGame;
+            auto size = game.second.clients.size();
+
+            serializedGame.resize(sizeof(uint32_t) + sizeof(size));
+            auto buffer = serializedGame.data();
+
+            std::memcpy(buffer, game.second.gameId, sizeof(uint32_t));
+            buffer += sizeof(uint32_t);
+
+            std::memcpy(buffer, size, sizeof(size));
+
+            msg = createMessage(0xA1, serializedGame.data(), serializedGame.size());
+            sendToClient(clientId, msg);
+        }
+        msg = createMessage(0xA2, "end", 4);
+        sendToClient(clientId, msg);
+        exit(0);
+    }
 }

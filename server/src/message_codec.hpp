@@ -41,3 +41,15 @@ inline std::vector<uint8_t> encodeMessage(const Message& msg) {
     }
     return buffer;
 }
+
+/**
+ * @brief
+ */
+inline Message createMessage(const uint8_t type, const unsigned char* data, size_t length) {
+    Message out;
+
+    out.type = type;
+    out.payload.resize(length - 1);
+    std::memcpy(out.payload.data(), data + 1, length - 1);
+    return out;
+}
