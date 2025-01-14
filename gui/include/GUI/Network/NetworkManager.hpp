@@ -27,9 +27,21 @@ class NetworkManager : public GUI::ECS::EntityNode {
     NetworkManager(const std::uint32_t entityId = 0);
     void Initialize();
     void HandleMessages();
-    void SendMessage(const std::string &message, const std::string &address, uint16_t port);
+    void SendMessage(const std::string &message);
+
+    void setPort(const unsigned int port);
+    void setIp(const std::string &ip);
+    void setAddress(const std::string &ip, const unsigned int port);
+
+    const bool isConnected() const;
 
     private:
+    void _connect();
+    void _disconnect();
+
+    bool _connectionActive = false;
+    unsigned int _port = -1;
+    std::string _ip = "127.0.0.1";
     asio::io_context ioContext;
     asio::ip::udp::socket socket{ ioContext };
 };

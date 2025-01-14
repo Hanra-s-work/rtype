@@ -18,13 +18,13 @@ NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entity
 void NetworkManager::Initialize()
 {
     try {
-        asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), 4242);
+        asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), _port);
         socket.open(asio::ip::udp::v4());
         socket.bind(localEndpoint);
-        std::cout << "UDP Socket initialized on port 4242" << std::endl;
+        PRETTY_INFO << "UDP Socket initialized on port " << _port << std::endl;
     }
     catch (const std::exception &e) {
-        std::cerr << "Error initializing UDP socket: " << e.what() << std::endl;
+        PRETTY_CRITICAL << "Error initializing UDP socket: " << e.what() << std::endl;
     }
 }
 
@@ -44,20 +44,120 @@ void NetworkManager::HandleMessages()
         }
     }
     catch (const std::exception &e) {
-        std::cerr << "Error handling messages: " << e.what() << std::endl;
+        PRETTY_ERROR << "Error handling messages: " << e.what() << std::endl;
     }
 }
 
-void NetworkManager::SendMessage(const std::string &message, const std::string &address, uint16_t port)
+void NetworkManager::SendMessage(const std::string &message)
 {
+    if (!isConnected()) {
+        std::cerr << "Cannot send message: No active connection." << std::endl;
+        return;
+    }
+
+    if (message.size() > 65507) {
+        std::cerr << "Message too large for UDP datagram." << std::endl;
+        return;
+    }
+
     try {
-        asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(address), port);
+        asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
         std::vector<uint8_t> data(message.begin(), message.end());
 
         socket.send_to(asio::buffer(data), remoteEndpoint);
-        std::cout << "Message sent to " << address << ":" << port << std::endl;
+        std::cerr << "Message : " << message << " sent to " << _ip << ":" << _port << std::endl;
     }
     catch (const std::exception &e) {
         std::cerr << "Error sending message: " << e.what() << std::endl;
+    }
+}
+
+const bool NetworkManager::isConnected() const
+{
+    std::cerr << "In is connected" << std::endl;
+    std::cerr << "status: " << Recoded::myToString(socket.is_open()) << std::endl;
+    return socket.is_open();
+}
+
+
+void NetworkManager::setPort(const unsigned int port)
+{
+    std::cerr << "In the set Port" << std::endl;
+    if (_port == port) {
+        return;
+    };
+    PRETTY_SUCCESS << "Setting Port" << std::endl;
+    _port = port;
+    _connect();
+}
+
+void NetworkManager::setIp(const std::string &ip)
+{
+    std::cerr << "In the set ip" << std::endl;
+    if (_ip == ip) {
+        return;
+    };
+    PRETTY_SUCCESS << "Setting ip" << std::endl;
+    _ip = ip;
+    _connect();
+}
+
+void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
+{
+    std::cerr << "Setting address" << std::endl;
+    if (_ip == ip && _port == port) {
+        return;
+    }
+    PRETTY_SUCCESS << "Setting address" << std::endl;
+    _ip = ip;
+    _port = port;
+    _connect();
+}
+
+void NetworkManager::_connect()
+{
+    std::cerr << "In the connect function " << std::endl;
+    PRETTY_DEBUG << "Connecting" << std::endl;
+    try {
+        if (isConnected()) {
+            _disconnect();
+        }
+
+        if (_ip.empty() || _port <= 0 || _port > 65535) {
+            throw std::invalid_argument("Invalid IP or port for connection.");
+        }
+
+        asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
+
+        if (!socket.is_open()) {
+            socket.open(asio::ip::udp::v4());
+        }
+
+        asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), 0);
+        socket.bind(localEndpoint);
+
+        PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
+        SendMessage("hello");
+        _connectionActive = true;
+    }
+    catch (const std::exception &e) {
+        PRETTY_CRITICAL << "Error connecting to server: " << e.what() << std::endl;
+        _connectionActive = false;
+    }
+};
+
+void NetworkManager::_disconnect()
+{
+    try {
+        if (socket.is_open()) {
+            socket.close();
+            std::cerr << "Disconnected from server at " << _ip << ":" << _port << std::endl;
+        } else {
+            std::cerr << "Socket is already closed." << std::endl;
+        }
+        _connectionActive = false;
+    }
+    catch (const std::exception &e) {
+        std::cerr << "Error disconnecting from server: " << e.what() << std::endl;
     }
 }
