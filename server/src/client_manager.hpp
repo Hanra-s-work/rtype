@@ -6,25 +6,21 @@
 
 /**
  * @class ClientManager
- * @brief Tracks (ip::udp::endpoint)->clientId for consistent identification of clients.
+ * @brief Tracks (ip::udp::endpoint)->clientId and allows lookup in reverse.
  */
 class ClientManager {
 public:
-    /**
-     * @brief Resolves or creates a clientId for a given remote endpoint.
-     * @param ep The client's (IP,port) endpoint.
-     * @return The clientId assigned to that endpoint.
-     */
     uint32_t resolveClientID(const asio::ip::udp::endpoint& ep);
-
-    /**
-     * @brief Removes a client from the manager by endpoint.
-     * @param ep The endpoint to remove.
-     */
     void removeClient(const asio::ip::udp::endpoint& ep);
 
+    /**
+     * @brief Returns the endpoint for a given clientId if known, 
+     *        else a default-constructed endpoint.
+     */
+    asio::ip::udp::endpoint getEndpointForId(uint32_t clientId);
+
 private:
-    std::mutex mutex_; ///< Protects the maps below
+    std::mutex mutex_;
     std::unordered_map<asio::ip::udp::endpoint, uint32_t> epToId_;
     std::unordered_map<uint32_t, asio::ip::udp::endpoint> idToEp_;
     uint32_t nextId_ = 1;
