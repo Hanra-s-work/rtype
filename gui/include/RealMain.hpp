@@ -41,6 +41,7 @@
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/Window.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
+#include "GUI/Network/NetworkManager.hpp"
 
 
  /**
@@ -52,7 +53,7 @@ class Main {
   /**
    * @brief Constructor for the Main class.
    * @param ip The IP address to use for connections (default: "127.0.0.1").
-   * @param port The port number to use for connections (default: 5000).
+   * @param port The port number to use for connections (default: 9000).
    * @param windowWidth The width of the application window (default: 800).
    * @param windowHeight The height of the application window (default: 600).
    * @param windowCursor Whether the cursor should be visible (default: true).
@@ -71,7 +72,7 @@ class Main {
    * @param log Inform the program if it needs to output logs or not (default: false).
    * @param debug Whether debug mode is enabled (default: false).
    */
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 9000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false);
   ~Main();
 
   void run();
@@ -254,6 +255,8 @@ class Main {
   void _bossFightScreen();           //BOSS_FIGHT
   void _connectionFailedScreen();    //CONNECTION_FAILED
   void _connectionAddressScreen();   //CONNECTION_ADDRESS
+  void _lobbyList();                 //LOBBY_LIST
+  void _lobbyRoom();                 //LOBBY_ROOM
 
   // Function related to managing sub components in the windows
 
@@ -270,6 +273,8 @@ class Main {
   void _goConnectionFailed();  // Connection failed screen
   void _goConnect();           // Connection in progress (this function will redirect the user to either the game or the connection failed)
   void _goConnectionAddress(); // Connection changer screen
+  void _goLobbyList();         // Lobby list screen
+  void _goLobbyRoom();         // Lobby room screen
 
 
   // Musics
@@ -365,6 +370,9 @@ class Main {
   const std::string _ipV4ThirdChunkKey = "connectionAddressScreenIpV4ThirdChunk";
   const std::string _ipV4FourthChunkKey = "connectionAddressScreenIpV4FourthChunk";
   const std::string _portV4ChunkKey = "connectionAddressScreenPortV4ChunkKey";
+
+  // Network manager
+  NetworkManager _networkManager;
 };
 
 int RealMain(int argc, char **argv);

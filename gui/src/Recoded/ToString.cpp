@@ -60,6 +60,12 @@ const std::string Recoded::myToString(const ActiveScreen &item)
         case ActiveScreen::CONNECTION_ADDRESS:
             return "CONNECTION ADDRESS";
             break;
+        case ActiveScreen::LOBBY_LIST:
+            return "LOBBY LIST";
+            break;
+        case ActiveScreen::LOBBY_ROOM:
+            return "LOBBY ROOM";
+            break;
         default:
             return "UNKNOWN";
             break;
