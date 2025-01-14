@@ -1,18 +1,21 @@
 #include "game_manager.hpp"
+#include <algorithm>
+#include <iostream>
 
-/**
- * @file game_manager.cpp
- * @brief Implementation of the GameManager class methods.
- */
+const size_t GameManager::MAX_PLAYERS_PER_GAME;
+
+GameManager::GameManager(BroadcastFunc broadcastFunc)
+  : broadcastFunc_(std::move(broadcastFunc))
+{ }
 
 uint32_t GameManager::assignClientToGame(uint32_t clientId) {
-    // Check if already assigned
+    // If already assigned, return existing
     auto it = clientToGame_.find(clientId);
     if (it != clientToGame_.end()) {
         return it->second;
     }
 
-    // Otherwise find or create a new game
+    // Otherwise find/create
     uint32_t gid = findOrCreateGame();
     auto &gInst = games_.at(gid);
 
@@ -22,36 +25,36 @@ uint32_t GameManager::assignClientToGame(uint32_t clientId) {
     std::cout << "[GameManager] Added client " << clientId 
               << " to game " << gid << "\n";
 
-    // The Game class might have some method to handle a new player, or an event:
-    // For example, create a spawn event or call onServerEventReceived(...).
-    // We'll just illustrate:
-    std::string connectEvent = "\x01" + std::to_string(clientId);
-    gInst.game->onServerEventReceived(connectEvent);
+    // Possibly let the Game know about a connect event:
+    // e.g. some string or a custom GameMessage
+    std::string evt = "\x01" + std::to_string(clientId);
+    gInst.game->onServerEventReceived(evt);
 
     return gid;
 }
 
 void GameManager::removeClientFromGame(uint32_t clientId) {
     auto it = clientToGame_.find(clientId);
-    if (it == clientToGame_.end()) return;
+    if (it == clientToGame_.end()) {
+        return;
+    }
 
     uint32_t gid = it->second;
     auto &gInst = games_.at(gid);
 
-    // Remove from client list
+    // remove from vector
     auto &cList = gInst.clients;
     cList.erase(std::remove(cList.begin(), cList.end(), clientId), cList.end());
 
-    // Possibly notify the Game that this player left:
-    std::string disconnectEvent = "\x02" + std::to_string(clientId);
-    gInst.game->onServerEventReceived(disconnectEvent);
+    // Possibly inform the game of a disconnect
+    std::string evt = "\x02" + std::to_string(clientId);
+    gInst.game->onServerEventReceived(evt);
 
     clientToGame_.erase(clientId);
 
     std::cout << "[GameManager] Removed client " << clientId 
               << " from game " << gid << "\n";
 
-    // If the game is empty, we can remove it:
     if (cList.empty()) {
         games_.erase(gid);
         std::cout << "[GameManager] Destroyed game " << gid 
@@ -68,58 +71,63 @@ uint32_t GameManager::getGameIdForClient(uint32_t clientId) const {
 }
 
 void GameManager::updateAllGames(float dt) {
-    // For each active game, call update
     for (auto &pair : games_) {
         auto &gInst = pair.second;
+
+        // 1) Update the game logic
         gInst.game->update(dt);
-        // Optionally collect events from gInst.game->getGameEvents() and broadcast them
+
+        // 2) Suppose getGameEvents() returns a list of strings
+        auto events = gInst.game->getGameEvents();
+
+        // 3) For each event, broadcast to each client in gInst.clients
+        for (const auto &evt : events) {
+            // Let's build a small Message to send
+            Message outMsg;
+            outMsg.type = 100; // some code meaning "GameEvent"
+
+            // Put the string in outMsg.payload
+            outMsg.payload.assign(evt.begin(), evt.end());
+
+            // Send to each client
+            for (auto cid : gInst.clients) {
+                broadcastFunc_(cid, outMsg);
+            }
+        }
     }
 }
 
 void GameManager::handleGameMessage(uint32_t gameId, uint32_t clientId, const Message& msg) {
     auto it = games_.find(gameId);
-    if (it == games_.end()) {
-        return; // no such game
-    }
+    if (it == games_.end()) return;
 
     auto &gInst = it->second;
 
-    // Typically, you would parse msg.payload into a GameMessage or some command structure
-    // Then call gInst.game->onGameEventReceived(...) or similar
-    // For demonstration, let's do a minimal approach:
-
-    // 1) Convert the raw `Message` into a `GameMessage` if you want
-    // We'll pretend the payload is a single integer or something.
-    // Real code: you'd do more robust serialization, e.g. using `Game::deserialize`.
+    // For demonstration, let's say we interpret the payload as a string
     if (!msg.payload.empty()) {
-        // Suppose we interpret the first byte as a messageType
-        // Or use your 'deserialize' logic:
-        std::istringstream iss(std::string(
-            reinterpret_cast<const char*>(msg.payload.data()), msg.payload.size()));
-        GameMessage gm = deserialize(iss);
-
-        // Now pass this to the game:
-        gInst.game->onGameEventReceived(gm);
-    } 
-    else {
-        // If there's no payload, maybe handle it differently
-        // or do nothing
+        std::string eventString(
+            reinterpret_cast<const char*>(msg.payload.data()),
+            msg.payload.size()
+        );
+        // Then feed that into the game as an event
+        gInst.game->onServerEventReceived(eventString);
+    } else {
+        // or do something if no payload
     }
 }
 
 uint32_t GameManager::findOrCreateGame() {
-    // Find existing non-full game
+    // Look for an existing not-full game
     for (auto &pair : games_) {
         if (pair.second.clients.size() < MAX_PLAYERS_PER_GAME) {
             return pair.first;
         }
     }
-
-    // Otherwise create a new one
+    // Otherwise create new
     uint32_t gid = nextGameId_++;
     GameInstance gInst;
     gInst.gameId = gid;
-    gInst.game = std::make_unique<Game>(); // your actual Game constructor
+    gInst.game = std::make_unique<Game>(); // your actual game constructor
     games_[gid] = std::move(gInst);
 
     std::cout << "[GameManager] Created new game " << gid << "\n";

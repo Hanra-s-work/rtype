@@ -1,15 +1,13 @@
 #include "server.hpp"
 #include <iostream>
 
-/**
- * @file server.cpp
- * @brief Implementation of the Server class methods.
- */
-
 Server::Server(asio::io_context& io, unsigned short port)
-  : socket_(io, asio::ip::udp::endpoint(asio::ip::udp::v4(), port))
+  : socket_(io, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
+    gameManager_([this](uint32_t cid, const Message& msg){
+        // A lambda so gameManager can call back to sendToClient
+        this->sendToClient(cid, msg);
+    })
 {
-    std::cout << "[Server] Listening on 0.0.0.0:" << port << " (UDP)\n";
     doReceive();
 }
 
@@ -20,45 +18,68 @@ void Server::doReceive() {
             if (!ec && bytesRecv > 0) {
                 handleMessage(bytesRecv);
             }
-            // Keep listening, even if error or 0 bytes
             doReceive();
         }
     );
 }
 
 void Server::handleMessage(std::size_t bytesReceived) {
-    // Decode minimal 4-byte header
     Message msg;
     if (!decodeMessage(recvBuffer_.data(), bytesReceived, msg)) {
         std::cout << "[Server] Invalid message from " << remoteEndpoint_ << "\n";
         return;
     }
 
-    // Find or create clientId for this endpoint
+    // Identify or create client ID
     uint32_t clientId = clientManager_.resolveClientID(remoteEndpoint_);
-    // For demonstration, assume msg.type might match your messageType enum in GameMessage
+    // For debugging
+    // std::cout << "[Server] Received type=" << msg.type 
+    //           << " from clientId=" << clientId << "\n";
+
+    // Example simple switch:
     switch (msg.type) {
-    case 1: {
+    case 1: { // CONNECT
         std::cout << "[Server] Client " << clientId 
                   << " connected from " << remoteEndpoint_ << "\n";
-        // Assign them to a game
-        auto gameId = gameManager_.assignClientToGame(clientId);
-        // Possibly respond or do more logic
+        gameManager_.assignClientToGame(clientId);
         break;
     }
-    case 2: {
+    case 2: { // DISCONNECT
         std::cout << "[Server] Client " << clientId << " disconnected.\n";
         gameManager_.removeClientFromGame(clientId);
         clientManager_.removeClient(remoteEndpoint_);
         break;
     }
     default: {
-        // Forward to game manager. This might be MOVE, SPAWN, etc.
-        auto gameId = gameManager_.getGameIdForClient(clientId);
-        if (gameId != 0) {
-            gameManager_.handleGameMessage(gameId, clientId, msg);
+        // Forward to game manager to interpret
+        uint32_t gID = gameManager_.getGameIdForClient(clientId);
+        if (gID != 0) {
+            gameManager_.handleGameMessage(gID, clientId, msg);
         }
         break;
     }
     }
+}
+
+void Server::sendToClient(uint32_t clientId, const Message& msg) {
+    // 1) Get endpoint from clientManager
+    auto ep = clientManager_.getEndpointForId(clientId);
+    if (ep == asio::ip::udp::endpoint()) {
+        std::cout << "[Server] No endpoint known for client " << clientId << "\n";
+        return;
+    }
+
+    // 2) Encode
+    auto buffer = encodeMessage(msg);
+
+    // 3) async_send
+    socket_.async_send_to(
+        asio::buffer(buffer),
+        ep,
+        [this](std::error_code ec, std::size_t bytesSent){
+            if (ec) {
+                std::cout << "[Server] sendToClient error: " << ec.message() << "\n";
+            }
+        }
+    );
 }
