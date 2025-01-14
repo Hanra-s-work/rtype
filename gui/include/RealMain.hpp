@@ -202,12 +202,42 @@ class Main {
   void _sendAllPackets();
   void _processIncommingPackets();
 
+  // Ip string processing
+  const std::string _getIpChunk(const unsigned int index, const std::string &defaultValue) const;
+
+  // Text component fetching
+  const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _getTextComponent(const std::string &textComponentKey);
+
   // Functions in charge of managing a node from an ipv4
   const std::string _incrementIpV4Node(const std::string &v4Section);
   const std::string _decrementIpV4Node(const std::string &v4Section);
 
+  // Functions in charge of managing the port counter
+  const std::string _incrementPortCounter(const std::string &portSection);
+  const std::string _decrementPortCounter(const std::string &portSection);
+
+  // Functions to increment a specific chunk of the address
+  void _incrementIpChunkOne();
+  void _incrementIpChunkTwo();
+  void _incrementIpChunkThree();
+  void _incrementIpChunkFour();
+  void _incrementPortChunk();
+
+  // Functions to decrement a specific chunk of the address
+  void _decrementIpChunkOne();
+  void _decrementIpChunkTwo();
+  void _decrementIpChunkThree();
+  void _decrementIpChunkFour();
+  void _decrementPortChunk();
+
+  // Function in charge of returning the Event manager
+  const std::shared_ptr<GUI::ECS::Systems::EventManager> _getEventManager();
+
+  // Function in charge of creating text components
+  const std::shared_ptr<GUI::ECS::Components::TextComponent> _createText(const std::string &application, const std::string &name, const std::string &text, const GUI::ECS::Systems::Font &font, const unsigned int size = 40, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::Black);
+
   // Function in charge of creating buttons
-  const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName = "callback function", const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::AliceBlue);
+  const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName = "callback function", const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::AliceBlue, const std::shared_ptr<GUI::ECS::Systems::Font> &textFont = nullptr);
 
   // Functions in charge of extracting the x and y coordinates of the screen
   const unsigned int _getScreenCenterX();
@@ -238,6 +268,7 @@ class Main {
   void _goBossFight();         // Boss fight screen
   void _goUnknown();           // When the screen is unknown
   void _goConnectionFailed();  // Connection failed screen
+  void _goConnect();           // Connection in progress (this function will redirect the user to either the game or the connection failed)
   void _goConnectionAddress(); // Connection changer screen
 
 
@@ -269,7 +300,6 @@ class Main {
 
   void _closeConnection();
 
-
   // Private members
 
   // ecs entity holder
@@ -294,6 +324,9 @@ class Main {
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
+
+  // Variable in charge of setting the maximum allowed port range
+  unsigned int _maximumPortRange = 64738;
 
   // Entity id tracking
   std::uint32_t _baseId = 0;
@@ -322,6 +355,16 @@ class Main {
   bool _gameMusicStarted = false;
   bool _mainMenuMusicStarted = false;
   bool _bossFightMusicStarted = false;
+
+  // Variable in charge of informing the gui if we are connected
+  bool _connected = false;
+
+  // Variables in charge of tracking the keys for the ip's
+  const std::string _ipV4FirstChunkKey = "connectionAddressScreenIpV4FirstChunk";
+  const std::string _ipV4SecondChunkKey = "connectionAddressScreenIpV4SecondChunk";
+  const std::string _ipV4ThirdChunkKey = "connectionAddressScreenIpV4ThirdChunk";
+  const std::string _ipV4FourthChunkKey = "connectionAddressScreenIpV4FourthChunk";
+  const std::string _portV4ChunkKey = "connectionAddressScreenPortV4ChunkKey";
 };
 
 int RealMain(int argc, char **argv);
