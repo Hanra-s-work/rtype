@@ -10,50 +10,47 @@
 
 /**
  * @class Server
- * @brief Asynchronous UDP server that accepts multiple clients and manages multiple Game instances.
- *
- * Binds to 0.0.0.0:<port> for LAN accessibility, uses async receive to handle client packets,
- * and forwards messages to the GameManager and ClientManager.
+ * @brief The main UDP server that accepts client messages and updates the game logic.
  */
 class Server : public std::enable_shared_from_this<Server> {
 public:
     /**
-     * @brief Constructs the Server with a bound UDP socket on the given port.
-     * @param io The Asio io_context for async I/O.
-     * @param port The UDP port (e.g., 9000) for listening to client messages.
+     * @brief Constructs the Server, binding a UDP socket to the specified port.
+     * @param io The Asio io_context for async operations.
+     * @param port The UDP port for listening (e.g. 9000).
      */
     Server(asio::io_context& io, unsigned short port);
 
     /**
-     * @brief Accessor to retrieve the GameManager (manages multiple Game instances).
+     * @brief Accessor for the GameManager that manages multiple games.
      * @return Reference to the GameManager instance.
      */
     GameManager& getGameManager() { return gameManager_; }
 
+    /**
+     * @brief Sends a Message to a specific client by ID (uses clientManager to find endpoint).
+     * @param clientId The unique ID of the client.
+     * @param msg The message to send.
+     */
+    void sendToClient(uint32_t clientId, const Message& msg);
+
 private:
     /**
-     * @brief Initiates an async receive operation for UDP packets.
+     * @brief Initiates an asynchronous receive operation.
      */
     void doReceive();
 
     /**
-     * @brief Callback that processes a received packet (decodes and routes to game logic).
-     * @param bytesReceived Number of bytes in the packet.
+     * @brief Callback when a packet is received.
+     * @param bytesReceived The size of the received packet in bytes.
      */
     void handleMessage(std::size_t bytesReceived);
 
-    /// UDP socket bound to 0.0.0.0:<port>.
     asio::ip::udp::socket socket_;
-
-    /// Endpoint of the remote client who sent the current packet.
     asio::ip::udp::endpoint remoteEndpoint_;
 
-    /// Buffer to store incoming packet data.
     std::array<char, 2048> recvBuffer_;
 
-    /// Tracks endpoint <-> clientId mapping.
     ClientManager clientManager_;
-
-    /// Manages multiple Game instances.
-    GameManager gameManager_;
+    GameManager   gameManager_;
 };
