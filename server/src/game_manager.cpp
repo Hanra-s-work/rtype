@@ -130,11 +130,13 @@ uint32_t GameManager::createGame(uint32_t admin, const std::string& name) {
 }
 
 
-void GameManager::joinGame(uint32_t gameId) {
+void GameManager::joinGame(uint32_t gameId, uint32_t clientId) {
     auto it = games_.find(gameId);
     if (it != games_.end()) {
         if (it->second.clients.size() < MAX_PLAYERS_PER_GAME) {
-            return gameId;
+            it->second.clients.push_back(clientId);
+            clientToGame_[clientId] = gameId;
+            std::cout << "[GameManager] Assigned client " << clientId << " to game " << gameId << "\n";
         } else {
             std::cerr << "[GameManager] Game " << gameId << " is full. Cannot join.\n";
             return;
