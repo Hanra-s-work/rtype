@@ -13,7 +13,7 @@
  */
 struct GameInstance {
     uint32_t gameId;
-    std::unique_ptr<Game> game;
+    Game game;
     std::vector<uint32_t> clients;
 };
 

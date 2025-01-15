@@ -28,7 +28,7 @@ uint32_t GameManager::assignClientToGame(uint32_t clientId) {
     // Possibly let the Game know about a connect event:
     // e.g. some string or a custom GameMessage
     std::string evt = "\x01" + std::to_string(clientId);
-    gInst.game->onServerEventReceived(evt);
+    gInst.game.onServerEventReceived(evt);
 
     return gid;
 }
@@ -48,7 +48,7 @@ void GameManager::removeClientFromGame(uint32_t clientId) {
 
     // Possibly inform the game of a disconnect
     std::string evt = "\x02" + std::to_string(clientId);
-    gInst.game->onServerEventReceived(evt);
+    gInst.game.onServerEventReceived(evt);
 
     clientToGame_.erase(clientId);
 
@@ -75,10 +75,10 @@ void GameManager::updateAllGames(float dt) {
         auto &gInst = pair.second;
 
         // 1) Update the game logic
-        gInst.game->update(dt);
+        gInst.game.update(dt);
 
         // 2) Suppose getGameEvents() returns a list of strings
-        auto events = gInst.game->getGameEvents();
+        auto events = gInst.game.getGameEvents();
 
         // 3) For each event, broadcast to each client in gInst.clients
         for (const auto &evt : events) {
@@ -110,7 +110,7 @@ void GameManager::handleGameMessage(uint32_t gameId, uint32_t clientId, const Me
             msg.payload.size()
         );
         // Then feed that into the game as an event
-        gInst.game->onServerEventReceived(eventString);
+        gInst.game.onServerEventReceived(eventString);
     } else {
         // or do something if no payload
     }
@@ -127,7 +127,7 @@ uint32_t GameManager::findOrCreateGame() {
     uint32_t gid = nextGameId_++;
     GameInstance gInst;
     gInst.gameId = gid;
-    gInst.game = std::make_unique<Game>(); // your actual game constructor
+    gInst.game = Game(); // your actual game constructor
     games_[gid] = std::move(gInst);
 
     std::cout << "[GameManager] Created new game " << gid << "\n";

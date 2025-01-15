@@ -92,10 +92,10 @@ void Server::sendToClient(uint32_t clientId, const Message& msg) {
 }
 
 void Server::sendGameList(uint32_t clientId) {
-    auto games = gameManager_.getGames();
+    std::unordered_map<uint32_t, GameInstance> games = gameManager_.getGames();
     const std::string response = "Start of game list...";
 
-    Message msg = createMessage(0xA0, response, response.length());
+    Message msg = createMessage(0xA0, response.c_str(), response.length());
     sendToClient(clientId, msg);
 
     pid_t pid = fork();
@@ -104,19 +104,19 @@ void Server::sendGameList(uint32_t clientId) {
         return;
     }
     else if (pid == 0) {
-        for (auto game : games) {
+        for (auto &game : games) {
             std::vector<uint8_t> serializedGame;
             auto size = game.second.clients.size();
 
             serializedGame.resize(sizeof(uint32_t) + sizeof(size));
             auto buffer = serializedGame.data();
 
-            std::memcpy(buffer, game.second.gameId, sizeof(uint32_t));
+            std::memcpy(buffer, &game.second.gameId, sizeof(uint32_t));
             buffer += sizeof(uint32_t);
 
-            std::memcpy(buffer, size, sizeof(size));
+            std::memcpy(buffer, &size, sizeof(size));
 
-            msg = createMessage(0xA1, serializedGame.data(), serializedGame.size());
+            msg = createMessage(0xA1, reinterpret_cast<char*>(serializedGame.data()), serializedGame.size());
             sendToClient(clientId, msg);
         }
         msg = createMessage(0xA2, "end", 4);

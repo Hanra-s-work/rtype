@@ -45,7 +45,7 @@ inline std::vector<uint8_t> encodeMessage(const Message& msg) {
 /**
  * @brief
  */
-inline Message createMessage(const uint8_t type, const unsigned char* data, size_t length) {
+inline Message createMessage(const uint8_t type, const char* data, size_t length) {
     Message out;
 
     out.type = type;
