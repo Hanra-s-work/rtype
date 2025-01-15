@@ -8,29 +8,30 @@ GameManager::GameManager(BroadcastFunc broadcastFunc)
   : broadcastFunc_(std::move(broadcastFunc))
 { }
 
-uint32_t GameManager::assignClientToGame(uint32_t clientId) {
+void GameManager::assignClientToGame(uint32_t clientId, uint32_t gameId) {
     // If already assigned, return existing
     auto it = clientToGame_.find(clientId);
     if (it != clientToGame_.end()) {
-        return it->second;
+        std::cout << "[GameManager] Client " << clientId 
+                << " already in a game" << "\n";
+        return;
     }
+    
+    try {
+        GameInstance &gInst = games_.at(gameId);
+        gInst.clients.push_back(clientId);
+        clientToGame_[clientId] = gameId;
 
-    // Otherwise find/create
-    uint32_t gid = findOrCreateGame();
-    auto &gInst = games_.at(gid);
+        std::cout << "[GameManager] Added client " << clientId 
+                << " to game " << gameId << "\n";
 
-    gInst.clients.push_back(clientId);
-    clientToGame_[clientId] = gid;
-
-    std::cout << "[GameManager] Added client " << clientId 
-              << " to game " << gid << "\n";
-
-    // Possibly let the Game know about a connect event:
-    // e.g. some string or a custom GameMessage
-    std::string evt = "\x01" + std::to_string(clientId);
-    gInst.game.onServerEventReceived(evt);
-
-    return gid;
+        // Possibly let the Game know about a connect event:
+        // e.g. some string or a custom GameMessage
+        std::string evt = "\x01" + std::to_string(clientId);
+        gInst.game.onServerEventReceived(evt);
+    } catch (std::out_of_range &e) {
+        std::cout << "[GameManager] No such game found: " << gameId << "\n";
+    }
 }
 
 void GameManager::removeClientFromGame(uint32_t clientId) {
@@ -75,6 +76,7 @@ void GameManager::updateAllGames(float dt) {
         auto &gInst = pair.second;
 
         // 1) Update the game logic
+        if (gInst.gameStatus != IN_GAME) continue;
         gInst.game.update(dt);
 
         // 2) Suppose getGameEvents() returns a list of strings
@@ -82,14 +84,11 @@ void GameManager::updateAllGames(float dt) {
 
         // 3) For each event, broadcast to each client in gInst.clients
         for (const auto &evt : events) {
-            // Let's build a small Message to send
             Message outMsg;
-            outMsg.type = 100; // some code meaning "GameEvent"
+            outMsg.type = evt[0];
 
-            // Put the string in outMsg.payload
-            outMsg.payload.assign(evt.begin(), evt.end());
+            outMsg.payload.assign(evt.begin() + 1, evt.end());
 
-            // Send to each client
             for (auto cid : gInst.clients) {
                 broadcastFunc_(cid, outMsg);
             }

@@ -40,12 +40,6 @@ public:
      */
      void sendGameList(uint32_t clientId);
 
-    /**
-     * @brief Creates a game lobby.
-     * @param clientId The unique ID of the client.
-     */
-    void createGameLobby(uint32_t clientId);
-
 private:
     /**
      * @brief Initiates an asynchronous receive operation.

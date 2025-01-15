@@ -50,7 +50,7 @@ public:
     /**
      * @brief Assign a client to a new or existing game.
      */
-    uint32_t assignClientToGame(uint32_t clientId);
+    void assignClientToGame(uint32_t clientId, uint32_t gameId);
 
     /**
      * @brief Remove a client from whichever game they are in.
