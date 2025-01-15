@@ -8,11 +8,24 @@
 #include "memory"
 
 /**
+ * @enum GameStatus
+ * @brief The current status of the game.
+ */
+enum GameStatus : uint8_t {
+    IN_LOBBY,
+    IN_GAME,
+    ENDED
+};
+
+/**
  * @struct GameInstance
  * @brief A single game session: a Game object plus the connected clients.
  */
 struct GameInstance {
     uint32_t gameId;
+    std::string gameName;
+    uint32_t owner;
+    GameStatus gameStatus;
     Game game;
     std::vector<uint32_t> clients;
 };
@@ -63,12 +76,12 @@ public:
     * @brief Returns the list of games.
     */
     std::unordered_map<uint32_t, GameInstance> getGames();
-private:
+
     /**
      * @brief Finds a game that isn't full or creates a new one.
      */
-    uint32_t findOrCreateGame();
-
+    uint32_t CreateGame(uint32_t admin, const std::string& name);
+private:
     // The broadcast function to call: broadcastFunc_(clientId, msg).
     BroadcastFunc broadcastFunc_;
 
