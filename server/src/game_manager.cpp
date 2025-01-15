@@ -147,6 +147,29 @@ void GameManager::joinGame(uint32_t gameId, uint32_t clientId) {
     }
 }
 
+void GameManager::leaveGame(uint32_t clientId)
+{
+    auto it = clientToGame_.find(clientId);
+    if (it != clientToGame_.end()) {
+        uint32_t gid = it->second;
+        auto itGame = games_.find(gid);
+        if (itGame != games_.end()) {
+            GameInstance &game = itGame->second;
+            game.clients.remove(clientId);
+            if (game.owner == clientId) {
+                game.owner = game.clients.front();
+                std::cout << "[GameManager] Client " << game.owner << " is the new owner of game " << game.gameId << "\n";
+            }
+            std::cout << "[GameManager] Client " << clientId << " left the game " << game.gameId << "\n";
+        } else {
+            std::cerr << "[GameManager] Client " << clientId << " is in a invalid game!\n";
+        }
+    } else {
+        std::cerr << "[GameManager] Client " << clientId << " is not in a game right now.\n";
+    }
+
+}
+
 std::unordered_map<uint32_t, GameInstance> GameManager::getGames() {
     return this->games_;
 }

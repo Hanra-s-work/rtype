@@ -73,15 +73,21 @@ void Server::handleMessage(std::size_t bytesReceived) {
         break;
     }
     case 0xB1: { // JOIN LOBBY
+        uint32_t gid;
+        std::memcpy(&gid, msg.payload.data(), sizeof(uint32_t));
+        gameManager_.joinGame(gid, clientId);
         break;
     }
     case 0xB2: { // READY
+        clientManager_.getClient(clientId).ready = true;
         break;
     }
     case 0xBE: { // UNREADY
+        clientManager_.getClient(clientId).ready = false;
         break;
     }
     case 0xBF: { // LEAVE LOBBY
+        gameManager_.leaveGame(clientId);
         break;
     }
     default: {

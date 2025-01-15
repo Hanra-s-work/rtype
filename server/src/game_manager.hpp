@@ -1,6 +1,6 @@
 #pragma once
 #include <unordered_map>
-#include <vector>
+#include <list>
 #include <cstdint>
 #include <functional>
 #include "../../game_source/manager/include/Game.hpp"
@@ -27,7 +27,7 @@ struct GameInstance {
     uint32_t owner;
     GameStatus gameStatus;
     Game game;
-    std::vector<uint32_t> clients;
+    std::list<uint32_t> clients;
 };
 
 /**
@@ -78,7 +78,7 @@ public:
     std::unordered_map<uint32_t, GameInstance> getGames();
 
     /**
-     * @brief Finds a game that isn't full or creates a new one.
+     * @brief Creates a new game lobby.
      * @param admin Id of the cliend who owns the game lobby.
      * @param name Name of the game lobby.
      */
@@ -90,6 +90,13 @@ public:
      * @param clientId The ID of the client.
      */
     void joinGame(uint32_t gameId, uint32_t clientId);
+
+    /**
+     * @brief Leave the game.
+     * @param ClientId The ID of the client.
+     */
+    void leaveGame(uint32_t clientId);
+
 private:
     // The broadcast function to call: broadcastFunc_(clientId, msg).
     BroadcastFunc broadcastFunc_;
