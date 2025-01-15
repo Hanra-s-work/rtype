@@ -37,7 +37,7 @@ bool performAction(const GameMessage& event, Registry& r)
     switch (event.type)
     {
     case CONNECT:
-        spawn_player(r, 120, 540, event.msg.cli_id, event.msg.username);
+        spawn_player(r, 80, 300, event.msg.cli_id, event.msg.username);
         break;
     case DISCONNECT:
         id = getIdByClientId(r, event.msg.cli_id);

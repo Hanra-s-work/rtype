@@ -12,8 +12,8 @@ void spawn_monster_system(Registry &r)
 {
     spawn_timer -= Time::deltaTime;
     if (spawn_timer <= 0.0f) {
-        float x = 2000.f;
-        float y = randint(60, 960);
+        float x = 825.f;
+        float y = randint(60, 540);
         spawn_monster(r, x, y);
         std::cout << "spawning monster..." << std::endl;
         spawn_timer = DEFAULT_TIMER;
