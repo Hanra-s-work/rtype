@@ -130,6 +130,22 @@ uint32_t GameManager::createGame(uint32_t admin, const std::string& name) {
     return gid;
 }
 
+
+void GameManager::joinGame(uint32_t gameId) {
+    auto it = games_.find(gameId);
+    if (it != games_.end()) {
+        if (it->second.clients.size() < MAX_PLAYERS_PER_GAME) {
+            return gameId;
+        } else {
+            std::cerr << "[GameManager] Game " << gameId << " is full. Cannot join.\n";
+            return;
+        }
+    } else {
+        std::cerr << "[GameManager] Game " << gameId << " does not exist.\n";
+        return;
+    }
+}
+
 std::unordered_map<uint32_t, GameInstance> GameManager::getGames() {
     return this->games_;
 }

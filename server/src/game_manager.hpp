@@ -83,6 +83,12 @@ public:
      * @param name Name of the game lobby.
      */
     uint32_t createGame(uint32_t admin, const std::string& name);
+
+    /**
+     * @brief Finds an existing game by its ID and attempts to join it.
+     * @param gameId The ID of the game to join.
+     */
+    void joinGame(uint32_t gameId);
 private:
     // The broadcast function to call: broadcastFunc_(clientId, msg).
     BroadcastFunc broadcastFunc_;
