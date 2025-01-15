@@ -116,18 +116,14 @@ void GameManager::handleGameMessage(uint32_t gameId, uint32_t clientId, const Me
     }
 }
 
-uint32_t GameManager::findOrCreateGame() {
-    // Look for an existing not-full game
-    for (auto &pair : games_) {
-        if (pair.second.clients.size() < MAX_PLAYERS_PER_GAME) {
-            return pair.first;
-        }
-    }
-    // Otherwise create new
+uint32_t GameManager::createGame(uint32_t admin, const std::string& name) {
     uint32_t gid = nextGameId_++;
     GameInstance gInst;
     gInst.gameId = gid;
-    gInst.game = Game(); // your actual game constructor
+    gInst.gameName = name;
+    gInst.owner = admin;
+    gInst.gameStatus = IN_LOBBY;
+    gInst.game = Game();
     games_[gid] = std::move(gInst);
 
     std::cout << "[GameManager] Created new game " << gid << "\n";

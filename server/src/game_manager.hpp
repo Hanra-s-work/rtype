@@ -79,8 +79,10 @@ public:
 
     /**
      * @brief Finds a game that isn't full or creates a new one.
+     * @param admin Id of the cliend who owns the game lobby.
+     * @param name Name of the game lobby.
      */
-    uint32_t CreateGame(uint32_t admin, const std::string& name);
+    uint32_t createGame(uint32_t admin, const std::string& name);
 private:
     // The broadcast function to call: broadcastFunc_(clientId, msg).
     BroadcastFunc broadcastFunc_;
