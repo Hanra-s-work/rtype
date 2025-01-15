@@ -52,9 +52,36 @@ void Server::handleMessage(std::size_t bytesReceived) {
         clientManager_.removeClient(remoteEndpoint_);
         break;
     }
-    case 0xA0: {
+    case 0x10: { // CHANGE NAME
+        char name[9];
+        std::memcpy(name, msg.payload.data(), 8);
+        name[9] = '\0';
+        clientManager_.getClient(clientId).username.assign(name);
+        break;
+    }
+    case 0xA0: { // GET LOBBYS
         std::cout << "[Server] Sending Games to Client " << clientId << ".\n";
         sendGameList(clientId);
+        break;
+    }
+    case 0xB0: { // CREATE LOBBY
+        char name[9];
+        std::memcpy(name, msg.payload.data(), 8);
+        name[9] = '\0';
+        uint32_t gid = gameManager_.createGame(clientId, name);
+        gameManager_.joinGame(gid, clientId);
+        break;
+    }
+    case 0xB1: { // JOIN LOBBY
+        break;
+    }
+    case 0xB2: { // READY
+        break;
+    }
+    case 0xBE: { // UNREADY
+        break;
+    }
+    case 0xBF: { // LEAVE LOBBY
         break;
     }
     default: {

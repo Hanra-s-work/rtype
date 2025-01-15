@@ -9,6 +9,7 @@ uint32_t ClientManager::resolveClientID(const asio::ip::udp::endpoint& ep) {
         uint32_t newId = nextId_++;
         epToId_[ep] = newId;
         idToEp_[newId] = ep;
+        idToClient_[newId] = {newId, ep, "Player1"};
         return newId;
     }
 }
@@ -30,4 +31,9 @@ asio::ip::udp::endpoint ClientManager::getEndpointForId(uint32_t clientId) {
         return it->second;
     }
     return asio::ip::udp::endpoint(); // invalid
+}
+
+Client &ClientManager::getClient(const uint32_t id)
+{
+    return idToClient_.at(id);
 }
