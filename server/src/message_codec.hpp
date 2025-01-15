@@ -43,7 +43,11 @@ inline std::vector<uint8_t> encodeMessage(const Message& msg) {
 }
 
 /**
- * @brief
+ * @brief Creates a Message object.
+ * @param type The type of message.
+ * @param data The data pointer.
+ * @param length The length of the data.
+ * @return a `Message` object.
  */
 inline Message createMessage(const uint8_t type, const char* data, size_t length) {
     Message out;

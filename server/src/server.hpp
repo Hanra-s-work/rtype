@@ -36,13 +36,15 @@ public:
 
     /**
      * @brief Sends the list of all games to the client.
+     * @param clientId The unique ID of the client.
      */
      void sendGameList(uint32_t clientId);
 
-     /**
-      * @brief Creates a game lobby.
-      */
-      void createGameLobby();
+    /**
+     * @brief Creates a game lobby.
+     * @param clientId The unique ID of the client.
+     */
+    void createGameLobby(uint32_t clientId);
 
 private:
     /**
