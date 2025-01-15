@@ -12,7 +12,7 @@ void GameManager::assignClientToGame(uint32_t clientId, uint32_t gameId) {
     // If already assigned, return existing
     auto it = clientToGame_.find(clientId);
     if (it != clientToGame_.end()) {
-        std::cout << "[GameManager] Client " << clientId 
+        std::cerr << "[GameManager] Client " << clientId 
                 << " already in a game" << "\n";
         return;
     }
@@ -30,7 +30,7 @@ void GameManager::assignClientToGame(uint32_t clientId, uint32_t gameId) {
         std::string evt = "\x01" + std::to_string(clientId);
         gInst.game.onServerEventReceived(evt);
     } catch (std::out_of_range &e) {
-        std::cout << "[GameManager] No such game found: " << gameId << "\n";
+        std::cerr << "[GameManager] No such game found: " << gameId << "\n";
     }
 }
 

@@ -87,8 +87,9 @@ public:
     /**
      * @brief Finds an existing game by its ID and attempts to join it.
      * @param gameId The ID of the game to join.
+     * @param clientId The ID of the client.
      */
-    void joinGame(uint32_t gameId);
+    void joinGame(uint32_t gameId, uint32_t clientId);
 private:
     // The broadcast function to call: broadcastFunc_(clientId, msg).
     BroadcastFunc broadcastFunc_;
