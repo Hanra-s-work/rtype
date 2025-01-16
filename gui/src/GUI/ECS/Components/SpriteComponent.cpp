@@ -428,7 +428,7 @@ void GUI::ECS::Components::SpriteComponent::setAnimation(const GUI::ECS::Compone
     PRETTY_SUCCESS << "Collision updated for sprite '" << _spriteName << "'" << std::endl;
     _animationSet = true;
     _collisionSet = true;
-    _spritesheet = animation.getBaseTexture();
+    setSpritesheet(animation.getBaseTexture());
     PRETTY_SUCCESS << "Spritesheet set" << std::endl;
 }
 
