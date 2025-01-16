@@ -1721,10 +1721,53 @@ void Main::_demoScreen()
     PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
     if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
         PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _demoBrain.stop();
+        _demoStarted = false;
         _goHome();
     }
 
-    // std::shared_ptr<GUI::ECS::Components::SpriteComponent> spritePlayer;
+    if (!_demoInitialised) {
+        PRETTY_DEBUG << "The demo brain is not initialised, initialising" << std::endl;
+        _demoBrain.initialiseClass(_ecsEntities);
+        _demoInitialised = true;
+        PRETTY_DEBUG << "The brain has been initialised" << std::endl;
+    }
+
+    if (!_demoStarted) {
+        PRETTY_DEBUG << "The demo has not started, starting" << std::endl;
+        _demoBrain.reset();
+        _demoBrain.start();
+        _demoStarted = true;
+        PRETTY_DEBUG << "The demo has started" << std::endl;
+    }
+
+    if (_demoBrain.isGameOver()) {
+        PRETTY_DEBUG << "The demo is over, resetting" << std::endl;
+        _demoBrain.reset();
+        _demoStarted = false;
+        PRETTY_DEBUG << "The demo has been reset" << std::endl;
+        PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
+        _goGameOver();
+        PRETTY_DEBUG << "The game over screen has been set to play next" << std::endl;
+        return;
+    }
+
+    if (_demoBrain.isGameWon()) {
+        PRETTY_DEBUG << "The demo has been won, resetting" << std::endl;
+        _demoBrain.reset();
+        _demoStarted = false;
+        PRETTY_DEBUG << "The demo has been reset" << std::endl;
+        PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
+        _goGameWon();
+        PRETTY_DEBUG << "The game won screen has been set to play next" << std::endl;
+        return;
+    }
+
+    PRETTY_DEBUG << "Ticking the demo brain" << std::endl;
+    _demoBrain.tick();
+    PRETTY_DEBUG << "Rendering content" << std::endl;
+    _demoBrain.render();
+    PRETTY_DEBUG << "Ticked and rendered content" << std::endl;
 }
 
 void Main::_settingsMenu()
@@ -1744,6 +1787,437 @@ void Main::_settingsMenu()
         PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
         _goHome();
     }
+
+    PRETTY_DEBUG << "Declaring size customisation options" << std::endl;
+    const unsigned int titleTextSize = 40;
+    const unsigned int bodyTextSize = 20;
+    const unsigned int soundTextSize = 20;
+    const unsigned int musicTextSize = 20;
+    const unsigned int soundButtonTextSize = 20;
+    const unsigned int soundButtonWidth = 50;
+    const unsigned int soundButtonHeight = 20;
+    const unsigned int musicButtonTextSize = 20;
+    const unsigned int musicButtonWidth = 50;
+    const unsigned int musicButtonHeight = 20;
+    PRETTY_DEBUG << "Declared size customisation options" << std::endl;
+
+    PRETTY_DEBUG << "Declaring colour customisation options" << std::endl;
+    const GUI::ECS::Systems::Colour titleColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour bodyColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour soundColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour musicColour = GUI::ECS::Systems::Colour::Cyan;
+    GUI::ECS::Systems::Colour soundButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
+    GUI::ECS::Systems::Colour soundButtonNormalColour = GUI::ECS::Systems::Colour::White;
+    GUI::ECS::Systems::Colour soundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    GUI::ECS::Systems::Colour soundButtonClickedColour = GUI::ECS::Systems::Colour::Green;
+    if (_playSoundEffects) {
+        soundButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
+        soundButtonNormalColour = GUI::ECS::Systems::Colour::Black;
+        soundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+        soundButtonClickedColour = GUI::ECS::Systems::Colour::Red;
+    }
+    GUI::ECS::Systems::Colour musicButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
+    GUI::ECS::Systems::Colour musicButtonNormalColour = GUI::ECS::Systems::Colour::White;
+    GUI::ECS::Systems::Colour musicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    GUI::ECS::Systems::Colour musicButtonClickedColour = GUI::ECS::Systems::Colour::Green;
+    if (_playMusic) {
+        musicButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
+        musicButtonNormalColour = GUI::ECS::Systems::Colour::Black;
+        musicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+        musicButtonClickedColour = GUI::ECS::Systems::Colour::Red;
+    }
+    PRETTY_DEBUG << "Declared colour customisation options" << std::endl;
+
+    PRETTY_DEBUG << "Declaring required item keys" << std::endl;
+    const std::string titleTextKey = "settingsMenuTitleTextKey";
+    const std::string bodyTextKey = "settingsMenuBodyTextKey";
+    const std::string soundTextKey = "settingsMenuSoundTextKey";
+    const std::string musicTextKey = "settingsMenuMusicTextKey";
+    const std::string soundButtonKey = "settingsMenuSoundButtonKey";
+    const std::string musicButtonKey = "settingsMenuMusicButtonKey";
+    PRETTY_DEBUG << "Declared required item keys" << std::endl;
+
+    PRETTY_DEBUG << "Getting the lists of ressources we want" << std::endl;
+    // The list of font components to allow the screen to find the ressources it needs if present
+    const std::vector<std::any> fonts = _ecsEntities[typeid(GUI::ECS::Systems::Font)];
+
+    // The list of text components to allow the screen to find the ressources it needs if present
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+
+    // The list of button components to allow the screen to find the ressources it needs if present
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    // The list of the background components to allow the screen to find the ressources it needs (if present)
+    std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    PRETTY_DEBUG << "Got the list of ressources we want" << std::endl;
+
+    PRETTY_DEBUG << "Declaring the ressources required for the settings menu (for the texts)" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> bodyTextItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> titleTextItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> musicTextItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> soundTextItem;
+    PRETTY_DEBUG << "Declared the ressources required for the settings menu (for the texts)" << std::endl;
+
+    PRETTY_DEBUG << "Declaring the ressources required for the settings menu (for the buttons)" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> musicButtonItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> soundButtonItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> mainMenuButtonItem;
+    PRETTY_DEBUG << "Declared the ressources required for the settings menu (for the buttons)" << std::endl;
+
+    PRETTY_DEBUG << "Declaring font holder instances" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFont;
+    PRETTY_DEBUG << "Declared font holder instances" << std::endl;
+
+    PRETTY_DEBUG << "Declaring the ressource required for the settings menu to have a background" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundItem;
+    PRETTY_DEBUG << "Declared the ressource required for the settings menu to have a background" << std::endl;
+
+
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule.has_value()) {
+            continue;
+        }
+        std::string application = textCapsule.value()->getApplication();
+        std::string name = textCapsule.value()->getName();
+        if (application == titleTextKey || name == titleTextKey) {
+            titleTextItem.emplace(textCapsule.value());
+        } else if (application == bodyTextKey || name == bodyTextKey) {
+            bodyTextItem.emplace(textCapsule.value());
+        } else if (application == soundTextKey || name == soundTextKey) {
+            soundTextItem.emplace(textCapsule.value());
+        } else if (application == musicTextKey || name == musicTextKey) {
+            musicTextItem.emplace(textCapsule.value());
+        } else {
+            continue;
+        }
+    }
+
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule.has_value()) {
+            continue;
+        }
+        std::string application = buttonCapsule.value()->getApplication();
+        std::string name = buttonCapsule.value()->getName();
+        if (application == soundButtonKey || name == soundButtonKey) {
+            soundButtonItem.emplace(buttonCapsule.value());
+        } else if (application == _mainMenuKey) {
+            mainMenuButtonItem.emplace(buttonCapsule.value());
+        } else if (application == musicButtonKey || name == musicButtonKey) {
+            musicButtonItem.emplace(buttonCapsule.value());
+        } else {
+            continue;
+        }
+    }
+
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (!backgroundCapsule.has_value()) {
+            continue;
+        }
+        if (
+            backgroundCapsule.value()->getApplication() == "settings" || backgroundCapsule.value()->getName() == "settings" ||
+            backgroundCapsule.value()->getApplication() == "Settings" || backgroundCapsule.value()->getName() == "Settings"
+            ) {
+            backgroundItem.emplace(backgroundCapsule.value());
+        }
+    }
+
+    if (!titleTextItem.has_value() || !bodyTextItem.has_value() || !soundTextItem.has_value() || !musicButtonItem.has_value() || !soundButtonItem.has_value() || !mainMenuButtonItem.has_value()) {
+        PRETTY_DEBUG << "Fetching the fonts that will be used in the window" << std::endl;
+        unsigned int index = 0;
+        unsigned int titleFontIndex = 0;
+        unsigned int bodyFontIndex = 0;
+        unsigned int defaultFontIndex = 0;
+        unsigned int buttonFontIndex = 0;
+        for (std::any fontCast : fonts) {
+            std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fontCast, false);
+            if (!fontCapsule.has_value()) {
+                continue;
+            }
+            std::string applicationContext = fontCapsule.value()->getApplication();
+            if (applicationContext == "title") {
+                titleFontIndex = index;
+            } else if (applicationContext == "body") {
+                bodyFontIndex = index;
+            } else if (applicationContext == "default") {
+                defaultFontIndex = index;
+            } else if (applicationContext == "button") {
+                buttonFontIndex = index;
+            } else {
+                index++;
+                continue;
+            }
+            index++;
+        }
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[titleFontIndex], false);
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[bodyFontIndex], false);
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[defaultFontIndex], false);
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[buttonFontIndex], false);
+        if (!defaultFontCapsule.has_value()) {
+            PRETTY_DEBUG << "No default font found, aborting program" << std::endl;
+            throw CustomExceptions::NoFont("<Default font not found>");
+        }
+        defaultFont.emplace(defaultFontCapsule.value());
+        titleFont.emplace(defaultFontCapsule.value());
+        bodyFont.emplace(defaultFontCapsule.value());
+        buttonFont.emplace(defaultFontCapsule.value());
+        if (titleFontCapsule.has_value()) {
+            PRETTY_SUCCESS << "Title font found, not defaulting to the default font." << std::endl;
+            titleFont.emplace(titleFontCapsule.value());
+        }
+        if (bodyFontCapsule.has_value()) {
+            PRETTY_SUCCESS << "Body font found, not defaulting to the default font." << std::endl;
+            bodyFont.emplace(bodyFontCapsule.value());
+        }
+        if (buttonFontCapsule.has_value()) {
+            PRETTY_SUCCESS << "Button font found, not defaulting to the default font." << std::endl;
+            buttonFont.emplace(buttonFontCapsule.value());
+        }
+        PRETTY_DEBUG << "Fetched the fonts that will be used in the window" << std::endl;
+    }
+
+    PRETTY_DEBUG << "Checking is title text component exists" << std::endl;
+    if (!titleTextItem.has_value()) {
+        PRETTY_DEBUG << "Title text component does not exist, creating" << std::endl;
+        if (!titleFont.has_value()) {
+            PRETTY_ERROR << "No font found in title font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating title text component" << std::endl;
+        titleTextItem = _createText(
+            titleTextKey,
+            titleTextKey,
+            "Settings",
+            *(titleFont.value()),
+            titleTextSize,
+            titleColour,
+            titleColour,
+            titleColour
+        );
+        PRETTY_DEBUG << "Created title text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if title text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking is body text component exists" << std::endl;
+    if (!bodyTextItem.has_value()) {
+        PRETTY_DEBUG << "Body text component does not exist, creating" << std::endl;
+        if (!bodyFont.has_value()) {
+            PRETTY_ERROR << "No font found in body font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating body text component" << std::endl;
+        bodyTextItem = _createText(
+            bodyTextKey,
+            bodyTextKey,
+            "Comme and customise your user experience!",
+            *(bodyFont.value()),
+            bodyTextSize,
+            bodyColour,
+            bodyColour,
+            bodyColour
+        );
+        PRETTY_DEBUG << "Created body text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if body text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking is sound text component exists" << std::endl;
+    if (!soundTextItem.has_value()) {
+        PRETTY_DEBUG << "Sound text component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in body font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating sound text component" << std::endl;
+        soundTextItem = _createText(
+            soundTextKey,
+            soundTextKey,
+            "Sound effects: ",
+            *(defaultFont.value()),
+            soundTextSize,
+            soundColour,
+            soundColour,
+            soundColour
+        );
+        PRETTY_DEBUG << "Created sound text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if sound text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking is music text component exists" << std::endl;
+    if (!musicTextItem.has_value()) {
+        PRETTY_DEBUG << "Music text component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in body font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating music text component" << std::endl;
+        musicTextItem = _createText(
+            musicTextKey,
+            musicTextKey,
+            "Music: ",
+            *(defaultFont.value()),
+            musicTextSize,
+            musicColour,
+            musicColour,
+            musicColour
+        );
+        PRETTY_DEBUG << "Created music text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if music text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the sound button is created" << std::endl;
+    if (!soundButtonItem.has_value()) {
+        PRETTY_DEBUG << "Sound button component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in default font." << std::endl;
+            return;
+        }
+        std::string soundStatus = "OFF";
+        if (_playMusic) {
+            soundStatus = "ON";
+        }
+        PRETTY_DEBUG << "Creating sound button component" << std::endl;
+        soundButtonItem = _createButton(
+            soundButtonKey,
+            soundStatus,
+            std::bind(&Main::_toggleSound, this),
+            "_toggleSound",
+            soundButtonWidth,
+            soundButtonHeight,
+            soundButtonTextSize,
+            soundButtonBackgroundColour,
+            soundButtonNormalColour,
+            soundButtonHoverColour,
+            soundButtonClickedColour,
+            defaultFont.value()
+        );
+        PRETTY_DEBUG << "sound button component created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the sound button was created" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the music button is created" << std::endl;
+    if (!musicButtonItem.has_value()) {
+        PRETTY_DEBUG << "Sound button component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in default font." << std::endl;
+            return;
+        }
+        std::string musicStatus = "OFF";
+        if (_playMusic) {
+            musicStatus = "ON";
+        }
+        PRETTY_DEBUG << "Creating music button component" << std::endl;
+        musicButtonItem = _createButton(
+            musicButtonKey,
+            musicStatus,
+            std::bind(&Main::_toggleMusic, this),
+            "_toggleMusic",
+            musicButtonWidth,
+            musicButtonHeight,
+            musicButtonTextSize,
+            musicButtonBackgroundColour,
+            musicButtonNormalColour,
+            musicButtonHoverColour,
+            musicButtonClickedColour,
+            defaultFont.value()
+        );
+        PRETTY_DEBUG << "music button component created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the music button was created" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the home button exists" << std::endl;
+    if (!mainMenuButtonItem.has_value()) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        mainMenuButtonItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed" << std::endl;
+
+
+    PRETTY_DEBUG << "Setting item positions" << std::endl;
+    backgroundItem.value()->setDimension(win.value()->getDimensions());
+    backgroundItem.value()->setPosition({ 0, 0 });
+
+    float posY = 0;
+    float posX = 0;
+    const float step = 10;
+
+    titleTextItem.value()->setPosition({ posX, posY });
+    posY += step + titleTextSize;
+    bodyTextItem.value()->setPosition({ posX, posY });
+    posY += step + bodyTextSize;
+    soundTextItem.value()->setPosition({ posX, posY });
+    posX = _getScreenCenterX();
+    soundButtonItem.value()->setPosition({ posX, posY });
+    posX = 0;
+    posY += step + soundTextSize;
+    musicTextItem.value()->setPosition({ posX, posY });
+    posX = _getScreenCenterX();
+    musicButtonItem.value()->setPosition({ posX, posY });
+    posX = 0;
+    posY += step + musicTextSize;
+    mainMenuButtonItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "Item positions set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the text of the buttons" << std::endl;
+    std::string soundStatus = "OFF";
+    if (_playSoundEffects) {
+        soundStatus = "ON";
+    }
+    soundButtonItem.value()->setTextString(soundStatus);
+    std::string musicStatus = "OFF";
+    if (_playSoundEffects) {
+        musicStatus = "ON";
+    }
+    musicButtonItem.value()->setTextString(musicStatus);
+    PRETTY_DEBUG << "The text of the buttons has been set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the colour of the buttons" << std::endl;
+    soundButtonItem.value()->setNormalColor(soundButtonBackgroundColour);
+    soundButtonItem.value()->setHoverColor(soundButtonBackgroundColour);
+    soundButtonItem.value()->setClickedColor(soundButtonBackgroundColour);
+    soundButtonItem.value()->setTextNormalColor(soundButtonNormalColour);
+    soundButtonItem.value()->setTextHoverColor(soundButtonHoverColour);
+    soundButtonItem.value()->setTextClickedColor(soundButtonClickedColour);
+    musicButtonItem.value()->setNormalColor(musicButtonBackgroundColour);
+    musicButtonItem.value()->setHoverColor(musicButtonBackgroundColour);
+    musicButtonItem.value()->setClickedColor(musicButtonBackgroundColour);
+    musicButtonItem.value()->setTextNormalColor(musicButtonNormalColour);
+    musicButtonItem.value()->setTextHoverColor(musicButtonHoverColour);
+    musicButtonItem.value()->setTextClickedColor(musicButtonClickedColour);
+    PRETTY_DEBUG << "The colour of the buttons has been set" << std::endl;
+
+    PRETTY_DEBUG << "Displaying elements on the screen" << std::endl;
+    win.value()->draw(*(backgroundItem.value()));
+    PRETTY_DEBUG << "Background rendered" << std::endl;
+    win.value()->draw(*(titleTextItem.value()));
+    win.value()->draw(*(bodyTextItem.value()));
+    PRETTY_DEBUG << "Title and body text rendered" << std::endl;
+    win.value()->draw(*(soundTextItem.value()));
+    win.value()->draw(*(soundButtonItem.value()));
+    PRETTY_DEBUG << "Sound button and text rendered" << std::endl;
+    win.value()->draw(*(musicTextItem.value()));
+    win.value()->draw(*(musicButtonItem.value()));
+    PRETTY_DEBUG << "Music button and text rendered" << std::endl;
+    win.value()->draw(*(mainMenuButtonItem.value()));
+    PRETTY_DEBUG << "Home button rendered" << std::endl;
+    PRETTY_DEBUG << "Displayed elements on the screen" << std::endl;
 }
 
 void Main::_unknownScreen()
@@ -3938,6 +4412,105 @@ void Main::_goLobbyRoom()
 }
 
 /**
+ * @brief Switches between an active and disabled music playing
+ */
+void Main::_toggleMusic()
+{
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    PRETTY_DEBUG << "Flushing stored events" << std::endl;
+    event_ptr.value()->flushEvents();
+    PRETTY_SUCCESS << "Events flushed" << std::endl;
+
+    _updateMusicStatus();
+
+    if (_playMusic) {
+        _playMusic = false;
+        return;
+    }
+    _playMusic = true;
+}
+
+/**
+ * @brief Switches between an active and disabled sound playing
+ */
+void Main::_toggleSound()
+{
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    PRETTY_DEBUG << "Flushing stored events" << std::endl;
+    event_ptr.value()->flushEvents();
+    PRETTY_SUCCESS << "Events flushed" << std::endl;
+
+    if (_playSoundEffects) {
+        _playSoundEffects = false;
+        return;
+    }
+    _playSoundEffects = true;
+}
+
+void Main::_updateMusicStatus()
+{
+    if (!_playMusic) {
+        PRETTY_WARNING << "No music is supposed to play, not playing any" << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        return;
+    }
+    PRETTY_DEBUG << "Updating the current music that is supposed to play." << std::endl;
+    if (_activeScreen == ActiveScreen::MENU || _activeScreen == ActiveScreen::SETTINGS || _activeScreen == ActiveScreen::CONNECTION_ADDRESS || _activeScreen == ActiveScreen::LOBBY_LIST || _activeScreen == ActiveScreen::LOBBY_ROOM) {
+        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
+        _startMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (_activeScreen == ActiveScreen::GAME || _activeScreen == ActiveScreen::DEMO) {
+        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
+        _stopMainMenuMusic();
+        _startGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (_activeScreen == ActiveScreen::BOSS_FIGHT) {
+        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _startBossFightMusic();
+    } else if (_activeScreen == ActiveScreen::GAME_WON) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _winSound();
+    } else if (_activeScreen == ActiveScreen::GAME_OVER) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+        _gameOverSound();
+    } else if (_activeScreen == ActiveScreen::CONNECTION_FAILED) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+    } else {
+        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    }
+    PRETTY_DEBUG << "Updated the current music that is supposed to play." << std::endl;
+}
+
+/**
  * @brief Starts the main menu music if it has not already started.
  *
  * This function iterates through all music components in the entity-component system,
@@ -4138,6 +4711,10 @@ void Main::_stopBossFightMusic()
  */
 void Main::_shootSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -4166,6 +4743,10 @@ void Main::_shootSound()
  */
 void Main::_damageSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -4194,6 +4775,10 @@ void Main::_damageSound()
  */
 void Main::_deadSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -4223,6 +4808,10 @@ void Main::_deadSound()
  */
 void Main::_buttonSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -4251,6 +4840,10 @@ void Main::_buttonSound()
  */
 void Main::_gameOverSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -4279,6 +4872,10 @@ void Main::_gameOverSound()
  */
 void Main::_winSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -4719,12 +5316,12 @@ void Main::setDebug(const bool debug)
 }
 
 /**
- * @brief Function in charge of updating the type of screen that is supposed
- * to be displayed as well as change the music based on the active screen.
- *
- * @param screen of type Active screen which informs the program of the current
- * screen type that needs to be processed.
- */
+*@brief Function in charge of updating the type of screen that is supposed
+*to be displayed as well as change the music based on the active screen.
+*
+*@param screen of type Active screen which informs the program of the current
+*screen type that needs to be processed.
+*/
 void Main::setActiveScreen(const ActiveScreen screen)
 {
     PRETTY_DEBUG << "Getting the event manager component" << std::endl;
@@ -4740,49 +5337,7 @@ void Main::setActiveScreen(const ActiveScreen screen)
     PRETTY_DEBUG << "Setting active screen to: '" << Recoded::myToString(screen) << "'" << std::endl;
     _activeScreen = screen;
     PRETTY_DEBUG << "Set active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
-
-    PRETTY_DEBUG << "Updating the current music that is supposed to play." << std::endl;
-    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS || screen == ActiveScreen::LOBBY_LIST || screen == ActiveScreen::LOBBY_ROOM) {
-        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
-        _startMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-    } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
-        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
-        _stopMainMenuMusic();
-        _startGameLoopMusic();
-        _stopBossFightMusic();
-    } else if (screen == ActiveScreen::BOSS_FIGHT) {
-        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _startBossFightMusic();
-    } else if (screen == ActiveScreen::GAME_WON) {
-        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-        _winSound();
-    } else if (screen == ActiveScreen::GAME_OVER) {
-        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-        _deadSound();
-        _gameOverSound();
-    } else if (screen == ActiveScreen::CONNECTION_FAILED) {
-        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-        _deadSound();
-    } else {
-        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-    }
-    PRETTY_DEBUG << "Updated the current music that is supposed to play." << std::endl;
+    _updateMusicStatus();
 }
 
 /**

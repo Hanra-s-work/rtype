@@ -120,6 +120,11 @@ void GUI::ECS::Components::ButtonComponent::setTextClickedColor(const GUI::ECS::
     _componentText.setClickedColor(clickedColor);
 }
 
+void GUI::ECS::Components::ButtonComponent::setTextString(const std::string &text)
+{
+    _componentText.setText(text);
+}
+
 void GUI::ECS::Components::ButtonComponent::setPosition(const std::pair<float, float> &position)
 {
     _componentText.setPosition(position);

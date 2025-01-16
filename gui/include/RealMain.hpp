@@ -34,6 +34,7 @@
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
 #include "ActiveScreen.hpp"
+#include "GUI/ECS/Demo.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -131,6 +132,8 @@ class Main {
   void _loadToml();
   void _mainLoop();
   std::string _lowerText(const std::string &text);
+
+  // Functions to check the state of elements
   const bool _isIpInRange(const std::string &ip) const;
   const bool _isPortCorrect(const unsigned int port) const;
   const bool _isFilePresent(const std::string &filepath) const;
@@ -189,19 +192,24 @@ class Main {
     return ItemNode;
   }
 
+  // Functions in charge of loading the ressources for the program
   std::uint32_t _initialiseAudio();
   std::uint32_t _initialiseFonts();
   std::uint32_t _initialiseIcon();
   std::uint32_t _initialiseSprites();
   std::uint32_t _initialiseBackgrounds();
 
+  // Functions in charge of initialising connections and the base ressources
   void _initialiseConnection();
   void _initialiseRessources();
 
+  // Function in charge of updating the text displayed on screen when the ressources are loading
   void _updateLoadingText(const std::string &detail = "Loading...");
 
+  // Function in charge of updating the mouse collisions for all renderable components
   void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
 
+  // Functions in charge of sending and receiving packets with the server
   void _sendAllPackets();
   void _processIncommingPackets();
 
@@ -278,8 +286,14 @@ class Main {
   void _goLobbyList();         // Lobby list screen
   void _goLobbyRoom();         // Lobby room screen
 
+  // Settings
+  void _toggleMusic(); // Function that will enable/disable the playing of music
+  void _toggleSound(); // Function that will enable/disable the playing of sound effects
 
   // Musics
+
+  // Function in charge of updating the music status
+  void _updateMusicStatus();
 
   // Main menu music
   void _startMainMenuMusic();
@@ -376,6 +390,19 @@ class Main {
 
   // Network manager
   NetworkManager _networkManager;
+
+  // Singleplayer demo
+  GUI::ECS::Demo::Orchestrator _demoBrain;
+  bool _demoInitialised = false;
+  bool _demoStarted = false;
+
+  // Settings variables
+  bool _playMusic = true;
+  bool _playSoundEffects = true;
+
+  // Settings tokens
+  const std::string _playMusicToken = "settingsWindowPlayMusicButton";
+  const std::string _playSoundEffectsToken = "settingsWindowPlaySoundEffectsButton";
 };
 
 int RealMain(int argc, char **argv);
