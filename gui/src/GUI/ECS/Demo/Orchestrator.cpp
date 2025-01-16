@@ -30,6 +30,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
     std::any win = _ecsEntities[typeid(GUI::ECS::Systems::Window)][0];
     const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> window_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>>(win, false);
     if (!window_ptr.has_value()) {
+        PRETTY_ERROR << "The window manager has not been found" << std::endl;
         throw CustomExceptions::NoWindow("<No window to draw on>");
     }
     _window = window_ptr.value();
@@ -39,12 +40,13 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
     std::any evt = _ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0];
     const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(evt, false);
     if (!event_ptr.has_value()) {
+        PRETTY_ERROR << "The event has been found" << std::endl;
         throw CustomExceptions::NoEventManager("<No events to listen on>");
     }
     _event = event_ptr.value();
     PRETTY_DEBUG << "The event manager has been fetched" << std::endl;
 
-    PRETTY_DEBUG << "Fetching the sprites of contained in the ecs array (if present)" << std::endl;
+    PRETTY_DEBUG << "Fetching the sprites contained in the ecs array (if present)" << std::endl;
     std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
 
     for (std::any node : sprites) {
@@ -58,25 +60,38 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             applicationContext == "sprite42" || applicationContext == "r-typesheet42" ||
             name == "sprite42" || name == "r-typesheet42"
             ) {
+            PRETTY_DEBUG << "Sprite player has been found" << std::endl;
             _spritePlayer = sprite.value();
+            PRETTY_DEBUG << "Sprite player content:\n" << *_spritePlayer << std::endl;
         } else if (
             applicationContext == "sprite43_laser" || applicationContext == "sprite43_laser" ||
             name == "sprite43_laser" || name == "sprite43_laser"
             ) {
+            PRETTY_DEBUG << "Sprite bullet found" << std::endl;
             _spriteBullet = sprite.value();
+            PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         } else if (
             applicationContext == "sprite3" || applicationContext == "sprite3" ||
             name == "r-typesheet3" || name == "r-typesheet3"
             ) {
+            PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
             _spriteBulletEnemy = sprite.value();
+            PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
             name == "sprite13" || name == "sprite13" ||
             applicationContext == "r-typesheet13" || applicationContext == "r-typesheet13"
             ) {
+            PRETTY_DEBUG << "Sprite enemy found" << std::endl;
             _spriteEnemy = sprite.value();
+            PRETTY_DEBUG << "Sprite enemy content:\n" << *_spriteEnemy << std::endl;
         }
     }
     PRETTY_DEBUG << "The sprite player has been fetched" << std::endl;
+
+    if (_spriteBullet == nullptr || _spritePlayer == nullptr || _spriteEnemy == nullptr || _spriteBulletEnemy == nullptr) {
+        PRETTY_ERROR << "The sprite player, bullet, enemy or bullet enemy has not been found" << std::endl;
+        throw CustomExceptions::NoSprite("<One of the sprites that the program attempted to load was missing>");
+    }
 
     PRETTY_DEBUG << "Spawning the player in the screen" << std::endl;
     _spawn();
@@ -210,14 +225,20 @@ const bool GUI::ECS::Demo::Orchestrator::isGameWon() const
 
 void GUI::ECS::Demo::Orchestrator::_spawn()
 {
+    PRETTY_DEBUG << "In _spawn function in charge of creating the user" << std::endl;
     if (_spritePlayer == nullptr) {
+        PRETTY_ERROR << "The _spritePlayer is set to nullptr" << std::endl;
         throw CustomExceptions::NoSprite("<Sprite player not found>");
     }
     if (_spriteBullet == nullptr) {
+        PRETTY_ERROR << "The _spriteBullet is set to nullptr" << std::endl;
         throw CustomExceptions::NoSprite("<Sprite bullet not found>");
     }
+    PRETTY_DEBUG << "The _playerBrain shared pointer is going to be created" << std::endl;
     _playerBrain = std::make_shared<GUI::ECS::Demo::PlayerBrain>();
-    _playerBrain->setSprite(*_spritePlayer, *_spriteBullet);
+    PRETTY_DEBUG << "The _playerBrain shared pointer has been created" << std::endl;
+    _playerBrain->setSprite(_spritePlayer, _spriteBullet);
+    PRETTY_DEBUG << "The _playerBrain has been set with the sprites of bullet and player" << std::endl;
 }
 
 void GUI::ECS::Demo::Orchestrator::_kill()
@@ -228,17 +249,26 @@ void GUI::ECS::Demo::Orchestrator::_kill()
 
 void GUI::ECS::Demo::Orchestrator::_spawnEnemy(const std::pair<float, float> pos)
 {
+    PRETTY_DEBUG << "In spawn enemy" << std::endl;
     if (_spriteEnemy == nullptr) {
+        PRETTY_ERROR << "The _spriteEnemy is set to nullptr" << std::endl;
         throw CustomExceptions::NoSprite("<Sprite enemy not found>");
     }
     if (_spriteBulletEnemy == nullptr) {
+        PRETTY_ERROR << "The _spriteBulletEnemy is set to nullptr" << std::endl;
         throw CustomExceptions::NoSprite("<Sprite bullet enemy not found>");
     }
+    PRETTY_DEBUG << "The _enemyBrain shared pointer is going to be created" << std::endl;
     std::shared_ptr<GUI::ECS::Demo::EnemyBrain> enemy = std::make_shared<GUI::ECS::Demo::EnemyBrain>();
-    enemy->setSprite(*_spriteEnemy, *_spriteBulletEnemy);
+    PRETTY_DEBUG << "The _enemyBrain shared pointer has been created" << std::endl;
+    enemy->setSprite(_spriteEnemy, _spriteBulletEnemy);
+    PRETTY_DEBUG << "The sprite enemy and sprite bullet enemy has been set" << std::endl;
     enemy->setPosition(pos);
+    PRETTY_DEBUG << "The enemy has been set with the position" << std::endl;
     enemy->setVisible(true);
+    PRETTY_DEBUG << "The enemy is visible" << std::endl;
     _enemyBrain.push_back(enemy);
+    PRETTY_DEBUG << "The enemy has been added to the _enemyBrain" << std::endl;
 }
 
 const int GUI::ECS::Demo::Orchestrator::_randInt(int min, int max)
