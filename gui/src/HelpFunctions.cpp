@@ -22,8 +22,8 @@
 static void displayUsageSummary(const std::string binName)
 {
     std::cout << "USAGE:\n";
-    std::cout << "\t" << binName << " [--ip] [--port] [--log] [--debug] [--help]";
-    std::cout << " [--version] [--full-screen] [--window-width] [--window-height]";
+    std::cout << "\t" << binName << " [--ip] [--port] [--log] [--debug] [--help] [--version]";
+    // std::cout << " [--full-screen] [--window-width] [--window-height]";
     std::cout << " [--frame-rate-limit] [--config-file] [--username]";
     std::cout << " [--position-x] [--position-y] [--window-title]";// [--cursor] ";
     // std::cout << " [--cursor-icon] [--image-is-sprite] [--sprite-start-top] ";
@@ -44,9 +44,9 @@ static void displayDetailedUsage()
     std::cout << "\t--debug                       \tEnable debug logging. (if this option is provided, the --log flag becomes forced regardless of it being provided or not)\n";
     std::cout << "\t--help                        \tDisplay this help message and exit.\n\n";
     std::cout << "\t--version                     \tDisplay the version of the program and exit.\n";
-    std::cout << "\t--full-screen                 \tEnable full screen mode.\n";
-    std::cout << "\t--window-width=\"800\"        \tSet the width of the window. (Default value: 800)\n";
-    std::cout << "\t--window-height=\"600\"       \tSet the height of the window. (Default value: 600)\n";
+    // std::cout << "\t--full-screen                 \tEnable full screen mode.\n";
+    // std::cout << "\t--window-width=\"800\"        \tSet the width of the window. (Default value: 800)\n";
+    // std::cout << "\t--window-height=\"600\"       \tSet the height of the window. (Default value: 600)\n";
     std::cout << "\t--frame-rate-limit=\"60\"     \tSet the frame rate limit of the window. (Default value: 60)\n";
     std::cout << "\t--config-file=\"client_config.toml\" \tSet the path to the toml file that contains the sprites to load. (Default value: client_config.toml)\n";
     std::cout << "\t--position-x=\"0\"            \tSet the x position of the window. (Default value: 0)\n";
