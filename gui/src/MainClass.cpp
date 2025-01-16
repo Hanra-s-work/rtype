@@ -1708,6 +1708,8 @@ void Main::_gameScreen()
 
 void Main::_demoScreen()
 {
+    PRETTY_DEBUG << "In _demoScreen" << std::endl;
+    PRETTY_DEBUG << "_demoInitialised = " << Recoded::myToString(_demoInitialised) << ", _demoStarted = " << Recoded::myToString(_demoStarted) << std::endl;
 
     PRETTY_DEBUG << "Getting the window manager component" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
@@ -5005,6 +5007,7 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     setActiveScreen(ActiveScreen::MENU);
+    // setActiveScreen(ActiveScreen::DEMO);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
