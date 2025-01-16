@@ -36,7 +36,7 @@ class NetworkManager : public GUI::ECS::EntityNode {
 
     const bool isConnected() const;
 
-    const std::string &receiveMessage();
+    const std::string receiveMessage();
 
     private:
     void _connect();

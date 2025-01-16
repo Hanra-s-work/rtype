@@ -123,6 +123,11 @@ void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
     _connect();
 }
 
+const std::string NetworkManager::receiveMessage()
+{
+    return "ee";
+}
+
 void NetworkManager::_connect()
 {
     std::cerr << "In the connect function " << std::endl;
