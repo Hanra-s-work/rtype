@@ -1806,26 +1806,22 @@ void Main::_settingsMenu()
     const GUI::ECS::Systems::Colour bodyColour = GUI::ECS::Systems::Colour::Cyan;
     const GUI::ECS::Systems::Colour soundColour = GUI::ECS::Systems::Colour::Cyan;
     const GUI::ECS::Systems::Colour musicColour = GUI::ECS::Systems::Colour::Cyan;
-    GUI::ECS::Systems::Colour soundButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
-    GUI::ECS::Systems::Colour soundButtonNormalColour = GUI::ECS::Systems::Colour::White;
-    GUI::ECS::Systems::Colour soundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
-    GUI::ECS::Systems::Colour soundButtonClickedColour = GUI::ECS::Systems::Colour::Green;
-    if (_playSoundEffects) {
-        soundButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
-        soundButtonNormalColour = GUI::ECS::Systems::Colour::Black;
-        soundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
-        soundButtonClickedColour = GUI::ECS::Systems::Colour::Red;
-    }
-    GUI::ECS::Systems::Colour musicButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
-    GUI::ECS::Systems::Colour musicButtonNormalColour = GUI::ECS::Systems::Colour::White;
-    GUI::ECS::Systems::Colour musicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
-    GUI::ECS::Systems::Colour musicButtonClickedColour = GUI::ECS::Systems::Colour::Green;
-    if (_playMusic) {
-        musicButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
-        musicButtonNormalColour = GUI::ECS::Systems::Colour::Black;
-        musicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
-        musicButtonClickedColour = GUI::ECS::Systems::Colour::Red;
-    }
+    const GUI::ECS::Systems::Colour stoppedSoundButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonNormalColour = GUI::ECS::Systems::Colour::White;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonClickedColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingSoundButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingSoundButtonNormalColour = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour playingSoundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour playingSoundButtonClickedColour = GUI::ECS::Systems::Colour::Red;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonNormalColour = GUI::ECS::Systems::Colour::White;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonClickedColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingMusicButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingMusicButtonNormalColour = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour playingMusicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour playingMusicButtonClickedColour = GUI::ECS::Systems::Colour::Red;
     PRETTY_DEBUG << "Declared colour customisation options" << std::endl;
 
     PRETTY_DEBUG << "Declaring required item keys" << std::endl;
@@ -2077,8 +2073,16 @@ void Main::_settingsMenu()
             return;
         }
         std::string soundStatus = "OFF";
-        if (_playMusic) {
+        GUI::ECS::Systems::Colour soundButtonBackgroundColour = playingSoundButtonBackgroundColour;
+        GUI::ECS::Systems::Colour soundButtonNormalColour = playingSoundButtonNormalColour;
+        GUI::ECS::Systems::Colour soundButtonHoverColour = playingSoundButtonHoverColour;
+        GUI::ECS::Systems::Colour soundButtonClickedColour = playingSoundButtonClickedColour;
+        if (_playSoundEffects) {
             soundStatus = "ON";
+            soundButtonBackgroundColour = stoppedSoundButtonBackgroundColour;
+            soundButtonNormalColour = stoppedSoundButtonNormalColour;
+            soundButtonHoverColour = stoppedSoundButtonHoverColour;
+            soundButtonClickedColour = stoppedSoundButtonClickedColour;
         }
         PRETTY_DEBUG << "Creating sound button component" << std::endl;
         soundButtonItem = _createButton(
@@ -2107,8 +2111,16 @@ void Main::_settingsMenu()
             return;
         }
         std::string musicStatus = "OFF";
+        GUI::ECS::Systems::Colour musicButtonBackgroundColour = playingMusicButtonBackgroundColour;
+        GUI::ECS::Systems::Colour musicButtonNormalColour = playingMusicButtonNormalColour;
+        GUI::ECS::Systems::Colour musicButtonHoverColour = playingMusicButtonHoverColour;
+        GUI::ECS::Systems::Colour musicButtonClickedColour = playingMusicButtonClickedColour;
         if (_playMusic) {
             musicStatus = "ON";
+            musicButtonBackgroundColour = stoppedMusicButtonBackgroundColour;
+            musicButtonNormalColour = stoppedMusicButtonNormalColour;
+            musicButtonHoverColour = stoppedMusicButtonHoverColour;
+            musicButtonClickedColour = stoppedMusicButtonClickedColour;
         }
         PRETTY_DEBUG << "Creating music button component" << std::endl;
         musicButtonItem = _createButton(
@@ -2182,25 +2194,45 @@ void Main::_settingsMenu()
     }
     soundButtonItem.value()->setTextString(soundStatus);
     std::string musicStatus = "OFF";
-    if (_playSoundEffects) {
+    if (_playMusic) {
         musicStatus = "ON";
     }
     musicButtonItem.value()->setTextString(musicStatus);
     PRETTY_DEBUG << "The text of the buttons has been set" << std::endl;
 
     PRETTY_DEBUG << "Setting the colour of the buttons" << std::endl;
-    soundButtonItem.value()->setNormalColor(soundButtonBackgroundColour);
-    soundButtonItem.value()->setHoverColor(soundButtonBackgroundColour);
-    soundButtonItem.value()->setClickedColor(soundButtonBackgroundColour);
-    soundButtonItem.value()->setTextNormalColor(soundButtonNormalColour);
-    soundButtonItem.value()->setTextHoverColor(soundButtonHoverColour);
-    soundButtonItem.value()->setTextClickedColor(soundButtonClickedColour);
-    musicButtonItem.value()->setNormalColor(musicButtonBackgroundColour);
-    musicButtonItem.value()->setHoverColor(musicButtonBackgroundColour);
-    musicButtonItem.value()->setClickedColor(musicButtonBackgroundColour);
-    musicButtonItem.value()->setTextNormalColor(musicButtonNormalColour);
-    musicButtonItem.value()->setTextHoverColor(musicButtonHoverColour);
-    musicButtonItem.value()->setTextClickedColor(musicButtonClickedColour);
+    PRETTY_DEBUG << "Colour for the sound" << std::endl;
+    if (_playSoundEffects) {
+        soundButtonItem.value()->setNormalColor(playingSoundButtonBackgroundColour);
+        soundButtonItem.value()->setHoverColor(playingSoundButtonBackgroundColour);
+        soundButtonItem.value()->setClickedColor(playingSoundButtonBackgroundColour);
+        soundButtonItem.value()->setTextNormalColor(playingSoundButtonNormalColour);
+        soundButtonItem.value()->setTextHoverColor(playingSoundButtonHoverColour);
+        soundButtonItem.value()->setTextClickedColor(playingSoundButtonClickedColour);
+    } else {
+        soundButtonItem.value()->setNormalColor(stoppedSoundButtonBackgroundColour);
+        soundButtonItem.value()->setHoverColor(stoppedSoundButtonBackgroundColour);
+        soundButtonItem.value()->setClickedColor(stoppedSoundButtonBackgroundColour);
+        soundButtonItem.value()->setTextNormalColor(stoppedSoundButtonNormalColour);
+        soundButtonItem.value()->setTextHoverColor(stoppedSoundButtonHoverColour);
+        soundButtonItem.value()->setTextClickedColor(stoppedSoundButtonClickedColour);
+    }
+    PRETTY_DEBUG << "Colour for the music" << std::endl;
+    if (_playMusic) {
+        musicButtonItem.value()->setNormalColor(playingMusicButtonBackgroundColour);
+        musicButtonItem.value()->setHoverColor(playingMusicButtonBackgroundColour);
+        musicButtonItem.value()->setClickedColor(playingMusicButtonBackgroundColour);
+        musicButtonItem.value()->setTextNormalColor(playingMusicButtonNormalColour);
+        musicButtonItem.value()->setTextHoverColor(playingMusicButtonHoverColour);
+        musicButtonItem.value()->setTextClickedColor(playingMusicButtonClickedColour);
+    } else {
+        musicButtonItem.value()->setNormalColor(stoppedMusicButtonBackgroundColour);
+        musicButtonItem.value()->setHoverColor(stoppedMusicButtonBackgroundColour);
+        musicButtonItem.value()->setClickedColor(stoppedMusicButtonBackgroundColour);
+        musicButtonItem.value()->setTextNormalColor(stoppedMusicButtonNormalColour);
+        musicButtonItem.value()->setTextHoverColor(stoppedMusicButtonHoverColour);
+        musicButtonItem.value()->setTextClickedColor(stoppedMusicButtonClickedColour);
+    }
     PRETTY_DEBUG << "The colour of the buttons has been set" << std::endl;
 
     PRETTY_DEBUG << "Displaying elements on the screen" << std::endl;
@@ -4426,12 +4458,13 @@ void Main::_toggleMusic()
     event_ptr.value()->flushEvents();
     PRETTY_SUCCESS << "Events flushed" << std::endl;
 
-    _updateMusicStatus();
 
     if (_playMusic) {
         _playMusic = false;
+        _updateMusicStatus();
         return;
     }
+    _updateMusicStatus();
     _playMusic = true;
 }
 
