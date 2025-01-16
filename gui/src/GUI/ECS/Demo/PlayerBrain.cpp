@@ -20,16 +20,23 @@ GUI::ECS::Demo::PlayerBrain::PlayerBrain(const GUI::ECS::Demo::PlayerBrain &copy
 }
 
 
-void GUI::ECS::Demo::PlayerBrain::setSprite(const GUI::ECS::Components::SpriteComponent &sprite, const GUI::ECS::Components::SpriteComponent &bullet)
+void GUI::ECS::Demo::PlayerBrain::setSprite(const std::shared_ptr<GUI::ECS::Components::SpriteComponent> &sprite, const std::shared_ptr<GUI::ECS::Components::SpriteComponent> &bullet)
 {
-    _sprite = sprite;
-    _bullet.setSprite(bullet);
+    PRETTY_DEBUG << "Setting the sprite content" << std::endl;
+    _sprite = *sprite;
+    PRETTY_DEBUG << "The sprite entity is set" << std::endl;
+    _bullet.setSprite(*bullet);
+    PRETTY_DEBUG << "The bullet entity is set" << std::endl;
     _bullet.setVisible(true);
     _bullet.setEnemy(false);
     _bullet.setDirection({ -1,0 });
     _bullet.setDamage(5);
     _bullet.setSpeed(5);
+    PRETTY_DEBUG << "Bullet info has been set" << std::endl;
     _collision.update(_sprite.getCollision());
+    PRETTY_DEBUG << "Sprite info: " << _sprite << std::endl;
+    PRETTY_DEBUG << "Bullet info: " << *bullet << std::endl;
+    PRETTY_DEBUG << "Collision info: " << _collision << std::endl;
 };
 
 void GUI::ECS::Demo::PlayerBrain::setPosition(const std::pair<float, float> &pos)

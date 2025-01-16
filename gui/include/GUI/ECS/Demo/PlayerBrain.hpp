@@ -30,7 +30,7 @@ namespace GUI
 
                 ~PlayerBrain() = default;
 
-                void setSprite(const GUI::ECS::Components::SpriteComponent &sprite, const GUI::ECS::Components::SpriteComponent &bullet);
+                void setSprite(const std::shared_ptr<GUI::ECS::Components::SpriteComponent> &sprite, const std::shared_ptr<GUI::ECS::Components::SpriteComponent> &bullet);
 
                 void setPosition(const std::pair<float, float> &pos);
 
