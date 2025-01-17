@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include <asio.hpp>
+#include <sstream>
 
 #include "ProtocolHandler.hpp"
 #include "Log.hpp"
@@ -36,7 +37,7 @@ class NetworkManager : public GUI::ECS::EntityNode {
 
     const bool isConnected() const;
 
-    const std::string receiveMessage();
+    void receiveMessage();
 
     private:
     void _connect();

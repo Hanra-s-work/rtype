@@ -123,12 +123,71 @@ void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
     _connect();
 }
 
-const std::string NetworkManager::receiveMessage()
+void NetworkManager::receiveMessage()
 {
-    return "ee";
+    try {
+        // Préparer un buffer pour recevoir les données
+        std::vector<uint8_t> buffer(1024);
+        asio::ip::udp::endpoint senderEndpoint;
+
+        // Recevoir les données du serveur
+        size_t bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
+
+        if (bytesReceived > 0) {
+            // Redimensionner le buffer à la taille réelle des données reçues
+            buffer.resize(bytesReceived);
+
+            // Désérialiser les données reçues en un paquet
+            Packet receivedPacket = Packet::deserialize(buffer);
+
+            // Debug : Afficher le contenu du paquet reçu
+            receivedPacket.print();
+
+            // Traiter le paquet en fonction de son type
+            switch (receivedPacket.getType()) {
+                case Packet::MessageType::CONNECT:
+                    PRETTY_INFO << "CONNECT message received." << std::endl;
+                    // Gérer la connexion ici
+                    break;
+
+                case Packet::MessageType::DISCONNECT:
+                    PRETTY_INFO << "DISCONNECT message received." << std::endl;
+                    // Gérer la déconnexion ici
+                    break;
+
+                case Packet::MessageType::MOVE:
+                    PRETTY_INFO << "MOVE message received." << std::endl;
+                    // Gérer le mouvement ici
+                    break;
+
+                case Packet::MessageType::SHOOT:
+                    PRETTY_INFO << "SHOOT message received." << std::endl;
+                    // Gérer le tir ici
+                    break;
+
+                case Packet::MessageType::SPAWN:
+                    PRETTY_INFO << "SPAWN message received." << std::endl;
+                    // Gérer l'apparition d'une entité ici
+                    break;
+
+                case Packet::MessageType::ERROR:
+                    PRETTY_ERROR << "ERROR message received." << std::endl;
+                    // Gérer les erreurs ici
+                    break;
+
+                default:
+                    PRETTY_WARNING << "Unknown message type received: "
+                                   << static_cast<int>(receivedPacket.getType()) << std::endl;
+                    break;
+            }
+        }
+    }
+    catch (const std::exception &e) {
+        PRETTY_ERROR << "Error receiving message: " << e.what() << std::endl;
+    }
 }
 
-void NetworkManager::_connect()
+void NetworkManager::_connect()                                            
 {
     std::cerr << "In the connect function " << std::endl;
     PRETTY_DEBUG << "Connecting" << std::endl;
@@ -151,11 +210,14 @@ void NetworkManager::_connect()
         socket.bind(localEndpoint);
 
         PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
+
+        // Send a CONNECT packet
         std::string username = _playerName;
         std::vector<uint8_t> payload(username.begin(), username.end());
         if (payload.size() < 8) {
             payload.resize(8, 0x00);
         }
+
         Packet connectPacket(Packet::MessageType::CONNECT, payload);
         std::vector<uint8_t> serializedData = Packet::serialize(connectPacket);
 
@@ -163,8 +225,9 @@ void NetworkManager::_connect()
             asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
             socket.send_to(asio::buffer(serializedData), remoteEndpoint);
             std::cerr << "CONNECT packet sent to " << _ip << ":" << _port << std::endl;
-        }
-        catch (const std::exception &e) {
+
+            // Immediately try to receive a response after sending the CONNECT packet
+        } catch (const std::exception &e) {
             std::cerr << "Error sending CONNECT packet: " << e.what() << std::endl;
         }
 
@@ -174,7 +237,7 @@ void NetworkManager::_connect()
         PRETTY_CRITICAL << "Error connecting to server: " << e.what() << std::endl;
         _connectionActive = false;
     }
-};
+}
 
 void NetworkManager::_disconnect()
 {
