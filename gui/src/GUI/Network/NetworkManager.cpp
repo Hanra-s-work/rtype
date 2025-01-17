@@ -13,9 +13,9 @@
 #include <iostream>
 #include "GUI/Network/NetworkManager.hpp"
 
-NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entityId) {}
+GUI::Network::NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entityId) {}
 
-void NetworkManager::Initialize()
+void GUI::Network::NetworkManager::Initialize()
 {
     try {
         asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), _port);
@@ -28,7 +28,7 @@ void NetworkManager::Initialize()
     }
 }
 
-void NetworkManager::HandleMessages()
+void GUI::Network::NetworkManager::HandleMessages()
 {
     try {
         std::vector<uint8_t> buffer(1024);
@@ -48,7 +48,7 @@ void NetworkManager::HandleMessages()
     }
 }
 
-void NetworkManager::SendMessage(const std::string &message)
+void GUI::Network::NetworkManager::SendMessage(const std::string &message)
 {
     if (!isConnected()) {
         std::cerr << "Cannot send message: No active connection." << std::endl;
@@ -72,21 +72,21 @@ void NetworkManager::SendMessage(const std::string &message)
     }
 }
 
-const bool NetworkManager::isConnected() const
+const bool GUI::Network::NetworkManager::isConnected() const
 {
     std::cerr << "In is connected" << std::endl;
     std::cerr << "status: " << Recoded::myToString(_socket.is_open()) << std::endl;
     return _socket.is_open();
 }
 
-float NetworkManager::bytesToFloat(const uint8_t *bytes)
+float GUI::Network::NetworkManager::bytesToFloat(const uint8_t *bytes)
 {
     float value;
     std::memcpy(&value, bytes, sizeof(float));
     return value;
 }
 
-std::string NetworkManager::bytesToHex(const std::vector<uint8_t> &bytes)
+std::string GUI::Network::NetworkManager::bytesToHex(const std::vector<uint8_t> &bytes)
 {
     std::ostringstream oss;
     for (uint8_t byte : bytes) {
@@ -95,7 +95,7 @@ std::string NetworkManager::bytesToHex(const std::vector<uint8_t> &bytes)
     return oss.str();
 }
 
-std::string NetworkManager::translateMessage(const std::vector<uint8_t> &message)
+std::string GUI::Network::NetworkManager::translateMessage(const std::vector<uint8_t> &message)
 {
     if (message.empty()) {
         return "[Error] Empty message received.";
@@ -183,7 +183,7 @@ std::string NetworkManager::translateMessage(const std::vector<uint8_t> &message
     return result.str();
 }
 
-void NetworkManager::setPort(const unsigned int port)
+void GUI::Network::NetworkManager::setPort(const unsigned int port)
 {
     std::cerr << "In the set Port" << std::endl;
     if (_port == port) {
@@ -194,7 +194,7 @@ void NetworkManager::setPort(const unsigned int port)
     _connect();
 }
 
-void NetworkManager::setIp(const std::string &ip)
+void GUI::Network::NetworkManager::setIp(const std::string &ip)
 {
     std::cerr << "In the set ip" << std::endl;
     if (_ip == ip) {
@@ -205,7 +205,7 @@ void NetworkManager::setIp(const std::string &ip)
     _connect();
 }
 
-void NetworkManager::setPlayerName(const std::string &playerName)
+void GUI::Network::NetworkManager::setPlayerName(const std::string &playerName)
 {
     if (_playerName == playerName) {
         return;
@@ -214,7 +214,7 @@ void NetworkManager::setPlayerName(const std::string &playerName)
     _playerName = playerName;
 }
 
-void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
+void GUI::Network::NetworkManager::setAddress(const std::string &ip, const unsigned int port)
 {
     std::cerr << "Setting address" << std::endl;
     if (_ip == ip && _port == port) {
@@ -226,7 +226,7 @@ void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
     _connect();
 }
 
-void NetworkManager::receiveMessage()
+void GUI::Network::NetworkManager::receiveMessage()
 {
     if (!isConnected()) {
         std::cerr << "Cannot receive message: No active connection." << std::endl;
@@ -261,7 +261,7 @@ void NetworkManager::receiveMessage()
     }
 }
 
-void NetworkManager::_connect()
+void GUI::Network::NetworkManager::_connect()
 {
     std::cerr << "In the connect function " << std::endl;
     PRETTY_DEBUG << "Connecting" << std::endl;
@@ -292,7 +292,7 @@ void NetworkManager::_connect()
             payload.resize(8, 0x00);
         }
 
-        Packet connectPacket(Packet::MessageType::CONNECT, payload);
+        Packet connectPacket(MessageType::CONNECT, payload);
         std::vector<uint8_t> serializedData = Packet::serialize(connectPacket);
 
         try {
@@ -313,7 +313,7 @@ void NetworkManager::_connect()
     }
 }
 
-void NetworkManager::_disconnect()
+void GUI::Network::NetworkManager::_disconnect()
 {
     try {
         if (_socket.is_open()) {
