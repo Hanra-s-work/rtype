@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(rtype_server CXX)
+project(r-type_server CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -19,17 +19,17 @@ set(SERVER_SOURCES
     # ...
 )
 
-add_executable(rtype_server
+add_executable(r-type_server
     ${SERVER_SOURCES}
 )
 
 # If your server needs includes from "server/src", do:
-target_include_directories(rtype_server PRIVATE
+target_include_directories(r-type_server PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # Link the server to the library from game_source
-target_link_libraries(rtype_server
+target_link_libraries(r-type_server
     PRIVATE
     RTypeSource # from game_source/CMakeLists
 
