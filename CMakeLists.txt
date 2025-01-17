@@ -29,4 +29,4 @@ add_custom_target(copy_binaries ALL
 
 # Ensure the custom target depends on all subdirectories
 # This is now safe to do after defining the targets.
-add_dependencies(copy_binaries r-type_client rtype_server)
+add_dependencies(copy_binaries r-type_client r-type_server)
