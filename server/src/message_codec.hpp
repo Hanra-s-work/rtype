@@ -19,8 +19,8 @@ inline bool decodeMessage(const char* data, size_t length, Message& out) {
     // netLen  = ntohs(netLen);
 
     out.type = netType;
-    out.payload.resize(length);
-    std::memcpy(out.payload.data(), data, length);
+    out.payload.resize(length - 1);
+    std::memcpy(out.payload.data(), data + 1, length - 1);
     return true;
 }
 
@@ -37,7 +37,7 @@ inline std::vector<uint8_t> encodeMessage(const Message& msg) {
     std::vector<uint8_t> buffer(size + 1);
     std::memcpy(buffer.data(), &netType, 1);
     if (size > 0) {
-        std::memcpy(buffer.data() + 1, msg.payload.data(), size);
+        std::memcpy(buffer.data() + 4, msg.payload.data(), size);
     }
     return buffer;
 }
