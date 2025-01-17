@@ -46,7 +46,7 @@ class Packet : public GUI::ECS::EntityNode {
     static Packet deserialize(const std::vector<uint8_t> &data);
 
     /*// Debug part \\*/
-    void print() const;
+    const std::string print() const;
     /*// Debug part \\*/
 
     private:

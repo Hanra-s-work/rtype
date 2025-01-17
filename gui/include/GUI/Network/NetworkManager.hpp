@@ -43,9 +43,9 @@ class NetworkManager : public GUI::ECS::EntityNode {
 
     const bool isConnected() const;
 
-    float bytesToFloat(const uint8_t* bytes);
-    std::string bytesToHex(const std::vector<uint8_t>& bytes);
-    std::string translateMessage(const std::vector<uint8_t>& message);
+    float bytesToFloat(const uint8_t *bytes);
+    std::string bytesToHex(const std::vector<uint8_t> &bytes);
+    std::string translateMessage(const std::vector<uint8_t> &message);
     void receiveMessage();
 
     private:
@@ -56,7 +56,7 @@ class NetworkManager : public GUI::ECS::EntityNode {
     unsigned int _port = -1;
     std::string _ip = "127.0.0.1";
     std::string _playerName = "Player";
-    asio::io_context ioContext;
-    asio::ip::udp::socket socket{ ioContext };
+    asio::io_context _ioContext;
+    asio::ip::udp::socket _socket{ _ioContext };
 };
 

@@ -19,8 +19,8 @@ void NetworkManager::Initialize()
 {
     try {
         asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), _port);
-        socket.open(asio::ip::udp::v4());
-        socket.bind(localEndpoint);
+        _socket.open(asio::ip::udp::v4());
+        _socket.bind(localEndpoint);
         PRETTY_INFO << "UDP Socket initialized on port " << _port << std::endl;
     }
     catch (const std::exception &e) {
@@ -34,12 +34,12 @@ void NetworkManager::HandleMessages()
         std::vector<uint8_t> buffer(1024);
         asio::ip::udp::endpoint senderEndpoint;
 
-        size_t bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
+        size_t bytesReceived = _socket.receive_from(asio::buffer(buffer), senderEndpoint);
         if (bytesReceived > 0) {
             std::vector<uint8_t> receivedData(buffer.begin(), buffer.begin() + bytesReceived);
             Packet packet = Packet::deserialize(receivedData);
             /*// Debug part \\*/
-            packet.print();
+            std::cerr << packet.print() << std::endl;
             /*// Debug part \\*/
         }
     }
@@ -64,7 +64,7 @@ void NetworkManager::SendMessage(const std::string &message)
         asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
         std::vector<uint8_t> data(message.begin(), message.end());
 
-        socket.send_to(asio::buffer(data), remoteEndpoint);
+        _socket.send_to(asio::buffer(data), remoteEndpoint);
         std::cerr << "Message : " << message << " sent to " << _ip << ":" << _port << std::endl;
     }
     catch (const std::exception &e) {
@@ -75,17 +75,19 @@ void NetworkManager::SendMessage(const std::string &message)
 const bool NetworkManager::isConnected() const
 {
     std::cerr << "In is connected" << std::endl;
-    std::cerr << "status: " << Recoded::myToString(socket.is_open()) << std::endl;
-    return socket.is_open();
+    std::cerr << "status: " << Recoded::myToString(_socket.is_open()) << std::endl;
+    return _socket.is_open();
 }
 
-float NetworkManager::bytesToFloat(const uint8_t* bytes) {
+float NetworkManager::bytesToFloat(const uint8_t *bytes)
+{
     float value;
     std::memcpy(&value, bytes, sizeof(float));
     return value;
 }
 
-std::string NetworkManager::bytesToHex(const std::vector<uint8_t>& bytes) {
+std::string NetworkManager::bytesToHex(const std::vector<uint8_t> &bytes)
+{
     std::ostringstream oss;
     for (uint8_t byte : bytes) {
         oss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
@@ -93,7 +95,8 @@ std::string NetworkManager::bytesToHex(const std::vector<uint8_t>& bytes) {
     return oss.str();
 }
 
-std::string NetworkManager::translateMessage(const std::vector<uint8_t>& message) {
+std::string NetworkManager::translateMessage(const std::vector<uint8_t> &message)
+{
     if (message.empty()) {
         return "[Error] Empty message received.";
     }
@@ -104,73 +107,73 @@ std::string NetworkManager::translateMessage(const std::vector<uint8_t>& message
 
     switch (messageType) {
         case 0x01: { // CONNECT
-            std::string username(reinterpret_cast<const char*>(&message[1]), 8);
-            result << "CONNECT Message\nUsername: " << username << "\n";
-            break;
-        }
-        case 0x02: { // DISCONNECT
-            size_t id;
-            std::memcpy(&id, &message[1], sizeof(size_t));
-            result << "DISCONNECT Message\nEntity ID: " << id << "\n";
-            break;
-        }
-        case 0x03: { // MOVE
-            size_t id;
-            float x, y;
-            std::memcpy(&id, &message[1], sizeof(size_t));
-            x = bytesToFloat(&message[1 + sizeof(size_t)]);
-            y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(float)]);
-            result << "MOVE Message\nEntity ID: " << id << "\nPosition: (" << x << ", " << y << ")\n";
-            break;
-        }
-        case 0x04: { // SHOOT
-            size_t id;
-            std::memcpy(&id, &message[1], sizeof(size_t));
-            result << "SHOOT Message\nEntity ID: " << id << "\n";
-            break;
-        }
-        case 0x05: { // SPAWN
-            size_t id;
-            short asset;
-            float x, y;
-            std::memcpy(&id, &message[1], sizeof(size_t));
-            std::memcpy(&asset, &message[1 + sizeof(size_t)], sizeof(short));
-            x = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short)]);
-            y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short) + sizeof(float)]);
-            result << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
-            break;
-        }
-        case 0x06: { // KILL
-            size_t id;
-            std::memcpy(&id, &message[1], sizeof(size_t));
-            result << "KILL Message\nEntity ID: " << id << "\n";
-            break;
-        }
-        case 0x07: { // DAMAGE
-            size_t id;
-            std::memcpy(&id, &message[1], sizeof(size_t));
-            result << "DAMAGE Message\nEntity ID: " << id << "\n";
-            break;
-        }
-        case 0x0A: { // STATUS
-            uint8_t status = message[1];
-            result << "STATUS Message\nStatus: ";
-            if (status == 0x00) {
-                result << "On going\n";
-            } else if (status == 0x01) {
-                result << "Victory\n";
-            } else if (status == 0xFF) {
-                result << "Defeat\n";
-            } else {
-                result << "Unknown\n";
+                std::string username(reinterpret_cast<const char *>(&message[1]), 8);
+                result << "CONNECT Message\nUsername: " << username << "\n";
+                break;
             }
-            break;
-        }
+        case 0x02: { // DISCONNECT
+                size_t id;
+                std::memcpy(&id, &message[1], sizeof(size_t));
+                result << "DISCONNECT Message\nEntity ID: " << id << "\n";
+                break;
+            }
+        case 0x03: { // MOVE
+                size_t id;
+                float x, y;
+                std::memcpy(&id, &message[1], sizeof(size_t));
+                x = bytesToFloat(&message[1 + sizeof(size_t)]);
+                y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(float)]);
+                result << "MOVE Message\nEntity ID: " << id << "\nPosition: (" << x << ", " << y << ")\n";
+                break;
+            }
+        case 0x04: { // SHOOT
+                size_t id;
+                std::memcpy(&id, &message[1], sizeof(size_t));
+                result << "SHOOT Message\nEntity ID: " << id << "\n";
+                break;
+            }
+        case 0x05: { // SPAWN
+                size_t id;
+                short asset;
+                float x, y;
+                std::memcpy(&id, &message[1], sizeof(size_t));
+                std::memcpy(&asset, &message[1 + sizeof(size_t)], sizeof(short));
+                x = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short)]);
+                y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short) + sizeof(float)]);
+                result << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
+                break;
+            }
+        case 0x06: { // KILL
+                size_t id;
+                std::memcpy(&id, &message[1], sizeof(size_t));
+                result << "KILL Message\nEntity ID: " << id << "\n";
+                break;
+            }
+        case 0x07: { // DAMAGE
+                size_t id;
+                std::memcpy(&id, &message[1], sizeof(size_t));
+                result << "DAMAGE Message\nEntity ID: " << id << "\n";
+                break;
+            }
+        case 0x0A: { // STATUS
+                uint8_t status = message[1];
+                result << "STATUS Message\nStatus: ";
+                if (status == 0x00) {
+                    result << "On going\n";
+                } else if (status == 0x01) {
+                    result << "Victory\n";
+                } else if (status == 0xFF) {
+                    result << "Defeat\n";
+                } else {
+                    result << "Unknown\n";
+                }
+                break;
+            }
         case 0xFF: { // ERROR
-            uint8_t errorCode = message[1];
-            result << "ERROR Message\nError Code: 0x" << std::hex << static_cast<int>(errorCode) << "\n";
-            break;
-        }
+                uint8_t errorCode = message[1];
+                result << "ERROR Message\nError Code: 0x" << std::hex << static_cast<int>(errorCode) << "\n";
+                break;
+            }
         default:
             result << "Unknown Message Type\n";
             break;
@@ -236,7 +239,7 @@ void NetworkManager::receiveMessage()
 
         while (true) {
             std::error_code ec;
-            size_t bytesRecv = socket.receive_from(
+            size_t bytesRecv = _socket.receive_from(
                 asio::buffer(recvBuffer), remoteEndpoint, 0, ec
             );
 
@@ -247,17 +250,18 @@ void NetworkManager::receiveMessage()
 
             if (bytesRecv > 0) {
                 std::vector<uint8_t> message(recvBuffer.begin(), recvBuffer.begin() + bytesRecv);
-                    std::string translatedMessage = translateMessage(message);
-                    std::cout << "[Client] Translated Message from " << remoteEndpoint << ":\n" << translatedMessage << "\n";
+                std::string translatedMessage = translateMessage(message);
+                std::cout << "[Client] Translated Message from " << remoteEndpoint << ":\n" << translatedMessage << "\n";
             }
         }
 
-    } catch (const std::exception& e) {
+    }
+    catch (const std::exception &e) {
         std::cerr << "[Client] Exception in receiveMessage: " << e.what() << "\n";
     }
 }
 
-void NetworkManager::_connect()                                            
+void NetworkManager::_connect()
 {
     std::cerr << "In the connect function " << std::endl;
     PRETTY_DEBUG << "Connecting" << std::endl;
@@ -272,12 +276,12 @@ void NetworkManager::_connect()
 
         asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
 
-        if (!socket.is_open()) {
-            socket.open(asio::ip::udp::v4());
+        if (!_socket.is_open()) {
+            _socket.open(asio::ip::udp::v4());
         }
 
         asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), 0);
-        socket.bind(localEndpoint);
+        _socket.bind(localEndpoint);
 
         PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
 
@@ -293,10 +297,11 @@ void NetworkManager::_connect()
 
         try {
             asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
-            socket.send_to(asio::buffer(serializedData), remoteEndpoint);
+            _socket.send_to(asio::buffer(serializedData), remoteEndpoint);
             std::cerr << "CONNECT packet sent to " << _ip << ":" << _port << std::endl;
 
-        } catch (const std::exception &e) {
+        }
+        catch (const std::exception &e) {
             std::cerr << "Error sending CONNECT packet: " << e.what() << std::endl;
         }
 
@@ -311,8 +316,8 @@ void NetworkManager::_connect()
 void NetworkManager::_disconnect()
 {
     try {
-        if (socket.is_open()) {
-            socket.close();
+        if (_socket.is_open()) {
+            _socket.close();
             std::cerr << "Disconnected from server at " << _ip << ":" << _port << std::endl;
         } else {
             std::cerr << "Socket is already closed." << std::endl;

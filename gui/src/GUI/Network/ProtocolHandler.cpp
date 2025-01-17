@@ -59,13 +59,15 @@ Packet Packet::deserialize(const std::vector<uint8_t> &data)
     return Packet(type, payload);
 }
 
-void Packet::print() const
+const std::string Packet::print() const
 {
-    std::cout << "Packet Type: " << static_cast<int>(type) << "\n";
-    std::cout << "Packet Size: " << size << "\n";
-    std::cout << "Payload: ";
+    std::string result = "";
+    result += "Packet Type: " + Recoded::myToString(static_cast<int>(type)) + "\n";
+    result += "Packet Size: " + Recoded::myToString(size) + "\n";
+    result += "Payload: ";
     for (auto byte : payload) {
-        std::cout << static_cast<int>(byte) << " ";
+        result += Recoded::myToString(static_cast<int>(byte)) + " ";
     }
-    std::cout << std::endl;
+    result += "\n";
+    return result;
 }
