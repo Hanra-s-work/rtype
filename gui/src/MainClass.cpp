@@ -5006,8 +5006,8 @@ void Main::_mainLoop()
     _updateLoadingText("All the ressources have been loaded.");
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
-    setActiveScreen(ActiveScreen::MENU);
-    // setActiveScreen(ActiveScreen::DEMO);
+    // setActiveScreen(ActiveScreen::MENU);
+    setActiveScreen(ActiveScreen::DEMO);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {

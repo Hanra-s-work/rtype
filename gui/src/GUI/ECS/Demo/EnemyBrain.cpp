@@ -43,6 +43,12 @@ void GUI::ECS::Demo::EnemyBrain::setPosition(const std::pair<float, float> &pos)
     _sprite.setPosition(pos);
 };
 
+void GUI::ECS::Demo::EnemyBrain::setDimension(const std::pair<float, float> &dim)
+{
+    _collision.setDimension(dim);
+    _sprite.setDimension(dim);
+};
+
 void GUI::ECS::Demo::EnemyBrain::setHealth(const long int health)
 {
     _health = health;
