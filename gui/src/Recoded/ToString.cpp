@@ -149,3 +149,29 @@ const std::string Recoded::myToString(const GUI::ECS::Systems::ActiveShape &shap
     return "Unknown";
 }
 
+const std::string Recoded::myToString(const GUI::Network::MessageType &messageType)
+{
+    if (messageType == GUI::Network::MessageType::CONNECT) {
+        return "Connect";
+    }
+    if (messageType == GUI::Network::MessageType::DISCONNECT) {
+        return "Disconnect";
+    }
+    if (messageType == GUI::Network::MessageType::MOVE) {
+        return "Move";
+    }
+    if (messageType == GUI::Network::MessageType::SHOOT) {
+        return "Shoot";
+    }
+    if (messageType == GUI::Network::MessageType::SPAWN) {
+        return "Spawn";
+    }
+    if (messageType == GUI::Network::MessageType::UPDATE) {
+        return "Update";
+    }
+    if (messageType == GUI::Network::MessageType::ERROR) {
+        return "Error";
+    }
+    return "Unknown";
+}
+
