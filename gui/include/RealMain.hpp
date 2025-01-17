@@ -33,6 +33,7 @@
 #include "Utilities.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
+#include "GUI/Network.hpp"
 #include "ActiveScreen.hpp"
 #include "GUI/ECS/Demo.hpp"
 #include "CustomExceptions.hpp"
@@ -42,7 +43,6 @@
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/Window.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
-#include "GUI/Network/NetworkManager.hpp"
 
 
  /**
@@ -389,7 +389,7 @@ class Main {
   const std::string _portV4ChunkKey = "connectionAddressScreenPortV4ChunkKey";
 
   // Network manager
-  NetworkManager _networkManager;
+  GUI::Network::ThreadCapsule _networkManager;
 
   // Singleplayer demo
   GUI::ECS::Demo::Orchestrator _demoBrain;
