@@ -426,7 +426,7 @@ start_left = true
 start_top = true
 initial_frame = 0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
 end_frame = -1 #end of all the frames
-frame_delay = 100 # delay between each frame in milliseconds
+frame_delay = 100000 # delay between each frame in milliseconds
 
 # [spritesheets.sprite14]
 # name = "r-typesheet14"
@@ -1071,8 +1071,9 @@ sprite_height = 17
 start_left = true
 start_top = true
 initial_frame = 0 # cyan ship: 0 to 4, purple 5 to 9, green: 10 to 14, red: 15 to 19, dark blue: 20 to 24
-end_frame = -1 #end of all the frames
-frame_delay = 100 # delay between each frame in milliseconds
+end_frame = 2
+# end_frame = -1 #end of all the frames
+frame_delay = 100000 # delay between each frame in milliseconds
 
 # [spritesheets.sprite43_fireball]
 # name = "r-typesheet43_fireball"
