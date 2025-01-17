@@ -32,6 +32,7 @@ set(SOURCES
     src/CustomExceptions/NotInitialised.cpp
 
     # Network files
+    src/GUI/Network/ThreadCapsule.cpp
     src/GUI/Network/NetworkManager.cpp
     src/GUI/Network/ProtocolHandler.cpp
 
