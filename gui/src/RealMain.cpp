@@ -280,7 +280,7 @@ int RealMain(int argc, char **argv)
     bool help_found = false;
     bool version_found = false;
 
-    Main MyMain("127.0.0.1", 5000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, "client_config.toml", false, false);
+    Main MyMain("127.0.0.1", 9000, 800, 600, true, false, "R-Type", 0, 0, "NULL", false, false, false, 20, 20, 60, "client_config.toml", false, false);
 
     if (argc > 1) {
         try {

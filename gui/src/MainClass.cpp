@@ -20,7 +20,7 @@
   * @brief Constructor for the Main class.
   *
   * @param ip The IP address to use for connections (default: "127.0.0.1").
-  * @param port The port number to use for connections (default: 5000).
+  * @param port The port number to use for connections (default: 9000).
   * @param windowWidth The width of the application window (default: 800).
   * @param windowHeight The height of the application window (default: 600).
   * @param windowCursor Whether the cursor should be visible (default: true).
@@ -38,6 +38,7 @@
   * @param configFilePath Path to the configuration file (default: "client_config.toml").
   * @param log Inform the program if it needs to output logs or not (default: false).
   * @param debug Whether debug mode is enabled (default: false).
+  * @param username The name of the user that is going to play (default: player)
   */
 Main::Main(
     const std::string &ip,
@@ -58,21 +59,24 @@ Main::Main(
     unsigned int frameLimit,
     const std::string &configFilePath,
     const bool log,
-    const bool debug
+    const bool debug,
+    const std::string &player
 ) :
-    _windowWidth(windowWidth),
-    _windowHeight(windowHeight),
-    _windowCursor(windowCursor),
-    _windowFullscreen(windowFullscreen),
-    _windowTitle(windowTitle),
-    _windowX(windowX),
-    _windowY(windowY),
-    _imageIsSprite(imageIsSprite),
-    _spriteStartTop(spriteStartTop),
-    _spriteStartLeft(spriteStartLeft),
-    _spriteWidth(spriteWidth),
-    _configFilePath(configFilePath),
-    _spriteHeight(spriteHeight)
+_windowWidth(windowWidth),
+_windowHeight(windowHeight),
+_windowCursor(windowCursor),
+_windowFullscreen(windowFullscreen),
+_windowTitle(windowTitle),
+_windowX(windowX),
+_windowY(windowY),
+_imageIsSprite(imageIsSprite),
+_spriteStartTop(spriteStartTop),
+_spriteStartLeft(spriteStartLeft),
+_spriteWidth(spriteWidth),
+_configFilePath(configFilePath),
+_spriteHeight(spriteHeight),
+_networkManager(),
+_player(player)
 {
     _log = log;
     Logging::Log::getInstance().setLogEnabled(log);
@@ -107,7 +111,12 @@ Main::Main(
     } else {
         throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
+    PRETTY_INFO << "Setting the player name" << std::endl;
+    _networkManager.setPlayerName(_player);
     PRETTY_INFO << "End of processing" << std::endl;
+    PRETTY_INFO << "Initialising the connection with the server" << std::endl;
+    _networkManager.setAddress(_ip, _port);
+    PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
 }
 
 /**
@@ -347,10 +356,7 @@ const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std
 void Main::_initialiseConnection()
 {
     std::string address = _ip + ":" + std::to_string(_port);
-
-    if (SUCCESS != SUCCESS) {
-        throw CustomExceptions::ConnectionFailed(address);
-    }
+    _networkManager.setAddress(_ip, _port);
 }
 
 /**
@@ -525,7 +531,7 @@ std::uint32_t Main::_initialiseFonts()
         PRETTY_DEBUG << "Loading font '" << application << "' ... [LOADING]" << std::endl;
         std::shared_ptr<GUI::ECS::Systems::Font> node = std::make_shared<GUI::ECS::Systems::Font>(_baseId, name, path, defaultSize, application, bold, italic);
         PRETTY_DEBUG << "Font '" << application << "' [LOADED]" << std::endl;
-        PRECISE_DEBUG << "Storing in ecs entity" << std::endl;
+        PRETTY_DEBUG << "Storing in ecs entity" << std::endl;
         _ecsEntities[typeid(GUI::ECS::Systems::Font)].push_back(node);
         if (application == titleFontNode) {
             _titleFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
@@ -539,7 +545,7 @@ std::uint32_t Main::_initialiseFonts()
         if (application == buttonFontNode) {
             _buttonFontIndex = _ecsEntities[typeid(GUI::ECS::Systems::Font)].size() - 1;
         }
-        PRECISE_DEBUG << "Stored in ecs entity" << std::endl;
+        PRETTY_DEBUG << "Stored in ecs entity" << std::endl;
         _baseId++;
     }
     PRETTY_INFO << "Value of the base id: " << std::to_string(_baseId) << std::endl;
@@ -846,7 +852,7 @@ void Main::_initialiseRessources()
         throw CustomExceptions::NoFont("<No fonts are loaded into the program>");
     }
 
-    PRECISE_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
+    PRETTY_INFO << "Fetching loaded font for displaying a loading text on screen." << std::endl;
     std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> firstFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], true);
     if (!firstFontCapsule.has_value()) {
         throw CustomExceptions::NoFont();
@@ -992,7 +998,7 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
  */
 void Main::_sendAllPackets()
 {
-
+    _networkManager.SendMessage("Yolo");
 };
 
 /**
@@ -1002,9 +1008,571 @@ void Main::_sendAllPackets()
  */
 void Main::_processIncommingPackets()
 {
-
+    _networkManager.receiveMessage();
 }
 
+/**
+ * @brief Retrieves a chunk of an IP address based on the provided index.
+ *
+ * This function extracts a chunk from the IP address stored in the `_ip` member
+ * variable by locating the dots (`"."`) as separators. The function returns the
+ * chunk corresponding to the given `index`. If no dot is found or the chunk is
+ * empty, the function returns the provided default value.
+ *
+ * The `index` parameter specifies the segment of the IP address to retrieve,
+ * starting from `0` for the first segment (before the first dot). If the IP
+ * address has fewer segments than the specified `index`, the content after the
+ * last dot is returned. If no dots exist in the IP address, the entire string
+ * is returned or the `defaultValue` is returned if the string is empty.
+ *
+ * @param index The index of the chunk to retrieve. A value of `0` returns the
+ * first chunk, `1` returns the second, etc.
+ * @param defaultValue The value to return if the chunk is empty or no dot is
+ * found in the IP address.
+ *
+ * @return The chunk of the IP address at the specified index, or the
+ * `defaultValue` if the chunk is empty, the index is out of bounds, or no dot
+ *  is found.
+ *
+ * @note This function handles IP addresses with varying numbers of segments,
+ * returning either the part of the string before a dot or the content after
+ * the last dot. If no dots exist, the full string is considered a single chunk.
+ */
+const std::string Main::_getIpChunk(const unsigned int index, const std::string &defaultValue) const
+{
+    PRETTY_DEBUG << "In _getIpChunk" << std::endl;
+
+    PRETTY_DEBUG << "Handling edge case when the _ip is empty" << std::endl;
+    if (_ip.empty()) {
+        PRETTY_DEBUG << "_ip is empty, returning defaultValue" << std::endl;
+        return defaultValue;
+    }
+
+    std::string resp;
+    size_t startPos = 0;
+    size_t dotPos = 0;
+    unsigned int currentIndex = 0;
+
+    PRETTY_DEBUG << "Looping through the dots in the IP address." << std::endl;
+    while (true) {
+        PRETTY_DEBUG << "Finding the next dot" << std::endl;
+        dotPos = _ip.find('.', startPos);
+        if (dotPos == std::string::npos) {
+            PRETTY_DEBUG << "No more dots found, returning the rest of the string" << std::endl;
+            break;
+        }
+
+        if (currentIndex == index) {
+            resp = _ip.substr(startPos, dotPos - startPos);
+            PRETTY_DEBUG << "Found node at index " << index << ": " << resp << std::endl;
+            return resp;
+        }
+
+        PRETTY_DEBUG << "Moving to the next segment after the current dot" << std::endl;
+        startPos = dotPos + 1;
+        ++currentIndex;
+    }
+
+    if (currentIndex == index) {
+        PRETTY_DEBUG << "Returning the content after the last dot if any" << std::endl;
+        PRETTY_DEBUG << "Getting the part after the last dot" << std::endl;
+        resp = _ip.substr(startPos);
+        PRETTY_DEBUG << "Found node at last index: " << resp << std::endl;
+        if (resp.empty()) {
+            PRETTY_DEBUG << "Returning the defaultValue because resp is empty" << std::endl;
+            return defaultValue;
+        }
+        return resp;
+    }
+
+    PRETTY_DEBUG << "No dot was found or index was too large, returning the default value.\n"
+        << "Content of defaultValue: " << defaultValue << std::endl;
+    return defaultValue;
+}
+
+/**
+ * @brief Retrieves a TextComponent based on the provided key.
+ *
+ * This function searches through a collection of `TextComponent` entities within the ECS (Entity Component System).
+ * It attempts to find the `TextComponent` whose application matches the provided `textComponentKey`.
+ * If a matching `TextComponent` is found, it returns it as a `shared_ptr`. If no match is found,
+ * it returns an empty `std::optional` object (`std::nullopt`).
+ *
+ * @param textComponentKey The key used to identify the desired `TextComponent` based on its associated application.
+ *
+ * @return A `std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>>` containing the matching `TextComponent`
+ *         if found, or `std::nullopt` if no matching component is found.
+ *
+ * @note This function iterates over all `TextComponent` entities and compares the `application` field of each one
+ *       with the provided `textComponentKey`. If no match is found, it returns `std::nullopt`.
+ */
+const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> Main::_getTextComponent(const std::string &textComponentKey)
+{
+    const std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+
+    PRETTY_DEBUG << "texts.size() = " << Recoded::myToString(texts.size()) << std::endl;
+
+    for (std::any node : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunk = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(node, false);
+        if (node.has_value()) {
+            PRETTY_DEBUG << "node type: '" << node.type().name() << "'" << std::endl;
+        }
+        if (!chunk.has_value()) {
+            PRETTY_DEBUG << "Text component is empty" << std::endl;
+            continue;
+        }
+        if (chunk.value()->getApplication() == textComponentKey || chunk.value()->getName() == textComponentKey) {
+            PRETTY_DEBUG << "Found node with key: " << chunk.value()->getApplication() << std::endl;
+            return chunk;
+        }
+    }
+    PRETTY_DEBUG << "No matching text component found" << std::endl;
+    return std::nullopt;
+}
+
+/**
+ * @brief Increments an IPv4 node value represented as a string.
+ *
+ * This function takes a string representing an IPv4 node (e.g., "0" to "255")
+ * and increments it by 1. If the input is invalid, it defaults to "0".
+ * If the input is "255", it wraps around to "0".
+ *
+ * @param v4Node The IPv4 node value as a string. Expected to be in the range "0" to "255".
+ *
+ * @return The incremented IPv4 node value as a string. Returns "0" for invalid
+ * input or when the input is "255".
+ *
+ * @warning Logs a warning message if the input is not a valid number.
+ *
+ * @note Leading zeros in the input are accepted but ignored
+ * (e.g., "000" is treated as "0").
+ */
+const std::string Main::_incrementIpV4Node(const std::string &v4Node)
+{
+    if (v4Node == "0" || v4Node == "000") {
+        return "1";
+    }
+    try {
+        const unsigned int v4int = std::max({ std::stoi(v4Node), 0 });
+        if (v4int < 255) {
+            return std::to_string(v4int + 1);
+        } else {
+            return "0";
+        }
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_WARNING << "The argument passed is not a number, you entered: '"
+            << v4Node << "', stoi error: '" << std::string(e.what()) << "'"
+            << ", defaulting to: '0'"
+            << std::endl;
+        return "0";
+    }
+}
+
+/**
+ * @brief Decrements an IPv4 node value represented as a string.
+ *
+ * This function takes a string representing an IPv4 node (e.g., "0" to "255")
+ * and decrements it by 1. If the input is invalid, it defaults to "0".
+ * If the input is "0", it wraps around to "255".
+ *
+ * @param v4Node The IPv4 node value as a string. Expected to be in the range "0" to "255".
+ *
+ * @return The decremented IPv4 node value as a string. Returns "0" for invalid input or
+ * when the input is "0".
+ *
+ * @warning Logs a warning message if the input is not a valid number.
+ *
+ * @note Leading zeros in the input are accepted but ignored
+ * (e.g., "000" is treated as "0").
+ */
+const std::string Main::_decrementIpV4Node(const std::string &v4Node)
+{
+    try {
+        const unsigned int v4int = std::max({ std::stoi(v4Node), 0 });
+        if (v4int > 0) {
+            return std::to_string(v4int - 1);
+        } else {
+            return "255";
+        }
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_WARNING << "The argument passed is not a number, you entered: '"
+            << v4Node << "', stoi error: '" << std::string(e.what()) << "'"
+            << ", defaulting to: '0'"
+            << std::endl;
+        return "0";
+    }
+}
+
+/**
+ * @brief Increments a port counter value represented as a string.
+ *
+ * This function takes a string representing a port value (e.g., "0" to `_maximumPortRange`) and increments
+ * it by 1. If the input is invalid, it defaults to "0". If the port value reaches `_maximumPortRange`,
+ * it wraps around to "0".
+ *
+ * @param portSection The port value as a string. Expected to be a numeric value in the range "0" to `_maximumPortRange`.
+ * @return The incremented port value as a string. Returns "0" for invalid input or when the port value equals `_maximumPortRange`.
+ *
+ * @warning Logs a warning message if the input is not a valid number.
+ *
+ * @note Leading zeros in the input are accepted but ignored (e.g., "000" is treated as "0").
+ * @note The `_maximumPortRange` variable should be properly defined to set the upper limit of the port range.
+ */
+const std::string Main::_incrementPortCounter(const std::string &portSection)
+{
+    if (portSection == "0" || portSection == "000") {
+        return "1";
+    }
+    try {
+        const unsigned int port = std::max({ std::stoi(portSection), 0 });
+        if (port < _maximumPortRange) {
+            return std::to_string(port + 1);
+        } else {
+            return "0";
+        }
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_WARNING << "The argument passed is not a number, you entered: '"
+            << portSection << "', stoi error: '" << std::string(e.what()) << "'"
+            << ", defaulting to: '0'"
+            << std::endl;
+        return "0";
+    }
+}
+
+/**
+ * @brief Decrements a port counter value represented as a string.
+ *
+ * This function takes a string representing a port value (e.g., "0" to `_maximumPortRange`) and decrements
+ * it by 1. If the input is invalid, it defaults to "0". If the port value is "0", it wraps around
+ * to `_maximumPortRange`.
+ *
+ * @param portSection The port value as a string. Expected to be a numeric value in the range "0" to `_maximumPortRange`.
+ * @return The decremented port value as a string. Returns "0" for invalid input or when the port value is negative.
+ *
+ * @warning Logs a warning message if the input is not a valid number.
+ *
+ * @note Leading zeros in the input are accepted but ignored (e.g., "000" is treated as "0").
+ * @note The `_maximumPortRange` variable should be properly defined to set the upper limit of the port range.
+ */
+const std::string Main::_decrementPortCounter(const std::string &portSection)
+{
+    try {
+        const unsigned int port = std::max({ std::stoi(portSection), 0 });
+        if (port > 0) {
+            return std::to_string(port - 1);
+        } else {
+            return std::to_string(_maximumPortRange);
+        }
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_WARNING << "The argument passed is not a number, you entered: '"
+            << portSection << "', stoi error: '" << std::string(e.what()) << "'"
+            << ", defaulting to: '0'"
+            << std::endl;
+        return "0";
+    }
+}
+
+/**
+ * @brief Increments the value of the first chunk of the IP address.
+ *
+ * This function retrieves the current value of the first IP chunk, increments it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_incrementIpChunkOne()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4FirstChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _incrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The first chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Increments the value of the second chunk of the IP address.
+ *
+ * This function retrieves the current value of the second IP chunk, increments it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_incrementIpChunkTwo()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4SecondChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the second IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _incrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The second chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Increments the value of the third chunk of the IP address.
+ *
+ * This function retrieves the current value of the third IP chunk, increments it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_incrementIpChunkThree()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4ThirdChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the third IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _incrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The third chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Increments the value of the fourth chunk of the IP address.
+ *
+ * This function retrieves the current value of the fourth IP chunk, increments it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_incrementIpChunkFour()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4FourthChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the fourth IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _incrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The fourth chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+
+/**
+ * @brief Increments the value of the port chunk.
+ *
+ * This function retrieves the current value of the port chunk, increments it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_incrementPortChunk()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_portV4ChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the port chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _incrementPortCounter(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The port chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+
+/**
+ * @brief Decrements the value of the first chunk of the IP address.
+ *
+ * This function retrieves the current value of the first IP chunk, decrements it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_decrementIpChunkOne()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4FirstChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _decrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The first chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Decrements the value of the second chunk of the IP address.
+ *
+ * This function retrieves the current value of the second IP chunk, decrements it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_decrementIpChunkTwo()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4SecondChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the second IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _decrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The second chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Decrements the value of the third chunk of the IP address.
+ *
+ * This function retrieves the current value of the third IP chunk, decrements it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_decrementIpChunkThree()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4ThirdChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the third IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _decrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The third chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Decrements the value of the fourth chunk of the IP address.
+ *
+ * This function retrieves the current value of the fourth IP chunk, decrements it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_decrementIpChunkFour()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_ipV4FourthChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the fourth IP chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _decrementIpV4Node(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The fourth chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+
+/**
+ * @brief Decrements the value of the port chunk.
+ *
+ * This function retrieves the current value of the port chunk, decrements it, and updates the corresponding
+ * `TextComponent`. If the `TextComponent` cannot be found, an error message is logged.
+ */
+void Main::_decrementPortChunk()
+{
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Flushing cached events" << std::endl;
+    events->flushEvents();
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> text = _getTextComponent(_portV4ChunkKey);
+    if (!text.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the port chunk." << std::endl;
+        return;
+    }
+    const std::string currentChunk = text.value()->getText();
+    const std::string newChunk = _decrementPortCounter(currentChunk);
+    text.value()->setText(newChunk);
+    PRETTY_DEBUG << "The port chunk has it's value that has been set to: '"
+        << newChunk << "', the previous value was: '" << currentChunk << "'"
+        << std::endl;
+}
+
+/**
+ * @brief Retrieves the EventManager component from the ECS system.
+ *
+ * This function attempts to fetch the `GUI::ECS::Systems::EventManager` component from the ECS entity system.
+ * If the component cannot be found or an uncasting error occurs, an exception is thrown.
+ *
+ * @throws CustomExceptions::NoEventManager If the `EventManager` component is not found or uncasting fails.
+ *
+ * @return A `std::shared_ptr` to the `GUI::ECS::Systems::EventManager` component.
+ *
+ * @note Debug messages are logged to indicate the success or failure of the operation.
+ */
+const std::shared_ptr<GUI::ECS::Systems::EventManager> Main::_getEventManager()
+{
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    return event_ptr.value();
+}
+
+/**
+ * @brief Creates a TextComponent entity and initializes its properties.
+ *
+ * This function constructs a new `GUI::ECS::Components::TextComponent` instance with the
+ * specified text, font, and appearance settings, then adds it to the ECS system's entity list.
+ *
+ * @param application The name of the application the text component belongs to.
+ * @param name The name identifier for the text component.
+ * @param text The text content to display in the text component.
+ * @param font The font to use for rendering the text.
+ * @param size The font size to render the text with.
+ * @param normal The color of the text in its normal state.
+ * @param hover The color of the text when hovered over.
+ * @param clicked The color of the text when clicked.
+ *
+ * @return A `std::shared_ptr` to the created `GUI::ECS::Components::TextComponent`.
+ */
+const std::shared_ptr<GUI::ECS::Components::TextComponent> Main::_createText(const std::string &application, const std::string &name, const std::string &text, const GUI::ECS::Systems::Font &font, const unsigned int size, const GUI::ECS::Systems::Colour &normal, const GUI::ECS::Systems::Colour &hover, const GUI::ECS::Systems::Colour &clicked)
+{
+    std::shared_ptr<GUI::ECS::Components::TextComponent> textNode = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, font, text, size);
+    textNode->setApplication(application);
+    textNode->setName(name);
+    textNode->setNormalColor(normal);
+    textNode->setHoverColor(hover);
+    textNode->setClickedColor(clicked);
+    PRETTY_DEBUG << "Ecs before push_backs:\n" << "- TextComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size()) << std::endl;
+    _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(textNode);
+    PRETTY_DEBUG << "Ecs after push_backs:\n" << "- TextComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size()) << std::endl;
+    _baseId += 1;
+    return textNode;
+}
 
 /**
  * @brief Function in charge of creating and adding a button component to the ecs system.
@@ -1023,13 +1591,18 @@ void Main::_processIncommingPackets()
  *
  * @return const std::shared_ptr<GUI::ECS::Components::ButtonComponent>
  */
-const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName, const int width, const int height, const int textSize, const GUI::ECS::Systems::Colour &bg, const GUI::ECS::Systems::Colour &normal, const GUI::ECS::Systems::Colour &hover, const GUI::ECS::Systems::Colour &clicked)
+const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName, const int width, const int height, const int textSize, const GUI::ECS::Systems::Colour &bg, const GUI::ECS::Systems::Colour &normal, const GUI::ECS::Systems::Colour &hover, const GUI::ECS::Systems::Colour &clicked, const std::shared_ptr<GUI::ECS::Systems::Font> &textFont)
 {
     const std::string errMsgFont = "<Required font not found for the text of the button>, system error: ";
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontInstance = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], true, errMsgFont);
-    if (!fontInstance.has_value()) {
-        PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
-        throw CustomExceptions::NoFont(errMsgFont);
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontInstance;
+    if (textFont == nullptr) {
+        fontInstance = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>, CustomExceptions::NoFont>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], true, errMsgFont);
+        if (!fontInstance.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
+            throw CustomExceptions::NoFont(errMsgFont);
+        }
+    } else {
+        fontInstance.emplace(textFont);
     }
     std::shared_ptr<GUI::ECS::Components::ShapeComponent> shapeItem = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId);
     _baseId += 1;
@@ -1037,18 +1610,31 @@ const std::shared_ptr<GUI::ECS::Components::ButtonComponent> Main::_createButton
     shapeItem->setNormalColor(bg);
     shapeItem->setHoverColor(bg);
     shapeItem->setClickedColor(bg);
-    shapeItem->setApplication(application);
+    shapeItem->setApplication(std::string(application + "Shape"));
 
     std::shared_ptr<GUI::ECS::Components::TextComponent> textItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(fontInstance.value()), title, textSize, normal, hover, clicked);
-    textItem->setApplication(application);
+    textItem->setApplication(std::string(application + "Text"));
     _baseId += 1;
     std::shared_ptr<GUI::ECS::Components::ButtonComponent> buttonItem = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *shapeItem, *textItem);
     buttonItem->setCallback(callback, callbackName);
     buttonItem->setApplication(application);
     _baseId += 1;
+    PRETTY_DEBUG << "Ecs before push_backs:\n" <<
+        "- TextComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size()) << "\n"
+        "- ShapeComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].size()) << "\n"
+        "- ButtonComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].size()) << "\n"
+        << std::endl;
+    PRETTY_DEBUG << "Inserting a TextComponent with key: " << title << std::endl;
     _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(textItem);
+    PRETTY_DEBUG << "Inserting a ShapeComponent with key: " << application << std::endl;
     _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(shapeItem);
+    PRETTY_DEBUG << "Inserting a Button Component with key: " << Recoded::myToString(_baseId) << std::endl;
     _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(buttonItem);
+    PRETTY_DEBUG << "Ecs after push_backs:\n" <<
+        "- TextComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size()) << "\n"
+        "- ShapeComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].size()) << "\n"
+        "- ButtonComponent: " << Recoded::myToString(_ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].size()) << "\n"
+        << std::endl;
     return buttonItem;
 }
 
@@ -1068,12 +1654,12 @@ const unsigned int Main::_getScreenCenterX()
     }
     PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
     const std::pair<int, int> windowDimensions = win.value()->getDimensions();
-    if (windowDimensions.first == 0.0) {
+    if (windowDimensions.first <= 0.0) {
         PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
         throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
     }
     PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
-    return windowDimensions.first / 2;
+    return static_cast<unsigned int>(windowDimensions.first / 2);
 }
 
 
@@ -1093,27 +1679,579 @@ const unsigned int Main::_getScreenCenterY()
     }
     PRETTY_DEBUG << "Setting the icon at the top center of the main menu." << std::endl;
     const std::pair<int, int> windowDimensions = win.value()->getDimensions();
-    if (windowDimensions.second == 0.0) {
+    if (windowDimensions.second <= 0.0) {
         PRETTY_CRITICAL << "Skipping calculations and rendering because the window is smaller or equal to 0." << std::endl;
         throw CustomExceptions::NoWindow("<There is no window or it's size is smaller than 1>");
     }
     PRETTY_DEBUG << "Calculating the y-coordinate (center of the window)." << std::endl;
-    return windowDimensions.second / 2;
+    return static_cast<unsigned int>(windowDimensions.second / 2);
 }
 
 void Main::_gameScreen()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 }
 
 void Main::_demoScreen()
 {
+    PRETTY_DEBUG << "In _demoScreen" << std::endl;
+    PRETTY_DEBUG << "_demoInitialised = " << Recoded::myToString(_demoInitialised) << ", _demoStarted = " << Recoded::myToString(_demoStarted) << std::endl;
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _demoBrain.stop();
+        _demoStarted = false;
+        _goHome();
+    }
+
+    if (!_demoInitialised) {
+        PRETTY_DEBUG << "The demo brain is not initialised, initialising" << std::endl;
+        _demoBrain.initialiseClass(_ecsEntities);
+        _demoInitialised = true;
+        PRETTY_DEBUG << "The brain has been initialised" << std::endl;
+    }
+
+    if (!_demoStarted) {
+        PRETTY_DEBUG << "The demo has not started, starting" << std::endl;
+        _demoBrain.reset();
+        _demoBrain.start();
+        _demoStarted = true;
+        PRETTY_DEBUG << "The demo has started" << std::endl;
+    }
+
+    if (_demoBrain.isGameOver()) {
+        PRETTY_DEBUG << "The demo is over, resetting" << std::endl;
+        _demoBrain.reset();
+        _demoStarted = false;
+        PRETTY_DEBUG << "The demo has been reset" << std::endl;
+        PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
+        _goGameOver();
+        PRETTY_DEBUG << "The game over screen has been set to play next" << std::endl;
+        return;
+    }
+
+    if (_demoBrain.isGameWon()) {
+        PRETTY_DEBUG << "The demo has been won, resetting" << std::endl;
+        _demoBrain.reset();
+        _demoStarted = false;
+        PRETTY_DEBUG << "The demo has been reset" << std::endl;
+        PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
+        _goGameWon();
+        PRETTY_DEBUG << "The game won screen has been set to play next" << std::endl;
+        return;
+    }
+
+    PRETTY_DEBUG << "Ticking the demo brain" << std::endl;
+    _demoBrain.tick();
+    PRETTY_DEBUG << "Rendering content" << std::endl;
+    _demoBrain.render();
+    PRETTY_DEBUG << "Ticked and rendered content" << std::endl;
 }
 
 void Main::_settingsMenu()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Declaring size customisation options" << std::endl;
+    const unsigned int titleTextSize = 40;
+    const unsigned int bodyTextSize = 20;
+    const unsigned int soundTextSize = 20;
+    const unsigned int musicTextSize = 20;
+    const unsigned int soundButtonTextSize = 20;
+    const unsigned int soundButtonWidth = 50;
+    const unsigned int soundButtonHeight = 20;
+    const unsigned int musicButtonTextSize = 20;
+    const unsigned int musicButtonWidth = 50;
+    const unsigned int musicButtonHeight = 20;
+    PRETTY_DEBUG << "Declared size customisation options" << std::endl;
+
+    PRETTY_DEBUG << "Declaring colour customisation options" << std::endl;
+    const GUI::ECS::Systems::Colour titleColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour bodyColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour soundColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour musicColour = GUI::ECS::Systems::Colour::Cyan;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonNormalColour = GUI::ECS::Systems::Colour::White;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour stoppedSoundButtonClickedColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingSoundButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingSoundButtonNormalColour = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour playingSoundButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour playingSoundButtonClickedColour = GUI::ECS::Systems::Colour::Red;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonBackgroundColour = GUI::ECS::Systems::Colour::Red;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonNormalColour = GUI::ECS::Systems::Colour::White;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour stoppedMusicButtonClickedColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingMusicButtonBackgroundColour = GUI::ECS::Systems::Colour::Green;
+    const GUI::ECS::Systems::Colour playingMusicButtonNormalColour = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour playingMusicButtonHoverColour = GUI::ECS::Systems::Colour::Grey50;
+    const GUI::ECS::Systems::Colour playingMusicButtonClickedColour = GUI::ECS::Systems::Colour::Red;
+    PRETTY_DEBUG << "Declared colour customisation options" << std::endl;
+
+    PRETTY_DEBUG << "Declaring required item keys" << std::endl;
+    const std::string titleTextKey = "settingsMenuTitleTextKey";
+    const std::string bodyTextKey = "settingsMenuBodyTextKey";
+    const std::string soundTextKey = "settingsMenuSoundTextKey";
+    const std::string musicTextKey = "settingsMenuMusicTextKey";
+    const std::string soundButtonKey = "settingsMenuSoundButtonKey";
+    const std::string musicButtonKey = "settingsMenuMusicButtonKey";
+    PRETTY_DEBUG << "Declared required item keys" << std::endl;
+
+    PRETTY_DEBUG << "Getting the lists of ressources we want" << std::endl;
+    // The list of font components to allow the screen to find the ressources it needs if present
+    const std::vector<std::any> fonts = _ecsEntities[typeid(GUI::ECS::Systems::Font)];
+
+    // The list of text components to allow the screen to find the ressources it needs if present
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+
+    // The list of button components to allow the screen to find the ressources it needs if present
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+
+    // The list of the background components to allow the screen to find the ressources it needs (if present)
+    std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    PRETTY_DEBUG << "Got the list of ressources we want" << std::endl;
+
+    PRETTY_DEBUG << "Declaring the ressources required for the settings menu (for the texts)" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> bodyTextItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> titleTextItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> musicTextItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> soundTextItem;
+    PRETTY_DEBUG << "Declared the ressources required for the settings menu (for the texts)" << std::endl;
+
+    PRETTY_DEBUG << "Declaring the ressources required for the settings menu (for the buttons)" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> musicButtonItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> soundButtonItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> mainMenuButtonItem;
+    PRETTY_DEBUG << "Declared the ressources required for the settings menu (for the buttons)" << std::endl;
+
+    PRETTY_DEBUG << "Declaring font holder instances" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFont;
+    PRETTY_DEBUG << "Declared font holder instances" << std::endl;
+
+    PRETTY_DEBUG << "Declaring the ressource required for the settings menu to have a background" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundItem;
+    PRETTY_DEBUG << "Declared the ressource required for the settings menu to have a background" << std::endl;
+
+
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule.has_value()) {
+            continue;
+        }
+        std::string application = textCapsule.value()->getApplication();
+        std::string name = textCapsule.value()->getName();
+        if (application == titleTextKey || name == titleTextKey) {
+            titleTextItem.emplace(textCapsule.value());
+        } else if (application == bodyTextKey || name == bodyTextKey) {
+            bodyTextItem.emplace(textCapsule.value());
+        } else if (application == soundTextKey || name == soundTextKey) {
+            soundTextItem.emplace(textCapsule.value());
+        } else if (application == musicTextKey || name == musicTextKey) {
+            musicTextItem.emplace(textCapsule.value());
+        } else {
+            continue;
+        }
+    }
+
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule.has_value()) {
+            continue;
+        }
+        std::string application = buttonCapsule.value()->getApplication();
+        std::string name = buttonCapsule.value()->getName();
+        if (application == soundButtonKey || name == soundButtonKey) {
+            soundButtonItem.emplace(buttonCapsule.value());
+        } else if (application == _mainMenuKey) {
+            mainMenuButtonItem.emplace(buttonCapsule.value());
+        } else if (application == musicButtonKey || name == musicButtonKey) {
+            musicButtonItem.emplace(buttonCapsule.value());
+        } else {
+            continue;
+        }
+    }
+
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (!backgroundCapsule.has_value()) {
+            continue;
+        }
+        if (
+            backgroundCapsule.value()->getApplication() == "settings" || backgroundCapsule.value()->getName() == "settings" ||
+            backgroundCapsule.value()->getApplication() == "Settings" || backgroundCapsule.value()->getName() == "Settings"
+            ) {
+            backgroundItem.emplace(backgroundCapsule.value());
+        }
+    }
+
+    if (!titleTextItem.has_value() || !bodyTextItem.has_value() || !soundTextItem.has_value() || !musicButtonItem.has_value() || !soundButtonItem.has_value() || !mainMenuButtonItem.has_value()) {
+        PRETTY_DEBUG << "Fetching the fonts that will be used in the window" << std::endl;
+        unsigned int index = 0;
+        unsigned int titleFontIndex = 0;
+        unsigned int bodyFontIndex = 0;
+        unsigned int defaultFontIndex = 0;
+        unsigned int buttonFontIndex = 0;
+        for (std::any fontCast : fonts) {
+            std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fontCast, false);
+            if (!fontCapsule.has_value()) {
+                continue;
+            }
+            std::string applicationContext = fontCapsule.value()->getApplication();
+            if (applicationContext == "title") {
+                titleFontIndex = index;
+            } else if (applicationContext == "body") {
+                bodyFontIndex = index;
+            } else if (applicationContext == "default") {
+                defaultFontIndex = index;
+            } else if (applicationContext == "button") {
+                buttonFontIndex = index;
+            } else {
+                index++;
+                continue;
+            }
+            index++;
+        }
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[titleFontIndex], false);
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[bodyFontIndex], false);
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[defaultFontIndex], false);
+        const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[buttonFontIndex], false);
+        if (!defaultFontCapsule.has_value()) {
+            PRETTY_DEBUG << "No default font found, aborting program" << std::endl;
+            throw CustomExceptions::NoFont("<Default font not found>");
+        }
+        defaultFont.emplace(defaultFontCapsule.value());
+        titleFont.emplace(defaultFontCapsule.value());
+        bodyFont.emplace(defaultFontCapsule.value());
+        buttonFont.emplace(defaultFontCapsule.value());
+        if (titleFontCapsule.has_value()) {
+            PRETTY_SUCCESS << "Title font found, not defaulting to the default font." << std::endl;
+            titleFont.emplace(titleFontCapsule.value());
+        }
+        if (bodyFontCapsule.has_value()) {
+            PRETTY_SUCCESS << "Body font found, not defaulting to the default font." << std::endl;
+            bodyFont.emplace(bodyFontCapsule.value());
+        }
+        if (buttonFontCapsule.has_value()) {
+            PRETTY_SUCCESS << "Button font found, not defaulting to the default font." << std::endl;
+            buttonFont.emplace(buttonFontCapsule.value());
+        }
+        PRETTY_DEBUG << "Fetched the fonts that will be used in the window" << std::endl;
+    }
+
+    PRETTY_DEBUG << "Checking is title text component exists" << std::endl;
+    if (!titleTextItem.has_value()) {
+        PRETTY_DEBUG << "Title text component does not exist, creating" << std::endl;
+        if (!titleFont.has_value()) {
+            PRETTY_ERROR << "No font found in title font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating title text component" << std::endl;
+        titleTextItem = _createText(
+            titleTextKey,
+            titleTextKey,
+            "Settings",
+            *(titleFont.value()),
+            titleTextSize,
+            titleColour,
+            titleColour,
+            titleColour
+        );
+        PRETTY_DEBUG << "Created title text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if title text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking is body text component exists" << std::endl;
+    if (!bodyTextItem.has_value()) {
+        PRETTY_DEBUG << "Body text component does not exist, creating" << std::endl;
+        if (!bodyFont.has_value()) {
+            PRETTY_ERROR << "No font found in body font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating body text component" << std::endl;
+        bodyTextItem = _createText(
+            bodyTextKey,
+            bodyTextKey,
+            "Comme and customise your user experience!",
+            *(bodyFont.value()),
+            bodyTextSize,
+            bodyColour,
+            bodyColour,
+            bodyColour
+        );
+        PRETTY_DEBUG << "Created body text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if body text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking is sound text component exists" << std::endl;
+    if (!soundTextItem.has_value()) {
+        PRETTY_DEBUG << "Sound text component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in body font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating sound text component" << std::endl;
+        soundTextItem = _createText(
+            soundTextKey,
+            soundTextKey,
+            "Sound effects: ",
+            *(defaultFont.value()),
+            soundTextSize,
+            soundColour,
+            soundColour,
+            soundColour
+        );
+        PRETTY_DEBUG << "Created sound text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if sound text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking is music text component exists" << std::endl;
+    if (!musicTextItem.has_value()) {
+        PRETTY_DEBUG << "Music text component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in body font." << std::endl;
+            return;
+        }
+        PRETTY_DEBUG << "Creating music text component" << std::endl;
+        musicTextItem = _createText(
+            musicTextKey,
+            musicTextKey,
+            "Music: ",
+            *(defaultFont.value()),
+            musicTextSize,
+            musicColour,
+            musicColour,
+            musicColour
+        );
+        PRETTY_DEBUG << "Created music text component" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if music text component existed" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the sound button is created" << std::endl;
+    if (!soundButtonItem.has_value()) {
+        PRETTY_DEBUG << "Sound button component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in default font." << std::endl;
+            return;
+        }
+        std::string soundStatus = "OFF";
+        GUI::ECS::Systems::Colour soundButtonBackgroundColour = playingSoundButtonBackgroundColour;
+        GUI::ECS::Systems::Colour soundButtonNormalColour = playingSoundButtonNormalColour;
+        GUI::ECS::Systems::Colour soundButtonHoverColour = playingSoundButtonHoverColour;
+        GUI::ECS::Systems::Colour soundButtonClickedColour = playingSoundButtonClickedColour;
+        if (_playSoundEffects) {
+            soundStatus = "ON";
+            soundButtonBackgroundColour = stoppedSoundButtonBackgroundColour;
+            soundButtonNormalColour = stoppedSoundButtonNormalColour;
+            soundButtonHoverColour = stoppedSoundButtonHoverColour;
+            soundButtonClickedColour = stoppedSoundButtonClickedColour;
+        }
+        PRETTY_DEBUG << "Creating sound button component" << std::endl;
+        soundButtonItem = _createButton(
+            soundButtonKey,
+            soundStatus,
+            std::bind(&Main::_toggleSound, this),
+            "_toggleSound",
+            soundButtonWidth,
+            soundButtonHeight,
+            soundButtonTextSize,
+            soundButtonBackgroundColour,
+            soundButtonNormalColour,
+            soundButtonHoverColour,
+            soundButtonClickedColour,
+            defaultFont.value()
+        );
+        PRETTY_DEBUG << "sound button component created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the sound button was created" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the music button is created" << std::endl;
+    if (!musicButtonItem.has_value()) {
+        PRETTY_DEBUG << "Sound button component does not exist, creating" << std::endl;
+        if (!defaultFont.has_value()) {
+            PRETTY_ERROR << "No font found in default font." << std::endl;
+            return;
+        }
+        std::string musicStatus = "OFF";
+        GUI::ECS::Systems::Colour musicButtonBackgroundColour = playingMusicButtonBackgroundColour;
+        GUI::ECS::Systems::Colour musicButtonNormalColour = playingMusicButtonNormalColour;
+        GUI::ECS::Systems::Colour musicButtonHoverColour = playingMusicButtonHoverColour;
+        GUI::ECS::Systems::Colour musicButtonClickedColour = playingMusicButtonClickedColour;
+        if (_playMusic) {
+            musicStatus = "ON";
+            musicButtonBackgroundColour = stoppedMusicButtonBackgroundColour;
+            musicButtonNormalColour = stoppedMusicButtonNormalColour;
+            musicButtonHoverColour = stoppedMusicButtonHoverColour;
+            musicButtonClickedColour = stoppedMusicButtonClickedColour;
+        }
+        PRETTY_DEBUG << "Creating music button component" << std::endl;
+        musicButtonItem = _createButton(
+            musicButtonKey,
+            musicStatus,
+            std::bind(&Main::_toggleMusic, this),
+            "_toggleMusic",
+            musicButtonWidth,
+            musicButtonHeight,
+            musicButtonTextSize,
+            musicButtonBackgroundColour,
+            musicButtonNormalColour,
+            musicButtonHoverColour,
+            musicButtonClickedColour,
+            defaultFont.value()
+        );
+        PRETTY_DEBUG << "music button component created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the music button was created" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the home button exists" << std::endl;
+    if (!mainMenuButtonItem.has_value()) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        mainMenuButtonItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed" << std::endl;
+
+
+    PRETTY_DEBUG << "Setting item positions" << std::endl;
+    backgroundItem.value()->setDimension(win.value()->getDimensions());
+    backgroundItem.value()->setPosition({ 0, 0 });
+
+    float posY = 0;
+    float posX = 0;
+    const float step = 10;
+
+    titleTextItem.value()->setPosition({ posX, posY });
+    posY += step + titleTextSize;
+    bodyTextItem.value()->setPosition({ posX, posY });
+    posY += step + bodyTextSize;
+    soundTextItem.value()->setPosition({ posX, posY });
+    posX = _getScreenCenterX();
+    soundButtonItem.value()->setPosition({ posX, posY });
+    posX = 0;
+    posY += step + soundTextSize;
+    musicTextItem.value()->setPosition({ posX, posY });
+    posX = _getScreenCenterX();
+    musicButtonItem.value()->setPosition({ posX, posY });
+    posX = 0;
+    posY += step + musicTextSize;
+    mainMenuButtonItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "Item positions set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the text of the buttons" << std::endl;
+    std::string soundStatus = "OFF";
+    if (_playSoundEffects) {
+        soundStatus = "ON";
+    }
+    soundButtonItem.value()->setTextString(soundStatus);
+    std::string musicStatus = "OFF";
+    if (_playMusic) {
+        musicStatus = "ON";
+    }
+    musicButtonItem.value()->setTextString(musicStatus);
+    PRETTY_DEBUG << "The text of the buttons has been set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the colour of the buttons" << std::endl;
+    PRETTY_DEBUG << "Colour for the sound" << std::endl;
+    if (_playSoundEffects) {
+        soundButtonItem.value()->setNormalColor(playingSoundButtonBackgroundColour);
+        soundButtonItem.value()->setHoverColor(playingSoundButtonBackgroundColour);
+        soundButtonItem.value()->setClickedColor(playingSoundButtonBackgroundColour);
+        soundButtonItem.value()->setTextNormalColor(playingSoundButtonNormalColour);
+        soundButtonItem.value()->setTextHoverColor(playingSoundButtonHoverColour);
+        soundButtonItem.value()->setTextClickedColor(playingSoundButtonClickedColour);
+    } else {
+        soundButtonItem.value()->setNormalColor(stoppedSoundButtonBackgroundColour);
+        soundButtonItem.value()->setHoverColor(stoppedSoundButtonBackgroundColour);
+        soundButtonItem.value()->setClickedColor(stoppedSoundButtonBackgroundColour);
+        soundButtonItem.value()->setTextNormalColor(stoppedSoundButtonNormalColour);
+        soundButtonItem.value()->setTextHoverColor(stoppedSoundButtonHoverColour);
+        soundButtonItem.value()->setTextClickedColor(stoppedSoundButtonClickedColour);
+    }
+    PRETTY_DEBUG << "Colour for the music" << std::endl;
+    if (_playMusic) {
+        musicButtonItem.value()->setNormalColor(playingMusicButtonBackgroundColour);
+        musicButtonItem.value()->setHoverColor(playingMusicButtonBackgroundColour);
+        musicButtonItem.value()->setClickedColor(playingMusicButtonBackgroundColour);
+        musicButtonItem.value()->setTextNormalColor(playingMusicButtonNormalColour);
+        musicButtonItem.value()->setTextHoverColor(playingMusicButtonHoverColour);
+        musicButtonItem.value()->setTextClickedColor(playingMusicButtonClickedColour);
+    } else {
+        musicButtonItem.value()->setNormalColor(stoppedMusicButtonBackgroundColour);
+        musicButtonItem.value()->setHoverColor(stoppedMusicButtonBackgroundColour);
+        musicButtonItem.value()->setClickedColor(stoppedMusicButtonBackgroundColour);
+        musicButtonItem.value()->setTextNormalColor(stoppedMusicButtonNormalColour);
+        musicButtonItem.value()->setTextHoverColor(stoppedMusicButtonHoverColour);
+        musicButtonItem.value()->setTextClickedColor(stoppedMusicButtonClickedColour);
+    }
+    PRETTY_DEBUG << "The colour of the buttons has been set" << std::endl;
+
+    PRETTY_DEBUG << "Displaying elements on the screen" << std::endl;
+    win.value()->draw(*(backgroundItem.value()));
+    PRETTY_DEBUG << "Background rendered" << std::endl;
+    win.value()->draw(*(titleTextItem.value()));
+    win.value()->draw(*(bodyTextItem.value()));
+    PRETTY_DEBUG << "Title and body text rendered" << std::endl;
+    win.value()->draw(*(soundTextItem.value()));
+    win.value()->draw(*(soundButtonItem.value()));
+    PRETTY_DEBUG << "Sound button and text rendered" << std::endl;
+    win.value()->draw(*(musicTextItem.value()));
+    win.value()->draw(*(musicButtonItem.value()));
+    PRETTY_DEBUG << "Music button and text rendered" << std::endl;
+    win.value()->draw(*(mainMenuButtonItem.value()));
+    PRETTY_DEBUG << "Home button rendered" << std::endl;
+    PRETTY_DEBUG << "Displayed elements on the screen" << std::endl;
 }
 
 void Main::_unknownScreen()
@@ -1125,17 +2263,31 @@ void Main::_unknownScreen()
     const std::string titleKey = "unknownScreenTitle";
     const std::string bodyKey = "unknownScreenBody";
 
-    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
-    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
-    std::shared_ptr<GUI::ECS::Components::ButtonComponent> home;
+    const unsigned int titleTextSize = 40;
+    const unsigned int bodyTextSize = 20;
+
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::CadetBlue;
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> homeItem;
 
     std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
     std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
 
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
         PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
         throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
     }
 
 
@@ -1144,10 +2296,12 @@ void Main::_unknownScreen()
         if (textCapsule) {
             if (textCapsule.value()->getApplication() == titleKey) {
                 titleTextFound = true;
-                title = textCapsule.value();
+                titleItem = textCapsule.value();
+                titleItem->setSize(titleTextSize);
             } else if (textCapsule.value()->getApplication() == bodyKey) {
                 bodyTextFound = true;
-                body = textCapsule.value();
+                bodyItem = textCapsule.value();
+                bodyItem->setSize(bodyTextSize);
             } else {
                 continue;
             }
@@ -1159,7 +2313,7 @@ void Main::_unknownScreen()
         if (buttonCapsule) {
             if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
                 homeButtonFound = true;
-                home = buttonCapsule.value();
+                homeItem = buttonCapsule.value();
             }
         }
     }
@@ -1170,10 +2324,16 @@ void Main::_unknownScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
             return;
         }
-        std::shared_ptr<GUI::ECS::Components::TextComponent> title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
-        title->setApplication(titleKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
-        _baseId += 1;
+        titleItem = _createText(
+            titleKey,
+            titleKey,
+            "Uh Oh!",
+            *(titleFont.value()),
+            titleTextSize,
+            textColour,
+            textColour,
+            textColour
+        );
     }
 
     if (!bodyTextFound) {
@@ -1182,129 +2342,21 @@ void Main::_unknownScreen()
             PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
             return;
         }
-        std::shared_ptr<GUI::ECS::Components::TextComponent> body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
-        body->setApplication(bodyKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
-        _baseId += 1;
+        bodyItem = _createText(
+            bodyKey,
+            bodyKey,
+            "It seems like you have landed on an unknown page.",
+            *(bodyFont.value()),
+            bodyTextSize,
+            textColour,
+            textColour,
+            textColour
+        );
     }
 
-    if (!homeButtonFound) {
-        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_defaultFontIndex], false);
-        if (!defaultFont.has_value()) {
-            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
-            return;
-        }
-        std::shared_ptr<GUI::ECS::Components::TextComponent> buttonText = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(defaultFont.value()), "It seems like you have landed on an unknown page.");
-        buttonText->setApplication(bodyKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(buttonText);
-        _baseId += 1;
-        Recoded::FloatRect rectangle;
-        rectangle.position.first = 0;
-        rectangle.position.second = 0;
-        rectangle.size.first = 20;
-        rectangle.size.second = 20;
-        std::shared_ptr<GUI::ECS::Components::ShapeComponent> buttonShape = std::make_shared<GUI::ECS::Components::ShapeComponent>(_baseId, rectangle, GUI::ECS::Systems::Colour::White);
-        buttonShape->setVisible(true);
-        _ecsEntities[typeid(GUI::ECS::Components::ShapeComponent)].push_back(buttonShape);
-        _baseId += 1;
-        std::shared_ptr<GUI::ECS::Components::ButtonComponent> home = std::make_shared<GUI::ECS::Components::ButtonComponent>(_baseId, *buttonShape, *buttonText);
-        home->setApplication(_mainMenuKey);
-        home->setCallback(std::bind(&Main::_mainMenuScreen, this), "_mainMenuScreen");
-        _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)].push_back(home);
-        _baseId += 1;
-    }
-
-    unsigned int posx = _getScreenCenterX();
-    unsigned int posy = _getScreenCenterY();
-
-    title->setPosition({ posx, posy });
-    body->setPosition({ posx, posy + 20 });
-    home->setPosition({ posx, posy + 40 });
-    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
-    win.value()->draw(*title);
-    win.value()->draw(*body);
-    win.value()->draw(*home);
-    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
-}
-
-void Main::_gameOverScreen()
-{
-
-    bool bodyTextFound = false;
-    bool titleTextFound = false;
-    bool homeButtonFound = false;
-
-    const std::string titleKey = "GameOverScreenTitle";
-    const std::string bodyKey = "GameOverScreenBody";
-    const std::string backgroundKey = "gameOver";
-
-    std::shared_ptr<GUI::ECS::Components::TextComponent> body;
-    std::shared_ptr<GUI::ECS::Components::TextComponent> title;
-    std::shared_ptr<GUI::ECS::Components::ButtonComponent> home;
-
-    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
-    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
-
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
-    if (!win.has_value()) {
-        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
-        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
-    }
-
-
-    for (std::any textCast : texts) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
-        if (textCapsule) {
-            if (textCapsule.value()->getApplication() == titleKey) {
-                titleTextFound = true;
-                title = textCapsule.value();
-            } else if (textCapsule.value()->getApplication() == bodyKey) {
-                bodyTextFound = true;
-                body = textCapsule.value();
-            } else {
-                continue;
-            }
-        }
-    }
-
-    for (std::any buttonCast : buttons) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
-        if (buttonCapsule) {
-            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
-                homeButtonFound = true;
-                home = buttonCapsule.value();
-            }
-        }
-    }
-
-    if (!titleTextFound) {
-        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
-        if (!titleFont.has_value()) {
-            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the unknown screen screen." << std::endl;
-            return;
-        }
-        std::shared_ptr<GUI::ECS::Components::TextComponent> title = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Uh Oh!");
-        title->setApplication(titleKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(title);
-        _baseId += 1;
-    }
-
-    if (!bodyTextFound) {
-        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
-        if (!bodyFont.has_value()) {
-            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the unknown screen screen." << std::endl;
-            return;
-        }
-        std::shared_ptr<GUI::ECS::Components::TextComponent> body = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "It seems like you have landed on an unknown page.");
-        body->setApplication(bodyKey);
-        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(body);
-        _baseId += 1;
-    }
-
-    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
     if (!homeButtonFound) {
         PRETTY_WARNING << "Home button not found, creating" << std::endl;
-        home = _createButton(
+        homeItem = _createButton(
             _mainMenuKey,
             "Home",
             std::bind(&Main::_goHome, this),
@@ -1323,20 +2375,387 @@ void Main::_gameOverScreen()
     unsigned int posx = _getScreenCenterX();
     unsigned int posy = _getScreenCenterY();
 
-    title->setPosition({ posx, posy });
-    body->setPosition({ posx, posy + 20 });
-    home->setPosition({ posx, posy + 40 });
+    const unsigned int titleOffest = (2 * titleTextSize);
+    const unsigned int titleLength = (titleItem->getSize() + 1) / 2 + titleOffest;
+    const unsigned int bodyLength = ((bodyItem->getSize() + 1) / 2) + (17 * bodyTextSize);
+    const unsigned int homeItemLength = (homeItem->getTextSize() + 1) / 2 + titleOffest;
+
+    PRETTY_DEBUG << "Lengths:\n- titleLength: '" << titleLength << "'\n- bodyLength: '" << bodyLength << "'\n- homeItemLength: '" << homeItemLength << "'" << std::endl;
+    PRETTY_DEBUG << "Positions:\n- posx: '" << posx << "'\n- posy: '" << posy << "'" << std::endl;
+
+
+    titleItem->setPosition({ posx - titleLength, posy });
+    bodyItem->setPosition({ posx - bodyLength, posy + 60 });
+    homeItem->setPosition({ posx - homeItemLength, posy + 100 });
     PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
-    win.value()->draw(*title);
-    win.value()->draw(*body);
-    win.value()->draw(*home);
+    win.value()->draw(*titleItem);
+    win.value()->draw(*bodyItem);
+    win.value()->draw(*homeItem);
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
+}
+
+void Main::_gameOverScreen()
+{
+
+    PRETTY_DEBUG << "In the _gameOverScreen function." << std::endl;
+
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+    bool backgroundFound = false;
+
+    const std::string titleKey = "GameOverScreenTitle";
+    const std::string bodyKey = "GameOverScreenBody";
+    const std::string backgroundKey = "gameOver";
+
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Coral4;
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> homeItem;
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> backgroundItem;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
+    PRETTY_DEBUG << "vector texts size: " << texts.size() << std::endl;
+    PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
+    PRETTY_DEBUG << "vector backgrounds size: " << backgrounds.size() << std::endl;
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule.has_value()) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                titleItem = textCapsule.value();
+                PRETTY_DEBUG << "Text title found" << std::endl;
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                bodyItem = textCapsule.value();
+                PRETTY_DEBUG << "Text body found" << std::endl;
+            } else {
+                continue;
+            }
+        }
+    }
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule.has_value() && buttonCapsule.value()->getApplication() == _mainMenuKey) {
+            homeButtonFound = true;
+            homeItem = buttonCapsule.value();
+            PRETTY_DEBUG << "Button found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the button content." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the background." << std::endl;
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (backgroundCapsule.has_value() && backgroundCapsule.value()->getApplication() == backgroundKey) {
+            backgroundFound = true;
+            backgroundItem = backgroundCapsule.value();
+            PRETTY_DEBUG << "Background found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the background content." << std::endl;
+
+    PRETTY_DEBUG << "Values of the checker variables: \n- bodyTextFound: '" << Recoded::myToString(bodyTextFound) << "'\n- titleTextFound: '" << Recoded::myToString(titleTextFound) << "'\n- homeButtonFound: '" << Recoded::myToString(homeButtonFound) << "'" << std::endl;
+
+    PRETTY_DEBUG << "Checking the text for the title." << std::endl;
+    if (!titleTextFound) {
+        PRETTY_WARNING << "No title text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the game over screen screen." << std::endl;
+            return;
+        }
+        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Game Over!");
+        titleItem->setApplication(titleKey);
+        titleItem->setNormalColor(textColour);
+        titleItem->setHoverColor(textColour);
+        titleItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(titleItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text for the title." << std::endl;
+
+    PRETTY_DEBUG << "Checking text content for the body." << std::endl;
+    if (!bodyTextFound) {
+        PRETTY_WARNING << "No body text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game over screen screen." << std::endl;
+            return;
+        }
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have died!", 20);
+        bodyItem->setApplication(bodyKey);
+        bodyItem->setNormalColor(textColour);
+        bodyItem->setHoverColor(textColour);
+        bodyItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(bodyItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text content for the body." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
+    if (!homeButtonFound) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        homeItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
+    if (!backgroundFound) {
+        PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::Red;
+        titleItem->setNormalColor(defaultColourForNoBackground);
+        titleItem->setHoverColor(defaultColourForNoBackground);
+        titleItem->setClickedColor(defaultColourForNoBackground);
+        bodyItem->setNormalColor(defaultColourForNoBackground);
+        bodyItem->setHoverColor(defaultColourForNoBackground);
+        bodyItem->setClickedColor(defaultColourForNoBackground);
+    }
+
+    PRETTY_DEBUG << "Checking the coordinates for the center of the x and y axis." << std::endl;
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+    PRETTY_DEBUG << "Center of the screen is at (" << posx << ", " << posy << ")" << std::endl;
+
+    PRETTY_DEBUG << "The items that are currently loaded, are:\n- " << *titleItem << "\n- " << *bodyItem << "\n- " << *homeItem << std::endl;
+
+    PRETTY_DEBUG << "Setting the position of the components." << std::endl;
+    titleItem->setPosition({ posx, posy });
+    PRETTY_DEBUG << "Position for the title item is set." << std::endl;
+    bodyItem->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Position for the body item is set." << std::endl;
+    homeItem->setPosition({ posx, posy + 100 });
+    PRETTY_DEBUG << "Position for the home item is set." << std::endl;
+    if (backgroundFound) {
+        backgroundItem->setDimension({ _windowWidth, _windowHeight });
+        win.value()->draw(*backgroundItem);
+    }
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*titleItem);
+    PRETTY_DEBUG << "Title Item drawn." << std::endl;
+    win.value()->draw(*bodyItem);
+    PRETTY_DEBUG << "Body Item drawn." << std::endl;
+    win.value()->draw(*homeItem);
+    PRETTY_DEBUG << "Home Item drawn." << std::endl;
     PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
 void Main::_gameWonScreen()
 {
 
+    PRETTY_DEBUG << "In the _gameWonScreen function." << std::endl;
 
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+    bool backgroundFound = false;
+
+    const std::string titleKey = "GameWonScreenTitle";
+    const std::string bodyKey = "GameWonScreenBody";
+    const std::string backgroundKey = "gameWon";
+
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Chartreuse;
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> homeItem;
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> backgroundItem;
+
+    std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
+    PRETTY_DEBUG << "vector texts size: " << texts.size() << std::endl;
+    PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
+    PRETTY_DEBUG << "vector backgrounds size: " << backgrounds.size() << std::endl;
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule.has_value()) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                titleItem = textCapsule.value();
+                PRETTY_DEBUG << "Text title found" << std::endl;
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                bodyItem = textCapsule.value();
+                PRETTY_DEBUG << "Text body found" << std::endl;
+            } else {
+                continue;
+            }
+        }
+    }
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule.has_value() && buttonCapsule.value()->getApplication() == _mainMenuKey) {
+            homeButtonFound = true;
+            homeItem = buttonCapsule.value();
+            PRETTY_DEBUG << "Button found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the button content." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the background." << std::endl;
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (backgroundCapsule.has_value() && backgroundCapsule.value()->getApplication() == backgroundKey) {
+            backgroundFound = true;
+            backgroundItem = backgroundCapsule.value();
+            PRETTY_DEBUG << "Background found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the background content." << std::endl;
+
+    PRETTY_DEBUG << "Values of the checker variables: \n- bodyTextFound: '" << Recoded::myToString(bodyTextFound) << "'\n- titleTextFound: '" << Recoded::myToString(titleTextFound) << "'\n- homeButtonFound: '" << Recoded::myToString(homeButtonFound) << "'" << std::endl;
+
+    PRETTY_DEBUG << "Checking the text for the title." << std::endl;
+    if (!titleTextFound) {
+        PRETTY_WARNING << "No title text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the game won screen screen." << std::endl;
+            return;
+        }
+        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Game Won!");
+        titleItem->setApplication(titleKey);
+        titleItem->setNormalColor(textColour);
+        titleItem->setHoverColor(textColour);
+        titleItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(titleItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text for the title." << std::endl;
+
+    PRETTY_DEBUG << "Checking text content for the body." << std::endl;
+    if (!bodyTextFound) {
+        PRETTY_WARNING << "No body text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game won screen screen." << std::endl;
+            return;
+        }
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You have won!", 20);
+        bodyItem->setApplication(bodyKey);
+        bodyItem->setNormalColor(textColour);
+        bodyItem->setHoverColor(textColour);
+        bodyItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(bodyItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text content for the body." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
+    if (!homeButtonFound) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        homeItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
+    if (!backgroundFound) {
+        PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::GreenYellow;
+        titleItem->setNormalColor(defaultColourForNoBackground);
+        titleItem->setHoverColor(defaultColourForNoBackground);
+        titleItem->setClickedColor(defaultColourForNoBackground);
+        titleItem->setNormalColor(defaultColourForNoBackground);
+        titleItem->setHoverColor(defaultColourForNoBackground);
+        titleItem->setClickedColor(defaultColourForNoBackground);
+    }
+
+    PRETTY_DEBUG << "Checking the coordinates for the center of the x and y axis." << std::endl;
+    unsigned int posx = _getScreenCenterX();
+    unsigned int posy = _getScreenCenterY();
+    PRETTY_DEBUG << "Center of the screen is at (" << posx << ", " << posy << ")" << std::endl;
+
+    PRETTY_DEBUG << "The items that are currently loaded, are:\n- " << *titleItem << "\n- " << *bodyItem << "\n- " << *homeItem << std::endl;
+
+    PRETTY_DEBUG << "Setting the position of the components." << std::endl;
+    titleItem->setPosition({ posx, posy });
+    PRETTY_DEBUG << "Position for the title item is set." << std::endl;
+    bodyItem->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Position for the body item is set." << std::endl;
+    homeItem->setPosition({ posx, posy + 100 });
+    PRETTY_DEBUG << "Position for the home item is set." << std::endl;
+    if (backgroundFound) {
+        backgroundItem->setDimension({ _windowWidth, _windowHeight });
+        win.value()->draw(*backgroundItem);
+    }
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*titleItem);
+    PRETTY_DEBUG << "Title Item drawn." << std::endl;
+    win.value()->draw(*bodyItem);
+    PRETTY_DEBUG << "Body Item drawn." << std::endl;
+    win.value()->draw(*homeItem);
+    PRETTY_DEBUG << "Home Item drawn." << std::endl;
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
 void Main::_mainMenuScreen()
@@ -1369,10 +2788,20 @@ void Main::_mainMenuScreen()
     unsigned int heightPos = 0;
     const unsigned int heightStep = 40;
 
-    std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
     if (!win.has_value()) {
         PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
         throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goExit();
     }
 
     for (const std::any node : images) {
@@ -1494,7 +2923,7 @@ void Main::_mainMenuScreen()
         PRETTY_WARNING << "Online Game button not found, creating" << std::endl;
         onlineGame.emplace(
             _createButton(
-                onlineGameKey, "Online Game", std::bind(&Main::_goPlay, this), "_goPlay", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
+                onlineGameKey, "Online Game", std::bind(&Main::_goConnectionAddress, this), "_goConnectionAddress", buttonWidth, buttonHeight, textSize, bg, normal, hover, clicked
             )
         );
         PRETTY_SUCCESS << "Start Button created" << std::endl;
@@ -1546,17 +2975,1247 @@ void Main::_mainMenuScreen()
 void Main::_bossFightScreen()
 {
 
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
 }
 
 void Main::_connectionFailedScreen()
 {
 
+    PRETTY_DEBUG << "In the _connectionFailedScreen function." << std::endl;
+
+    bool bodyTextFound = false;
+    bool titleTextFound = false;
+    bool homeButtonFound = false;
+    bool backgroundFound = false;
+    bool connectButtonFound = false;
+
+    const std::string bodyKey = "ConnectionFailedScreenBody";
+    const std::string titleKey = "ConnectionFailedScreenTitle";
+    const std::string backgroundKey = "connectionFailed";
+    const std::string connectionButtonKey = "ConnectionFailedScreenConnectButton";
+
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Firebrick;
+
+    std::shared_ptr<GUI::ECS::Components::TextComponent> bodyItem;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> titleItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> homeItem;
+    std::shared_ptr<GUI::ECS::Components::ButtonComponent> connectItem;
+    std::shared_ptr<GUI::ECS::Components::ImageComponent> backgroundItem;
+
+    const std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    const std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+
+    PRETTY_DEBUG << "vector texts size: " << texts.size() << std::endl;
+    PRETTY_DEBUG << "vector buttons size: " << buttons.size() << std::endl;
+    PRETTY_DEBUG << "vector backgrounds size: " << backgrounds.size() << std::endl;
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
+    for (std::any textCast : texts) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>>(textCast, false);
+        if (textCapsule.has_value()) {
+            if (textCapsule.value()->getApplication() == titleKey) {
+                titleTextFound = true;
+                titleItem = textCapsule.value();
+                PRETTY_DEBUG << "Text title found" << std::endl;
+            } else if (textCapsule.value()->getApplication() == bodyKey) {
+                bodyTextFound = true;
+                bodyItem = textCapsule.value();
+                PRETTY_DEBUG << "Text body found" << std::endl;
+            } else {
+                continue;
+            }
+        }
+    }
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
+    for (std::any buttonCast : buttons) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (buttonCapsule.has_value()) {
+            if (buttonCapsule.value()->getApplication() == _mainMenuKey) {
+                homeButtonFound = true;
+                homeItem = buttonCapsule.value();
+                PRETTY_DEBUG << "Home button found" << std::endl;
+            } else if (buttonCapsule.value()->getApplication() == connectionButtonKey) {
+                connectButtonFound = true;
+                connectItem = buttonCapsule.value();
+                PRETTY_DEBUG << "Connection button found" << std::endl;
+            }
+        }
+    }
+    PRETTY_DEBUG << "Fetched the button content." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the background." << std::endl;
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (backgroundCapsule.has_value() && backgroundCapsule.value()->getApplication() == backgroundKey) {
+            backgroundFound = true;
+            backgroundItem = backgroundCapsule.value();
+            PRETTY_DEBUG << "Background found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the background content." << std::endl;
+
+    PRETTY_DEBUG << "Values of the checker variables: \n- bodyTextFound: '" << Recoded::myToString(bodyTextFound) << "'\n- titleTextFound: '" << Recoded::myToString(titleTextFound) << "'\n- homeButtonFound: '" << Recoded::myToString(homeButtonFound) << "'\n- backgroundFound: '" << Recoded::myToString(backgroundFound) << "'\n- connectButtonFound: '" << Recoded::myToString(connectButtonFound) << "'" << std::endl;
+
+    PRETTY_DEBUG << "Checking the text for the title." << std::endl;
+    if (!titleTextFound) {
+        PRETTY_WARNING << "No title text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_titleFontIndex], false);
+        if (!titleFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the title text of the game won screen screen." << std::endl;
+            return;
+        }
+        titleItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(titleFont.value()), "Connection failed!");
+        titleItem->setApplication(titleKey);
+        titleItem->setNormalColor(textColour);
+        titleItem->setHoverColor(textColour);
+        titleItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(titleItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text for the title." << std::endl;
+
+    PRETTY_DEBUG << "Checking text content for the body." << std::endl;
+    if (!bodyTextFound) {
+        PRETTY_WARNING << "No body text instance found, creating instance." << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(_ecsEntities[typeid(GUI::ECS::Systems::Font)][_bodyFontIndex], false);
+        if (!bodyFont.has_value()) {
+            PRETTY_CRITICAL << "There is no font to be extracted for creating the body text of the game won screen screen." << std::endl;
+            return;
+        }
+        bodyItem = std::make_shared<GUI::ECS::Components::TextComponent>(_baseId, *(bodyFont.value()), "You are not connected to the server!", 20);
+        bodyItem->setApplication(bodyKey);
+        bodyItem->setNormalColor(textColour);
+        bodyItem->setHoverColor(textColour);
+        bodyItem->setClickedColor(textColour);
+        _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].push_back(bodyItem);
+        _baseId += 1;
+    }
+    PRETTY_DEBUG << "Checked the text content for the body." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
+    if (!homeButtonFound) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        homeItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Connect button exists." << std::endl;
+    if (!connectButtonFound) {
+        PRETTY_WARNING << "Connect button not found, creating" << std::endl;
+        connectItem = _createButton(
+            connectionButtonKey,
+            "Connection address",
+            std::bind(&Main::_goConnectionAddress, this),
+            "_goConnectionAddress",
+            300,
+            30,
+            20,
+            GUI::ECS::Systems::Colour::White,
+            GUI::ECS::Systems::Colour::Black,
+            GUI::ECS::Systems::Colour::BlueViolet,
+            GUI::ECS::Systems::Colour::DeepSkyBlue
+        );
+        PRETTY_SUCCESS << "connect Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
+    if (!backgroundFound) {
+        PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::OrangeRed;
+        titleItem->setNormalColor(defaultColourForNoBackground);
+        titleItem->setHoverColor(defaultColourForNoBackground);
+        titleItem->setClickedColor(defaultColourForNoBackground);
+        bodyItem->setNormalColor(defaultColourForNoBackground);
+        bodyItem->setHoverColor(defaultColourForNoBackground);
+        bodyItem->setClickedColor(defaultColourForNoBackground);
+    }
+
+    PRETTY_DEBUG << "Checking the coordinates for the center of the x and y axis." << std::endl;
+    unsigned int posx = 40;
+    unsigned int posy = 30;
+    PRETTY_DEBUG << "Center of the screen is at (" << posx << ", " << posy << ")" << std::endl;
+
+    PRETTY_DEBUG << "The items that are currently loaded, are:\n- " << *titleItem << "\n- " << *bodyItem << "\n- " << *homeItem << std::endl;
+
+    PRETTY_DEBUG << "Setting the position of the components." << std::endl;
+    titleItem->setPosition({ posx, posy });
+    PRETTY_DEBUG << "Position for the title item is set." << std::endl;
+    bodyItem->setPosition({ posx, posy + 40 });
+    PRETTY_DEBUG << "Position for the body item is set." << std::endl;
+    homeItem->setPosition({ posx, posy + 100 });
+    PRETTY_DEBUG << "Position for the home item is set." << std::endl;
+    connectItem->setPosition({ posx, posy + 160 });
+    PRETTY_DEBUG << "Position for the connect item is set." << std::endl;
+    if (backgroundFound) {
+        backgroundItem->setDimension({ _windowWidth, _windowHeight });
+        win.value()->draw(*backgroundItem);
+    }
+    PRETTY_DEBUG << "Component's positions updated for the current screen." << std::endl;
+    win.value()->draw(*titleItem);
+    PRETTY_DEBUG << "Title Item drawn." << std::endl;
+    win.value()->draw(*bodyItem);
+    PRETTY_DEBUG << "Body Item drawn." << std::endl;
+    win.value()->draw(*homeItem);
+    PRETTY_DEBUG << "Home Item drawn." << std::endl;
+    win.value()->draw(*connectItem);
+    PRETTY_DEBUG << "Connect Item drawn." << std::endl;
+    PRETTY_SUCCESS << "Component's positions drawn successfully." << std::endl;
 }
 
 void Main::_connectionAddressScreen()
 {
 
+    PRETTY_DEBUG << "Base id: " << Recoded::myToString(_baseId) << std::endl;
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+    PRETTY_SUCCESS << "Escape key wasn't pressed" << std::endl;
+
+    PRETTY_DEBUG << "In the _connectionAddressScreen" << std::endl;
+    PRETTY_DEBUG << "Initialising keys" << std::endl;
+    // navigation and info tokens
+    const std::string homeKey = "connectionAddressScreenHome";
+    const std::string bodyKey = "connectionAddressScreenBody";
+    const std::string titleKey = "connectionAddressScreenTitle";
+    const std::string connectKey = "connectionAddressScreenConnect";
+    // decoration token
+    const std::string backgroundKey = "connectionAddress";
+    // ip tokens
+    const std::string ipV4FirstDotKey = "connectionAddressScreenIpV4FirstDot";
+    const std::string ipV4SecondDotKey = "connectionAddressScreenIpV4SecondDot";
+    const std::string ipV4ThirdDotKey = "connectionAddressScreenIpV4ThirdDot";
+    // port tokens
+    const std::string portV4ColumnKey = "connectionAddressScreenPortV4ColumnKey";
+    // ip toggler tokens
+    const std::string ipChunkOneUpKey = "connectionAddressScreenIpChunkOneUp";
+    const std::string ipChunkOneDownKey = "connectionAddressScreenIpChunkOneDown";
+    const std::string ipChunkTwoUpKey = "connectionAddressScreenIpChunkTwoUp";
+    const std::string ipChunkTwoDownKey = "connectionAddressScreenIpChunkTwoDown";
+    const std::string ipChunkThreeUpKey = "connectionAddressScreenIpChunkThreeUp";
+    const std::string ipChunkThreeDownKey = "connectionAddressScreenIpChunkThreeDown";
+    const std::string ipChunkFourUpKey = "connectionAddressScreenIpChunkFourUp";
+    const std::string ipChunkFourDownKey = "connectionAddressScreenIpChunkFourDown";
+    // port toggler tokens
+    const std::string portChunkUpKey = "connectionAddressScreenPortChunkUpKey";
+    const std::string portChunkDownKey = "connectionAddressScreenPortChunkDownKey";
+    PRETTY_DEBUG << "Keys initialised" << std::endl;
+
+    PRETTY_DEBUG << "Fetching component lists from the entity list" << std::endl;
+    const std::vector<std::any> fonts = _ecsEntities[typeid(GUI::ECS::Systems::Font)];
+    const std::vector<std::any> texts = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)];
+    const std::vector<std::any> buttons = _ecsEntities[typeid(GUI::ECS::Components::ButtonComponent)];
+    const std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    PRETTY_DEBUG << "Fetched component lists from the entity list" << std::endl;
+
+    PRETTY_DEBUG << "Setting the default colour for the text that will displayed" << std::endl;
+    const GUI::ECS::Systems::Colour textColour = GUI::ECS::Systems::Colour::Wheat;
+    PRETTY_DEBUG << "Default colour set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the ip colour for the text that will displayed" << std::endl;
+    const GUI::ECS::Systems::Colour textColourIp = GUI::ECS::Systems::Colour::Gold;
+    const GUI::ECS::Systems::Colour textColourIpDot = GUI::ECS::Systems::Colour::Chartreuse;
+    const GUI::ECS::Systems::Colour textColourPort = GUI::ECS::Systems::Colour::Pink;
+    const GUI::ECS::Systems::Colour textColourPortColumn = GUI::ECS::Systems::Colour::MediumAquamarine;
+    PRETTY_DEBUG << "Ip text colour set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the size of the title" << std::endl;
+    const unsigned int titleSize = 40;
+    PRETTY_DEBUG << "Title size set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the size of the body text" << std::endl;
+    const unsigned int bodySize = 20;
+    PRETTY_DEBUG << "Body text size set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the size for the text that will manage the ip and port display" << std::endl;
+    const unsigned int ipTextSize = 20;
+    const unsigned int portTextSize = 20;
+    const unsigned int ipTextDotSize = ipTextSize;
+    const unsigned int portTextColumnSize = portTextSize;
+    const unsigned int buttonUpSize = 40;
+    const unsigned int buttonUpBoxWidth = 30;
+    const unsigned int buttonUpBoxHeight = 30;
+    const unsigned int buttonDownSize = 40;
+    const unsigned int buttonDownBoxWidth = 30;
+    const unsigned int buttonDownBoxHeight = 30;
+    PRETTY_DEBUG << "Text size set for ip and port display" << std::endl;
+
+    PRETTY_DEBUG << "Setting the ip and port colour for the buttons that will displayed" << std::endl;
+    const GUI::ECS::Systems::Colour buttonUpColourIpNormal = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour buttonUpColourIpHover = GUI::ECS::Systems::Colour::Chartreuse;
+    const GUI::ECS::Systems::Colour buttonUpColourIpClicked = GUI::ECS::Systems::Colour::YellowGreen;
+    const GUI::ECS::Systems::Colour buttonUpColourIpBackground = GUI::ECS::Systems::Colour::Transparent;
+
+    const GUI::ECS::Systems::Colour buttonUpColourPortNormal = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour buttonUpColourPortHover = GUI::ECS::Systems::Colour::Chartreuse;
+    const GUI::ECS::Systems::Colour buttonUpColourPortClicked = GUI::ECS::Systems::Colour::YellowGreen;
+    const GUI::ECS::Systems::Colour buttonUpColourPortBackground = GUI::ECS::Systems::Colour::Transparent;
+
+    const GUI::ECS::Systems::Colour buttonDownColourIpNormal = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour buttonDownColourIpHover = GUI::ECS::Systems::Colour::Chartreuse;
+    const GUI::ECS::Systems::Colour buttonDownColourIpClicked = GUI::ECS::Systems::Colour::YellowGreen;
+    const GUI::ECS::Systems::Colour buttonDownColourIpBackground = GUI::ECS::Systems::Colour::Transparent;
+
+    const GUI::ECS::Systems::Colour buttonDownColourPortNormal = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour buttonDownColourPortHover = GUI::ECS::Systems::Colour::Chartreuse;
+    const GUI::ECS::Systems::Colour buttonDownColourPortClicked = GUI::ECS::Systems::Colour::YellowGreen;
+    const GUI::ECS::Systems::Colour buttonDownColourPortBackground = GUI::ECS::Systems::Colour::Transparent;
+    PRETTY_DEBUG << "Ip and port button colour set" << std::endl;
+
+    PRETTY_DEBUG << "Setting the customisation information for the general buttons" << std::endl;
+    const GUI::ECS::Systems::Colour buttonGeneralColourBackground = GUI::ECS::Systems::Colour::White;
+    const GUI::ECS::Systems::Colour buttonGeneralColourNormal = GUI::ECS::Systems::Colour::Black;
+    const GUI::ECS::Systems::Colour buttonGeneralColourHover = GUI::ECS::Systems::Colour::BlueViolet;
+    const GUI::ECS::Systems::Colour buttonGeneralColourClicked = GUI::ECS::Systems::Colour::DeepSkyBlue;
+    PRETTY_DEBUG << "General button customisation set" << std::endl;
+
+    PRETTY_DEBUG << "Fetching the fonts that will be used in the window" << std::endl;
+    unsigned int index = 0;
+    unsigned int titleFontIndex = 0;
+    unsigned int bodyFontIndex = 0;
+    unsigned int defaultFontIndex = 0;
+    unsigned int buttonFontIndex = 0;
+    for (std::any fontCast : fonts) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fontCast, false);
+        if (!fontCapsule.has_value()) {
+            continue;
+        }
+        std::string applicationContext = fontCapsule.value()->getApplication();
+        if (applicationContext == "title") {
+            titleFontIndex = index;
+        } else if (applicationContext == "body") {
+            bodyFontIndex = index;
+        } else if (applicationContext == "default") {
+            defaultFontIndex = index;
+        } else if (applicationContext == "button") {
+            buttonFontIndex = index;
+        } else {
+            index++;
+            continue;
+        }
+        index++;
+    }
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[titleFontIndex], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[bodyFontIndex], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[defaultFontIndex], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[buttonFontIndex], false);
+    if (!defaultFontCapsule.has_value()) {
+        PRETTY_DEBUG << "No default font found, aborting program" << std::endl;
+        throw CustomExceptions::NoFont("<Default font not found>");
+    }
+    const std::shared_ptr<GUI::ECS::Systems::Font> defaultFont = defaultFontCapsule.value();
+    std::shared_ptr<GUI::ECS::Systems::Font> titleFont = defaultFontCapsule.value();
+    std::shared_ptr<GUI::ECS::Systems::Font> bodyFont = defaultFontCapsule.value();
+    std::shared_ptr<GUI::ECS::Systems::Font> buttonFont = defaultFontCapsule.value();
+    if (titleFontCapsule.has_value()) {
+        PRETTY_SUCCESS << "Title font found, not defaulting to the default font." << std::endl;
+        titleFont = titleFontCapsule.value();
+    }
+    if (bodyFontCapsule.has_value()) {
+        PRETTY_SUCCESS << "Body font found, not defaulting to the default font." << std::endl;
+        bodyFont = bodyFontCapsule.value();
+    }
+    if (buttonFontCapsule.has_value()) {
+        PRETTY_SUCCESS << "Button font found, not defaulting to the default font." << std::endl;
+        buttonFont = buttonFontCapsule.value();
+    }
+    PRETTY_DEBUG << "Fetched the fonts that will be used in the window" << std::endl;
+
+    PRETTY_DEBUG << "Holder for the background initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundItem;
+    PRETTY_DEBUG << "Background holder initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the title and body initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> titleItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> bodyItem;
+    PRETTY_DEBUG << "Holders for the title and body initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the home and connect buttons initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> homeItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> connectItem;
+    PRETTY_DEBUG << "Holders for the home and connect buttons initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the ip text chunks initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4FirstChunkItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4FirstDotItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4SecondChunkItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4SecondDotItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4ThirdChunkItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4ThirdDotItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> ipV4FourthChunkItem;
+    PRETTY_DEBUG << "Holders for the ip text chunks initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the port text chunks initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> portV4ColumnItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> portV4ChunkItem;
+    PRETTY_DEBUG << "Holders for the port text chunks initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the ip button chunks initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkOneUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkOneDownItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkTwoUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkTwoDownItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkThreeUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkThreeDownItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkFourUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> ipChunkFourDownItem;
+    PRETTY_DEBUG << "Holders for the ip button chunks initialised" << std::endl;
+
+    PRETTY_DEBUG << "Holders for the port button chunks initialising" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> portChunkUpItem;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> portChunkDownItem;
+    PRETTY_DEBUG << "Holders for the port button chunks initialised" << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the background." << std::endl;
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (backgroundCapsule.has_value() && backgroundCapsule.value()->getApplication() == backgroundKey) {
+            backgroundItem.emplace(backgroundCapsule.value());
+            PRETTY_DEBUG << "Background found" << std::endl;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the background content." << std::endl;
+
+
+    PRETTY_DEBUG << "Fetching the text components if present." << std::endl;
+    unsigned int textIndex = 0;
+    for (std::any textCast : texts) {
+        textIndex += 1;
+        PRETTY_DEBUG << "Text component index: " << Recoded::myToString(textIndex) << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> textCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::TextComponent>, CustomExceptions::NoText>(textCast, false, "<No text component found>");
+        if (!textCapsule.has_value()) {
+            PRETTY_WARNING << "No text component found, index: " << Recoded::myToString(textIndex) << std::endl;
+            continue;
+        }
+        std::string applicationContext = textCapsule.value()->getApplication();
+        if (applicationContext == titleKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << titleKey << "' found and assigned to the correct item."
+                << std::endl;
+            titleItem.emplace(textCapsule.value());
+        } else if (applicationContext == bodyKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << bodyKey << "' found and assigned to the correct item."
+                << std::endl;
+            bodyItem.emplace(textCapsule.value());
+        } else if (applicationContext == _ipV4FirstChunkKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << _ipV4FirstChunkKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4FirstChunkItem.emplace(textCapsule.value());
+        } else if (applicationContext == _ipV4SecondChunkKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << _ipV4SecondChunkKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4SecondChunkItem.emplace(textCapsule.value());
+        } else if (applicationContext == _ipV4ThirdChunkKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << _ipV4ThirdChunkKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4ThirdChunkItem.emplace(textCapsule.value());
+        } else if (applicationContext == _ipV4FourthChunkKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << _ipV4FirstChunkKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4FourthChunkItem.emplace(textCapsule.value());
+        } else if (applicationContext == _portV4ChunkKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << _portV4ChunkKey << "' found and assigned to the correct item."
+                << std::endl;
+            portV4ChunkItem.emplace(textCapsule.value());
+        } else if (applicationContext == ipV4FirstDotKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << ipV4FirstDotKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4FirstDotItem.emplace(textCapsule.value());
+        } else if (applicationContext == ipV4SecondDotKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << ipV4SecondDotKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4SecondDotItem.emplace(textCapsule.value());
+        } else if (applicationContext == ipV4ThirdDotKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << ipV4ThirdDotKey << "' found and assigned to the correct item."
+                << std::endl;
+            ipV4ThirdDotItem.emplace(textCapsule.value());
+        } else if (applicationContext == portV4ColumnKey) {
+            PRETTY_DEBUG << "Text Node '"
+                << portV4ColumnKey << "' found and assigned to the correct item."
+                << std::endl;
+            portV4ColumnItem.emplace(textCapsule.value());
+        } else {
+            PRETTY_DEBUG << "The current text node: " << Recoded::myToString(textIndex) << " does not correspond to the researched contexts" << std::endl;
+            PRETTY_DEBUG << "Text application context: " << applicationContext << std::endl;
+            continue;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the text components that were present." << std::endl;
+
+    PRETTY_DEBUG << "Attempting to fetch content for the button." << std::endl;
+    unsigned int buttonIndex = 0;
+    for (std::any buttonCast : buttons) {
+        buttonIndex += 1;
+        PRETTY_DEBUG << "Button index: " << Recoded::myToString(buttonIndex) << std::endl;
+        std::optional<std::shared_ptr<GUI::ECS::Components::ButtonComponent>> buttonCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ButtonComponent>>(buttonCast, false);
+        if (!buttonCapsule.has_value()) {
+            PRETTY_DEBUG << "The current button (index: " << Recoded::myToString(buttonIndex) << ") does not correspond to a button" << std::endl;
+            continue;
+        }
+        std::string applicationContext = buttonCapsule.value()->getApplication();
+        if (applicationContext == _mainMenuKey) {
+            homeItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "Main menu button found" << std::endl;
+        } else if (applicationContext == connectKey) {
+            connectItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "Connect button found" << std::endl;
+        } else if (applicationContext == ipChunkOneUpKey) {
+            ipChunkOneUpItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk one up button found" << std::endl;
+        } else if (applicationContext == ipChunkTwoUpKey) {
+            ipChunkTwoUpItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk two up button found" << std::endl;
+        } else if (applicationContext == ipChunkThreeUpKey) {
+            ipChunkThreeUpItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk three up button found" << std::endl;
+        } else if (applicationContext == ipChunkFourUpKey) {
+            ipChunkFourUpItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk four up button found" << std::endl;
+        } else if (applicationContext == ipChunkOneDownKey) {
+            ipChunkOneDownItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk one down button found" << std::endl;
+        } else if (applicationContext == ipChunkTwoDownKey) {
+            ipChunkTwoDownItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk two down button found" << std::endl;
+        } else if (applicationContext == ipChunkThreeDownKey) {
+            ipChunkThreeDownItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk three down button found" << std::endl;
+        } else if (applicationContext == ipChunkFourDownKey) {
+            ipChunkFourDownItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "IP chunk four down button found" << std::endl;
+        } else if (applicationContext == portChunkUpKey) {
+            portChunkUpItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "Port chunk up button found" << std::endl;
+        } else if (applicationContext == portChunkDownKey) {
+            portChunkDownItem.emplace(buttonCapsule.value());
+            PRETTY_DEBUG << "Port chunk down button found" << std::endl;
+        } else {
+            PRETTY_DEBUG << "Button Index:" << Recoded::myToString(buttonIndex) << std::endl;
+            PRETTY_DEBUG << "Unknown button found with context: " << applicationContext << std::endl;
+            continue;
+        }
+    }
+    PRETTY_DEBUG << "Fetched the button content." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Home button exists." << std::endl;
+    if (!homeItem.has_value()) {
+        PRETTY_WARNING << "Home button not found, creating" << std::endl;
+        homeItem = _createButton(
+            _mainMenuKey,
+            "Home",
+            std::bind(&Main::_goHome, this),
+            "_goHome",
+            200,
+            30,
+            20,
+            buttonGeneralColourBackground,
+            buttonGeneralColourNormal,
+            buttonGeneralColourHover,
+            buttonGeneralColourClicked
+        );
+        PRETTY_SUCCESS << "Home Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the home button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking text content for the body." << std::endl;
+    if (!bodyItem.has_value()) {
+        PRETTY_WARNING << "No body text instance found, creating instance." << std::endl;
+        bodyItem = _createText(
+            bodyKey,
+            bodyKey,
+            "Please set the ip for the server",
+            *bodyFont,
+            bodySize,
+            textColour,
+            textColour,
+            textColour
+        );
+    }
+    PRETTY_DEBUG << "Checked the text content for the body." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the title item is set" << std::endl;
+    if (!titleItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the title component" << std::endl;
+        titleItem = _createText(
+            titleKey,
+            titleKey,
+            "Server address",
+            *titleFont,
+            titleSize,
+            textColour,
+            textColour,
+            textColour
+        );
+    }
+    PRETTY_DEBUG << "Checked if the title item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the Connect button exists." << std::endl;
+    if (!connectItem.has_value()) {
+        PRETTY_WARNING << "Connect button not found, creating" << std::endl;
+        connectItem = _createButton(
+            connectKey,
+            "Connect",
+            std::bind(&Main::_goConnect, this),
+            "_goConnect",
+            200,
+            30,
+            20,
+            buttonGeneralColourBackground,
+            buttonGeneralColourNormal,
+            buttonGeneralColourHover,
+            buttonGeneralColourClicked
+        );
+        PRETTY_SUCCESS << "Connect Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the Connect button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4FirstChunk item is set" << std::endl;
+    if (!ipV4FirstChunkItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4FirstChunk component" << std::endl;
+        ipV4FirstChunkItem = _createText(
+            _ipV4FirstChunkKey,
+            _ipV4FirstChunkKey,
+            _getIpChunk(0, "127"),
+            *defaultFont,
+            ipTextSize,
+            textColourIp,
+            textColourIp,
+            textColourIp
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4FirstChunk item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4FirstDot item is set" << std::endl;
+    if (!ipV4FirstDotItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4FirstDot component" << std::endl;
+        ipV4FirstDotItem = _createText(
+            ipV4FirstDotKey,
+            ipV4FirstDotKey,
+            ".",
+            *defaultFont,
+            ipTextSize,
+            textColourIpDot,
+            textColourIpDot,
+            textColourIpDot
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4FirstDot item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4SecondChunk item is set" << std::endl;
+    if (!ipV4SecondChunkItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4SecondChunk component" << std::endl;
+        ipV4SecondChunkItem = _createText(
+            _ipV4SecondChunkKey,
+            _ipV4SecondChunkKey,
+            _getIpChunk(1, "0"),
+            *defaultFont,
+            ipTextSize,
+            textColourIp,
+            textColourIp,
+            textColourIp
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4SecondChunk item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4SecondDot item is set" << std::endl;
+    if (!ipV4SecondDotItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4SecondDot component" << std::endl;
+        ipV4SecondDotItem = _createText(
+            ipV4SecondDotKey,
+            ipV4SecondDotKey,
+            ".",
+            *defaultFont,
+            ipTextDotSize,
+            textColourIpDot,
+            textColourIpDot,
+            textColourIpDot
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4SecondDot item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4ThirdChunk item is set" << std::endl;
+    if (!ipV4ThirdChunkItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4ThirdChunk component" << std::endl;
+        ipV4ThirdChunkItem = _createText(
+            _ipV4ThirdChunkKey,
+            _ipV4ThirdChunkKey,
+            _getIpChunk(2, "0"),
+            *defaultFont,
+            ipTextSize,
+            textColourIp,
+            textColourIp,
+            textColourIp
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4ThirdChunk item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4ThirdDot item is set" << std::endl;
+    if (!ipV4ThirdDotItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4ThirdDot component" << std::endl;
+        ipV4ThirdDotItem = _createText(
+            ipV4ThirdDotKey,
+            ipV4ThirdDotKey,
+            ".",
+            *defaultFont,
+            ipTextDotSize,
+            textColourIpDot,
+            textColourIpDot,
+            textColourIpDot
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4ThirdDot item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipV4FourthChunk item is set" << std::endl;
+    if (!ipV4FourthChunkItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the ipV4FourthChunk component" << std::endl;
+        ipV4FourthChunkItem = _createText(
+            _ipV4FourthChunkKey,
+            _ipV4FourthChunkKey,
+            _getIpChunk(3, "1"),
+            *defaultFont,
+            ipTextSize,
+            textColourIp,
+            textColourIp,
+            textColourIp
+        );
+    }
+    PRETTY_DEBUG << "Checked if the ipV4FourthChunk item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the portV4Column item is set" << std::endl;
+    if (!portV4ColumnItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the portV4Column component" << std::endl;
+        portV4ColumnItem = _createText(
+            portV4ColumnKey,
+            portV4ColumnKey,
+            ":",
+            *defaultFont,
+            portTextColumnSize,
+            textColourPortColumn,
+            textColourPortColumn,
+            textColourPortColumn
+        );
+    }
+    PRETTY_DEBUG << "Checked if the portV4Column item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the portV4Chunk item is set" << std::endl;
+    if (!portV4ChunkItem.has_value()) {
+        PRETTY_DEBUG << "Title item is not set, setting the portV4Chunk component" << std::endl;
+        portV4ChunkItem = _createText(
+            _portV4ChunkKey,
+            _portV4ChunkKey,
+            std::to_string(_port),
+            *defaultFont,
+            portTextSize,
+            textColourPort,
+            textColourPort,
+            textColourPort
+        );
+    }
+    PRETTY_DEBUG << "Checked if the portV4Chunk item is set" << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkOneUp button exists." << std::endl;
+    if (!ipChunkOneUpItem.has_value()) {
+        PRETTY_WARNING << "ipChunkOneUp button not found, creating" << std::endl;
+        ipChunkOneUpItem = _createButton(
+            ipChunkOneUpKey,
+            "x",
+            std::bind(&Main::_incrementIpChunkOne, this),
+            "_incrementIpChunkOne",
+            buttonUpBoxWidth,
+            buttonUpBoxHeight,
+            buttonUpSize,
+            buttonUpColourIpBackground,
+            buttonUpColourIpNormal,
+            buttonUpColourIpHover,
+            buttonUpColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkOneUp Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkOneUp button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkOneDown button exists." << std::endl;
+    if (!ipChunkOneDownItem.has_value()) {
+        PRETTY_WARNING << "ipChunkOneDown button not found, creating" << std::endl;
+        ipChunkOneDownItem = _createButton(
+            ipChunkOneDownKey,
+            "z",
+            std::bind(&Main::_decrementIpChunkOne, this),
+            "_decrementIpChunkOne",
+            buttonDownBoxWidth,
+            buttonDownBoxHeight,
+            buttonDownSize,
+            buttonDownColourIpBackground,
+            buttonDownColourIpNormal,
+            buttonDownColourIpHover,
+            buttonDownColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkOneDown Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkOneDown button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkTwoUp button exists." << std::endl;
+    if (!ipChunkTwoUpItem.has_value()) {
+        PRETTY_WARNING << "ipChunkTwoUp button not found, creating" << std::endl;
+        ipChunkTwoUpItem = _createButton(
+            ipChunkTwoUpKey,
+            "x",
+            std::bind(&Main::_incrementIpChunkTwo, this),
+            "_incrementIpChunkTwo",
+            buttonUpBoxWidth,
+            buttonUpBoxHeight,
+            buttonUpSize,
+            buttonUpColourIpBackground,
+            buttonUpColourIpNormal,
+            buttonUpColourIpHover,
+            buttonUpColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkTwoUp Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkTwoUp button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkTwoDown button exists." << std::endl;
+    if (!ipChunkTwoDownItem.has_value()) {
+        PRETTY_WARNING << "ipChunkTwoDown button not found, creating" << std::endl;
+        ipChunkTwoDownItem = _createButton(
+            ipChunkTwoDownKey,
+            "z",
+            std::bind(&Main::_decrementIpChunkTwo, this),
+            "_decrementIpChunkTwo",
+            buttonDownBoxWidth,
+            buttonDownBoxHeight,
+            buttonDownSize,
+            buttonDownColourIpBackground,
+            buttonDownColourIpNormal,
+            buttonDownColourIpHover,
+            buttonDownColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkTwoDown Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkTwoDown button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkThreeUp button exists." << std::endl;
+    if (!ipChunkThreeUpItem.has_value()) {
+        PRETTY_WARNING << "ipChunkThreeUp button not found, creating" << std::endl;
+        ipChunkThreeUpItem = _createButton(
+            ipChunkThreeUpKey,
+            "x",
+            std::bind(&Main::_incrementIpChunkThree, this),
+            "_incrementIpChunkThree",
+            buttonUpBoxWidth,
+            buttonUpBoxHeight,
+            buttonUpSize,
+            buttonUpColourIpBackground,
+            buttonUpColourIpNormal,
+            buttonUpColourIpHover,
+            buttonUpColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkThreeUp Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkThreeUp button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkThreeDown button exists." << std::endl;
+    if (!ipChunkThreeDownItem.has_value()) {
+        PRETTY_WARNING << "ipChunkThreeDown button not found, creating" << std::endl;
+        ipChunkThreeDownItem = _createButton(
+            ipChunkThreeDownKey,
+            "z",
+            std::bind(&Main::_decrementIpChunkThree, this),
+            "_decrementIpChunkThree",
+            buttonDownBoxWidth,
+            buttonDownBoxHeight,
+            buttonDownSize,
+            buttonDownColourIpBackground,
+            buttonDownColourIpNormal,
+            buttonDownColourIpHover,
+            buttonDownColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkThreeDown Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkThreeDown button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkFourUp button exists." << std::endl;
+    if (!ipChunkFourUpItem.has_value()) {
+        PRETTY_WARNING << "ipChunkFourUp button not found, creating" << std::endl;
+        ipChunkFourUpItem = _createButton(
+            ipChunkFourUpKey,
+            "x",
+            std::bind(&Main::_incrementIpChunkFour, this),
+            "_incrementIpChunkFour",
+            buttonUpBoxWidth,
+            buttonUpBoxHeight,
+            buttonUpSize,
+            buttonUpColourIpBackground,
+            buttonUpColourIpNormal,
+            buttonUpColourIpHover,
+            buttonUpColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkFourUp Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkFourUp button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the ipChunkFourDown button exists." << std::endl;
+    if (!ipChunkFourDownItem.has_value()) {
+        PRETTY_WARNING << "ipChunkFourDown button not found, creating" << std::endl;
+        ipChunkFourDownItem = _createButton(
+            ipChunkFourDownKey,
+            "z",
+            std::bind(&Main::_decrementIpChunkFour, this),
+            "_decrementIpChunkFour",
+            buttonDownBoxWidth,
+            buttonDownBoxHeight,
+            buttonDownSize,
+            buttonDownColourIpBackground,
+            buttonDownColourIpNormal,
+            buttonDownColourIpHover,
+            buttonDownColourIpClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "ipChunkFourDown Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the ipChunkFourDown button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the portChunkUp button exists." << std::endl;
+    if (!portChunkUpItem.has_value()) {
+        PRETTY_WARNING << "portChunkUp button not found, creating" << std::endl;
+        portChunkUpItem = _createButton(
+            portChunkUpKey,
+            "x",
+            std::bind(&Main::_incrementPortChunk, this),
+            "_incrementPortChunk",
+            buttonUpBoxWidth,
+            buttonUpBoxHeight,
+            buttonUpSize,
+            buttonUpColourPortBackground,
+            buttonUpColourPortNormal,
+            buttonUpColourPortHover,
+            buttonUpColourPortClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "portChunkUp Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the portChunkUp button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the portChunkDown button exists." << std::endl;
+    if (!portChunkDownItem.has_value()) {
+        PRETTY_WARNING << "portChunkDown button not found, creating" << std::endl;
+        portChunkDownItem = _createButton(
+            portChunkDownKey,
+            "z",
+            std::bind(&Main::_decrementPortChunk, this),
+            "_decrementPortChunk",
+            buttonDownBoxWidth,
+            buttonDownBoxHeight,
+            buttonDownSize,
+            buttonDownColourPortBackground,
+            buttonDownColourPortNormal,
+            buttonDownColourPortHover,
+            buttonDownColourPortClicked,
+            buttonFont
+        );
+        PRETTY_SUCCESS << "portChunkDown Button created" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the portChunkDown button existed." << std::endl;
+
+    PRETTY_DEBUG << "Checking if background exists" << std::endl;
+    if (!backgroundItem.has_value()) {
+        PRETTY_WARNING << "Background not found, changing the text components" << std::endl;
+        const GUI::ECS::Systems::Colour defaultColourForNoBackground = GUI::ECS::Systems::Colour::White;
+        titleItem.value()->setNormalColor(defaultColourForNoBackground);
+        titleItem.value()->setHoverColor(defaultColourForNoBackground);
+        titleItem.value()->setClickedColor(defaultColourForNoBackground);
+        bodyItem.value()->setNormalColor(defaultColourForNoBackground);
+        bodyItem.value()->setHoverColor(defaultColourForNoBackground);
+        bodyItem.value()->setClickedColor(defaultColourForNoBackground);
+        ipV4FirstChunkItem.value()->setNormalColor(defaultColourForNoBackground);
+        ipV4FirstChunkItem.value()->setHoverColor(defaultColourForNoBackground);
+        ipV4FirstChunkItem.value()->setClickedColor(defaultColourForNoBackground);
+        ipV4SecondChunkItem.value()->setNormalColor(defaultColourForNoBackground);
+        ipV4SecondChunkItem.value()->setHoverColor(defaultColourForNoBackground);
+        ipV4SecondChunkItem.value()->setClickedColor(defaultColourForNoBackground);
+        ipV4ThirdChunkItem.value()->setNormalColor(defaultColourForNoBackground);
+        ipV4ThirdChunkItem.value()->setHoverColor(defaultColourForNoBackground);
+        ipV4ThirdChunkItem.value()->setClickedColor(defaultColourForNoBackground);
+        ipV4FourthChunkItem.value()->setNormalColor(defaultColourForNoBackground);
+        ipV4FourthChunkItem.value()->setHoverColor(defaultColourForNoBackground);
+        ipV4FourthChunkItem.value()->setClickedColor(defaultColourForNoBackground);
+        portV4ColumnItem.value()->setNormalColor(defaultColourForNoBackground);
+        portV4ColumnItem.value()->setHoverColor(defaultColourForNoBackground);
+        portV4ColumnItem.value()->setClickedColor(defaultColourForNoBackground);
+    }
+    PRETTY_DEBUG << "Checked if the background existed." << std::endl;
+
+    PRETTY_DEBUG << "Getting the center y of the screen" << std::endl;
+    const unsigned int centerY = _getScreenCenterY();
+    const unsigned int centerX = _getScreenCenterX();
+    PRETTY_DEBUG << "Center Y of the screen is " << centerY << std::endl;
+
+    PRETTY_DEBUG << "Setting the X padding" << std::endl;
+    const unsigned int padX = 10;
+    PRETTY_DEBUG << "Setting the Y padding" << std::endl;
+    const unsigned int padY = 10;
+    PRETTY_DEBUG << "Setting the X line tracker" << std::endl;
+    unsigned int posX = padX;
+    PRETTY_DEBUG << "Setting the x step" << std::endl;
+    const unsigned int ipXStep = 20;
+    PRETTY_DEBUG << "Setting the Y column tracker" << std::endl;
+    unsigned int posY = padY;
+    PRETTY_DEBUG << "Setting the y step" << std::endl;
+    const unsigned int yStep = 40;
+
+    PRETTY_DEBUG << "Setting positions" << std::endl;
+    titleItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "titleItem position: " << Recoded::myToString(titleItem.value()->getPosition()) << std::endl;
+    posY += yStep + titleSize;
+    bodyItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "bodyItem position: " << Recoded::myToString(bodyItem.value()->getPosition()) << std::endl;
+    posY += yStep + bodySize;
+    PRETTY_DEBUG << "Setting the positions for the increment arrows" << std::endl;
+    ipChunkOneUpItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkOneUpItem position: " << Recoded::myToString(ipChunkOneUpItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += ipTextDotSize;
+    ipChunkTwoUpItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkTwoUpItem position: " << Recoded::myToString(ipChunkTwoUpItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += ipTextDotSize;
+    ipChunkThreeUpItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkThreeUpItem position: " << Recoded::myToString(ipChunkThreeUpItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += ipTextDotSize;
+    ipChunkFourUpItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkFourUpItem position: " << Recoded::myToString(ipChunkFourUpItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += portTextColumnSize;
+    portChunkUpItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "portChunkUpItem position: " << Recoded::myToString(portChunkUpItem.value()->getPosition()) << std::endl;
+    PRETTY_DEBUG << "Setting the positions for the texts representing the address" << std::endl;
+    posX = padX;
+    posY += yStep + ipTextSize;
+    PRETTY_DEBUG << "Current posX: " << Recoded::myToString(posX) << ", posY: " << Recoded::myToString(posY) << std::endl;
+    ipV4FirstChunkItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4FirstChunkItem position: " << Recoded::myToString(ipV4FirstChunkItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    ipV4FirstDotItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4FirstDotItem position: " << Recoded::myToString(ipV4FirstDotItem.value()->getPosition()) << std::endl;
+    posX += ipTextDotSize;
+    ipV4SecondChunkItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4SecondChunkItem position: " << Recoded::myToString(ipV4SecondChunkItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    ipV4SecondDotItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4SecondDotItem position: " << Recoded::myToString(ipV4SecondDotItem.value()->getPosition()) << std::endl;
+    posX += ipTextDotSize;
+    ipV4ThirdChunkItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4ThirdChunkItem position: " << Recoded::myToString(ipV4ThirdChunkItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    ipV4ThirdDotItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4ThirdDotItem position: " << Recoded::myToString(ipV4ThirdDotItem.value()->getPosition()) << std::endl;
+    posX += ipTextDotSize;
+    ipV4FourthChunkItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipV4FourthChunkItem position: " << Recoded::myToString(ipV4FourthChunkItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    portV4ColumnItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "portV4ColumnItem position: " << Recoded::myToString(portV4ColumnItem.value()->getPosition()) << std::endl;
+    posX += portTextColumnSize;
+    portV4ChunkItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "portV4ChunkItem position: " << Recoded::myToString(portV4ChunkItem.value()->getPosition()) << std::endl;
+    posX = padX;
+    posY += yStep;
+    PRETTY_DEBUG << "Current posX: " << Recoded::myToString(posX) << ", posY: " << Recoded::myToString(posY) << std::endl;
+    ipChunkOneDownItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkOneDownItem position: " << Recoded::myToString(ipChunkOneDownItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += ipTextDotSize;
+    ipChunkTwoDownItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkTwoDownItem position: " << Recoded::myToString(ipChunkTwoDownItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += ipTextDotSize;
+    ipChunkThreeDownItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkThreeDownItem position: " << Recoded::myToString(ipChunkThreeDownItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += ipTextDotSize;
+    ipChunkFourDownItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "ipChunkFourDownItem position: " << Recoded::myToString(ipChunkFourDownItem.value()->getPosition()) << std::endl;
+    posX += ipXStep + ipTextSize;
+    posX += portTextColumnSize;
+    portChunkDownItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "portChunkDownItem position: " << Recoded::myToString(portChunkDownItem.value()->getPosition()) << std::endl;
+    posX = padX;
+    posY += yStep * 2;
+    PRETTY_DEBUG << "Current posX: " << Recoded::myToString(posX) << ", posY: " << Recoded::myToString(posY) << std::endl;
+    PRETTY_DEBUG << "Setting the position of the connect button" << std::endl;
+    connectItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "connectItem position: " << Recoded::myToString(connectItem.value()->getPosition()) << std::endl;
+    posX += ipXStep * 10;
+    PRETTY_DEBUG << "Current posX: " << Recoded::myToString(posX) << ", posY: " << Recoded::myToString(posY) << std::endl;
+    PRETTY_DEBUG << "Setting the position of the home button" << std::endl;
+    homeItem.value()->setPosition({ posX, posY });
+    PRETTY_DEBUG << "homeItem position: " << Recoded::myToString(homeItem.value()->getPosition()) << std::endl;
+    PRETTY_DEBUG << "Postions set" << std::endl;
+
+    PRETTY_DEBUG << "Rendering the content" << std::endl;
+    if (backgroundItem.has_value()) {
+        win.value()->draw(*(backgroundItem.value()));
+    }
+    PRETTY_DEBUG << "Rendered background" << std::endl;
+    win.value()->draw(*(titleItem.value()));
+    PRETTY_DEBUG << "Rendered title item" << std::endl;
+    win.value()->draw(*(bodyItem.value()));
+    PRETTY_DEBUG << "Rendered body item" << std::endl;
+    win.value()->draw(*(homeItem.value()));
+    PRETTY_DEBUG << "Rendered home item" << std::endl;
+    win.value()->draw(*(connectItem.value()));
+    PRETTY_DEBUG << "Rendered connect item" << std::endl;
+    win.value()->draw(*(ipV4FirstChunkItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4FirstChunk item" << std::endl;
+    win.value()->draw(*(ipV4FirstDotItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4FirstDot item" << std::endl;
+    win.value()->draw(*(ipV4SecondChunkItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4SecondChunk item" << std::endl;
+    win.value()->draw(*(ipV4SecondDotItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4SecondDotItem" << std::endl;
+    win.value()->draw(*(ipV4ThirdChunkItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4ThirdChunk item" << std::endl;
+    win.value()->draw(*(ipV4ThirdDotItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4ThirdDot item" << std::endl;
+    win.value()->draw(*(ipV4FourthChunkItem.value()));
+    PRETTY_DEBUG << "Rendered ipV4FourthChunk item" << std::endl;
+    win.value()->draw(*(portV4ColumnItem.value()));
+    PRETTY_DEBUG << "Rendered portV4Column item" << std::endl;
+    win.value()->draw(*(portV4ChunkItem.value()));
+    PRETTY_DEBUG << "Rendered portV4Chunk item" << std::endl;
+    win.value()->draw(*(ipChunkOneUpItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkOneUp item" << std::endl;
+    win.value()->draw(*(ipChunkOneDownItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkOneDown item" << std::endl;
+    win.value()->draw(*(ipChunkTwoUpItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkTwoUp item" << std::endl;
+    win.value()->draw(*(ipChunkTwoDownItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkTwoDown item" << std::endl;
+    win.value()->draw(*(ipChunkThreeUpItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkThreeUp item" << std::endl;
+    win.value()->draw(*(ipChunkThreeDownItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkThreeDown item" << std::endl;
+    win.value()->draw(*(ipChunkFourUpItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkFourUp item" << std::endl;
+    win.value()->draw(*(ipChunkFourDownItem.value()));
+    PRETTY_DEBUG << "Rendered ipChunkFourDown item" << std::endl;
+    win.value()->draw(*(portChunkUpItem.value()));
+    PRETTY_DEBUG << "Rendered portChunkUp item" << std::endl;
+    win.value()->draw(*(portChunkDownItem.value()));
+    PRETTY_DEBUG << "Rendered portChunkDown item" << std::endl;
+    PRETTY_DEBUG << "Content rendered" << std::endl;
+    PRETTY_DEBUG << "Base id: " << Recoded::myToString(_baseId) << std::endl;
 }
+
+void Main::_lobbyList()
+{
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+}
+
+void Main::_lobbyRoom()
+{
+
+    PRETTY_DEBUG << "Getting the window manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
+    if (!win.has_value()) {
+        PRETTY_CRITICAL << "There is no window to draw on." << std::endl;
+        throw CustomExceptions::NoWindow("<There was no window found on which components could be rendered>");
+    }
+    PRETTY_SUCCESS << "Window manager component found" << std::endl;
+
+    std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
+    PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _goHome();
+    }
+}
+
 /**
  * @brief Switches the active screen to the game screen for the online game version.
  *
@@ -1567,6 +4226,24 @@ void Main::_goPlay()
 {
     setActiveScreen(ActiveScreen::GAME);
 };
+
+/**
+ * @brief Sets the player's name.
+ *
+ * This function assigns a name to the player. If the provided name is empty,
+ * it defaults the player's name to "Player" and logs a warning message.
+ *
+ * @param player The name of the player to set. If empty, the default name "Player" is used.
+ */
+void Main::setPlayer(const std::string &player)
+{
+    if (player == "") {
+        PRETTY_WARNING << "Player name is empty, defaulting to 'Player'" << std::endl;
+        _player = "Player";
+    }
+    _player = player;
+    _networkManager.setPlayerName(_player);
+}
 
 /**
  * @brief Switches the active screen to the local game screen for the offline game version.
@@ -1659,6 +4336,86 @@ void Main::_goConnectionFailed()
 };
 
 /**
+ * @brief Attempts to establish a connection and updates the active screen based on the connection status.
+ *
+ * This function initializes the connection process by calling `_initialiseConnection()`. After attempting
+ * to connect, it checks the `_connected` flag to determine if the connection was successful. Based on the
+ * connection status, the active screen is updated:
+ * - If the connection fails, the active screen is set to `ActiveScreen::CONNECTION_FAILED`.
+ * - If the connection is successful, the active screen is set to `ActiveScreen::GAME`.
+ *
+ * @note Logs debug messages throughout the process for diagnostic purposes.
+ */
+void Main::_goConnect()
+{
+    PRETTY_DEBUG << "Reconstructing ip" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 1" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkOne = _getTextComponent(_ipV4FirstChunkKey);
+    if (!chunkOne.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
+        _goConnectionFailed();
+        return;
+    }
+    PRETTY_DEBUG << "Got the chunk 1" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 2" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkTwo = _getTextComponent(_ipV4SecondChunkKey);
+    if (!chunkTwo.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the second IP chunk." << std::endl;
+        _goConnectionFailed();
+        return;
+    }
+    PRETTY_DEBUG << "Got the chunk 2" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 3" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkThree = _getTextComponent(_ipV4ThirdChunkKey);
+    if (!chunkThree.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
+        _goConnectionFailed();
+        return;
+    }
+    PRETTY_DEBUG << "Got the chunk 3" << std::endl;
+    PRETTY_DEBUG << "Getting the chunk 4" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> chunkFour = _getTextComponent(_ipV4FourthChunkKey);
+    if (!chunkFour.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the first IP chunk." << std::endl;
+        _goConnectionFailed();
+        return;
+    }
+    PRETTY_DEBUG << "Got the chunk 4" << std::endl;
+    _ip = chunkOne.value()->getText() + ".";
+    _ip += chunkTwo.value()->getText() + ".";
+    _ip += chunkThree.value()->getText() + ".";
+    _ip += chunkFour.value()->getText();
+    PRETTY_DEBUG << "Reconstructing port" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> port = _getTextComponent(_portV4ChunkKey);
+    if (!port.has_value()) {
+        PRETTY_ERROR << "Could not find the text component for the port chunk." << std::endl;
+        _goConnectionFailed();
+        return;
+    }
+    try {
+        PRETTY_DEBUG << "The text port is: " << port.value()->getText() << std::endl;
+        _port = std::stoi(port.value()->getText());
+        PRETTY_DEBUG << "The port is" << Recoded::myToString(_port) << std::endl;
+    }
+    catch (std::invalid_argument &e) {
+        PRETTY_ERROR << "Could not convert the port to an integer." << std::endl;
+        _goConnectionFailed();
+        return;
+    }
+    PRETTY_DEBUG << "Current address: " << _ip << ":" << Recoded::myToString(_port) << std::endl;
+    PRETTY_DEBUG << "Attempting to connect" << std::endl;
+    _initialiseConnection();
+    PRETTY_DEBUG << "Checking if we are connected" << std::endl;
+    if (!_networkManager.isConnected()) {
+        PRETTY_DEBUG << "We are not connected" << std::endl;
+        _goConnectionFailed();
+    } else {
+        PRETTY_DEBUG << "We are connected" << std::endl;
+        _goPlay();
+    }
+};
+
+/**
  * @brief Switches the active screen to a connection address input screen.
  *
  * Sets the active screen to @c ActiveScreen::CONNECTION_ADDRESS, allowing the user to input a connection address.
@@ -1667,6 +4424,126 @@ void Main::_goConnectionAddress()
 {
     setActiveScreen(ActiveScreen::CONNECTION_ADDRESS);
 };
+
+/**
+ * @brief Switches the active screen to a lobby list  screen.
+ *
+ * Sets the active screen to @c ActiveScreen::LOBBY_LIST, allowing the user to choose the game they want to play.
+ */
+void Main::_goLobbyList()
+{
+    setActiveScreen(ActiveScreen::LOBBY_LIST);
+}
+
+/**
+ * @brief Switches the active screen to a lobby room input screen.
+ *
+ * Sets the active screen to @c ActiveScreen::LOBBY_ROOM, allowing the user to wait for other user's to connect.
+ */
+void Main::_goLobbyRoom()
+{
+    setActiveScreen(ActiveScreen::LOBBY_ROOM);
+}
+
+/**
+ * @brief Switches between an active and disabled music playing
+ */
+void Main::_toggleMusic()
+{
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    PRETTY_DEBUG << "Flushing stored events" << std::endl;
+    event_ptr.value()->flushEvents();
+    PRETTY_SUCCESS << "Events flushed" << std::endl;
+
+
+    if (_playMusic) {
+        _playMusic = false;
+        _updateMusicStatus();
+        return;
+    }
+    _updateMusicStatus();
+    _playMusic = true;
+}
+
+/**
+ * @brief Switches between an active and disabled sound playing
+ */
+void Main::_toggleSound()
+{
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
+    }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    PRETTY_DEBUG << "Flushing stored events" << std::endl;
+    event_ptr.value()->flushEvents();
+    PRETTY_SUCCESS << "Events flushed" << std::endl;
+
+    if (_playSoundEffects) {
+        _playSoundEffects = false;
+        return;
+    }
+    _playSoundEffects = true;
+}
+
+void Main::_updateMusicStatus()
+{
+    if (!_playMusic) {
+        PRETTY_WARNING << "No music is supposed to play, not playing any" << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        return;
+    }
+    PRETTY_DEBUG << "Updating the current music that is supposed to play." << std::endl;
+    if (_activeScreen == ActiveScreen::MENU || _activeScreen == ActiveScreen::SETTINGS || _activeScreen == ActiveScreen::CONNECTION_ADDRESS || _activeScreen == ActiveScreen::LOBBY_LIST || _activeScreen == ActiveScreen::LOBBY_ROOM) {
+        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
+        _startMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (_activeScreen == ActiveScreen::GAME || _activeScreen == ActiveScreen::DEMO) {
+        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
+        _stopMainMenuMusic();
+        _startGameLoopMusic();
+        _stopBossFightMusic();
+    } else if (_activeScreen == ActiveScreen::BOSS_FIGHT) {
+        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _startBossFightMusic();
+    } else if (_activeScreen == ActiveScreen::GAME_WON) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _winSound();
+    } else if (_activeScreen == ActiveScreen::GAME_OVER) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+        _gameOverSound();
+    } else if (_activeScreen == ActiveScreen::CONNECTION_FAILED) {
+        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+        _deadSound();
+    } else {
+        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
+        _stopMainMenuMusic();
+        _stopGameLoopMusic();
+        _stopBossFightMusic();
+    }
+    PRETTY_DEBUG << "Updated the current music that is supposed to play." << std::endl;
+}
 
 /**
  * @brief Starts the main menu music if it has not already started.
@@ -1869,6 +4746,10 @@ void Main::_stopBossFightMusic()
  */
 void Main::_shootSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -1897,6 +4778,10 @@ void Main::_shootSound()
  */
 void Main::_damageSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -1925,6 +4810,10 @@ void Main::_damageSound()
  */
 void Main::_deadSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -1954,6 +4843,10 @@ void Main::_deadSound()
  */
 void Main::_buttonSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -1982,6 +4875,10 @@ void Main::_buttonSound()
  */
 void Main::_gameOverSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -2010,6 +4907,10 @@ void Main::_gameOverSound()
  */
 void Main::_winSound()
 {
+    if (!_playSoundEffects) {
+        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+        return;
+    }
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
     for (std::any music : musics) {
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
@@ -2106,6 +5007,7 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     setActiveScreen(ActiveScreen::MENU);
+    // setActiveScreen(ActiveScreen::DEMO);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
@@ -2118,7 +5020,7 @@ void Main::_mainLoop()
         PRETTY_INFO << "Processing incoming packets" << std::endl;
         _processIncommingPackets();
         PRETTY_SUCCESS << "Processed incoming packets" << std::endl;
-        event->processEvents(*window);
+        event->processEvents(*window, getActiveScreen());
         PRETTY_SUCCESS << "Processed window events (user input basically)" << std::endl;
         _updateMouseForAllRendererables(event->getMouseInfo());
         PRETTY_SUCCESS << "Updated mouse position for all rendererables" << std::endl;
@@ -2135,6 +5037,10 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Game screen components are going to be set to be displayed" << std::endl;
             _gameScreen();
             PRETTY_SUCCESS << "Game screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::DEMO) {
+            PRETTY_DEBUG << "Demo screen components are going to be set to be displayed" << std::endl;
+            _demoScreen();
+            PRETTY_SUCCESS << "Demo screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::SETTINGS) {
             PRETTY_DEBUG << "Settings screen components are going to be set to be displayed" << std::endl;
             _settingsMenu();
@@ -2155,10 +5061,18 @@ void Main::_mainLoop()
             PRETTY_DEBUG << "Connection Failed screen components are going to be set to be displayed" << std::endl;
             _connectionFailedScreen();
             PRETTY_SUCCESS << "Connection Failed screen components are set to be displayed" << std::endl;
-        } else if (_activeScreen == ActiveScreen::DEMO) {
-            PRETTY_DEBUG << "Demo screen components are going to be set to be displayed" << std::endl;
-            _demoScreen();
-            PRETTY_SUCCESS << "Demo screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::CONNECTION_ADDRESS) {
+            PRETTY_DEBUG << "Connection Address screen components are going to be set to be displayed" << std::endl;
+            _connectionAddressScreen();
+            PRETTY_SUCCESS << "Connection Address screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::LOBBY_LIST) {
+            PRETTY_DEBUG << "Lobby list screen components are going to be set to be displayed" << std::endl;
+            _lobbyList();
+            PRETTY_SUCCESS << "Lobby list screen components are set to be displayed" << std::endl;
+        } else if (_activeScreen == ActiveScreen::LOBBY_ROOM) {
+            PRETTY_DEBUG << "Lobby room screen components are going to be set to be displayed" << std::endl;
+            _lobbyRoom();
+            PRETTY_SUCCESS << "Lobby room screen components are set to be displayed" << std::endl;
         } else if (_activeScreen == ActiveScreen::LOADING) {
             PRETTY_DEBUG << "Update loading text screen components are going to be set to be displayed" << std::endl;
             _updateLoadingText("Apparently we are loading something...");
@@ -2186,7 +5100,6 @@ void Main::_mainLoop()
 void Main::run()
 {
     _initialiseRessources();
-    _initialiseConnection();
     _mainLoop();
     _closeConnection();
 }
@@ -2204,6 +5117,7 @@ void Main::setIp(const std::string &ip)
 {
     if (_isIpInRange(ip) == true) {
         _ip = ip;
+        _networkManager.setIp(ip);
     } else {
         throw CustomExceptions::InvalidIp(ip);
     }
@@ -2220,6 +5134,7 @@ void Main::setPort(const unsigned int port)
 {
     if (_isPortCorrect(port) == true) {
         _port = port;
+        _networkManager.setPort(_port);
     } else {
         throw CustomExceptions::InvalidPort(std::to_string(port));
     }
@@ -2437,56 +5352,28 @@ void Main::setDebug(const bool debug)
 }
 
 /**
- * @brief Function in charge of updating the type of screen that is supposed
- * to be displayed as well as change the music based on the active screen.
- *
- * @param screen of type Active screen which informs the program of the current
- * screen type that needs to be processed.
- */
+*@brief Function in charge of updating the type of screen that is supposed
+*to be displayed as well as change the music based on the active screen.
+*
+*@param screen of type Active screen which informs the program of the current
+*screen type that needs to be processed.
+*/
 void Main::setActiveScreen(const ActiveScreen screen)
 {
-    _activeScreen = screen;
-    PRETTY_DEBUG << "Setting active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
-    if (screen == ActiveScreen::MENU || screen == ActiveScreen::SETTINGS || screen == ActiveScreen::CONNECTION_ADDRESS) {
-        PRETTY_DEBUG << "We're not in game nor in a boss fight, switching to menu music." << std::endl;
-        _startMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-    } else if (screen == ActiveScreen::GAME || screen == ActiveScreen::DEMO) {
-        PRETTY_DEBUG << "Were gaming, swithing to game music." << std::endl;
-        _stopMainMenuMusic();
-        _startGameLoopMusic();
-        _stopBossFightMusic();
-    } else if (screen == ActiveScreen::BOSS_FIGHT) {
-        PRETTY_DEBUG << "Boss fight!, switching to boss fight music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _startBossFightMusic();
-    } else if (screen == ActiveScreen::GAME_WON) {
-        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-        _winSound();
-    } else if (screen == ActiveScreen::GAME_OVER) {
-        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-        _deadSound();
-        _gameOverSound();
-    } else if (screen == ActiveScreen::CONNECTION_FAILED) {
-        PRETTY_DEBUG << "Game won!, switching to game won music." << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
-        _deadSound();
-    } else {
-        PRETTY_DEBUG << "No specific music rules, defaulting to no music" << std::endl;
-        _stopMainMenuMusic();
-        _stopGameLoopMusic();
-        _stopBossFightMusic();
+    PRETTY_DEBUG << "Getting the event manager component" << std::endl;
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::EventManager>> event_ptr = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::EventManager>>(_ecsEntities[typeid(GUI::ECS::Systems::EventManager)][0], false);
+    if (!event_ptr.has_value()) {
+        throw CustomExceptions::NoEventManager("<std::any un-casting failed>");
     }
+    PRETTY_SUCCESS << "Event manager component found" << std::endl;
+    PRETTY_DEBUG << "Flushing stored events" << std::endl;
+    event_ptr.value()->flushEvents();
+    PRETTY_SUCCESS << "Events flushed" << std::endl;
+
+    PRETTY_DEBUG << "Setting active screen to: '" << Recoded::myToString(screen) << "'" << std::endl;
+    _activeScreen = screen;
+    PRETTY_DEBUG << "Set active screen to: '" << getActiveScreenAsString() << "'." << std::endl;
+    _updateMusicStatus();
 }
 
 /**
@@ -2721,9 +5608,21 @@ const std::string Main::getActiveScreenAsString() const
 }
 
 /**
- * @brief Load a toml file into the program if it is present.
- *
- */
+*@brief Retrieves the player's name.
+*
+*This function returns the name of the current player.
+*
+*@return A string containing the player's name.
+*/
+const std::string Main::getPlayer() const
+{
+    return _player;
+}
+
+/**
+*@brief Load a toml file into the program if it is present.
+*
+*/
 void Main::_loadToml()
 {
     _tomlContent.setTOMLPath(_configFilePath);

@@ -26,4 +26,6 @@ enum class ActiveScreen {
     BOSS_FIGHT,
     CONNECTION_FAILED,
     CONNECTION_ADDRESS,
+    LOBBY_LIST,
+    LOBBY_ROOM,
 };

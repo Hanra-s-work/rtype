@@ -41,9 +41,9 @@ const GUI::ECS::Systems::MouseInfo GUI::ECS::Systems::EventManager::getMouseInfo
     return _mouse;
 }
 
-void GUI::ECS::Systems::EventManager::update(GUI::ECS::Systems::Window &window)
+void GUI::ECS::Systems::EventManager::update(GUI::ECS::Systems::Window &window, const ActiveScreen &screen)
 {
-    processEvents(window);
+    processEvents(window, screen);
 }
 
 void GUI::ECS::Systems::EventManager::update(const GUI::ECS::Systems::MouseInfo &mouse)
@@ -121,7 +121,16 @@ void GUI::ECS::Systems::EventManager::clearEvents()
 }
 
 
-void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &windowItem)
+void GUI::ECS::Systems::EventManager::flushEvents()
+{
+    PRETTY_DEBUG << "Setting the counter to the reset delay value" << std::endl;
+    _resetIndex = _resetDelay;
+    PRETTY_DEBUG << "Calling the clearEvents function" << std::endl;
+    clearEvents();
+    PRETTY_DEBUG << "The events have been flushed" << std::endl;
+}
+
+void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &windowItem, const ActiveScreen &currentScreen)
 {
     int counter = 0;
     clearEvents();
@@ -136,7 +145,11 @@ void GUI::ECS::Systems::EventManager::processEvents(GUI::ECS::Systems::Window &w
             PRETTY_DEBUG << "A key was pressed, it's code is: '" << _mapper.stringKey(code) << "'." << std::endl;
             if (code == sf::Keyboard::Scancode::Escape) {
                 PRETTY_INFO << "The escape key was pressed." << std::endl;
-                windowItem.close();
+                if (currentScreen == ActiveScreen::MENU) {
+                    windowItem.close();
+                } else {
+                    _keys.push_back(_mapper.mapKey(code));
+                }
             } else {
                 _keys.push_back(_mapper.mapKey(code));
             }

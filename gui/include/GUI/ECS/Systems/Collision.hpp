@@ -107,23 +107,23 @@ namespace GUI
             std::ostream &operator<<(std::ostream &os, const Collision &item);
 
             /**
-             * @brief Compares two colors for equality.
+             * @brief Compares two collision components for equality.
              * @param left The first collision component.
              * @param right The second collision component.
-             * @return `true` if the colors are equal; otherwise, `false`.
+             * @return `true` if the collision components are equal; otherwise, `false`.
              */
             [[nodiscard]] const bool operator==(Collision left, Collision right);
 
             /**
-             * @brief Compares two colors for inequality.
+             * @brief Compares two collision components for inequality.
              * @param left The first collision component.
              * @param right The second collision component.
-             * @return `true` if the colors are not equal; otherwise, `false`.
+             * @return `true` if the collision components are not equal; otherwise, `false`.
              */
             [[nodiscard]] const bool operator!=(Collision left, Collision right);
 
             /**
-             * @brief Adds two colors component-wise.
+             * @brief Adds two collision components component-wise.
              * @param left The first collision component.
              * @param right The second collision component.
              * @return The resulting collision component.
@@ -131,7 +131,7 @@ namespace GUI
             [[nodiscard]] const Collision operator+(Collision left, Collision right);
 
             /**
-             * @brief Subtracts two colors component-wise.
+             * @brief Subtracts two collision components component-wise.
              * @param left The first collision component.
              * @param right The second collision component.
              * @return The resulting collision component.
@@ -139,7 +139,7 @@ namespace GUI
             [[nodiscard]] const Collision operator-(Collision left, Collision right);
 
             /**
-             * @brief Multiplies two colors component-wise.
+             * @brief Multiplies two collision components component-wise.
              * @param left The first collision component.
              * @param right The second collision component.
              * @return The resulting collision component.

@@ -60,6 +60,12 @@ const std::string Recoded::myToString(const ActiveScreen &item)
         case ActiveScreen::CONNECTION_ADDRESS:
             return "CONNECTION ADDRESS";
             break;
+        case ActiveScreen::LOBBY_LIST:
+            return "LOBBY LIST";
+            break;
+        case ActiveScreen::LOBBY_ROOM:
+            return "LOBBY ROOM";
+            break;
         default:
             return "UNKNOWN";
             break;
@@ -79,27 +85,20 @@ const std::string Recoded::myToString(const GUI::ECS::GameComponents::Package_t 
 
 const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityType &item)
 {
-    switch (item) {
-        case GUI::ECS::GameComponents::EntityType::PLAYER:
-            return "PLAYER";
-            break;
+    if (item == GUI::ECS::GameComponents::EntityType::PLAYER) {
+        return "PLAYER";
+    }
+    if (item == GUI::ECS::GameComponents::EntityType::ENEMY) {
+        return "ENEMY";
+    }
+    if (item == GUI::ECS::GameComponents::EntityType::LASER_ENEMY) {
+        return "LASER_ENEMY";
+    }
 
-        case GUI::ECS::GameComponents::EntityType::ENEMY:
-            return "ENEMY";
-            break;
-
-        case GUI::ECS::GameComponents::EntityType::LASER_ENEMY:
-            return "LASER_ENEMY";
-            break;
-
-        case GUI::ECS::GameComponents::EntityType::LASER_PLAYER:
-            return "LASER_PLAYER";
-            break;
-
-        default:
-            return "UNKNOWN";
-            break;
-    };
+    if (item == GUI::ECS::GameComponents::EntityType::LASER_PLAYER) {
+        return "LASER_PLAYER";
+    }
+    return "UNKNOWN";
 };
 
 const std::string Recoded::myToString(const GUI::ECS::GameComponents::ECSPackage_t &item)
@@ -124,32 +123,29 @@ const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityActi
 
 const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityActionType &item)
 {
-    switch (item) {
-        case GUI::ECS::GameComponents::EntityActionType::MOVE:
-            return "MOVE";
-            break;
-        case GUI::ECS::GameComponents::EntityActionType::SHOOT:
-            return "SHOOT";
-            break;
-
-        default:
-            return "UNKNOWN";
-            break;
+    if (item == GUI::ECS::GameComponents::EntityActionType::MOVE) {
+        return "MOVE";
     }
+    if (item == GUI::ECS::GameComponents::EntityActionType::SHOOT) {
+        return "SHOOT";
+    }
+    return "UNKNOWN";
 }
 
 const std::string Recoded::myToString(const GUI::ECS::Systems::ActiveShape &shape)
 {
     if (shape == GUI::ECS::Systems::ActiveShape::NONE) {
         return "None";
-    } else if (shape == GUI::ECS::Systems::ActiveShape::CIRCLE) {
-        return "Circle";
-    } else if (shape == GUI::ECS::Systems::ActiveShape::CONVEX) {
-        return "Convex";
-    } else if (shape == GUI::ECS::Systems::ActiveShape::RECTANGLE) {
-        return "Rectangle";
-    } else {
-        return "Unknown";
     }
+    if (shape == GUI::ECS::Systems::ActiveShape::CIRCLE) {
+        return "Circle";
+    }
+    if (shape == GUI::ECS::Systems::ActiveShape::CONVEX) {
+        return "Convex";
+    }
+    if (shape == GUI::ECS::Systems::ActiveShape::RECTANGLE) {
+        return "Rectangle";
+    }
+    return "Unknown";
 }
 

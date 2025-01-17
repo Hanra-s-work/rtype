@@ -1,0 +1,166 @@
+/*
+** EPITECH PROJECT, 2024
+** rtype (Workspace)
+** File description:
+** Bullet.cpp
+*/
+
+/**
+ * @file Bullet.cpp
+ *
+ * @brief Implementation of the functions for the Bullet class.
+ */
+
+#include "GUI/ECS/Demo/Bullet.hpp"
+
+
+GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction, const int damage)
+    : _sprite(sprite), _fromEnemy(fromEnemy), _speed(speed), _direction(direction), _positionInitial(positionInitial), _damage(damage)
+{
+    _sprite.setPosition(positionInitial);
+    _collision.setPosition(positionInitial);
+    _collision.setDimension(_sprite.getSpritesheet().getCollisionInfo().getDimension());
+};
+
+GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Demo::Bullet &bullet)
+{
+    update(bullet);
+};
+
+
+void GUI::ECS::Demo::Bullet::setVisible(const bool visible)
+{
+    _visible = visible;
+    _sprite.setVisible(visible);
+}
+
+void GUI::ECS::Demo::Bullet::setPosition(const std::pair<float, float> &pos)
+{
+    _collision.setPosition(pos);
+    _sprite.setPosition(pos);
+};
+
+void GUI::ECS::Demo::Bullet::setSprite(const GUI::ECS::Components::SpriteComponent &sprite)
+{
+    _sprite.update(sprite);
+}
+
+void GUI::ECS::Demo::Bullet::setEnemy(const bool enemy)
+{
+    _fromEnemy = enemy;
+}
+
+void GUI::ECS::Demo::Bullet::setSpeed(const unsigned int speed)
+{
+    _speed = speed;
+}
+
+void GUI::ECS::Demo::Bullet::setDirection(const std::pair<int, int> &direction)
+{
+    _direction = direction;
+}
+
+void GUI::ECS::Demo::Bullet::setDamage(const int damage)
+{
+    _damage = damage;
+}
+
+void GUI::ECS::Demo::Bullet::tick()
+{
+    if (!_visible) {
+        return;
+    }
+    _sprite.checkTick();
+    std::pair<float, float> opt = { static_cast<float>(_collision.getPositionX() + _direction.first * _speed), static_cast<float>(_collision.getPositionY() + _direction.second * _speed) };
+    setPosition(opt);
+}
+const GUI::ECS::Components::SpriteComponent GUI::ECS::Demo::Bullet::render()
+{
+    return _sprite;
+};
+
+const bool GUI::ECS::Demo::Bullet::isVisible() const
+{
+    return _visible;
+}
+
+const bool GUI::ECS::Demo::Bullet::isEnemy() const
+{
+    return _fromEnemy;
+}
+
+const std::pair<float, float> GUI::ECS::Demo::Bullet::getPosition() const
+{
+    return _collision.getPosition();
+}
+
+
+/*
+If needed, check the opposite condition, as if<object> was the target and target the object
+( = check isColliding as target with bullet as parameter)
+*/
+const bool GUI::ECS::Demo::Bullet::isColliding(const GUI::ECS::Systems::Collision &second) const
+{
+    return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
+        && second.getPositionX() < _collision.getPositionX() + _collision.getWidth();
+}
+
+/**
+ * @brief Updates the sprite by copying another Bullet.
+ *
+ * @param copy The Bullet to copy data from.
+ */
+void GUI::ECS::Demo::Bullet::update(const GUI::ECS::Demo::Bullet &copy)
+{
+    _speed = copy.getSpeed();
+    _sprite = copy.getSprite();
+    _damage = copy.getDamage();
+    _visible = copy.isVisible();
+    _fromEnemy = copy.isEnemy();
+    _direction = copy.getDirection();
+    _collision = copy.getCollision();
+    _positionInitial = copy.getPositionInitial();
+}
+
+/**
+ * @brief Overloads the assignment operator to copy from another Bullet.
+ *
+ * @param copy The Bullet to copy data from.
+ *
+ * @return A reference to the updated instance.
+ */
+GUI::ECS::Demo::Bullet &GUI::ECS::Demo::Bullet::operator =(const GUI::ECS::Demo::Bullet &copy)
+{
+    update(copy);
+    return *this;
+}
+
+const unsigned int GUI::ECS::Demo::Bullet::getSpeed() const
+{
+    return _speed;
+}
+
+const GUI::ECS::Systems::Collision GUI::ECS::Demo::Bullet::getCollision() const
+{
+    return _collision;
+}
+
+const GUI::ECS::Components::SpriteComponent GUI::ECS::Demo::Bullet::getSprite() const
+{
+    return _sprite;
+}
+
+const std::pair<int, int> GUI::ECS::Demo::Bullet::getPositionInitial() const
+{
+    return _positionInitial;
+}
+
+const int GUI::ECS::Demo::Bullet::getDamage() const
+{
+    return _damage;
+}
+
+const std::pair<int, int> GUI::ECS::Demo::Bullet::getDirection() const
+{
+    return _direction;
+}

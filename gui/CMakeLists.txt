@@ -49,6 +49,12 @@ set(SOURCES
     src/GUI/ECS/Components/TextureComponent.cpp
     src/GUI/ECS/Components/AnimationComponent.cpp
 
+    # ECS Demo
+    src/GUI/ECS/Demo/Bullet.cpp
+    src/GUI/ECS/Demo/EnemyBrain.cpp
+    src/GUI/ECS/Demo/PlayerBrain.cpp
+    src/GUI/ECS/Demo/Orchestrator.cpp
+
     # ECS Systems
     src/GUI/ECS/Systems/Key.cpp
     src/GUI/ECS/Systems/Font.cpp

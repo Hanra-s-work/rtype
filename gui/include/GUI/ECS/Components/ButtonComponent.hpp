@@ -162,6 +162,12 @@ namespace GUI
                  * @param clickedColor
                  */
                 void setTextClickedColor(const GUI::ECS::Systems::Colour &clickedColor);
+                /**
+                 * @brief Set the text contained in the Text component
+                 *
+                 * @param text
+                 */
+                void setTextString(const std::string &text);
 
                 /**
                  * @brief Set the Position of all objects contained in the button

@@ -98,17 +98,29 @@
     #endif
 
     /**
+     * @brief Get the name of the function based on the compiler version
+     * 
+     */
+    #ifndef _FUNC_NAME
+        #if defined(__GNUG__) || defined(__GNUC__) || defined(__GNUC_MINOR__) || defined(__GNUC_PATCHLEVEL__)
+            #define _FUNC_NAME __PRETTY_FUNCTION__
+        #else
+            #define _FUNC_NAME __PRETTY_FUNCTION__ << '(' << __func__ << ')' 
+        #endif
+    #endif
+
+    /**
      * @brief Formats detailed logging information with file, line, and function details.
      */
     #ifndef _MY_FILE_GETTER
-        #define _MY_FILE_GETTER " " << __FILE__ << ":" << __LINE__ << " " << __PRETTY_FUNCTION__ << ": "
+        #define _MY_FILE_GETTER " " << __FILE__ << ":" << __LINE__ << " " << _FUNC_NAME << ": "
     #endif
 
     /**
      * @brief Formats detailed logging information with file, line, and function details in a colourised form.
      */
     #ifndef _MY_COLOURED_FILE_GETTER
-        #define _MY_COLOURED_FILE_GETTER BACKGROUND_COL << DEFAULT_FG << " " << SUCCESS_COL << __FILE__ << DEFAULT_FG << ":" << INFO_COL << __LINE__ << DEFAULT_FG << " " << WARNING_COL << __PRETTY_FUNCTION__ << DEFAULT_FG << ": "
+        #define _MY_COLOURED_FILE_GETTER BACKGROUND_COL << DEFAULT_FG << " " << SUCCESS_COL << __FILE__ << DEFAULT_FG << ":" << INFO_COL << __LINE__ << DEFAULT_FG << " " << WARNING_COL << _FUNC_NAME << DEFAULT_FG << ": "
     #endif
 
     /**

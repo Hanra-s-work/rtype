@@ -34,6 +34,7 @@
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
 #include "ActiveScreen.hpp"
+#include "GUI/ECS/Demo.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -41,6 +42,7 @@
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/Window.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
+#include "GUI/Network/NetworkManager.hpp"
 
 
  /**
@@ -52,7 +54,7 @@ class Main {
   /**
    * @brief Constructor for the Main class.
    * @param ip The IP address to use for connections (default: "127.0.0.1").
-   * @param port The port number to use for connections (default: 5000).
+   * @param port The port number to use for connections (default: 9000).
    * @param windowWidth The width of the application window (default: 800).
    * @param windowHeight The height of the application window (default: 600).
    * @param windowCursor Whether the cursor should be visible (default: true).
@@ -71,7 +73,7 @@ class Main {
    * @param log Inform the program if it needs to output logs or not (default: false).
    * @param debug Whether debug mode is enabled (default: false).
    */
-  Main(const std::string &ip = "127.0.0.1", unsigned int port = 5000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false);
+  Main(const std::string &ip = "127.0.0.1", unsigned int port = 9000, unsigned int windowWidth = 800, unsigned int windowHeight = 600, bool windowCursor = true, bool windowFullscreen = false, const std::string &windowTitle = "R-Type", unsigned int windowX = 0, unsigned int windowY = 0, const std::string &windowCursorIcon = "NULL", bool imageIsSprite = false, bool spriteStartTop = false, bool spriteStartLeft = false, unsigned int spriteWidth = 20, unsigned int spriteHeight = 20, unsigned int frameLimit = 60, const std::string &configFilePath = "client_config.toml", const bool log = false, const bool debug = false, const std::string &player = "Player");
   ~Main();
 
   void run();
@@ -99,6 +101,7 @@ class Main {
   void setLog(const bool debug);
   void setDebug(const bool debug);
   void setActiveScreen(const ActiveScreen screen);
+  void setPlayer(const std::string &player);
 
   // Getters
   const std::string getIp();
@@ -122,12 +125,15 @@ class Main {
   std::tuple<unsigned int, unsigned int> getWindowSize();
   const ActiveScreen getActiveScreen() const;
   const std::string getActiveScreenAsString() const;
+  const std::string getPlayer() const;
 
   private:
   // Private helper methods
   void _loadToml();
   void _mainLoop();
   std::string _lowerText(const std::string &text);
+
+  // Functions to check the state of elements
   const bool _isIpInRange(const std::string &ip) const;
   const bool _isPortCorrect(const unsigned int port) const;
   const bool _isFilePresent(const std::string &filepath) const;
@@ -186,24 +192,65 @@ class Main {
     return ItemNode;
   }
 
+  // Functions in charge of loading the ressources for the program
   std::uint32_t _initialiseAudio();
   std::uint32_t _initialiseFonts();
   std::uint32_t _initialiseIcon();
   std::uint32_t _initialiseSprites();
   std::uint32_t _initialiseBackgrounds();
 
+  // Functions in charge of initialising connections and the base ressources
   void _initialiseConnection();
   void _initialiseRessources();
 
+  // Function in charge of updating the text displayed on screen when the ressources are loading
   void _updateLoadingText(const std::string &detail = "Loading...");
 
+  // Function in charge of updating the mouse collisions for all renderable components
   void _updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &mouse);
 
+  // Functions in charge of sending and receiving packets with the server
   void _sendAllPackets();
   void _processIncommingPackets();
 
-  const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName = "callback function", const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::AliceBlue);
+  // Ip string processing
+  const std::string _getIpChunk(const unsigned int index, const std::string &defaultValue) const;
 
+  // Text component fetching
+  const std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _getTextComponent(const std::string &textComponentKey);
+
+  // Functions in charge of managing a node from an ipv4
+  const std::string _incrementIpV4Node(const std::string &v4Section);
+  const std::string _decrementIpV4Node(const std::string &v4Section);
+
+  // Functions in charge of managing the port counter
+  const std::string _incrementPortCounter(const std::string &portSection);
+  const std::string _decrementPortCounter(const std::string &portSection);
+
+  // Functions to increment a specific chunk of the address
+  void _incrementIpChunkOne();
+  void _incrementIpChunkTwo();
+  void _incrementIpChunkThree();
+  void _incrementIpChunkFour();
+  void _incrementPortChunk();
+
+  // Functions to decrement a specific chunk of the address
+  void _decrementIpChunkOne();
+  void _decrementIpChunkTwo();
+  void _decrementIpChunkThree();
+  void _decrementIpChunkFour();
+  void _decrementPortChunk();
+
+  // Function in charge of returning the Event manager
+  const std::shared_ptr<GUI::ECS::Systems::EventManager> _getEventManager();
+
+  // Function in charge of creating text components
+  const std::shared_ptr<GUI::ECS::Components::TextComponent> _createText(const std::string &application, const std::string &name, const std::string &text, const GUI::ECS::Systems::Font &font, const unsigned int size = 40, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::Black);
+
+  // Function in charge of creating buttons
+  const std::shared_ptr<GUI::ECS::Components::ButtonComponent> _createButton(const std::string &application, const std::string &title, std::function<void()> callback, const std::string &callbackName = "callback function", const int width = 40, const int height = 20, const int textSize = 20, const GUI::ECS::Systems::Colour &bg = GUI::ECS::Systems::Colour::Black, const GUI::ECS::Systems::Colour &normal = GUI::ECS::Systems::Colour::White, const GUI::ECS::Systems::Colour &hover = GUI::ECS::Systems::Colour::Yellow, const GUI::ECS::Systems::Colour &clicked = GUI::ECS::Systems::Colour::AliceBlue, const std::shared_ptr<GUI::ECS::Systems::Font> &textFont = nullptr);
+
+  // Functions in charge of extracting the x and y coordinates of the screen
   const unsigned int _getScreenCenterX();
   const unsigned int _getScreenCenterY();
 
@@ -218,6 +265,8 @@ class Main {
   void _bossFightScreen();           //BOSS_FIGHT
   void _connectionFailedScreen();    //CONNECTION_FAILED
   void _connectionAddressScreen();   //CONNECTION_ADDRESS
+  void _lobbyList();                 //LOBBY_LIST
+  void _lobbyRoom();                 //LOBBY_ROOM
 
   // Function related to managing sub components in the windows
 
@@ -232,10 +281,19 @@ class Main {
   void _goBossFight();         // Boss fight screen
   void _goUnknown();           // When the screen is unknown
   void _goConnectionFailed();  // Connection failed screen
+  void _goConnect();           // Connection in progress (this function will redirect the user to either the game or the connection failed)
   void _goConnectionAddress(); // Connection changer screen
+  void _goLobbyList();         // Lobby list screen
+  void _goLobbyRoom();         // Lobby room screen
 
+  // Settings
+  void _toggleMusic(); // Function that will enable/disable the playing of music
+  void _toggleSound(); // Function that will enable/disable the playing of sound effects
 
   // Musics
+
+  // Function in charge of updating the music status
+  void _updateMusicStatus();
 
   // Main menu music
   void _startMainMenuMusic();
@@ -263,7 +321,6 @@ class Main {
 
   void _closeConnection();
 
-
   // Private members
 
   // ecs entity holder
@@ -285,9 +342,13 @@ class Main {
   bool _spriteStartLeft;
   bool _log;
   bool _debug;
+  std::string _player;
   unsigned int _spriteWidth;
   unsigned int _spriteHeight;
   unsigned int _windowFrameLimit;
+
+  // Variable in charge of setting the maximum allowed port range
+  unsigned int _maximumPortRange = 64738;
 
   // Entity id tracking
   std::uint32_t _baseId = 0;
@@ -316,6 +377,32 @@ class Main {
   bool _gameMusicStarted = false;
   bool _mainMenuMusicStarted = false;
   bool _bossFightMusicStarted = false;
+
+  // Variable in charge of informing the gui if we are connected
+  bool _connected = false;
+
+  // Variables in charge of tracking the keys for the ip's
+  const std::string _ipV4FirstChunkKey = "connectionAddressScreenIpV4FirstChunk";
+  const std::string _ipV4SecondChunkKey = "connectionAddressScreenIpV4SecondChunk";
+  const std::string _ipV4ThirdChunkKey = "connectionAddressScreenIpV4ThirdChunk";
+  const std::string _ipV4FourthChunkKey = "connectionAddressScreenIpV4FourthChunk";
+  const std::string _portV4ChunkKey = "connectionAddressScreenPortV4ChunkKey";
+
+  // Network manager
+  NetworkManager _networkManager;
+
+  // Singleplayer demo
+  GUI::ECS::Demo::Orchestrator _demoBrain;
+  bool _demoInitialised = false;
+  bool _demoStarted = false;
+
+  // Settings variables
+  bool _playMusic = true;
+  bool _playSoundEffects = true;
+
+  // Settings tokens
+  const std::string _playMusicToken = "settingsWindowPlayMusicButton";
+  const std::string _playSoundEffectsToken = "settingsWindowPlaySoundEffectsButton";
 };
 
 int RealMain(int argc, char **argv);
