@@ -79,6 +79,106 @@ const bool NetworkManager::isConnected() const
     return socket.is_open();
 }
 
+float NetworkManager::bytesToFloat(const uint8_t* bytes) {
+    float value;
+    std::memcpy(&value, bytes, sizeof(float));
+    return value;
+}
+
+std::string NetworkManager::bytesToHex(const std::vector<uint8_t>& bytes) {
+    std::ostringstream oss;
+    for (uint8_t byte : bytes) {
+        oss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+    }
+    return oss.str();
+}
+
+std::string NetworkManager::translateMessage(const std::vector<uint8_t>& message) {
+    if (message.empty()) {
+        return "[Error] Empty message received.";
+    }
+
+    std::ostringstream result;
+    uint8_t messageType = message[0];
+    result << "Message Type: 0x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(messageType) << "\n";
+
+    switch (messageType) {
+        case 0x01: { // CONNECT
+            std::string username(reinterpret_cast<const char*>(&message[1]), 8);
+            result << "CONNECT Message\nUsername: " << username << "\n";
+            break;
+        }
+        case 0x02: { // DISCONNECT
+            size_t id;
+            std::memcpy(&id, &message[1], sizeof(size_t));
+            result << "DISCONNECT Message\nEntity ID: " << id << "\n";
+            break;
+        }
+        case 0x03: { // MOVE
+            size_t id;
+            float x, y;
+            std::memcpy(&id, &message[1], sizeof(size_t));
+            x = bytesToFloat(&message[1 + sizeof(size_t)]);
+            y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(float)]);
+            result << "MOVE Message\nEntity ID: " << id << "\nPosition: (" << x << ", " << y << ")\n";
+            break;
+        }
+        case 0x04: { // SHOOT
+            size_t id;
+            std::memcpy(&id, &message[1], sizeof(size_t));
+            result << "SHOOT Message\nEntity ID: " << id << "\n";
+            break;
+        }
+        case 0x05: { // SPAWN
+            size_t id;
+            short asset;
+            float x, y;
+            std::memcpy(&id, &message[1], sizeof(size_t));
+            std::memcpy(&asset, &message[1 + sizeof(size_t)], sizeof(short));
+            x = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short)]);
+            y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short) + sizeof(float)]);
+            result << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
+            break;
+        }
+        case 0x06: { // KILL
+            size_t id;
+            std::memcpy(&id, &message[1], sizeof(size_t));
+            result << "KILL Message\nEntity ID: " << id << "\n";
+            break;
+        }
+        case 0x07: { // DAMAGE
+            size_t id;
+            std::memcpy(&id, &message[1], sizeof(size_t));
+            result << "DAMAGE Message\nEntity ID: " << id << "\n";
+            break;
+        }
+        case 0x0A: { // STATUS
+            uint8_t status = message[1];
+            result << "STATUS Message\nStatus: ";
+            if (status == 0x00) {
+                result << "On going\n";
+            } else if (status == 0x01) {
+                result << "Victory\n";
+            } else if (status == 0xFF) {
+                result << "Defeat\n";
+            } else {
+                result << "Unknown\n";
+            }
+            break;
+        }
+        case 0xFF: { // ERROR
+            uint8_t errorCode = message[1];
+            result << "ERROR Message\nError Code: 0x" << std::hex << static_cast<int>(errorCode) << "\n";
+            break;
+        }
+        default:
+            result << "Unknown Message Type\n";
+            break;
+    }
+
+    result << "Raw Data: " << bytesToHex(message) << "\n";
+    return result.str();
+}
 
 void NetworkManager::setPort(const unsigned int port)
 {
@@ -123,12 +223,41 @@ void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
     _connect();
 }
 
-const std::string NetworkManager::receiveMessage()
+void NetworkManager::receiveMessage()
 {
-    return "ee";
+    if (!isConnected()) {
+        std::cerr << "Cannot receive message: No active connection." << std::endl;
+        return;
+    }
+
+    try {
+        std::array<char, 2048> recvBuffer;
+        asio::ip::udp::endpoint remoteEndpoint;
+
+        while (true) {
+            std::error_code ec;
+            size_t bytesRecv = socket.receive_from(
+                asio::buffer(recvBuffer), remoteEndpoint, 0, ec
+            );
+
+            if (ec) {
+                std::cerr << "[Client] Receive error: " << ec.message() << "\n";
+                break;
+            }
+
+            if (bytesRecv > 0) {
+                std::vector<uint8_t> message(recvBuffer.begin(), recvBuffer.begin() + bytesRecv);
+                    std::string translatedMessage = translateMessage(message);
+                    std::cout << "[Client] Translated Message from " << remoteEndpoint << ":\n" << translatedMessage << "\n";
+            }
+        }
+
+    } catch (const std::exception& e) {
+        std::cerr << "[Client] Exception in receiveMessage: " << e.what() << "\n";
+    }
 }
 
-void NetworkManager::_connect()
+void NetworkManager::_connect()                                            
 {
     std::cerr << "In the connect function " << std::endl;
     PRETTY_DEBUG << "Connecting" << std::endl;
@@ -151,11 +280,14 @@ void NetworkManager::_connect()
         socket.bind(localEndpoint);
 
         PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
+
+        // Send a CONNECT packet
         std::string username = _playerName;
         std::vector<uint8_t> payload(username.begin(), username.end());
         if (payload.size() < 8) {
             payload.resize(8, 0x00);
         }
+
         Packet connectPacket(Packet::MessageType::CONNECT, payload);
         std::vector<uint8_t> serializedData = Packet::serialize(connectPacket);
 
@@ -163,8 +295,8 @@ void NetworkManager::_connect()
             asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
             socket.send_to(asio::buffer(serializedData), remoteEndpoint);
             std::cerr << "CONNECT packet sent to " << _ip << ":" << _port << std::endl;
-        }
-        catch (const std::exception &e) {
+
+        } catch (const std::exception &e) {
             std::cerr << "Error sending CONNECT packet: " << e.what() << std::endl;
         }
 
@@ -174,7 +306,7 @@ void NetworkManager::_connect()
         PRETTY_CRITICAL << "Error connecting to server: " << e.what() << std::endl;
         _connectionActive = false;
     }
-};
+}
 
 void NetworkManager::_disconnect()
 {

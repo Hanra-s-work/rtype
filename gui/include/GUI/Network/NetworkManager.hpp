@@ -15,6 +15,13 @@
 #include <string>
 #include <vector>
 #include <asio.hpp>
+#include <sstream>
+#include <array>
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <cstdint>
+#include <cstring>
 
 #include "ProtocolHandler.hpp"
 #include "Log.hpp"
@@ -36,7 +43,10 @@ class NetworkManager : public GUI::ECS::EntityNode {
 
     const bool isConnected() const;
 
-    const std::string receiveMessage();
+    float bytesToFloat(const uint8_t* bytes);
+    std::string bytesToHex(const std::vector<uint8_t>& bytes);
+    std::string translateMessage(const std::vector<uint8_t>& message);
+    void receiveMessage();
 
     private:
     void _connect();
