@@ -125,65 +125,39 @@ void NetworkManager::setAddress(const std::string &ip, const unsigned int port)
 
 void NetworkManager::receiveMessage()
 {
+    if (!isConnected()) {
+        std::cerr << "Cannot receive message: No active connection." << std::endl;
+        return;
+    }
+
     try {
-        // Préparer un buffer pour recevoir les données
-        std::vector<uint8_t> buffer(1024);
-        asio::ip::udp::endpoint senderEndpoint;
+        std::array<char, 2048> recvBuffer;
+        asio::ip::udp::endpoint remoteEndpoint;
 
-        // Recevoir les données du serveur
-        size_t bytesReceived = socket.receive_from(asio::buffer(buffer), senderEndpoint);
+        while (true) {
+            std::error_code ec;
+            size_t bytesRecv = socket.receive_from(
+                asio::buffer(recvBuffer), remoteEndpoint, 0, ec
+            );
 
-        if (bytesReceived > 0) {
-            // Redimensionner le buffer à la taille réelle des données reçues
-            buffer.resize(bytesReceived);
+            if (ec) {
+                std::cerr << "[Client] Receive error: " << ec.message() << "\n";
+                break;
+            }
 
-            // Désérialiser les données reçues en un paquet
-            Packet receivedPacket = Packet::deserialize(buffer);
+            if (bytesRecv > 0) {
+                std::cout << "[Client] Received " << bytesRecv << " bytes from "
+                            << remoteEndpoint << ": ";
 
-            // Debug : Afficher le contenu du paquet reçu
-            receivedPacket.print();
-
-            // Traiter le paquet en fonction de son type
-            switch (receivedPacket.getType()) {
-                case Packet::MessageType::CONNECT:
-                    PRETTY_INFO << "CONNECT message received." << std::endl;
-                    // Gérer la connexion ici
-                    break;
-
-                case Packet::MessageType::DISCONNECT:
-                    PRETTY_INFO << "DISCONNECT message received." << std::endl;
-                    // Gérer la déconnexion ici
-                    break;
-
-                case Packet::MessageType::MOVE:
-                    PRETTY_INFO << "MOVE message received." << std::endl;
-                    // Gérer le mouvement ici
-                    break;
-
-                case Packet::MessageType::SHOOT:
-                    PRETTY_INFO << "SHOOT message received." << std::endl;
-                    // Gérer le tir ici
-                    break;
-
-                case Packet::MessageType::SPAWN:
-                    PRETTY_INFO << "SPAWN message received." << std::endl;
-                    // Gérer l'apparition d'une entité ici
-                    break;
-
-                case Packet::MessageType::ERROR:
-                    PRETTY_ERROR << "ERROR message received." << std::endl;
-                    // Gérer les erreurs ici
-                    break;
-
-                default:
-                    PRETTY_WARNING << "Unknown message type received: "
-                                   << static_cast<int>(receivedPacket.getType()) << std::endl;
-                    break;
+                for (size_t i = 0; i < bytesRecv; ++i) {
+                    std::cout << std::hex << (0xff & static_cast<unsigned>(recvBuffer[i])) << " ";
+                }
+                std::cout << std::dec << "\n";
             }
         }
-    }
-    catch (const std::exception &e) {
-        PRETTY_ERROR << "Error receiving message: " << e.what() << std::endl;
+
+    } catch (const std::exception& e) {
+        std::cerr << "[Client] Exception in receiveMessage: " << e.what() << "\n";
     }
 }
 

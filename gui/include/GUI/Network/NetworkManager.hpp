@@ -16,6 +16,7 @@
 #include <vector>
 #include <asio.hpp>
 #include <sstream>
+#include <array>
 
 #include "ProtocolHandler.hpp"
 #include "Log.hpp"
@@ -36,8 +37,8 @@ class NetworkManager : public GUI::ECS::EntityNode {
     void setAddress(const std::string &ip, const unsigned int port);
 
     const bool isConnected() const;
-
     void receiveMessage();
+
 
     private:
     void _connect();
