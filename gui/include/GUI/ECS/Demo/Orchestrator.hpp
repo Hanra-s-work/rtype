@@ -62,10 +62,12 @@ namespace GUI
                 bool _playing = false;
                 bool _gameWon = false;
                 bool _gameOver = false;
-                int _stepUp = 10;
-                int _stepDown = -10;
+                int _stepUp = -10;
+                int _stepDown = 10;
                 int _stepLeft = -10;
                 int _stepRight = 10;
+                float _screenPosXOffset = 75;
+                float _screenPosYOffset = 45;
                 std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBullet;
                 std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBulletEnemy;
                 std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spritePlayer;

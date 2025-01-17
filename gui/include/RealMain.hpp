@@ -397,7 +397,8 @@ class Main {
   bool _demoStarted = false;
 
   // Settings variables
-  bool _playMusic = true;
+  // bool _playMusic = true;
+  bool _playMusic = false;
   bool _playSoundEffects = true;
 
   // Settings tokens

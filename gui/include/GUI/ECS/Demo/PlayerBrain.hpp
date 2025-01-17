@@ -34,6 +34,8 @@ namespace GUI
 
                 void setPosition(const std::pair<float, float> &pos);
 
+                void setDimension(const std::pair<float, float> &size);
+
                 void setHealth(const long int health);
 
                 void setVisible(const bool visible);

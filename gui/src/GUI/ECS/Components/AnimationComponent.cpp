@@ -123,6 +123,7 @@ void GUI::ECS::Components::AnimationComponent::checkTick()
     if (_clock.getElapsedTime() >= _frameDelay) {
         _tick();
         _hasTicked = true;
+        _clock.reset();
     }
 }
 
@@ -686,8 +687,8 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
                 (posy * frameHeight)
             };
             std::pair<int, int> dimension = {
-                ((posx * frameWidth) + frameWidth),
-                ((posy * frameHeight) + frameHeight)
+                frameWidth,
+                frameHeight
             };
             Recoded::IntRect viewField(position, dimension);
             if (frameCounter >= initialFrame && (frameCounter <= endFrame || endFrame == (-1))) {
