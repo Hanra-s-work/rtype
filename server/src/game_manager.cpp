@@ -84,10 +84,10 @@ void GameManager::updateAllGames(float dt) {
         for (const auto &evt : events) {
             // Let's build a small Message to send
             Message outMsg;
-            outMsg.type = 100; // some code meaning "GameEvent"
+            outMsg.type = evt[0]; // some code meaning "GameEvent"
 
             // Put the string in outMsg.payload
-            outMsg.payload.assign(evt.begin(), evt.end());
+            outMsg.payload.assign(evt.begin() + 1, evt.end());
 
             // Send to each client
             for (auto cid : gInst.clients) {
