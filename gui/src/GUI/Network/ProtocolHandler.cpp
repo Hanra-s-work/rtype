@@ -12,27 +12,27 @@
 
 #include "GUI/Network/ProtocolHandler.hpp"
 
-Packet::Packet(MessageType type, const std::vector<uint8_t> &payload)
+GUI::Network::Packet::Packet(MessageType type, const std::vector<uint8_t> &payload)
     : type(type), size(static_cast<uint16_t>(payload.size())), payload(payload)
 {
 }
 
-Packet::MessageType Packet::getType() const
+GUI::Network::MessageType GUI::Network::Packet::getType() const
 {
     return type;
 }
 
-uint16_t Packet::getSize() const
+uint16_t GUI::Network::Packet::getSize() const
 {
     return size;
 }
 
-const std::vector<uint8_t> &Packet::getPayload() const
+const std::vector<uint8_t> &GUI::Network::Packet::getPayload() const
 {
     return payload;
 }
 
-std::vector<uint8_t> Packet::serialize(const Packet &packet)
+std::vector<uint8_t> GUI::Network::Packet::serialize(const GUI::Network::Packet &packet)
 {
     std::vector<uint8_t> buffer;
     buffer.push_back(static_cast<uint8_t>(packet.type));
@@ -43,7 +43,7 @@ std::vector<uint8_t> Packet::serialize(const Packet &packet)
     return buffer;
 }
 
-Packet Packet::deserialize(const std::vector<uint8_t> &data)
+GUI::Network::Packet GUI::Network::Packet::deserialize(const std::vector<uint8_t> &data)
 {
     if (data.size() < 3)
         throw std::runtime_error("Invalid packet size");
@@ -59,7 +59,7 @@ Packet Packet::deserialize(const std::vector<uint8_t> &data)
     return Packet(type, payload);
 }
 
-const std::string Packet::print() const
+const std::string GUI::Network::Packet::print() const
 {
     std::string result = "";
     result += "Packet Type: " + Recoded::myToString(static_cast<int>(type)) + "\n";
