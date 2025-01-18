@@ -71,7 +71,7 @@ namespace GUI
 
                 const bool getVisible() const;
 
-                const unsigned int getHealth() const;
+                const long int getHealth() const;
 
                 const GUI::ECS::Demo::Bullet getBullet() const;
 
@@ -92,7 +92,7 @@ namespace GUI
 
                 private:
                 bool _visible = true;
-                unsigned int _health = 100;
+                long int _health = 100;
                 GUI::ECS::Demo::Bullet _bullet;
                 GUI::ECS::Systems::Collision _collision;
                 GUI::ECS::Components::SpriteComponent _sprite;

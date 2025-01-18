@@ -44,6 +44,7 @@ void GUI::ECS::Demo::PlayerBrain::setSprite(const std::shared_ptr<GUI::ECS::Comp
     _bullet.setSpeed(5);
     _bullet.setPosition({ 1,1 });
     _bullet.setDirection({ -1,0 });
+    _bullet.setSize({ 1, 1 });
     PRETTY_DEBUG << "Bullet info has been set" << std::endl;
     _collision.update(_sprite.getCollision());
     _collision.setPosition(_bullet.getPosition());
@@ -70,7 +71,7 @@ void GUI::ECS::Demo::PlayerBrain::setDimension(const std::pair<float, float> &di
 void GUI::ECS::Demo::PlayerBrain::setHealth(const long int health)
 {
     _health = health;
-    if (_health <= 0) {
+    if (health <= 0) {
         _health = 0;
     }
 }
@@ -102,6 +103,7 @@ const GUI::ECS::Demo::Bullet GUI::ECS::Demo::PlayerBrain::shoot() const
 {
     GUI::ECS::Demo::Bullet shot(_bullet);
     shot.setPosition(_collision.getPosition());
+    shot.setSize({ 0.5,0.5 });
     PRETTY_DEBUG << "User Position: " << _collision << std::endl;
     PRETTY_DEBUG << "bullet: " << _bullet << ", shot: " << shot << std::endl;
     return shot;
@@ -144,7 +146,7 @@ const bool GUI::ECS::Demo::PlayerBrain::getVisible() const
     return _visible;
 }
 
-const unsigned int GUI::ECS::Demo::PlayerBrain::getHealth() const
+const long int GUI::ECS::Demo::PlayerBrain::getHealth() const
 {
     return _health;
 }

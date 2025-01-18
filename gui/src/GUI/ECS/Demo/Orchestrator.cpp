@@ -138,6 +138,8 @@ void GUI::ECS::Demo::Orchestrator::tick()
         return;
     }
 
+    PRETTY_DEBUG << "Orchestrator dump (before tick):\n" << getInfo(0) << std::endl;
+
     // Declaring a list to contain the bullets to remove
     std::vector<unsigned int> bulletsToRemove;
 
@@ -218,11 +220,6 @@ void GUI::ECS::Demo::Orchestrator::tick()
         } else {
             if (_playerBrain->isColliding(_bullets[index].getCollision())) {
                 _playerBrain->setHealth(_playerBrain->getHealth() - _bullets[index].getDamage());
-                // Check if the player is dead.
-                if (_playerBrain->getHealth() < 0) {
-                    _gameOver = true;
-                    return;
-                }
                 _bullets[index].setVisible(false);
             }
         }
@@ -242,6 +239,14 @@ void GUI::ECS::Demo::Orchestrator::tick()
         PRETTY_DEBUG << "All the enemies are dead, the game is won" << std::endl;
         _gameWon = true;
     }
+
+    // Check if the player is dead.
+    if (_playerBrain->getHealth() <= 0) {
+        _gameOver = true;
+        _gameWon = false;
+    }
+
+    PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;
 };
 
 void GUI::ECS::Demo::Orchestrator::render()
@@ -322,9 +327,9 @@ const std::string GUI::ECS::Demo::Orchestrator::getInfo(const unsigned int inden
         result += indentation + "\t}\n";
     }
     result += indentation + "}\n";
-    result += indentation + "- Window: {\n" + _window->getInfo(indent + 1) + "}\n";
-    result += indentation + "- Event: {\n" + _event->getInfo(indent + 1) + "}\n";
-    result += indentation + "- Player Brain: {\n" + _playerBrain->getInfo(indent + 1) + "}\n";
+    result += indentation + "- Window: {\n" + _window->getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Event: {\n" + _event->getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Player Brain: {\n" + _playerBrain->getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Enemy Brains: {\n";
     for (unsigned int index = 0; index < _enemyBrain.size(); index++) {
         result += indentation + "\t" + Recoded::myToString(index) + ": {\n";

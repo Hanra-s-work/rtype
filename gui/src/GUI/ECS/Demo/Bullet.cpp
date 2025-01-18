@@ -21,17 +21,13 @@ GUI::ECS::Demo::Bullet::Bullet(const std::uint32_t EntityId)
 GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction, const int damage)
     : EntityNode(0), _sprite(sprite), _fromEnemy(fromEnemy), _speed(speed), _direction(direction), _positionInitial(positionInitial), _damage(damage)
 {
-    _sprite.setPosition(positionInitial);
-    _collision.setPosition(positionInitial);
-    _collision.setDimension(_sprite.getSpritesheet().getCollisionInfo().getDimension());
+    _createBullet(positionInitial);
 };
 
 GUI::ECS::Demo::Bullet::Bullet(const std::uint32_t EntityId, const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction, const int damage)
     : EntityNode(EntityId), _sprite(sprite), _fromEnemy(fromEnemy), _speed(speed), _direction(direction), _positionInitial(positionInitial), _damage(damage)
 {
-    _sprite.setPosition(positionInitial);
-    _collision.setPosition(positionInitial);
-    _collision.setDimension(_sprite.getSpritesheet().getCollisionInfo().getDimension());
+    _createBullet(positionInitial);
 };
 
 GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Demo::Bullet &bullet)
@@ -77,6 +73,12 @@ void GUI::ECS::Demo::Bullet::setSpeed(const unsigned int speed)
 void GUI::ECS::Demo::Bullet::setDirection(const std::pair<int, int> &direction)
 {
     _direction = direction;
+}
+
+void GUI::ECS::Demo::Bullet::setSize(const std::pair<float, float> &dimension)
+{
+    _collision.setDimension(dimension);
+    _sprite.setDimension(dimension);
 }
 
 void GUI::ECS::Demo::Bullet::setDamage(const int damage)
@@ -217,6 +219,13 @@ const std::string GUI::ECS::Demo::Bullet::getInfo(const unsigned int indent) con
     result += indentation + "- Sprite: {\n" + _sprite.getInfo(indent + 1) + indentation + "}\n";
 
     return result;
+}
+
+void GUI::ECS::Demo::Bullet::_createBullet(const std::pair<int, int> &positionInitial)
+{
+    _sprite.setPosition(positionInitial);
+    _collision.setPosition(positionInitial);
+    _collision.setDimension(_sprite.getSpritesheet().getCollisionInfo().getDimension());
 }
 
 std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::Bullet &item)

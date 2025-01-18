@@ -45,6 +45,8 @@ namespace GUI
 
                 void setDirection(const std::pair<int, int> &direction);
 
+                void setSize(const std::pair<float, float> &dimension);
+
                 void setDamage(const int damage);
 
                 void tick();
@@ -105,6 +107,8 @@ namespace GUI
 
 
                 private:
+
+                void _createBullet(const std::pair<int, int> &positionInitial);
 
                 int _damage = 10;
                 bool _visible;

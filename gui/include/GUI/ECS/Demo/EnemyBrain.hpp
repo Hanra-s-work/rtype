@@ -69,7 +69,7 @@ namespace GUI
 
                 const bool getVisible() const;
 
-                const unsigned int getHealth() const;
+                const long int getHealth() const;
 
                 const GUI::ECS::Demo::Bullet getBullet() const;
 
@@ -93,7 +93,7 @@ namespace GUI
                 const int _randInt(int min = 5, int max = 20);
 
                 bool _visible = true;
-                unsigned int _health = 100;
+                long int _health = 100;
                 unsigned int _delayBeforeShot = 20;
                 GUI::ECS::Demo::Bullet _bullet;
                 GUI::ECS::Systems::Collision _collision;
