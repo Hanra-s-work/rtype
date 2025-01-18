@@ -299,11 +299,11 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
     result += indentation + "- Name: " + _name + "\n";
     result += indentation + "- Application: " + _application + "\n";
     result += indentation + "- Image Component present?: " + Recoded::myToString(_sfImage.has_value()) + "\n";
-    result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + indentation + "}\n";
     return result;
 };
 

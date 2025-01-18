@@ -673,16 +673,16 @@ const std::string GUI::ECS::Components::SpriteComponent::getInfo(const unsigned 
     result += indentation + "- Name: '" + _spriteName + "'\n";
     result += indentation + "- Application: '" + _application + "'\n";
     result += indentation + "- Spritesheet Set: " + Recoded::myToString(_spritesheetSet) + "\n";
-    result += indentation + "- Spritesheet: {\n" + _spritesheet.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Collision Set: " + Recoded::myToString(_collisionSet) + "}\n";
-    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Animation Set: " + Recoded::myToString(_animationSet) + "}\n";
-    result += indentation + "- Animation: {\n" + _animation.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Spritesheet: {\n" + _spritesheet.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Collision Set: " + Recoded::myToString(_collisionSet) + "\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Animation Set: " + Recoded::myToString(_animationSet) + "\n";
+    result += indentation + "- Animation: {\n" + _animation.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Spritesheet Set: " + Recoded::myToString(_spriteSet) + "\n";
     result += indentation + "- (sfSprite) Has sprite: " + Recoded::myToString(_sfSprite.has_value()) + "\n";
-    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 

@@ -382,7 +382,7 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
     }
     result += indentation + "}\n";
     result += indentation + "Current Rectangle: " + Recoded::myToString(_currentRectangle) + "\n";
-    result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + "}\n";
+    result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 

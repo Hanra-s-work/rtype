@@ -419,10 +419,10 @@ const std::string GUI::ECS::Components::ShapeComponent::getInfo(const unsigned i
     result += indentation + "- Shape rectangle set?: " + Recoded::myToString(_sfShapeRectangle.has_value()) + "\n";
     result += indentation + "- Shape circle set?: " + Recoded::myToString(_sfShapeCircle.has_value()) + "\n";
     result += indentation + "- Shape convex set?: " + Recoded::myToString(_sfShapeConvex.has_value()) + "\n";
-    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 

@@ -204,7 +204,7 @@ const std::string GUI::ECS::Components::TextureComponent::getInfo(const unsigned
     std::string result = indentation + "Texture:\n";
     result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     result += indentation + "- Visible: " + Recoded::myToString(_visible) + "\n";
-    result += indentation + "- Collision Info: \n" + _collisionInfo.getInfo(indent + 1) + "\n";
+    result += indentation + "- Collision Info: {\n" + _collisionInfo.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 
