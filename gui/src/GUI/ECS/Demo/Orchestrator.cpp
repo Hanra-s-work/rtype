@@ -97,54 +97,33 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
         throw CustomExceptions::NoSprite("<One of the sprites that the program attempted to load was missing>");
     }
     PRETTY_DEBUG << "The elements are loaded" << std::endl;
-
-    PRETTY_DEBUG << "Spawning the player in the screen" << std::endl;
-    _spawn();
-    PRETTY_DEBUG << "The player has been spawned" << std::endl;
-
-    PRETTY_DEBUG << "Spawning the enemies" << std::endl;
-    const float spriteHeight = _spriteEnemy->getCollision().getHeight();
-    const float spriteWidth = _spriteEnemy->getCollision().getWidth();
-    const int windowWidth = spriteWidth; //_window->getDimensions().first;
-    const int windowHeight = _window->getDimensions().second;
-    PRETTY_DEBUG << "window height: " << windowHeight << ", window width: " << windowWidth << std::endl;
-    PRETTY_DEBUG << "Sprite height: " << spriteHeight << ", sprite width: " << spriteWidth << std::endl;
-    PRETTY_DEBUG << "_screenPosXOffset: " << _screenPosXOffset << ", _screenPosYOffset: " << _screenPosYOffset << std::endl;
-    float posX = windowWidth;
-    PRETTY_DEBUG << "posX = windowWidth (" << windowWidth << ") = " << posX << std::endl;
-    PRETTY_DEBUG << "posX (" << posX << ") -= (spriteWidth (" << spriteWidth << ") + _screenPosXOffset (" << _screenPosXOffset << ")) (" << (spriteWidth + _screenPosXOffset) << ") = " << posX - (spriteWidth + _screenPosXOffset) << std::endl;
-    // posX -= (spriteWidth + _screenPosXOffset);
-    float posY = spriteHeight;
-    PRETTY_DEBUG << "posX: " << posX << ", posY: " << posY << std::endl;
-    for (unsigned int index = 0; index < 4; index++) {
-        std::pair<float, float> pos = { posX - _randInt(0, spriteWidth), posY };
-        PRETTY_DEBUG << "Spawning enemy : " << index << ", pos: " << pos << std::endl;
-        _spawnEnemy(pos);
-        posY += _randInt(spriteHeight, spriteHeight + 10);
-    }
-    PRETTY_DEBUG << "The enemies have been spawned" << std::endl;
+    _setTheScene();
 };
 
 void GUI::ECS::Demo::Orchestrator::start()
 {
     PRETTY_DEBUG << "The start function has been called" << std::endl;
     _playing = true;
+    _gameOver = false;
+    _gameWon = false;
 };
 
 void GUI::ECS::Demo::Orchestrator::stop()
 {
     PRETTY_DEBUG << "The stop function has been called" << std::endl;
     _playing = false;
+    _gameOver = false;
+    _gameWon = false;
 };
 
 void GUI::ECS::Demo::Orchestrator::reset()
 {
     PRETTY_DEBUG << "The reset function has been called" << std::endl;
-    _kill();
-    _spawn();
-    stop();
     _gameOver = false;
     _gameWon = false;
+    _kill();
+    _setTheScene();
+    stop();
 };
 
 void GUI::ECS::Demo::Orchestrator::tick()
@@ -282,7 +261,7 @@ const bool GUI::ECS::Demo::Orchestrator::isGameOver() const
 
 const bool GUI::ECS::Demo::Orchestrator::isGameWon() const
 {
-    return _gameOver;
+    return _gameWon;
 }
 
 void GUI::ECS::Demo::Orchestrator::_spawn()
@@ -308,7 +287,22 @@ void GUI::ECS::Demo::Orchestrator::_kill()
 {
     PRETTY_DEBUG << "The _kill function has been called" << std::endl;
     _playerBrain.reset();
+    for (unsigned int index = 0; index < _enemyBrain.size(); index++) {
+        PRETTY_DEBUG << "Resetting enemy: " << index << std::endl;
+        _enemyBrain[index].reset();
+    }
+    PRETTY_DEBUG << "Clearing enemy vector" << std::endl;
     _enemyBrain.clear();
+    PRETTY_DEBUG << "Enemies cleared, size: " << _enemyBrain.size() << std::endl;
+    PRETTY_DEBUG << "Clearing remaining bullets" << std::endl;
+    unsigned int bIndex = 0;
+    while (_bullets.size() > 0) {
+        PRETTY_DEBUG << "Removing bullet: " << bIndex << ", bullet type: " << Recoded::myToString(_bullets[_bullets.size() - 1].isEnemy()) << std::endl;
+        _bullets.pop_back();
+        bIndex++;
+    }
+    PRETTY_DEBUG << "Removed the bullets" << std::endl;
+    PRETTY_DEBUG << "A the end of the kill function" << std::endl;
 };
 
 void GUI::ECS::Demo::Orchestrator::_spawnEnemy(const std::pair<float, float> pos)
@@ -330,7 +324,7 @@ void GUI::ECS::Demo::Orchestrator::_spawnEnemy(const std::pair<float, float> pos
     enemy->setPosition(pos);
     PRETTY_DEBUG << "The enemy has been set with the position: " << pos << std::endl;
     enemy->setVisible(true);
-    // enemy->setDimension({ 10,10 });
+    enemy->setDimension({ 4,4 });
     PRETTY_DEBUG << "The enemy is visible" << std::endl;
     _enemyBrain.push_back(enemy);
     PRETTY_DEBUG << "The enemy has been added to the _enemyBrain" << std::endl;
@@ -344,5 +338,35 @@ const int GUI::ECS::Demo::Orchestrator::_randInt(int min, int max)
     return dist(gen);
 }
 
+void GUI::ECS::Demo::Orchestrator::_setTheScene()
+{
+    PRETTY_DEBUG << "Resetting the victory and loss variables" << std::endl;
+    _gameOver = false;
+    _gameWon = false;
+    PRETTY_DEBUG << "Reset the victory and loss variables" << std::endl;
+    PRETTY_DEBUG << "Spawning the player in the screen" << std::endl;
+    _spawn();
+    PRETTY_DEBUG << "The player has been spawned" << std::endl;
 
-
+    PRETTY_DEBUG << "Spawning the enemies" << std::endl;
+    const float spriteHeight = _spriteEnemy->getCollision().getHeight();
+    const float spriteWidth = _spriteEnemy->getCollision().getWidth();
+    const int windowWidth = _window->getDimensions().first;
+    const int windowHeight = _window->getDimensions().second;
+    PRETTY_DEBUG << "window height: " << windowHeight << ", window width: " << windowWidth << std::endl;
+    PRETTY_DEBUG << "Sprite height: " << spriteHeight << ", sprite width: " << spriteWidth << std::endl;
+    PRETTY_DEBUG << "_screenPosXOffset: " << _screenPosXOffset << ", _screenPosYOffset: " << _screenPosYOffset << std::endl;
+    float posX = windowWidth;
+    PRETTY_DEBUG << "posX = windowWidth (" << windowWidth << ") = " << posX << std::endl;
+    PRETTY_DEBUG << "posX (" << posX << ") -= (spriteWidth (" << spriteWidth << ") + _screenPosXOffset (" << _screenPosXOffset << ")) (" << (spriteWidth + _screenPosXOffset) << ") = " << posX - (spriteWidth + _screenPosXOffset) << std::endl;
+    posX -= (spriteWidth + _screenPosXOffset);
+    float posY = spriteHeight;
+    PRETTY_DEBUG << "posX: " << posX << ", posY: " << posY << std::endl;
+    for (unsigned int index = 0; index < 4; index++) {
+        std::pair<float, float> pos = { posX - _randInt(0, spriteWidth * 4), posY };
+        PRETTY_DEBUG << "Spawning enemy : " << index << ", pos: " << pos << std::endl;
+        _spawnEnemy(pos);
+        posY += _randInt(spriteHeight * 3, spriteHeight * 4);
+    }
+    PRETTY_DEBUG << "The enemies have been spawned" << std::endl;
+}

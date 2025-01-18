@@ -998,7 +998,8 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
  */
 void Main::_sendAllPackets()
 {
-    _networkManager.sendMessage("Yolo");
+    PRETTY_DEBUG << "Performing network stuff" << std::endl;
+    // _networkManager.sendMessage("Yolo");
 };
 
 /**
@@ -1008,7 +1009,8 @@ void Main::_sendAllPackets()
  */
 void Main::_processIncommingPackets()
 {
-    _networkManager.getReceivedMessages();
+    PRETTY_DEBUG << "Performing network stuff" << std::endl;
+    // _networkManager.getReceivedMessages();
 }
 
 /**
@@ -1721,17 +1723,12 @@ void Main::_demoScreen()
 
     std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
     PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
-    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
-        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
-        _demoBrain.stop();
-        _demoStarted = false;
-        _goHome();
-    }
 
     if (!_demoInitialised) {
         PRETTY_DEBUG << "The demo brain is not initialised, initialising" << std::endl;
         _demoBrain.initialiseClass(_ecsEntities);
         _demoInitialised = true;
+        _demoStarted = false;
         PRETTY_DEBUG << "The brain has been initialised" << std::endl;
     }
 
@@ -1743,9 +1740,19 @@ void Main::_demoScreen()
         PRETTY_DEBUG << "The demo has started" << std::endl;
     }
 
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _demoBrain.reset();
+        _demoBrain.stop();
+        _demoStarted = false;
+        _goHome();
+        return;
+    }
+
     if (_demoBrain.isGameOver()) {
         PRETTY_DEBUG << "The demo is over, resetting" << std::endl;
         _demoBrain.reset();
+        _demoBrain.stop();
         _demoStarted = false;
         PRETTY_DEBUG << "The demo has been reset" << std::endl;
         PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
@@ -1757,6 +1764,7 @@ void Main::_demoScreen()
     if (_demoBrain.isGameWon()) {
         PRETTY_DEBUG << "The demo has been won, resetting" << std::endl;
         _demoBrain.reset();
+        _demoBrain.stop();
         _demoStarted = false;
         PRETTY_DEBUG << "The demo has been reset" << std::endl;
         PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
@@ -5013,8 +5021,8 @@ void Main::_mainLoop()
     }
     PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
 
-    setActiveScreen(ActiveScreen::MENU);
-    // setActiveScreen(ActiveScreen::DEMO);
+    // setActiveScreen(ActiveScreen::MENU);
+    setActiveScreen(ActiveScreen::DEMO);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
@@ -5087,6 +5095,7 @@ void Main::_mainLoop()
         } else if (_activeScreen == ActiveScreen::EXIT) {
             PRETTY_INFO << "Exit choice detected, stopping" << std::endl;
             window->close();
+            _closeConnection();
             PRETTY_INFO << "The window is set to close" << std::endl;
             continue;
         } else {

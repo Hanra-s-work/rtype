@@ -424,8 +424,8 @@ sprite_width = 33
 sprite_height = 33
 start_left = true
 start_top = true
-initial_frame = 0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
-end_frame = -1 #end of all the frames
+initial_frame = 16 #0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
+end_frame = 29 #-1 #end of all the frames
 frame_delay = 100000 # delay between each frame in milliseconds
 
 # [spritesheets.sprite14]

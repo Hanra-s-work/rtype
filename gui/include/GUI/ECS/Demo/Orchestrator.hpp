@@ -59,6 +59,8 @@ namespace GUI
 
                 const int _randInt(int min = 0, int max = 5);
 
+                void _setTheScene();
+
                 bool _playing = false;
                 bool _gameWon = false;
                 bool _gameOver = false;
