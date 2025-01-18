@@ -930,4 +930,29 @@ namespace CustomExceptions
         std::string _msg; //!< Stores the error message.
         const char *_buffer; //!< Buffer for formatted error message.
     };
+
+    /**
+     * @brief This is the class in charge of informing the user
+     * that the program could not find any active threads that manage the network.
+     *
+     */
+    class NoActiveNetworkThread : public std::exception {
+        public:
+        /**
+         * @brief Construct a new No Background In Config File object
+         *
+         * @param exceptionDetails Additional details provided for the specific reason the error was raised.
+         */
+        NoActiveNetworkThread(const std::string &exceptionDetails = "");
+        ~NoActiveNetworkThread();
+        /**
+         * @brief Retrieves the error message.
+         * @return A C-style string representing the error message.
+         */
+        const char *what() const noexcept;
+
+        private:
+        std::string _msg; //!< Stores the error message.
+        const char *_buffer; //!< Buffer for formatted error message.
+    };
 }
