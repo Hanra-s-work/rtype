@@ -15,7 +15,7 @@
 
 GUI::Network::NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entityId) {}
 
-void GUI::Network::NetworkManager::Initialize()
+void GUI::Network::NetworkManager::initialize()
 {
     try {
         asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), _port);
@@ -28,7 +28,7 @@ void GUI::Network::NetworkManager::Initialize()
     }
 }
 
-void GUI::Network::NetworkManager::HandleMessages()
+void GUI::Network::NetworkManager::handleMessages()
 {
     try {
         std::vector<uint8_t> buffer(1024);
@@ -48,7 +48,7 @@ void GUI::Network::NetworkManager::HandleMessages()
     }
 }
 
-void GUI::Network::NetworkManager::SendMessage(const std::string &message)
+void GUI::Network::NetworkManager::sendMessage(const std::string &message)
 {
     if (!isConnected()) {
         std::cerr << "Cannot send message: No active connection." << std::endl;
@@ -237,7 +237,7 @@ void GUI::Network::NetworkManager::receiveMessage()
         std::array<char, 2048> recvBuffer;
         asio::ip::udp::endpoint remoteEndpoint;
 
-        while (true) {
+        while (_continueListening) {
             std::error_code ec;
             size_t bytesRecv = _socket.receive_from(
                 asio::buffer(recvBuffer), remoteEndpoint, 0, ec
@@ -259,6 +259,16 @@ void GUI::Network::NetworkManager::receiveMessage()
     catch (const std::exception &e) {
         std::cerr << "[Client] Exception in receiveMessage: " << e.what() << "\n";
     }
+}
+
+void GUI::Network::NetworkManager::startReceivingMessages()
+{
+    _continueListening = true;
+}
+
+void GUI::Network::NetworkManager::stopReceivingMessages()
+{
+    _continueListening = false;
 }
 
 void GUI::Network::NetworkManager::_connect()

@@ -55,39 +55,44 @@ namespace GUI
              * This function opens the socket and binds it to the specified port.
              * If initialization fails, an error message will be printed.
              */
-            void Initialize();
+            void initialize();
             /**
              * @brief Handles incoming messages on the UDP socket.
              *
              * This function listens for messages from the server, deserializes them, and processes the received data.
              */
-            void HandleMessages();
+            void handleMessages();
             /**
              * @brief Sends a message to the server.
+             *
              * @param message The message to send.
              *
              * This function will check if the socket is connected, validate the message size,
              * and send the message to the server.
              */
-            void SendMessage(const std::string &message);
+            void sendMessage(const std::string &message);
 
             /**
              * @brief Sets the port for communication.
+             *
              * @param port The port number to set.
              */
             void setPort(const unsigned int port);
             /**
              * @brief Sets the IP address for communication.
+             *
              * @param ip The IP address to set.
              */
             void setIp(const std::string &ip);
             /**
              * @brief Sets the player's name for identification.
+             *
              * @param name The player's name.
              */
             void setPlayerName(const std::string &name);
             /**
              * @brief Sets both the IP address and port for communication.
+             *
              * @param ip The IP address to set.
              * @param port The port number to set.
              */
@@ -95,25 +100,32 @@ namespace GUI
 
             /**
              * @brief Checks if the connection is active.
+             *
              * @return True if the socket is open and connected, false otherwise.
              */
             const bool isConnected() const;
 
             /**
              * @brief Converts a byte array to a floating-point value.
+             *
              * @param bytes Pointer to the byte array representing a float.
+             *
              * @return The corresponding floating-point value.
              */
             float bytesToFloat(const uint8_t *bytes);
             /**
              * @brief Converts a byte array to a hexadecimal string representation.
+             *
              * @param bytes The byte array to convert.
+             *
              * @return The hexadecimal string representing the byte array.
              */
             std::string bytesToHex(const std::vector<uint8_t> &bytes);
             /**
              * @brief Translates a message into a human-readable string format.
+             *
              * @param message The byte array representing the message.
+             *
              * @return A string representation of the message.
              *
              * This function decodes different message types such as connect, disconnect, move, shoot, etc.
@@ -127,6 +139,10 @@ namespace GUI
              * `translateMessage()` to display them in a human-readable format.
              */
             void receiveMessage();
+
+            void startReceivingMessages();
+
+            void stopReceivingMessages();
 
             private:
             /**
@@ -143,6 +159,7 @@ namespace GUI
             void _disconnect();
 
             bool _connectionActive = false;                                     //!< Flag indicating the connection status.
+            bool _continueListening = true;                                     //!< The variable in charge of tracking if the loop in receiveMessage should continue listening for messages or not
             unsigned int _port = -1;                                            //!< The port number for communication.
             std::string _ip = "127.0.0.1";                                      //!< The IP address for the server.
             std::string _playerName = "Player";                                 //!< The name of the player.
