@@ -13,8 +13,19 @@
 
 #include "GUI/ECS/Demo/PlayerBrain.hpp"
 
+GUI::ECS::Demo::PlayerBrain::PlayerBrain(const std::uint32_t entityId)
+    : EntityNode(entityId)
+{
+
+};
 
 GUI::ECS::Demo::PlayerBrain::PlayerBrain(const GUI::ECS::Demo::PlayerBrain &copy)
+{
+    update(copy);
+}
+
+GUI::ECS::Demo::PlayerBrain::PlayerBrain(const std::uint32_t entityId, const GUI::ECS::Demo::PlayerBrain &copy)
+    : EntityNode(entityId)
 {
     update(copy);
 }
@@ -29,11 +40,13 @@ void GUI::ECS::Demo::PlayerBrain::setSprite(const std::shared_ptr<GUI::ECS::Comp
     PRETTY_DEBUG << "The bullet entity is set" << std::endl;
     _bullet.setVisible(true);
     _bullet.setEnemy(false);
-    _bullet.setDirection({ -1,0 });
     _bullet.setDamage(5);
     _bullet.setSpeed(5);
+    _bullet.setPosition({ 1,1 });
+    _bullet.setDirection({ -1,0 });
     PRETTY_DEBUG << "Bullet info has been set" << std::endl;
     _collision.update(_sprite.getCollision());
+    _collision.setPosition(_bullet.getPosition());
     PRETTY_DEBUG << "Sprite info: " << _sprite << std::endl;
     PRETTY_DEBUG << "Bullet info: " << *bullet << std::endl;
     PRETTY_DEBUG << "Collision info: " << _collision << std::endl;
@@ -41,8 +54,11 @@ void GUI::ECS::Demo::PlayerBrain::setSprite(const std::shared_ptr<GUI::ECS::Comp
 
 void GUI::ECS::Demo::PlayerBrain::setPosition(const std::pair<float, float> &pos)
 {
+    PRETTY_DEBUG << "In setPosition" << std::endl;
     _collision.setPosition(pos);
     _sprite.setPosition(pos);
+    _bullet.setPosition(pos);
+    PRETTY_DEBUG << "collision: " << _collision << "sprite: " << _sprite << "bullet:" << _bullet.getCollision() << std::endl;
 };
 
 void GUI::ECS::Demo::PlayerBrain::setDimension(const std::pair<float, float> &dim)
@@ -86,6 +102,7 @@ const GUI::ECS::Demo::Bullet GUI::ECS::Demo::PlayerBrain::shoot() const
 {
     GUI::ECS::Demo::Bullet shot(_bullet);
     shot.setPosition(_collision.getPosition());
+    PRETTY_DEBUG << "bullet: " << _bullet.getCollision() << ", shot: " << shot.getCollision() << std::endl;
     return shot;
 }
 
@@ -144,4 +161,28 @@ const GUI::ECS::Components::SpriteComponent GUI::ECS::Demo::PlayerBrain::getSpri
 const GUI::ECS::Systems::Collision GUI::ECS::Demo::PlayerBrain::getCollision() const
 {
     return _collision;
+}
+
+const std::string GUI::ECS::Demo::PlayerBrain::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Player brain:\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: '" + Recoded::myToString(_visible) + "'\n";
+    result += indentation + "- Health: '" + Recoded::myToString(_health) + "'\n";
+    result += indentation + "- Bullet: {\n" + _bullet.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Sprite: {\n" + _sprite.getInfo(indent + 1) + indentation + "}\n";
+
+    return result;
+}
+
+std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::PlayerBrain &item)
+{
+    os << item.getInfo();
+    return os;
 }

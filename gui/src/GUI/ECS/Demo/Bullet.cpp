@@ -13,9 +13,21 @@
 
 #include "GUI/ECS/Demo/Bullet.hpp"
 
+GUI::ECS::Demo::Bullet::Bullet(const std::uint32_t EntityId)
+    : EntityNode(EntityId)
+{
+};
 
 GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction, const int damage)
-    : _sprite(sprite), _fromEnemy(fromEnemy), _speed(speed), _direction(direction), _positionInitial(positionInitial), _damage(damage)
+    : EntityNode(0), _sprite(sprite), _fromEnemy(fromEnemy), _speed(speed), _direction(direction), _positionInitial(positionInitial), _damage(damage)
+{
+    _sprite.setPosition(positionInitial);
+    _collision.setPosition(positionInitial);
+    _collision.setDimension(_sprite.getSpritesheet().getCollisionInfo().getDimension());
+};
+
+GUI::ECS::Demo::Bullet::Bullet(const std::uint32_t EntityId, const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction, const int damage)
+    : EntityNode(EntityId), _sprite(sprite), _fromEnemy(fromEnemy), _speed(speed), _direction(direction), _positionInitial(positionInitial), _damage(damage)
 {
     _sprite.setPosition(positionInitial);
     _collision.setPosition(positionInitial);
@@ -23,6 +35,13 @@ GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Components::SpriteComponent &spri
 };
 
 GUI::ECS::Demo::Bullet::Bullet(const GUI::ECS::Demo::Bullet &bullet)
+    : EntityNode(0)
+{
+    update(bullet);
+};
+
+GUI::ECS::Demo::Bullet::Bullet(const std::uint32_t EntityId, const GUI::ECS::Demo::Bullet &bullet)
+    : EntityNode(EntityId)
 {
     update(bullet);
 };
@@ -163,4 +182,31 @@ const int GUI::ECS::Demo::Bullet::getDamage() const
 const std::pair<int, int> GUI::ECS::Demo::Bullet::getDirection() const
 {
     return _direction;
+}
+
+const std::string GUI::ECS::Demo::Bullet::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Bullet:\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Damage: '" + Recoded::myToString(_damage) + "'\n";
+    result += indentation + "- Visible: '" + Recoded::myToString(_visible) + "'\n";
+    result += indentation + "- From Enemy: '" + Recoded::myToString(_fromEnemy) + "'\n";
+    result += indentation + "- Speed: '" + Recoded::myToString(_speed) + "'\n";
+    result += indentation + "- Direction: '" + Recoded::myToString(_direction) + "'\n";
+    result += indentation + "- Position Initial: '" + Recoded::myToString(_positionInitial) + "'\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Sprite: {\n" + _sprite.getInfo(indent + 1) + indentation + "}\n";
+
+    return result;
+}
+
+std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::Bullet &item)
+{
+    os << item.getInfo();
+    return os;
 }

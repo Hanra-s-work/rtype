@@ -16,6 +16,7 @@
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
 #include "CustomExceptions.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Demo/Bullet.hpp"
 #include "GUI/ECS/Demo/EnemyBrain.hpp"
 #include "GUI/ECS/Demo/PlayerBrain.hpp"
@@ -28,9 +29,9 @@ namespace GUI
     {
         namespace Demo
         {
-            class Orchestrator {
+            class Orchestrator : public EntityNode {
                 public:
-                Orchestrator() = default;
+                Orchestrator(const std::uint32_t entityId = 0);
 
                 ~Orchestrator() = default;
 
@@ -49,6 +50,18 @@ namespace GUI
                 const bool isGameOver() const;
 
                 const bool isGameWon() const;
+
+
+                /**
+                 * @brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 *
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
 
                 private:
                 void _spawn();
@@ -81,6 +94,16 @@ namespace GUI
                 std::vector<std::shared_ptr<GUI::ECS::Demo::EnemyBrain>> _enemyBrain;
                 std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
             };
+
+            /**
+             * @brief Outputs the sprite's info to a stream.
+             *
+             * @param os The output stream.
+             * @param item The sprite to output.
+             *
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const Orchestrator &item);
         }
     }
 }

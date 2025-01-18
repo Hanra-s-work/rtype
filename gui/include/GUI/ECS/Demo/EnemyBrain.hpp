@@ -11,6 +11,7 @@
 #include "Recoded.hpp"
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Demo/Bullet.hpp"
 #include "GUI/ECS/Demo/PlayerBrain.hpp"
 #include "GUI/ECS/Systems/Collision.hpp"
@@ -22,11 +23,13 @@ namespace GUI
     {
         namespace Demo
         {
-            class EnemyBrain {
+            class EnemyBrain : public EntityNode {
                 public:
-                EnemyBrain() = default;
+                EnemyBrain(const std::uint32_t entityId = 0);
 
                 EnemyBrain(const GUI::ECS::Demo::EnemyBrain &copy);
+
+                EnemyBrain(const std::uint32_t entityId, const GUI::ECS::Demo::EnemyBrain &copy);
 
                 ~EnemyBrain() = default;
 
@@ -74,6 +77,17 @@ namespace GUI
 
                 const GUI::ECS::Systems::Collision getCollision() const;
 
+                /**
+                 * @brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 *
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
+
                 private:
 
                 const int _randInt(int min = 5, int max = 20);
@@ -85,6 +99,16 @@ namespace GUI
                 GUI::ECS::Systems::Collision _collision;
                 GUI::ECS::Components::SpriteComponent _sprite;
             };
+
+            /**
+             * @brief Outputs the sprite's info to a stream.
+             *
+             * @param os The output stream.
+             * @param item The sprite to output.
+             *
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const EnemyBrain &item);
         }
     }
 }

@@ -10,6 +10,7 @@
 #include "Recoded.hpp"
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
+#include "GUI/ECS/EntityNode.hpp"
 #include "GUI/ECS/Components/SpriteComponent.hpp"
 
 namespace GUI
@@ -18,13 +19,17 @@ namespace GUI
     {
         namespace Demo
         {
-            class Bullet {
+            class Bullet : public EntityNode {
                 public:
-                Bullet() = default;
+                Bullet(const std::uint32_t EntityId = 0);
 
                 Bullet(const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction = { 0, -1 }, const int damage = 10);
 
                 Bullet(const GUI::ECS::Demo::Bullet &bullet);
+
+                Bullet(const std::uint32_t EntityId, const GUI::ECS::Components::SpriteComponent &sprite, const bool fromEnemy, const std::pair<int, int> &positionInitial, const unsigned int speed, const std::pair<int, int> &direction = { 0, -1 }, const int damage = 10);
+
+                Bullet(const std::uint32_t EntityId, const GUI::ECS::Demo::Bullet &bullet);
 
                 ~Bullet() = default;
 
@@ -87,17 +92,39 @@ namespace GUI
 
                 const std::pair<int, int> getDirection() const;
 
+                /**
+                 * @brief This is a function meant for debugging purposes
+                 * It will dump the current state of the variables upon call.
+                 * It will dump them for itself and any of it's underlying classes
+                 *
+                 * @param indent The level to which the class should be indented in the dump.
+                 *
+                 * @return const std::string The formatted output.
+                 */
+                const std::string getInfo(const unsigned int indent = 0) const;
+
+
                 private:
 
-                GUI::ECS::Components::SpriteComponent _sprite;
                 int _damage = 10;
                 bool _visible;
                 bool _fromEnemy;
-                std::pair<int, int> _positionInitial; //const 
                 unsigned int _speed;
                 std::pair<int, int> _direction;
+                std::pair<int, int> _positionInitial; //const 
                 GUI::ECS::Systems::Collision _collision;
+                GUI::ECS::Components::SpriteComponent _sprite;
             };
+
+            /**
+             * @brief Outputs the sprite's info to a stream.
+             *
+             * @param os The output stream.
+             * @param item The sprite to output.
+             *
+             * @return The modified output stream.
+             */
+            std::ostream &operator<<(std::ostream &os, const Bullet &item);
         }
     }
 }

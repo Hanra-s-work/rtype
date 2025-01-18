@@ -13,6 +13,10 @@
 
 #include "GUI/ECS/Demo/Orchestrator.hpp"
 
+GUI::ECS::Demo::Orchestrator::Orchestrator(const std::uint32_t entityId)
+    : EntityNode(entityId)
+{
+};
 
 void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_index, std::vector<std::any>> &ecsEntities)
 {
@@ -186,6 +190,17 @@ void GUI::ECS::Demo::Orchestrator::tick()
             bulletsToRemove.push_back(index);
             continue;
         }
+        // Checking if the bullets aren't out of bounds
+        float bulletPosX = _bullets[index].getCollision().getPositionX();
+        float bulletPosY = _bullets[index].getCollision().getPositionY();
+        if (
+            bulletPosX <= 0 || bulletPosX >= _window->getDimensions().first ||
+            bulletPosY <= 0 || bulletPosY >= _window->getDimensions().second
+            ) {
+            PRETTY_DEBUG << "Adding bullet index: " << index << " to the list of items to remove, is enemy: " << Recoded::myToString(_bullets[index].isEnemy()) << ", bullet pos: " << _bullets[index].getCollision() << std::endl;
+            bulletsToRemove.push_back(index);
+            continue;
+        }
         // The bullet is comming from a player, if so check the enemies
         if (!_bullets[index].isEnemy()) {
             for (unsigned int eIndex = 0; eIndex < _enemyBrain.size(); eIndex++) {
@@ -232,13 +247,21 @@ void GUI::ECS::Demo::Orchestrator::tick()
 void GUI::ECS::Demo::Orchestrator::render()
 {
     PRETTY_DEBUG << "In the render function" << std::endl;
-    PRETTY_DEBUG << "_playerBrain: " << Recoded::myToString(_playerBrain->isVisible()) << ", _enemy size: " << _enemyBrain.size() << ", _bullets size: " << _bullets.size() << std::endl;
-    PRETTY_DEBUG << "_playerBrain[" << _playerBrain->getSprite().getName() << "]<" << _playerBrain->getCollision().getPosition() << ">%" << _playerBrain->getCollision().getDimension() << "%:" << Recoded::myToString(_playerBrain->isVisible()) << std::endl;
+    std::string name = _playerBrain->getSprite().getName();
+    std::pair<float, float> pos = _playerBrain->getCollision().getPosition();
+    std::pair<float, float> dim = _playerBrain->getCollision().getDimension();
+    bool visible = _playerBrain->isVisible();
+    PRETTY_DEBUG << "_playerBrain: " << Recoded::myToString(visible) << ", _enemy size: " << _enemyBrain.size() << ", _bullets size: " << _bullets.size() << std::endl;
+    PRETTY_DEBUG << "_playerBrain[" << name << "]<" << pos << ">%" << dim << "%:" << Recoded::myToString(visible) << std::endl;
     _window->draw(_playerBrain->render());
     PRETTY_DEBUG << "Going to render the ennemies" << std::endl;
     unsigned int index = 0;
     for (std::shared_ptr<GUI::ECS::Demo::EnemyBrain> item : _enemyBrain) {
-        PRETTY_DEBUG << "_enemyBrain[" << item->getSprite().getName() << index << "]<" << item->getCollision().getPosition() << ">%" << item->getCollision().getDimension() << "%:" << Recoded::myToString(item->isVisible()) << std::endl;
+        std::string name = item->getSprite().getName();
+        std::pair<float, float> pos = item->getCollision().getPosition();
+        std::pair<float, float> dim = item->getCollision().getDimension();
+        bool visible = item->isVisible();
+        PRETTY_DEBUG << "_enemyBrain[" << name << index << "]<" << pos << ">%" << dim << "%:" << Recoded::myToString(visible) << std::endl;
         _window->draw(item->render());
         index++;
     }
@@ -246,7 +269,12 @@ void GUI::ECS::Demo::Orchestrator::render()
     PRETTY_DEBUG << "Going to render the bullets" << std::endl;
     index = 0;
     for (GUI::ECS::Demo::Bullet item : _bullets) {
-        PRETTY_DEBUG << "_bullets[" << item.getSprite().getName() << index << "]<" << item.getCollision().getPosition() << ">%" << item.getCollision().getDimension() << "%(" << Recoded::myToString(item.isEnemy()) << "):" << Recoded::myToString(item.isVisible()) << std::endl;
+        std::string name = item.getSprite().getName();
+        std::pair<float, float> pos = item.getCollision().getPosition();
+        std::pair<float, float> dim = item.getCollision().getDimension();
+        bool enemy = item.isEnemy();
+        bool visible = item.isVisible();
+        PRETTY_DEBUG << "_bullets[" << name << index << "]<" << pos << ">%" << dim << "%(" << Recoded::myToString(enemy) << "):" << Recoded::myToString(visible) << std::endl;
         _window->draw(item.render());
         index++;
     }
@@ -263,6 +291,50 @@ const bool GUI::ECS::Demo::Orchestrator::isGameWon() const
 {
     return _gameWon;
 }
+
+
+const std::string GUI::ECS::Demo::Orchestrator::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Player brain:\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Playing: '" + Recoded::myToString(_playing) + "'\n";
+    result += indentation + "- Game Won: '" + Recoded::myToString(_gameWon) + "'\n";
+    result += indentation + "- Game Over: '" + Recoded::myToString(_gameOver) + "'\n";
+    result += indentation + "- Step Up: '" + Recoded::myToString(_stepUp) + "'\n";
+    result += indentation + "- Step Down: '" + Recoded::myToString(_stepDown) + "'\n";
+    result += indentation + "- Step Left: '" + Recoded::myToString(_stepLeft) + "'\n";
+    result += indentation + "- Step Right: '" + Recoded::myToString(_stepRight) + "'\n";
+    result += indentation + "- Screen Position X Offset: '" + Recoded::myToString(_screenPosXOffset) + "'\n";
+    result += indentation + "- Screen Position Y Offset: '" + Recoded::myToString(_screenPosYOffset) + "'\n";
+    result += indentation + "- Sprite Bullet: {\n" + _spriteBullet->getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Sprite Bullet Enemy: {\n" + _spriteBulletEnemy->getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Sprite Player: {\n" + _spritePlayer->getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Sprite Enemy: {\n" + _spriteEnemy->getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Bullets: {\n";
+    for (unsigned int index = 0; index < _bullets.size(); index++) {
+        result += indentation + "\t" + Recoded::myToString(index) + ": {\n";
+        result += _bullets[index].getInfo(indent + 2);
+        result += indentation + "\t}\n";
+    }
+    result += indentation + "}\n";
+    result += indentation + "- Window: {\n" + _window->getInfo(indent + 1) + "}\n";
+    result += indentation + "- Event: {\n" + _event->getInfo(indent + 1) + "}\n";
+    result += indentation + "- Player Brain: {\n" + _playerBrain->getInfo(indent + 1) + "}\n";
+    result += indentation + "- Enemy Brains: {\n";
+    for (unsigned int index = 0; index < _enemyBrain.size(); index++) {
+        result += indentation + "\t" + Recoded::myToString(index) + ": {\n";
+        result += _enemyBrain[index]->getInfo(indent + 2);
+        result += indentation + "\t}\n";
+    }
+    result += indentation + "}\n";
+    return result;
+}
+
 
 void GUI::ECS::Demo::Orchestrator::_spawn()
 {
@@ -297,7 +369,7 @@ void GUI::ECS::Demo::Orchestrator::_kill()
     PRETTY_DEBUG << "Clearing remaining bullets" << std::endl;
     unsigned int bIndex = 0;
     while (_bullets.size() > 0) {
-        PRETTY_DEBUG << "Removing bullet: " << bIndex << ", bullet type: " << Recoded::myToString(_bullets[_bullets.size() - 1].isEnemy()) << std::endl;
+        PRETTY_DEBUG << "Removing bullet: " << bIndex << ", bullet enemy: " << Recoded::myToString(_bullets[_bullets.size() - 1].isEnemy()) << std::endl;
         _bullets.pop_back();
         bIndex++;
     }
@@ -344,6 +416,13 @@ void GUI::ECS::Demo::Orchestrator::_setTheScene()
     _gameOver = false;
     _gameWon = false;
     PRETTY_DEBUG << "Reset the victory and loss variables" << std::endl;
+    PRETTY_DEBUG << "Resetting the position of the items on screen" << std::endl;
+    std::pair<float, float> pos = { 1,1 };
+    _spriteBullet->setPosition(pos);
+    _spriteBulletEnemy->setPosition(pos);
+    _spritePlayer->setPosition(pos);
+    _spriteEnemy->setPosition(pos);
+    PRETTY_DEBUG << "Reset the position of the items on screen" << std::endl;
     PRETTY_DEBUG << "Spawning the player in the screen" << std::endl;
     _spawn();
     PRETTY_DEBUG << "The player has been spawned" << std::endl;
@@ -369,4 +448,10 @@ void GUI::ECS::Demo::Orchestrator::_setTheScene()
         posY += _randInt(spriteHeight * 3, spriteHeight * 4);
     }
     PRETTY_DEBUG << "The enemies have been spawned" << std::endl;
+}
+
+std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::Orchestrator &item)
+{
+    os << item.getInfo();
+    return os;
 }
