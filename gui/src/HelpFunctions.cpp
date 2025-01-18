@@ -49,10 +49,10 @@ static void displayDetailedUsage()
     // std::cout << "\t--window-height=\"600\"       \tSet the height of the window. (Default value: 600)\n";
     std::cout << "\t--frame-rate-limit=\"60\"     \tSet the frame rate limit of the window. (Default value: 60)\n";
     std::cout << "\t--config-file=\"client_config.toml\" \tSet the path to the toml file that contains the sprites to load. (Default value: client_config.toml)\n";
+    std::cout << "\t--username=\"Player\"         \tSet the name of the player that is going to connect (Default value: \"Player\")\n";
     std::cout << "\t--position-x=\"0\"            \tSet the x position of the window. (Default value: 0)\n";
     std::cout << "\t--position-y=\"0\"            \tSet the y position of the window. (Default value: 0)\n";
     std::cout << "\t--window-title=\"R-Type\"     \tSet the title of the window. (Default value: \"R-Type\")\n";
-    std::cout << "\t--username=\"Player\"         \tSet the name of the player that is going to connect (Default value: \"Player\")\n";
     // std::cout << "\t--cursor=\"true\"             \tShow/Hide the cursor. (Default value: true)\n";
     // std::cout << "\t--cursor-icon=\"cursor.png\"  \tSet the path of the cursor icon. (Default value: \"null\")\n";
     // std::cout << "\t--image-is-sprite=\"false\"   \tSet if the provided image is a spritesheet. (Default value: \"false\")\n";

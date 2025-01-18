@@ -365,7 +365,7 @@ void Main::_initialiseConnection()
  */
 void Main::_closeConnection()
 {
-
+    _networkManager.stopThread();
 }
 
 /**
@@ -998,7 +998,7 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
  */
 void Main::_sendAllPackets()
 {
-    _networkManager.SendMessage("Yolo");
+    _networkManager.sendMessage("Yolo");
 };
 
 /**
@@ -1008,7 +1008,7 @@ void Main::_sendAllPackets()
  */
 void Main::_processIncommingPackets()
 {
-    _networkManager.receiveMessage();
+    _networkManager.getReceivedMessages();
 }
 
 /**
@@ -4832,7 +4832,6 @@ void Main::_deadSound()
     }
 }
 
-
 /**
  * @brief Plays the button click sound effect.
  *
@@ -5005,6 +5004,14 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updating loading text to 'All the ressources have been loaded'." << std::endl;
     _updateLoadingText("All the ressources have been loaded.");
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
+
+    PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
+    if (!_networkManager.isThreadAlive()) {
+        PRETTY_DEBUG << "Initialising network thread" << std::endl;
+        _networkManager.initialize();
+        PRETTY_DEBUG << "Initialised network thread" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
 
     setActiveScreen(ActiveScreen::MENU);
     // setActiveScreen(ActiveScreen::DEMO);
