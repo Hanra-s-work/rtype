@@ -86,13 +86,27 @@ void GUI::ECS::Demo::Bullet::setDamage(const int damage)
 
 void GUI::ECS::Demo::Bullet::tick()
 {
+    PRETTY_DEBUG << "In the bullet tick function" << std::endl;
     if (!_visible) {
+        PRETTY_DEBUG << "The bullet isn't visible" << std::endl;
         return;
     }
+    PRETTY_DEBUG << "Checking sprite tick" << std::endl;
     _sprite.checkTick();
-    std::pair<float, float> opt = { static_cast<float>(_collision.getPositionX() + _direction.first * _speed), static_cast<float>(_collision.getPositionY() + _direction.second * _speed) };
+    PRETTY_DEBUG << "Calculating the new position" << std::endl;
+    PRETTY_DEBUG << "Current collision: " << _collision.getPosition() << ", direction: " << _direction << ", speed :" << Recoded::myToString(_speed) << std::endl;
+    const float offsetX = (_direction.first * static_cast<int>(_speed));
+    const float offsetY = (_direction.second * static_cast<int>(_speed));
+    PRETTY_DEBUG << "OffsetX = " << Recoded::myToString(offsetX) << ", offsetY = " << Recoded::myToString(offsetY) << std::endl;
+    const float finalPositionX = _collision.getPositionX() + offsetX;
+    const float finalPositionY = _collision.getPositionY() + offsetY;
+    PRETTY_DEBUG << "finalPositionX = " << finalPositionX << ", finalPositionY = " << finalPositionY << std::endl;
+    std::pair<float, float> opt = { finalPositionX,finalPositionY };
+    PRETTY_DEBUG << "Bullet tick: initial position: " << getPosition() << ", updated position: " << opt << std::endl;
     setPosition(opt);
+    PRETTY_DEBUG << "Position updated" << std::endl;
 }
+
 const GUI::ECS::Components::SpriteComponent GUI::ECS::Demo::Bullet::render()
 {
     return _sprite;

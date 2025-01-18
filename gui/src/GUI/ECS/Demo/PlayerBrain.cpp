@@ -58,7 +58,7 @@ void GUI::ECS::Demo::PlayerBrain::setPosition(const std::pair<float, float> &pos
     _collision.setPosition(pos);
     _sprite.setPosition(pos);
     _bullet.setPosition(pos);
-    PRETTY_DEBUG << "collision: " << _collision << "sprite: " << _sprite << "bullet:" << _bullet.getCollision() << std::endl;
+    PRETTY_DEBUG << "collision: " << _collision << "sprite: " << _sprite << "bullet:" << _bullet << std::endl;
 };
 
 void GUI::ECS::Demo::PlayerBrain::setDimension(const std::pair<float, float> &dim)
@@ -102,7 +102,8 @@ const GUI::ECS::Demo::Bullet GUI::ECS::Demo::PlayerBrain::shoot() const
 {
     GUI::ECS::Demo::Bullet shot(_bullet);
     shot.setPosition(_collision.getPosition());
-    PRETTY_DEBUG << "bullet: " << _bullet.getCollision() << ", shot: " << shot.getCollision() << std::endl;
+    PRETTY_DEBUG << "User Position: " << _collision << std::endl;
+    PRETTY_DEBUG << "bullet: " << _bullet << ", shot: " << shot << std::endl;
     return shot;
 }
 
