@@ -90,7 +90,9 @@ void GUI::ECS::Demo::PlayerBrain::setBulletSize(const std::pair<float, float> &s
 
 const bool GUI::ECS::Demo::PlayerBrain::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
-    return _collision.isColliding(second);
+    // return _collision.isColliding(second);
+    return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
+        && second.getPositionX() < _collision.getPositionX() + _collision.getWidth();
 };
 
 const bool GUI::ECS::Demo::PlayerBrain::isVisible() const
