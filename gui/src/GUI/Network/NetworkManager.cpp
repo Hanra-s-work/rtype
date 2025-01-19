@@ -15,6 +15,13 @@
 
 GUI::Network::NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entityId) {}
 
+GUI::Network::NetworkManager::~NetworkManager()
+{
+    if (isConnected()) {
+        _disconnect();
+    }
+}
+
 void GUI::Network::NetworkManager::initialize()
 {
     try {
