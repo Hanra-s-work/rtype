@@ -94,6 +94,12 @@ target_link_libraries(r-type_client
     Threads::Threads
 )
 
+# Enable debug mode
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Debug mode detected: Creating unit tests executable")
+    target_compile_options(r-type_client PRIVATE -g)
+endif()
+
 # Custom target to clean build artifacts
 add_custom_target(fclean
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}
