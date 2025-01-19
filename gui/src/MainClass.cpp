@@ -5070,6 +5070,7 @@ void Main::_mainLoop()
             PRETTY_INFO << "Exit choice detected, stopping" << std::endl;
             window->close();
             _closeConnection();
+            _updateMusicStatus();
             PRETTY_INFO << "The window is set to close" << std::endl;
             continue;
         } else {

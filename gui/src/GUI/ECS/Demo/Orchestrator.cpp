@@ -319,7 +319,7 @@ void GUI::ECS::Demo::Orchestrator::tick()
             _activeEnemies += 1;
         }
     }
-    if (index == _enemyBrain.size() || _activeEnemies <= 0) {
+    if (_activeEnemies <= 0) {
         PRETTY_DEBUG << "All the enemies are dead, the game is won" << std::endl;
         _gameWon = true;
     }
