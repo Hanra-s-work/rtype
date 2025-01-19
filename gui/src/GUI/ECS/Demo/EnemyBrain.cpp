@@ -113,7 +113,10 @@ const bool GUI::ECS::Demo::EnemyBrain::isColliding(const GUI::ECS::Systems::Coll
     PRETTY_DEBUG << "The Y overlap was calculated at: " << Recoded::myToString(yOverlap) << std::endl;
 
     PRETTY_DEBUG << "X Overlap: " << Recoded::myToString(xOverlap) << ", Y Overlap: " << Recoded::myToString(yOverlap) << std::endl;
-    return xOverlap && yOverlap;
+    PRETTY_DEBUG << "Checking if x and y are overlapping" << std::endl;
+    const bool overlapping = xOverlap && yOverlap;
+    PRETTY_DEBUG << "The result of if x and y are overlapping is: " << Recoded::myToString(overlapping) << std::endl;
+    return overlapping;
 };
 
 const bool GUI::ECS::Demo::EnemyBrain::isVisible() const
