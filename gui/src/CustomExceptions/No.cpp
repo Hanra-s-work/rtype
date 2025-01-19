@@ -560,4 +560,20 @@ namespace CustomExceptions
     {
         return _buffer;
     }
+
+    NoNetworkClass::NoNetworkClass(const std::string &exceptionDetails)
+    {
+        _msg = "Error: There is no network class to be passed\n";
+        if (!exceptionDetails.empty()) {
+            _msg += "Additional details: (" + exceptionDetails + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoNetworkClass::~NoNetworkClass() {};
+
+    const char *NoNetworkClass::what() const noexcept
+    {
+        return _buffer;
+    }
 }
