@@ -299,11 +299,11 @@ const std::string GUI::ECS::Components::ImageComponent::getInfo(const unsigned i
     result += indentation + "- Name: " + _name + "\n";
     result += indentation + "- Application: " + _application + "\n";
     result += indentation + "- Image Component present?: " + Recoded::myToString(_sfImage.has_value()) + "\n";
-    result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Position: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Texture Base: {\n" + _base.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Normal Color: {\n" + _normalColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + indentation + "}\n";
     return result;
 };
 
@@ -362,10 +362,6 @@ void GUI::ECS::Components::ImageComponent::_initialiseImage()
     if (!_sfImage.has_value()) {
         const std::any textureCapsule = _base.getTexture();
         if (textureCapsule.has_value()) {
-            if (textureCapsule.type() != typeid(std::shared_ptr<sf::Texture>)) {
-                PRETTY_ERROR << "Texture is not a shared_ptr<sf::Texture>" << std::endl;
-                throw CustomExceptions::NoTexture("<No texture was found when a texture of type sf::Texture was expected>");
-            }
             const std::string errMsg = "<No texture was found when a texture of type sf::Texture was expected>, system error: ";
             const std::optional<std::shared_ptr<sf::Texture>> texture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, errMsg);
             if (!texture.has_value()) {
@@ -441,14 +437,13 @@ void GUI::ECS::Components::ImageComponent::_processImageComponent()
         if (_textureAltered) {
             PRETTY_DEBUG << "The texture has been altered, updating image." << std::endl;
             const std::any textureCapsule = _base.getTexture();
-            if (textureCapsule.type() == typeid(std::shared_ptr<sf::Texture>) && textureCapsule.has_value()) {
-                const std::string errMsg = "<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: ";
-                const std::optional<std::shared_ptr<sf::Texture>> texture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, errMsg);
-                if (texture.has_value()) {
-                    _sfImage->setTexture(*(texture.value()));
-                    _textureAltered = false;
-                }
+            const std::string errMsg = "<There is no texture instance in this cast, expected a cast of type sf::Texture>, system error: ";
+            const std::optional<std::shared_ptr<sf::Texture>> texture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, errMsg);
+            if (texture.has_value()) {
+                _sfImage->setTexture(*(texture.value()));
+                _textureAltered = false;
             }
+
         }
     }
 }

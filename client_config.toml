@@ -319,9 +319,31 @@ sprite_width = 18
 sprite_height = 18
 start_left = true
 start_top = true
-initial_frame = 0 # mas: 11
+initial_frame = 0 # max: 11
 end_frame = -1 #end of all the frames
 frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite3b]
+name = "r-typesheet3b"
+path = "assets/img/r-typesheet3b.gif"
+sprite_width = 10
+sprite_height = 10
+start_left = true
+start_top = true
+initial_frame = 0 # max: 11
+end_frame = -1 #end of all the frames
+frame_delay = 1 #00 # delay between each frame in milliseconds
+
+[spritesheets.sprite3c]
+name = "r-typesheet3c"
+path = "assets/img/r-typesheet3c.gif"
+sprite_width = 10
+sprite_height = 10
+start_left = true
+start_top = true
+initial_frame = 0 # max: 11
+end_frame = 0 #end of all the frames
+frame_delay = 1 #00 # delay between each frame in milliseconds
 
 [spritesheets.sprite5]
 name = "r-typesheet5"
@@ -424,9 +446,9 @@ sprite_width = 33
 sprite_height = 33
 start_left = true
 start_top = true
-initial_frame = 0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
-end_frame = -1 #end of all the frames
-frame_delay = 100 # delay between each frame in milliseconds
+initial_frame = 16 #0 # brown turret: 0 to 14, blue turrets: 15 to 29, bolder: 34 to 35
+end_frame = 29 #-1 #end of all the frames
+frame_delay = 100000 # delay between each frame in milliseconds
 
 # [spritesheets.sprite14]
 # name = "r-typesheet14"
@@ -636,6 +658,28 @@ start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
 frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite30b]
+name = "r-typesheet30b"
+path = "assets/img/r-typesheet30b.gif"
+sprite_width = 10
+sprite_height = 10
+start_left = true
+start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 1 #00 # delay between each frame in milliseconds
+
+[spritesheets.sprite30c]
+name = "r-typesheet30c"
+path = "assets/img/r-typesheet30c.gif"
+sprite_width = 10
+sprite_height = 10
+start_left = true
+start_top = true
+initial_frame = 0
+end_frame = 0 #end of all the frames
+frame_delay = 1 #00 # delay between each frame in milliseconds
 
 # [spritesheets.sprite31_vertical] # Horizontal sprites will be cut in 2 due to them not being aligned in a matrix like manner
 # name = "r-typesheet31_vertical"
@@ -1071,8 +1115,9 @@ sprite_height = 17
 start_left = true
 start_top = true
 initial_frame = 0 # cyan ship: 0 to 4, purple 5 to 9, green: 10 to 14, red: 15 to 19, dark blue: 20 to 24
-end_frame = -1 #end of all the frames
-frame_delay = 100 # delay between each frame in milliseconds
+end_frame = 2
+# end_frame = -1 #end of all the frames
+frame_delay = 100000 # delay between each frame in milliseconds
 
 # [spritesheets.sprite43_fireball]
 # name = "r-typesheet43_fireball"

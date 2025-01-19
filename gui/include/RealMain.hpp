@@ -33,7 +33,9 @@
 #include "Utilities.hpp"
 #include "Constants.hpp"
 #include "TOMLLoader.hpp"
+#include "GUI/Network.hpp"
 #include "ActiveScreen.hpp"
+#include "SoundLib.hpp"
 #include "GUI/ECS/Demo.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
@@ -42,7 +44,6 @@
 #include "GUI/ECS/Systems/Colour.hpp"
 #include "GUI/ECS/Systems/Window.hpp"
 #include "GUI/ECS/Systems/EventManager.hpp"
-#include "GUI/Network/NetworkManager.hpp"
 
 
  /**
@@ -389,7 +390,7 @@ class Main {
   const std::string _portV4ChunkKey = "connectionAddressScreenPortV4ChunkKey";
 
   // Network manager
-  NetworkManager _networkManager;
+  GUI::Network::ThreadCapsule _networkManager;
 
   // Singleplayer demo
   GUI::ECS::Demo::Orchestrator _demoBrain;
@@ -398,7 +399,7 @@ class Main {
 
   // Settings variables
   bool _playMusic = true;
-  bool _playSoundEffects = true;
+  // bool _playMusic = false;
 
   // Settings tokens
   const std::string _playMusicToken = "settingsWindowPlayMusicButton";

@@ -149,6 +149,8 @@ Once done, your folder should look like this:
         ├── r-typesheet29.gif
         ├── r-typesheet2.gif
         ├── r-typesheet30a.gif
+        ├── r-typesheet30b.gif
+        ├── r-typesheet30c.gif
         ├── r-typesheet30.gif
         ├── r-typesheet31.gif
         ├── r-typesheet32.gif
@@ -160,6 +162,8 @@ Once done, your folder should look like this:
         ├── r-typesheet38.gif
         ├── r-typesheet39.gif
         ├── r-typesheet3.gif
+        ├── r-typesheet3b.gif
+        ├── r-typesheet3c.gif
         ├── r-typesheet40.gif
         ├── r-typesheet41.gif
         ├── r-typesheet42.gif

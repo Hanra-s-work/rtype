@@ -331,10 +331,10 @@ const std::string GUI::ECS::Components::ButtonComponent::getInfo(const unsigned 
     result += indentation + "- Name: " + _name + "\n";
     result += indentation + "- Application: " + _application + "\n";
     result += indentation + "- Callback: " + _callbackName + "\n";
-    result += indentation + "- Text: {\n" + _componentText.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Shape: {\n" + _componentShape.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Text: {\n" + _componentText.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Shape: {\n" + _componentShape.getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Text Size: " + Recoded::myToString(_textSize) + "\n";
-    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 

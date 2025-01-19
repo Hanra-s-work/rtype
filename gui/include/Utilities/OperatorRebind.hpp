@@ -14,6 +14,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include "Recoded/ToString.hpp"
+#include "GUI/Network/MessageType.hpp"
 #include "GUI/ECS/GameComponents/Package.hpp"
 #include "GUI/ECS/GameComponents/ECSPackage.hpp"
 #include "GUI/ECS/GameComponents/EntityType.hpp"
@@ -143,13 +144,13 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the ActiveScreen enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the ActiveScreen to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the ActiveScreen will be written.
      * @param item The ActiveScreen enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the ActiveScreen's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const ActiveScreen &item)
     {
@@ -160,13 +161,13 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the Package_t enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the Package_t to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the Package_t will be written.
      * @param item The Package_t enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the Package_t's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::GameComponents::Package_t &item)
     {
@@ -177,13 +178,13 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the EntityType enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the EntityType to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the EntityType will be written.
      * @param item The EntityType enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the EntityType's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::GameComponents::EntityType &item)
     {
@@ -194,13 +195,13 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the ECSPackage_t enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the ECSPackage_t to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the ECSPackage_t will be written.
      * @param item The ECSPackage_t enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the ECSPackage_t's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::GameComponents::ECSPackage_t &item)
     {
@@ -211,13 +212,13 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the EntityActions_t enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the EntityActions_t to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the EntityActions_t will be written.
      * @param item The EntityActions_t enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the EntityActions_t's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::GameComponents::EntityActions_t &item)
     {
@@ -228,13 +229,13 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the EntityActionType enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the EntityActionType to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the EntityActionType will be written.
      * @param item The EntityActionType enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the EntityActionType's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::GameComponents::EntityActionType &item)
     {
@@ -245,15 +246,32 @@ namespace Utilities
     /**
      * @brief Outputs a the string value of the ActiveShape enum to the given output stream using a custom string representation.
      *
-     * This function uses the custom `Recoded::myToString` function to convert the pair to a string
+     * This function uses the custom `Recoded::myToString` function to convert the ActiveShape to a string
      * and then inserts the result into the output stream.
      *
-     * @param os The output stream to which the pair will be written.
+     * @param os The output stream to which the ActiveShape will be written.
      * @param item The ActiveShape enum value to output.
      *
-     * @return The modified output stream with the pair's string representation appended.
+     * @return The modified output stream with the ActiveShape's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::ECS::Systems::ActiveShape &item)
+    {
+        os << Recoded::myToString(item);
+        return os;
+    };
+
+    /**
+     * @brief Outputs a the string value of the MessageType enum to the given output stream using a custom string representation.
+     *
+     * This function uses the custom `Recoded::myToString` function to convert the MessageType to a string
+     * and then inserts the result into the output stream.
+     *
+     * @param os The output stream to which the MessageType will be written.
+     * @param item The MessageType MessageType value to output.
+     *
+     * @return The modified output stream with the MessageType's string representation appended.
+     */
+    inline std::ostream &operator<<(std::ostream &os, const GUI::Network::MessageType &item)
     {
         os << Recoded::myToString(item);
         return os;

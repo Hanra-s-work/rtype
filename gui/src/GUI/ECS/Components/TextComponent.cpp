@@ -389,11 +389,11 @@ const std::string GUI::ECS::Components::TextComponent::getInfo(const unsigned in
     result += indentation + "- Text: '" + _text + "'\n";
     result += indentation + "- (sfText) Has text: " + Recoded::myToString(_sfTextComponent.has_value()) + "\n";
     result += indentation + "- Size: " + Recoded::myToString(_size) + "\n";
-    result += indentation + "- Text Position: {\n" + _textPos.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Font: {\n" + _font.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Normal Color: {\n" + _color.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + "}\n";
-    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + "}\n";
+    result += indentation + "- Text Position: {\n" + _textPos.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Font: {\n" + _font.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Normal Color: {\n" + _color.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Hover Color: {\n" + _hoverColor.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Clicked Color: {\n" + _clickedColor.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 

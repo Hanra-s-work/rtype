@@ -13,7 +13,19 @@
 
 #include "GUI/ECS/Demo/EnemyBrain.hpp"
 
+GUI::ECS::Demo::EnemyBrain::EnemyBrain(const std::uint32_t entityId)
+    : EntityNode(entityId)
+{
+
+};
+
 GUI::ECS::Demo::EnemyBrain::EnemyBrain(const GUI::ECS::Demo::EnemyBrain &copy)
+{
+    update(copy);
+}
+
+GUI::ECS::Demo::EnemyBrain::EnemyBrain(const std::uint32_t entityId, const GUI::ECS::Demo::EnemyBrain &copy)
+    : EntityNode(entityId)
 {
     update(copy);
 }
@@ -27,11 +39,15 @@ void GUI::ECS::Demo::EnemyBrain::setSprite(const std::shared_ptr<GUI::ECS::Compo
     PRETTY_DEBUG << "The bullet entity is set" << std::endl;
     _bullet.setVisible(true);
     _bullet.setEnemy(true);
-    _bullet.setDirection({ -1,0 });
     _bullet.setDamage(5);
     _bullet.setSpeed(5);
+    _bullet.setPosition({ 1,1 });
+    _bullet.setDirection({ -1,0 });
+    _bullet.setSize({ 0.5, 0.5 });
+    _bullet.tick();
     PRETTY_DEBUG << "Bullet info has been set" << std::endl;
     _collision.update(_sprite.getCollision());
+    _collision.setPosition(_bullet.getPosition());
     PRETTY_DEBUG << "Sprite info: " << _sprite << std::endl;
     PRETTY_DEBUG << "Bullet info: " << *bullet << std::endl;
     PRETTY_DEBUG << "Collision info: " << _collision << std::endl;
@@ -39,14 +55,23 @@ void GUI::ECS::Demo::EnemyBrain::setSprite(const std::shared_ptr<GUI::ECS::Compo
 
 void GUI::ECS::Demo::EnemyBrain::setPosition(const std::pair<float, float> &pos)
 {
+    PRETTY_DEBUG << "In setPosition" << std::endl;
     _collision.setPosition(pos);
     _sprite.setPosition(pos);
+    _bullet.setPosition(pos);
+    PRETTY_DEBUG << "collision: " << _collision << "sprite: " << _sprite << "bullet:" << _bullet << std::endl;
+};
+
+void GUI::ECS::Demo::EnemyBrain::setDimension(const std::pair<float, float> &dim)
+{
+    _collision.setDimension(dim);
+    _sprite.setDimension(dim);
 };
 
 void GUI::ECS::Demo::EnemyBrain::setHealth(const long int health)
 {
     _health = health;
-    if (_health <= 0) {
+    if (health <= 0) {
         _health = 0;
     }
 }
@@ -57,10 +82,41 @@ void GUI::ECS::Demo::EnemyBrain::setVisible(const bool visible)
     _sprite.setVisible(visible);
 };
 
+void GUI::ECS::Demo::EnemyBrain::setBulletSize(const std::pair<float, float> &size)
+{
+    _bullet.setSize(size);
+}
+
 const bool GUI::ECS::Demo::EnemyBrain::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
-    return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
-        && second.getPositionX() < _collision.getPositionX() + _collision.getWidth();
+    PRETTY_DEBUG << "Enemy Position: X = " << _collision.getPositionX()
+        << ", Y = " << _collision.getPositionY()
+        << ", Width = " << _collision.getWidth()
+        << ", Height = " << _collision.getHeight() << std::endl;
+
+    PRETTY_DEBUG << "External entity Position: X = " << second.getPositionX()
+        << ", Y = " << second.getPositionY()
+        << ", Width = " << second.getWidth()
+        << ", Height = " << second.getHeight() << std::endl;
+
+
+    PRETTY_DEBUG << "Setting the tolerance for the collision" << std::endl;
+    const float tolerance = 30.0f;
+    PRETTY_DEBUG << "The tolerance is set to: " << Recoded::myToString(tolerance) << std::endl;
+
+    PRETTY_DEBUG << "Calculating the overlap of X" << std::endl;
+    const bool xOverlap = (std::abs(_collision.getPositionX() - second.getPositionX()) <= (tolerance + (_collision.getWidth() + second.getWidth())));
+    PRETTY_DEBUG << "The X overlap was calculated at: " << Recoded::myToString(xOverlap) << std::endl;
+
+    PRETTY_DEBUG << "Calculating the overlap of Y" << std::endl;
+    const bool yOverlap = (std::abs(_collision.getPositionY() - second.getPositionY()) <= (tolerance + (_collision.getHeight() + second.getHeight())));
+    PRETTY_DEBUG << "The Y overlap was calculated at: " << Recoded::myToString(yOverlap) << std::endl;
+
+    PRETTY_DEBUG << "X Overlap: " << Recoded::myToString(xOverlap) << ", Y Overlap: " << Recoded::myToString(yOverlap) << std::endl;
+    PRETTY_DEBUG << "Checking if x and y are overlapping" << std::endl;
+    const bool overlapping = xOverlap && yOverlap;
+    PRETTY_DEBUG << "The result of if x and y are overlapping is: " << Recoded::myToString(overlapping) << std::endl;
+    return overlapping;
 };
 
 const bool GUI::ECS::Demo::EnemyBrain::isVisible() const
@@ -70,15 +126,21 @@ const bool GUI::ECS::Demo::EnemyBrain::isVisible() const
 
 const std::optional<GUI::ECS::Demo::Bullet> GUI::ECS::Demo::EnemyBrain::tick()
 {
+    PRETTY_DEBUG << "In enemy brain tick" << std::endl;
     _sprite.checkTick();
     if (_delayBeforeShot == 0) {
-        _delayBeforeShot = _randInt(5, 20);
+        _delayBeforeShot = _randInt(20, 80);
         GUI::ECS::Demo::Bullet shot(_bullet);
-        _bullet.setDamage(_randInt(1, 10));
-        _bullet.setPosition(_collision.getPosition());
+        shot.tick();
+        shot.setDamage(_randInt(1, 20));
+        shot.setPosition(_collision.getPosition());
+        PRETTY_DEBUG << "User Position: " << _collision << std::endl;
+        PRETTY_DEBUG << "bullet: " << _bullet << ", shot: " << shot << std::endl;
+        PRETTY_DEBUG << "Shot has been sent" << std::endl;
         return std::optional(shot);
     }
     _delayBeforeShot--;
+    PRETTY_DEBUG << "No shot has been sent" << std::endl;
     return std::nullopt;
 };
 
@@ -119,7 +181,7 @@ const bool GUI::ECS::Demo::EnemyBrain::getVisible() const
     return _visible;
 }
 
-const unsigned int GUI::ECS::Demo::EnemyBrain::getHealth() const
+const long int GUI::ECS::Demo::EnemyBrain::getHealth() const
 {
     return _health;
 }
@@ -146,4 +208,30 @@ const int GUI::ECS::Demo::EnemyBrain::_randInt(int min, int max)
     static std::mt19937 gen(rd());
     std::uniform_int_distribution<> dist(min, max);
     return dist(gen);
+}
+
+
+const std::string GUI::ECS::Demo::EnemyBrain::getInfo(const unsigned int indent) const
+{
+
+    std::string indentation = "";
+    for (unsigned int i = 0; i < indent; ++i) {
+        indentation += "\t";
+    }
+    std::string result = indentation + "Enemy brain:\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
+    result += indentation + "- Visible: '" + Recoded::myToString(_visible) + "'\n";
+    result += indentation + "- Health: '" + Recoded::myToString(_health) + "'\n";
+    result += indentation + "- Delay before shot: '" + Recoded::myToString(_delayBeforeShot) + "'\n";
+    result += indentation + "- Bullet: {\n" + _bullet.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Collision: {\n" + _collision.getInfo(indent + 1) + indentation + "}\n";
+    result += indentation + "- Sprite: {\n" + _sprite.getInfo(indent + 1) + indentation + "}\n";
+
+    return result;
+}
+
+std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::EnemyBrain &item)
+{
+    os << item.getInfo();
+    return os;
 }

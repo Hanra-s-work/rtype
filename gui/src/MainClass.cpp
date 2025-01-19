@@ -365,7 +365,7 @@ void Main::_initialiseConnection()
  */
 void Main::_closeConnection()
 {
-
+    _networkManager.stopThread();
 }
 
 /**
@@ -866,6 +866,12 @@ void Main::_initialiseRessources()
     window->display();
     _loadingIndex = _ecsEntities[typeid(GUI::ECS::Components::TextComponent)].size() - 1;
 
+
+    std::shared_ptr<SoundLib> soundLib = std::make_shared<SoundLib>(_baseId, _ecsEntities);
+    _ecsEntities[typeid(SoundLib)].push_back(soundLib);
+    _baseId += 1;
+    PRETTY_SUCCESS << "Sound library initialised" << std::endl;
+
     _baseId = _initialiseIcon();
     _baseId = _initialiseBackgrounds();
     _baseId = _initialiseSprites();
@@ -998,7 +1004,8 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
  */
 void Main::_sendAllPackets()
 {
-    _networkManager.SendMessage("Yolo");
+    PRETTY_DEBUG << "Performing network stuff" << std::endl;
+    // _networkManager.sendMessage("Yolo");
 };
 
 /**
@@ -1008,7 +1015,8 @@ void Main::_sendAllPackets()
  */
 void Main::_processIncommingPackets()
 {
-    _networkManager.receiveMessage();
+    PRETTY_DEBUG << "Performing network stuff" << std::endl;
+    // _networkManager.getReceivedMessages();
 }
 
 /**
@@ -1721,17 +1729,12 @@ void Main::_demoScreen()
 
     std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
     PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
-    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
-        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
-        _demoBrain.stop();
-        _demoStarted = false;
-        _goHome();
-    }
 
     if (!_demoInitialised) {
         PRETTY_DEBUG << "The demo brain is not initialised, initialising" << std::endl;
         _demoBrain.initialiseClass(_ecsEntities);
         _demoInitialised = true;
+        _demoStarted = false;
         PRETTY_DEBUG << "The brain has been initialised" << std::endl;
     }
 
@@ -1743,9 +1746,19 @@ void Main::_demoScreen()
         PRETTY_DEBUG << "The demo has started" << std::endl;
     }
 
+    if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
+        PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _demoBrain.reset();
+        _demoBrain.stop();
+        _demoStarted = false;
+        _goHome();
+        return;
+    }
+
     if (_demoBrain.isGameOver()) {
         PRETTY_DEBUG << "The demo is over, resetting" << std::endl;
         _demoBrain.reset();
+        _demoBrain.stop();
         _demoStarted = false;
         PRETTY_DEBUG << "The demo has been reset" << std::endl;
         PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
@@ -1757,6 +1770,7 @@ void Main::_demoScreen()
     if (_demoBrain.isGameWon()) {
         PRETTY_DEBUG << "The demo has been won, resetting" << std::endl;
         _demoBrain.reset();
+        _demoBrain.stop();
         _demoStarted = false;
         PRETTY_DEBUG << "The demo has been reset" << std::endl;
         PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
@@ -1789,6 +1803,18 @@ void Main::_settingsMenu()
         PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
         _goHome();
     }
+
+    PRETTY_DEBUG << "Getting the sound library if present" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    PRETTY_DEBUG << "Fetched the sound library" << std::endl;
 
     PRETTY_DEBUG << "Declaring size customisation options" << std::endl;
     const unsigned int titleTextSize = 40;
@@ -2075,16 +2101,16 @@ void Main::_settingsMenu()
             return;
         }
         std::string soundStatus = "OFF";
-        GUI::ECS::Systems::Colour soundButtonBackgroundColour = playingSoundButtonBackgroundColour;
-        GUI::ECS::Systems::Colour soundButtonNormalColour = playingSoundButtonNormalColour;
-        GUI::ECS::Systems::Colour soundButtonHoverColour = playingSoundButtonHoverColour;
-        GUI::ECS::Systems::Colour soundButtonClickedColour = playingSoundButtonClickedColour;
-        if (_playSoundEffects) {
+        GUI::ECS::Systems::Colour soundButtonBackgroundColour = stoppedSoundButtonBackgroundColour;
+        GUI::ECS::Systems::Colour soundButtonNormalColour = stoppedSoundButtonNormalColour;
+        GUI::ECS::Systems::Colour soundButtonHoverColour = stoppedSoundButtonHoverColour;
+        GUI::ECS::Systems::Colour soundButtonClickedColour = stoppedSoundButtonClickedColour;
+        if (soundLib.has_value() && soundLib.value()->isEnabled()) {
             soundStatus = "ON";
-            soundButtonBackgroundColour = stoppedSoundButtonBackgroundColour;
-            soundButtonNormalColour = stoppedSoundButtonNormalColour;
-            soundButtonHoverColour = stoppedSoundButtonHoverColour;
-            soundButtonClickedColour = stoppedSoundButtonClickedColour;
+            soundButtonBackgroundColour = playingSoundButtonBackgroundColour;
+            soundButtonNormalColour = playingSoundButtonNormalColour;
+            soundButtonHoverColour = playingSoundButtonHoverColour;
+            soundButtonClickedColour = playingSoundButtonClickedColour;
         }
         PRETTY_DEBUG << "Creating sound button component" << std::endl;
         soundButtonItem = _createButton(
@@ -2191,7 +2217,7 @@ void Main::_settingsMenu()
 
     PRETTY_DEBUG << "Setting the text of the buttons" << std::endl;
     std::string soundStatus = "OFF";
-    if (_playSoundEffects) {
+    if (soundLib.has_value() && soundLib.value()->isEnabled()) {
         soundStatus = "ON";
     }
     soundButtonItem.value()->setTextString(soundStatus);
@@ -2204,7 +2230,7 @@ void Main::_settingsMenu()
 
     PRETTY_DEBUG << "Setting the colour of the buttons" << std::endl;
     PRETTY_DEBUG << "Colour for the sound" << std::endl;
-    if (_playSoundEffects) {
+    if (soundLib.has_value() && soundLib.value()->isEnabled()) {
         soundButtonItem.value()->setNormalColor(playingSoundButtonBackgroundColour);
         soundButtonItem.value()->setHoverColor(playingSoundButtonBackgroundColour);
         soundButtonItem.value()->setClickedColor(playingSoundButtonBackgroundColour);
@@ -4485,11 +4511,27 @@ void Main::_toggleSound()
     event_ptr.value()->flushEvents();
     PRETTY_SUCCESS << "Events flushed" << std::endl;
 
-    if (_playSoundEffects) {
-        _playSoundEffects = false;
+
+    PRETTY_DEBUG << "Getting the sound library if present" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    _playSoundEffects = true;
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    PRETTY_DEBUG << "Fetched the sound library" << std::endl;
+
+
+    if (soundLib.has_value() && soundLib.value()->isEnabled()) {
+        soundLib.value()->setPlay(false);
+        return;
+    }
+    if (soundLib.has_value()) {
+        soundLib.value()->setPlay(true);
+    }
 }
 
 void Main::_updateMusicStatus()
@@ -4746,26 +4788,16 @@ void Main::_stopBossFightMusic()
  */
 void Main::_shootSound()
 {
-    if (!_playSoundEffects) {
-        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
-    for (std::any music : musics) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
-        if (!node.has_value()) {
-            continue;
-        }
-        if (
-            node.value()->getApplication() == "shooting" ||
-            node.value()->getMusicName() == "shooting" ||
-            node.value()->getApplication() == "Shooting" ||
-            node.value()->getMusicName() == "Shooting"
-            ) {
-            node.value()->setLoopMusic(false);
-            node.value()->play();
-        }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
     }
+    soundLib.value()->shootSound();
 }
 
 /**
@@ -4778,26 +4810,16 @@ void Main::_shootSound()
  */
 void Main::_damageSound()
 {
-    if (!_playSoundEffects) {
-        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
-    for (std::any music : musics) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
-        if (!node.has_value()) {
-            continue;
-        }
-        if (
-            node.value()->getApplication() == "damage" ||
-            node.value()->getMusicName() == "damage" ||
-            node.value()->getApplication() == "Damage" ||
-            node.value()->getMusicName() == "Damage"
-            ) {
-            node.value()->setLoopMusic(false);
-            node.value()->play();
-        }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
     }
+    soundLib.value()->damageSound();
 }
 
 /**
@@ -4810,28 +4832,17 @@ void Main::_damageSound()
  */
 void Main::_deadSound()
 {
-    if (!_playSoundEffects) {
-        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
-    for (std::any music : musics) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
-        if (!node.has_value()) {
-            continue;
-        }
-        if (
-            node.value()->getApplication() == "dead" ||
-            node.value()->getMusicName() == "dead" ||
-            node.value()->getApplication() == "Dead" ||
-            node.value()->getMusicName() == "Dead"
-            ) {
-            node.value()->setLoopMusic(false);
-            node.value()->play();
-        }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
     }
+    soundLib.value()->deadSound();
 }
-
 
 /**
  * @brief Plays the button click sound effect.
@@ -4843,26 +4854,16 @@ void Main::_deadSound()
  */
 void Main::_buttonSound()
 {
-    if (!_playSoundEffects) {
-        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
-    for (std::any music : musics) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
-        if (!node.has_value()) {
-            continue;
-        }
-        if (
-            node.value()->getApplication() == "button" ||
-            node.value()->getMusicName() == "button" ||
-            node.value()->getApplication() == "Button" ||
-            node.value()->getMusicName() == "Button"
-            ) {
-            node.value()->setLoopMusic(false);
-            node.value()->play();
-        }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
     }
+    soundLib.value()->buttonSound();
 }
 
 /**
@@ -4875,26 +4876,16 @@ void Main::_buttonSound()
  */
 void Main::_gameOverSound()
 {
-    if (!_playSoundEffects) {
-        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
-    for (std::any music : musics) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
-        if (!node.has_value()) {
-            continue;
-        }
-        if (
-            node.value()->getApplication() == "gameOver" ||
-            node.value()->getMusicName() == "gameOver" ||
-            node.value()->getApplication() == "Game Over" ||
-            node.value()->getMusicName() == "Game Over"
-            ) {
-            node.value()->setLoopMusic(false);
-            node.value()->play();
-        }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
     }
+    soundLib.value()->gameOverSound();
 }
 
 /**
@@ -4907,26 +4898,16 @@ void Main::_gameOverSound()
  */
 void Main::_winSound()
 {
-    if (!_playSoundEffects) {
-        PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
-    std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
-    for (std::any music : musics) {
-        std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
-        if (!node.has_value()) {
-            continue;
-        }
-        if (
-            node.value()->getApplication() == "success" ||
-            node.value()->getMusicName() == "success" ||
-            node.value()->getApplication() == "Success" ||
-            node.value()->getMusicName() == "Success"
-            ) {
-            node.value()->setLoopMusic(false);
-            node.value()->play();
-        }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
     }
+    soundLib.value()->winSound();
 }
 
 /**
@@ -5006,8 +4987,15 @@ void Main::_mainLoop()
     _updateLoadingText("All the ressources have been loaded.");
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
+    PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
+    if (!_networkManager.isThreadAlive()) {
+        PRETTY_DEBUG << "Initialising network thread" << std::endl;
+        _networkManager.initialize();
+        PRETTY_DEBUG << "Initialised network thread" << std::endl;
+    }
+    PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
+
     setActiveScreen(ActiveScreen::MENU);
-    // setActiveScreen(ActiveScreen::DEMO);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
@@ -5080,6 +5068,8 @@ void Main::_mainLoop()
         } else if (_activeScreen == ActiveScreen::EXIT) {
             PRETTY_INFO << "Exit choice detected, stopping" << std::endl;
             window->close();
+            _closeConnection();
+            _updateMusicStatus();
             PRETTY_INFO << "The window is set to close" << std::endl;
             continue;
         } else {

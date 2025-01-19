@@ -544,4 +544,20 @@ namespace CustomExceptions
     {
         return _buffer;
     }
+
+    NoActiveNetworkThread::NoActiveNetworkThread(const std::string &exceptionDetails)
+    {
+        _msg = "Error: There is no running network thread to use for the function you called.\n";
+        if (!exceptionDetails.empty()) {
+            _msg += "Additional details: (" + exceptionDetails + ")";
+        }
+        _buffer = _msg.c_str();
+    };
+
+    NoActiveNetworkThread::~NoActiveNetworkThread() {};
+
+    const char *NoActiveNetworkThread::what() const noexcept
+    {
+        return _buffer;
+    }
 }

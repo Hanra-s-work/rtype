@@ -18,6 +18,7 @@ set(SOURCES
     src/Log.cpp
     src/Main.cpp
     src/RealMain.cpp
+    src/SoundLib.cpp
     src/MainClass.cpp
     src/TOMLLoader.cpp
     src/HelpFunctions.cpp
@@ -32,6 +33,7 @@ set(SOURCES
     src/CustomExceptions/NotInitialised.cpp
 
     # Network files
+    src/GUI/Network/ThreadCapsule.cpp
     src/GUI/Network/NetworkManager.cpp
     src/GUI/Network/ProtocolHandler.cpp
 

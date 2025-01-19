@@ -123,7 +123,15 @@ void GUI::ECS::Components::AnimationComponent::checkTick()
     if (_clock.getElapsedTime() >= _frameDelay) {
         _tick();
         _hasTicked = true;
+        _clock.reset();
     }
+}
+
+void GUI::ECS::Components::AnimationComponent::forceTick()
+{
+    _tick();
+    _hasTicked = true;
+    _clock.reset();
 }
 
 void GUI::ECS::Components::AnimationComponent::start()
@@ -381,7 +389,7 @@ const std::string GUI::ECS::Components::AnimationComponent::getInfo(const unsign
     }
     result += indentation + "}\n";
     result += indentation + "Current Rectangle: " + Recoded::myToString(_currentRectangle) + "\n";
-    result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + "}\n";
+    result += indentation + "Clock: {\n" + _clock.getInfo(indent + 1) + indentation + "}\n";
     return result;
 }
 
@@ -516,11 +524,6 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
             << "Texture is not set." << std::endl;
         throw CustomExceptions::NoTexture("Base texture for the spritesheet animation");
-    }
-    if (textureCapsule.type() != typeid(std::shared_ptr<sf::Texture>)) {
-        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
-            << "Texture is no std::shared_ptr<sf::Texture> instance." << std::endl;
-        throw CustomExceptions::NoTexture("The texture type provided does not match std::shared_ptr<sf::Texture>");
     }
     PRETTY_DEBUG << "Getting the texture" << std::endl;
     std::optional<std::shared_ptr<sf::Texture>> OptionalTexture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, "Base texture for the spritesheet animation, <std::any , bad cast error>, system error: ");
@@ -686,8 +689,8 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
                 (posy * frameHeight)
             };
             std::pair<int, int> dimension = {
-                ((posx * frameWidth) + frameWidth),
-                ((posy * frameHeight) + frameHeight)
+                frameWidth,
+                frameHeight
             };
             Recoded::IntRect viewField(position, dimension);
             if (frameCounter >= initialFrame && (frameCounter <= endFrame || endFrame == (-1))) {

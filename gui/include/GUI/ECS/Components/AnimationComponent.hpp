@@ -191,6 +191,12 @@ namespace GUI
                 void checkTick();
 
                 /**
+                 * @brief Force the animation to tick regardless of the delay
+                 *
+                 */
+                void forceTick();
+
+                /**
                  * @brief Start the playing of the animation from the current index in memory
                  *
                  */
