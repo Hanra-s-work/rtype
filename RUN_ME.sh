@@ -28,9 +28,13 @@ if [ ! -d $DEST_FOLDER ]; then
     mkdir $DEST_FOLDER
 fi
 
+if [ $# -eq 1 ] && [ "$1" == "debug" ]; then
+    PREPEND_FLAG="-DCMAKE_BUILD_TYPE=Debug"
+fi
+
 # Run the setup
 echo "Running setup"
-cmake -S . -B $DEST_FOLDER
+cmake $PREPEND_FLAG -S . -B $DEST_FOLDER
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
     echo "Error: cmake failed"
