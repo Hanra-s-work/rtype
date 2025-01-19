@@ -174,7 +174,9 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
     PRETTY_DEBUG << "Orchestrator dump (before tick):\n" << getInfo(0) << std::endl;
 
     // update entities based on packets received
-    for (auto &packet : packets) {
+    PRETTY_DEBUG << "Going to process received packets" << std::endl;
+    for (const GUI::Network::MessageNode &packet : packets) {
+        PRETTY_DEBUG << "Packet received: " << Recoded::myToString(packet) << std::endl;
         switch (packet.type) {
             case GUI::Network::MessageType::MOVE:
                 _setPosition(packet.id, packet.info.coords);
@@ -203,9 +205,12 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
                 break;
         }
     }
+    PRETTY_DEBUG << "Processed received packets" << std::endl;
 
     // Update player movements
+    PRETTY_DEBUG << "Going to process the events" << std::endl;
     if (_event->getKeys().size() > 0) {
+        PRETTY_DEBUG << "Checking if the player id: " << Recoded::myToString(_playerId) << " is present" << std::endl;
         if (_playerId < _playerBrain.size()) {
             std::pair<float, float> position = _playerBrain[_playerId]->getCollision().getPosition();
 
@@ -221,7 +226,9 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
             }
 
             // Handle shooting
+            PRETTY_DEBUG << "Checking if the player has shot" << std::endl;
             if (_event->isKeyPressed(GUI::ECS::Systems::Key::Space)) {
+                PRETTY_DEBUG << "The player has shot" << std::endl;
                 if (_playerId < _playerBrain.size()) {
                     PRETTY_DEBUG << "Player shot" << std::endl;
                     _sendMessage({ GUI::Network::MessageType::SHOOT, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {0, 0}} });
@@ -231,8 +238,10 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
                     throw CustomExceptions::NoSprite("<No player>");
                 }
             }
+            PRETTY_DEBUG << "Checked if the player had shot" << std::endl;
 
             // Update player position
+            PRETTY_DEBUG << "Updating the player's position" << std::endl;
             if (_playerId < _playerBrain.size()) {
                 _playerBrain[_playerId]->setPosition(position);
                 _sendMessage({ GUI::Network::MessageType::MOVE, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {position.first, position.second}} });
@@ -240,6 +249,7 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
                 PRETTY_WARNING << "There is no player to update" << std::endl;
                 throw CustomExceptions::NoSprite("<No player>");
             }
+            PRETTY_DEBUG << "The player position has been updated" << std::endl;
         } else {
             PRETTY_WARNING << "There is no player to update" << std::endl;
             throw CustomExceptions::NoSprite("<No player>");
@@ -247,6 +257,7 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
     }
     PRETTY_DEBUG << "Updating the enemy count component (if present)" << std::endl;
     if (_remainingEnemies.has_value()) {
+        PRETTY_DEBUG << "Remaining enemy counter updated" << std::endl;
         _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_activeEnemies));
     }
     PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;

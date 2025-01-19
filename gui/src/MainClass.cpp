@@ -1035,9 +1035,13 @@ void Main::_processIncommingPackets()
 {
     PRETTY_DEBUG << "Getting the buffer from the incoming packets" << std::endl;
     _bufferPackets.clear();
-    if (_networkManager->isConnected()) {
+    const bool connected = _networkManager->isConnected();
+    PRETTY_DEBUG << "Connection status: " << Recoded::myToString(connected) << std::endl;
+    if (connected) {
         _bufferPackets = _networkManager->getReceivedMessages();
+        PRETTY_DEBUG << "Buffer packet size: " << Recoded::myToString(_bufferPackets.size()) << std::endl;
     }
+    PRETTY_DEBUG << "Out of _processIncommingPackets" << std::endl;
 }
 
 /**
