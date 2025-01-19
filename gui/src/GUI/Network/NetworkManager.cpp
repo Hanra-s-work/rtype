@@ -328,7 +328,7 @@ void GUI::Network::NetworkManager::stopReceivingMessages()
 
 std::vector<GUI::Network::MessageNode> GUI::Network::NetworkManager::getBufferedMessages()
 {
-    auto list = this->_bufferedMessages;
+    std::vector<GUI::Network::MessageNode> list = this->_bufferedMessages;
     _bufferedMessages.clear();
     return list;
 }
