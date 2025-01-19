@@ -25,9 +25,7 @@ GUI::Network::NetworkManager::~NetworkManager()
 void GUI::Network::NetworkManager::initialize()
 {
     try {
-        asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), _port);
-        _socket.open(asio::ip::udp::v4());
-        _socket.bind(localEndpoint);
+        _connect();
         PRETTY_INFO << "UDP Socket initialized on port " << _port << std::endl;
     }
     catch (const std::exception &e) {
@@ -79,6 +77,12 @@ void GUI::Network::NetworkManager::sendMessage(const GUI::Network::MessageNode &
     catch (const std::exception &e) {
         std::cerr << "Error sending message: " << e.what() << std::endl;
     }
+}
+
+void GUI::Network::NetworkManager::startGame()
+{
+    //core dump on this
+    //sendMessage({MessageType::CONNECT, 0, {0, 0, "", {0, 0}}});
 }
 
 const bool GUI::Network::NetworkManager::isConnected() const

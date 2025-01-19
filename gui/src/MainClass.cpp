@@ -361,11 +361,12 @@ void Main::_initialiseConnection()
     std::string address = _ip + ":" + std::to_string(_port);
     PRETTY_DEBUG << "Connecting to the server at " << address << std::endl;
     _networkManager->setAddress(_ip, _port);
-    if (_networkManager->isConnected()) {
-        PRETTY_SUCCESS << "We are connected to the server" << std::endl;
-    } else {
-        PRETTY_WARNING << "We are not connected to the server" << std::endl;
-    }
+    _networkManager->startGame();
+    // if (_networkManager->isConnected()) {
+    //     PRETTY_SUCCESS << "We are connected to the server" << std::endl;
+    // } else {
+    //     PRETTY_WARNING << "We are not connected to the server" << std::endl;
+    // }
 }
 
 /**
@@ -4533,7 +4534,7 @@ void Main::_goConnect()
     PRETTY_DEBUG << "Attempting to connect" << std::endl;
     _initialiseConnection();
     PRETTY_DEBUG << "Checking if we are connected" << std::endl;
-    if (!_networkManager->isConnected()) {
+    if (/*!_networkManager->isConnected()*/false) {
         PRETTY_DEBUG << "We are not connected" << std::endl;
         _goConnectionFailed();
     } else {

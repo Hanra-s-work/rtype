@@ -36,6 +36,8 @@ namespace GUI
             void startThread();
             void stopThread();
 
+            void startGame();
+
             void sendMessage(const MessageNode &message);
             const std::vector<GUI::Network::MessageNode> getReceivedMessages();
 
