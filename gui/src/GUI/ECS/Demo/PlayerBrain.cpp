@@ -43,7 +43,7 @@ void GUI::ECS::Demo::PlayerBrain::setSprite(const std::shared_ptr<GUI::ECS::Comp
     _bullet.setDamage(5);
     _bullet.setSpeed(5);
     _bullet.setPosition({ 1,1 });
-    _bullet.setDirection({ -1,0 });
+    _bullet.setDirection({ 1,0 });
     _bullet.setSize({ 0.5, 0.5 });
     _bullet.tick();
     PRETTY_DEBUG << "Bullet info has been set" << std::endl;

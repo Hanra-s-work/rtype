@@ -95,7 +95,7 @@ namespace GUI
                 const int _randInt(int min = 5, int max = 20);
 
                 bool _visible = true;
-                long int _health = 100;
+                long int _health = 1;//00;
                 unsigned int _delayBeforeShot = 20;
                 GUI::ECS::Demo::Bullet _bullet;
                 GUI::ECS::Systems::Collision _collision;

@@ -323,6 +323,17 @@ initial_frame = 0 # max: 11
 end_frame = -1 #end of all the frames
 frame_delay = 100 # delay between each frame in milliseconds
 
+[spritesheets.sprite3b]
+name = "r-typesheet3b"
+path = "assets/img/r-typesheet3b.gif"
+sprite_width = 10
+sprite_height = 10
+start_left = true
+start_top = true
+initial_frame = 0 # max: 11
+end_frame = -1 #end of all the frames
+frame_delay = 1 #00 # delay between each frame in milliseconds
+
 [spritesheets.sprite5]
 name = "r-typesheet5"
 path = "assets/img/r-typesheet5.gif"
@@ -636,6 +647,17 @@ start_top = true
 initial_frame = 0
 end_frame = -1 #end of all the frames
 frame_delay = 100 # delay between each frame in milliseconds
+
+[spritesheets.sprite30b]
+name = "r-typesheet30b"
+path = "assets/img/r-typesheet30b.gif"
+sprite_width = 10
+sprite_height = 10
+start_left = true
+start_top = true
+initial_frame = 0
+end_frame = -1 #end of all the frames
+frame_delay = 1 #00 # delay between each frame in milliseconds
 
 # [spritesheets.sprite31_vertical] # Horizontal sprites will be cut in 2 due to them not being aligned in a matrix like manner
 # name = "r-typesheet31_vertical"
