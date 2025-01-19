@@ -57,6 +57,12 @@ set(SOURCES
     src/GUI/ECS/Demo/PlayerBrain.cpp
     src/GUI/ECS/Demo/Orchestrator.cpp
 
+    # ECS Online
+    src/GUI/ECS/Online/Bullet.cpp
+    src/GUI/ECS/Online/EnemyBrain.cpp
+    src/GUI/ECS/Online/PlayerBrain.cpp
+    src/GUI/ECS/Online/Orchestrator.cpp
+
     # ECS Systems
     src/GUI/ECS/Systems/Key.cpp
     src/GUI/ECS/Systems/Font.cpp
