@@ -5,6 +5,14 @@
 ** Orchestrator.hpp
 */
 
+/**
+ * @file Orchestrator.hpp
+ *
+ * @brief Declaration of the Orchestrator class and its related functionality.
+ *
+ * @details This file defines the Orchestrator class, which acts as the main orchestrator for managing the game logic, rendering, and entity interactions in the ECS architecture.
+ */
+
 #pragma once
 #include <any>
 #include <vector>
@@ -30,26 +38,70 @@ namespace GUI
     {
         namespace Demo
         {
+            /**
+             * @brief The Orchestrator class manages the overall game state, including entity creation, updates, and rendering.
+             *
+             * @details This class inherits from EntityNode and coordinates various systems and entities in the ECS architecture.
+             * It also handles sound effects, game progression, and scene setup.
+             */
             class Orchestrator : public EntityNode {
                 public:
+                /**
+                 * @brief Default constructor.
+                 *
+                 * @param entityId The unique ID of the entity. Default is 0.
+                 */
                 Orchestrator(const std::uint32_t entityId = 0);
 
+                /**
+                 * @brief Destructor.
+                 */
                 ~Orchestrator() = default;
 
+                /**
+                 * @brief Initializes the ECS entities managed by the orchestrator.
+                 *
+                 * @param ecsEntities A map of type-indexed vectors containing entity data.
+                 */
                 void initialiseClass(std::unordered_map<std::type_index, std::vector<std::any>> &ecsEntities);
 
+                /**
+                 * @brief Starts the game logic and sets the game to a playing state.
+                 */
                 void start();
 
+                /**
+                 * @brief Stops the game logic and resets the playing state.
+                 */
                 void stop();
 
+                /**
+                 * @brief Resets the game state, clearing all entities and resetting conditions.
+                 */
                 void reset();
 
+                /**
+                 * @brief Updates the game state for the current frame.
+                 */
                 void tick();
 
+                /**
+                 * @brief Renders the game entities to the window.
+                 */
                 void render();
 
+                /**
+                 * @brief Checks if the game is over.
+                 *
+                 * @return True if the game is over, false otherwise.
+                 */
                 const bool isGameOver() const;
 
+                /**
+                 * @brief Checks if the game has been won.
+                 *
+                 * @return True if the game is won, false otherwise.
+                 */
                 const bool isGameWon() const;
 
 
@@ -66,48 +118,91 @@ namespace GUI
 
                 private:
 
+                /**
+                 * @brief Plays the shooting sound effect.
+                 */
                 void _shootSound();
+                /**
+                 * @brief Plays the damage sound effect.
+                 */
                 void _damageSound();
+                /**
+                 * @brief Plays the sound effect when an entity dies.
+                 */
                 void _deadSound();
+                /**
+                 * @brief Plays the button interaction sound effect.
+                 */
                 void _buttonSound();
+                /**
+                 * @brief Plays the sound effect when the game is over.
+                 */
                 void _gameOverSound();
+                /**
+                 * @brief Plays the sound effect when the game is won.
+                 */
                 void _winSound();
 
+                /**
+                 * @brief Spawns a new entity in the game.
+                 */
                 void _spawn();
 
+                /**
+                 * @brief Handles logic for removing or "killing" an entity.
+                 */
                 void _kill();
 
+                /**
+                 * @brief Spawns an enemy at the specified position.
+                 *
+                 * @param pos The position as a pair of (x, y) coordinates.
+                 */
                 void _spawnEnemy(const std::pair<float, float> pos);
 
+                /**
+                 * @brief Generates a random integer within a specified range.
+                 *
+                 * @param min The minimum value (inclusive). Default is 0.
+                 * @param max The maximum value (inclusive). Default is 5.
+                 *
+                 * @return A random integer within the range.
+                 */
                 const int _randInt(int min = 0, int max = 5);
 
+                /**
+                 * @brief Sets up the initial game scene, including background and entities.
+                 */
                 void _setTheScene();
 
+                /**
+                 * @brief Sets up the text components for the game UI.
+                 */
                 void _setTextComponents();
 
-                bool _playing = false;
-                bool _gameWon = false;
-                bool _gameOver = false;
-                int _stepUp = -10;
-                int _stepDown = 10;
-                int _stepLeft = -10;
-                int _stepRight = 10;
-                float _screenPosXOffset = 75;
-                float _screenPosYOffset = 45;
-                long int _activeEnemies = 0;
-                std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _titleHealth;
-                std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _remainingEnemies;
-                std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> _backgroundItem;
-                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBullet;
-                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBulletEnemy;
-                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spritePlayer;
-                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteEnemy;
-                std::vector<GUI::ECS::Demo::Bullet> _bullets;
-                std::shared_ptr<GUI::ECS::Systems::Window> _window;
-                std::shared_ptr<GUI::ECS::Systems::EventManager> _event;
-                std::shared_ptr<GUI::ECS::Demo::PlayerBrain> _playerBrain;
-                std::vector<std::shared_ptr<GUI::ECS::Demo::EnemyBrain>> _enemyBrain;
-                std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;
+                bool _playing = false;                                                                 //!< Indicates whether the game is currently playing.
+                bool _gameWon = false;                                                                 //!< Indicates if the game has been won.
+                bool _gameOver = false;                                                                //!< Indicates if the game is over.
+                int _stepUp = -10;                                                                     //!< Step size for upward movement.
+                int _stepDown = 10;                                                                    //!< Step size for downward movement.
+                int _stepLeft = -10;                                                                   //!< Step size for leftward movement.
+                int _stepRight = 10;                                                                   //!< Step size for rightward movement.
+                float _screenPosXOffset = 75;                                                          //!< Horizontal screen offset for positioning.
+                float _screenPosYOffset = 45;                                                          //!< Vertical screen offset for positioning.
+                long int _activeEnemies = 0;                                                           //!< Count of active enemies in the game.
+                std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _titleHealth;      //!< UI component for displaying health.
+                std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _remainingEnemies; //!< UI component for displaying remaining enemies.
+                std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> _backgroundItem;  //!< UI component for the background image.
+                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBullet;                  //!< Sprite component for player bullets.
+                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBulletEnemy;             //!< Sprite component for enemy bullets.
+                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spritePlayer;                  //!< Sprite component for the player.
+                std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteEnemy;                   //!< Sprite component for enemies.
+                std::vector<GUI::ECS::Demo::Bullet> _bullets;                                          //!< Container for all bullets in the game.
+                std::shared_ptr<GUI::ECS::Systems::Window> _window;                                    //!< Pointer to the window system.
+                std::shared_ptr<GUI::ECS::Systems::EventManager> _event;                               //!< Pointer to the event manager system.
+                std::shared_ptr<GUI::ECS::Demo::PlayerBrain> _playerBrain;                             //!< Pointer to the player's brain logic.
+                std::vector<std::shared_ptr<GUI::ECS::Demo::EnemyBrain>> _enemyBrain;                  //!< Container for enemy brains.
+                std::unordered_map<std::type_index, std::vector<std::any>> _ecsEntities;               //!< ECS entities managed by the orchestrator.
             };
 
             /**
