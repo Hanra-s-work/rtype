@@ -87,9 +87,18 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
         //     // _spriteBullet->setDimension({ 0.5,0.5 });
         //     // _spriteBullet->forceTick();
         //     PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
+        // } else if (
+        //     applicationContext == "sprite30b" || name == "sprite30b" ||
+        //     applicationContext == "typesheet30b" || name == "typesheet30b"
+        //     ) {
+        //     PRETTY_DEBUG << "Sprite bullet found" << std::endl;
+        //     _spriteBullet = sprite.value();
+        //     // _spriteBullet->setDimension({ 0.5,0.5 });
+        //     _spriteBullet->forceTick();
+        //     PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         } else if (
-            applicationContext == "sprite30b" || name == "sprite30b" ||
-            applicationContext == "typesheet30b" || name == "typesheet30b"
+            applicationContext == "sprite30c" || name == "sprite30c" ||
+            applicationContext == "typesheet30c" || name == "typesheet30c"
             ) {
             PRETTY_DEBUG << "Sprite bullet found" << std::endl;
             _spriteBullet = sprite.value();
@@ -105,14 +114,21 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             //     _spriteBulletEnemy->setDimension({ 0.5,0.5 });
             //     _spriteBulletEnemy->forceTick();
             //     PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
+        // } else if (
+        //     applicationContext == "sprite3b" || name == "sprite3b" ||
+        //     applicationContext == "r-typesheet3b" || name == "r-typesheet3b"
+        //     ) {
+        //     PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
+        //     _spriteBulletEnemy = sprite.value();
+        //     // _spriteBulletEnemy->setDimension({ 0.5,0.5 });
+        //     _spriteBullet->forceTick();
+        //     PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
-            applicationContext == "sprite3b" || name == "sprite3b" ||
-            applicationContext == "r-typesheet3b" || name == "r-typesheet3b"
+            applicationContext == "sprite3c" || name == "sprite3c" ||
+            applicationContext == "r-typesheet3c" || name == "r-typesheet3c"
             ) {
             PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
             _spriteBulletEnemy = sprite.value();
-            // _spriteBulletEnemy->setDimension({ 0.5,0.5 });
-            _spriteBullet->forceTick();
             PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
             applicationContext == "r-typesheet13" || name == "r-typesheet13" ||
@@ -206,6 +222,11 @@ void GUI::ECS::Demo::Orchestrator::tick()
             PRETTY_DEBUG << "Enemy shot details: " << shot.value() << std::endl;
             _bullets.push_back(shot.value());
         }
+        if (_enemyBrain[index]->isColliding(_playerBrain->getCollision())) {
+            _playerBrain->setHealth(0);
+            _gameOver = true;
+            return;
+        }
     }
 
     // Update player movements
@@ -225,9 +246,11 @@ void GUI::ECS::Demo::Orchestrator::tick()
 
         // Handle shooting
         if (_event->isKeyPressed(GUI::ECS::Systems::Key::Space)) {
-            _bullets.push_back(_playerBrain->shoot());
-            _bullets[_bullets.size()].setSize({ 0.5,0.5 });
-            PRETTY_DEBUG << "Player shot details: " << _bullets[_bullets.size() - 1] << std::endl;
+            GUI::ECS::Demo::Bullet shot = _playerBrain->shoot();
+            shot.setSize({ 0.5,0.5 });
+            PRETTY_DEBUG << "Player shot details: " << shot << std::endl;
+            _bullets.push_back(shot);
+            _shootSound();
         }
 
         // Update player position
@@ -276,6 +299,7 @@ void GUI::ECS::Demo::Orchestrator::tick()
             if (_playerBrain->isColliding(_bullets[index].getCollision())) {
                 _playerBrain->setHealth(_playerBrain->getHealth() - _bullets[index].getDamage());
                 _bullets[index].setVisible(false);
+                _damageSound();
             }
         }
     }
@@ -289,8 +313,13 @@ void GUI::ECS::Demo::Orchestrator::tick()
 
     // Check if all the enemies are dead
     unsigned int index = 0;
-    for (; index < _enemyBrain.size() && !_enemyBrain[index]->isVisible(); index++);
-    if (index == _enemyBrain.size()) {
+    _activeEnemies = 0;
+    for (; index < _enemyBrain.size(); index++) {
+        if (_enemyBrain[index]->isVisible()) {
+            _activeEnemies += 1;
+        }
+    }
+    if (index == _enemyBrain.size() || _activeEnemies <= 0) {
         PRETTY_DEBUG << "All the enemies are dead, the game is won" << std::endl;
         _gameWon = true;
     }
@@ -646,6 +675,139 @@ void GUI::ECS::Demo::Orchestrator::_setTextComponents()
     _remainingEnemies.emplace(textEnnemies);
     PRETTY_DEBUG << "Fonts gathered" << std::endl;
 
+}
+
+
+/**
+ * @brief Plays the shooting sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with shooting, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void GUI::ECS::Demo::Orchestrator::_shootSound()
+{
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    soundLib.value()->shootSound();
+}
+
+/**
+ * @brief Plays the damage sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with damage, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void GUI::ECS::Demo::Orchestrator::_damageSound()
+{
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    soundLib.value()->damageSound();
+}
+
+/**
+ * @brief Plays the death sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with the player or entity death, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void GUI::ECS::Demo::Orchestrator::_deadSound()
+{
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    soundLib.value()->deadSound();
+}
+
+/**
+ * @brief Plays the button click sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with button interactions, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void GUI::ECS::Demo::Orchestrator::_buttonSound()
+{
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    soundLib.value()->buttonSound();
+}
+
+/**
+ * @brief Plays the game over sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with the game over event, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void GUI::ECS::Demo::Orchestrator::_gameOverSound()
+{
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    soundLib.value()->gameOverSound();
+}
+
+/**
+ * @brief Plays the win sound effect.
+ *
+ * This function iterates through all music components in the entity-component system,
+ * finds the sound associated with success or game completion, disables looping, and plays the sound.
+ *
+ * @throws CustomExceptions::MusicNotInitialised If a music component cannot be cast to the expected type.
+ */
+void GUI::ECS::Demo::Orchestrator::_winSound()
+{
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!soundLib.has_value()) {
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    soundLib.value()->winSound();
 }
 
 std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::Orchestrator &item)

@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include "Log.hpp"
 #include "Recoded.hpp"
+#include "SoundLib.hpp"
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
 #include "CustomExceptions.hpp"
@@ -64,6 +65,14 @@ namespace GUI
                 const std::string getInfo(const unsigned int indent = 0) const;
 
                 private:
+
+                void _shootSound();
+                void _damageSound();
+                void _deadSound();
+                void _buttonSound();
+                void _gameOverSound();
+                void _winSound();
+
                 void _spawn();
 
                 void _kill();
@@ -85,7 +94,7 @@ namespace GUI
                 int _stepRight = 10;
                 float _screenPosXOffset = 75;
                 float _screenPosYOffset = 45;
-                unsigned int _activeEnemies = 0;
+                long int _activeEnemies = 0;
                 std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _titleHealth;
                 std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _remainingEnemies;
                 std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> _backgroundItem;
