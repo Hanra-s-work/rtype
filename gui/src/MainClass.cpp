@@ -111,11 +111,14 @@ _player(player)
     } else {
         throw CustomExceptions::InvalidFrameLimit(frameLimit);
     }
+    PRETTY_INFO << "Initialising the network manager" << std::endl;
+    _networkManager = std::make_shared<GUI::Network::ThreadCapsule>(_baseId);
+    _baseId += 1;
     PRETTY_INFO << "Setting the player name" << std::endl;
-    _networkManager.setPlayerName(_player);
+    _networkManager->setPlayerName(_player);
     PRETTY_INFO << "End of processing" << std::endl;
     PRETTY_INFO << "Initialising the connection with the server" << std::endl;
-    _networkManager.setAddress(_ip, _port);
+    _networkManager->setAddress(_ip, _port);
     PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
 }
 
@@ -356,7 +359,7 @@ const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std
 void Main::_initialiseConnection()
 {
     std::string address = _ip + ":" + std::to_string(_port);
-    _networkManager.setAddress(_ip, _port);
+    _networkManager->setAddress(_ip, _port);
 }
 
 /**
@@ -365,7 +368,7 @@ void Main::_initialiseConnection()
  */
 void Main::_closeConnection()
 {
-    _networkManager.stopThread();
+    _networkManager->stopThread();
 }
 
 /**
@@ -1004,8 +1007,15 @@ void Main::_updateMouseForAllRendererables(const GUI::ECS::Systems::MouseInfo &m
  */
 void Main::_sendAllPackets()
 {
-    PRETTY_DEBUG << "Performing network stuff" << std::endl;
-    // _networkManager.sendMessage("Yolo");
+    PRETTY_DEBUG << "Sending any packets that have been buffered and not sent" << std::endl;
+    // GUI::Network::MessageNode item;
+    // item.id = 0;
+    // item.info.assetId = 0;
+    // item.info.coords = { 0,0 };
+    // item.info.status = 0;
+    // item.info.username = "user";
+    // item.type = GUI::Network::MessageType::ERROR;
+    // _networkManager->sendMessage(item);
 };
 
 /**
@@ -1015,8 +1025,9 @@ void Main::_sendAllPackets()
  */
 void Main::_processIncommingPackets()
 {
-    PRETTY_DEBUG << "Performing network stuff" << std::endl;
-    // _networkManager.getReceivedMessages();
+    PRETTY_DEBUG << "Getting the buffer from the incoming packets" << std::endl;
+    _bufferPackets.clear();
+    _bufferPackets = _networkManager->getReceivedMessages();
 }
 
 /**
@@ -1697,6 +1708,8 @@ const unsigned int Main::_getScreenCenterY()
 
 void Main::_gameScreen()
 {
+    PRETTY_DEBUG << "In _onlineScreen" << std::endl;
+    PRETTY_DEBUG << "_onlineInitialised = " << Recoded::myToString(_onlineInitialised) << ", _onlineStarted = " << Recoded::myToString(_onlineStarted) << std::endl;
 
     PRETTY_DEBUG << "Getting the window manager component" << std::endl;
     const std::optional<std::shared_ptr<GUI::ECS::Systems::Window>> win = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Window>, CustomExceptions::NoWindow>(_ecsEntities[typeid(GUI::ECS::Systems::Window)][_mainWindowIndex], true, "<No window to render on>");
@@ -1708,10 +1721,67 @@ void Main::_gameScreen()
 
     std::shared_ptr<GUI::ECS::Systems::EventManager> events = _getEventManager();
     PRETTY_DEBUG << "Checking if the escape key was pressed" << std::endl;
+
+    if (!_networkClassSet) {
+        PRETTY_DEBUG << "The online brain does not have the network class, providing" << std::endl;
+        _onlineBrain.setNetworkClass(_networkManager);
+        PRETTY_DEBUG << "The brain now has the network class" << std::endl;
+    }
+
+    if (!_onlineInitialised) {
+        PRETTY_DEBUG << "The online brain is not initialised, initialising" << std::endl;
+        _onlineBrain.initialiseClass(_ecsEntities);
+        _onlineInitialised = true;
+        _onlineStarted = false;
+        PRETTY_DEBUG << "The brain has been initialised" << std::endl;
+    }
+
+    if (!_onlineStarted) {
+        PRETTY_DEBUG << "The online has not started, starting" << std::endl;
+        _onlineBrain.reset();
+        _onlineBrain.start();
+        _onlineStarted = true;
+        PRETTY_DEBUG << "The online has started" << std::endl;
+    }
+
     if (events->isKeyPressed(GUI::ECS::Systems::Key::Escape)) {
         PRETTY_DEBUG << "Escape key pressed, returning to the home screen" << std::endl;
+        _onlineBrain.reset();
+        _onlineBrain.stop();
+        _onlineStarted = false;
         _goHome();
+        return;
     }
+
+    if (_onlineBrain.isGameOver()) {
+        PRETTY_DEBUG << "The online is over, resetting" << std::endl;
+        _onlineBrain.reset();
+        _onlineBrain.stop();
+        _onlineStarted = false;
+        PRETTY_DEBUG << "The online has been reset" << std::endl;
+        PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
+        _goGameOver();
+        PRETTY_DEBUG << "The game over screen has been set to play next" << std::endl;
+        return;
+    }
+
+    if (_onlineBrain.isGameWon()) {
+        PRETTY_DEBUG << "The online has been won, resetting" << std::endl;
+        _onlineBrain.reset();
+        _onlineBrain.stop();
+        _onlineStarted = false;
+        PRETTY_DEBUG << "The online has been reset" << std::endl;
+        PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
+        _goGameWon();
+        PRETTY_DEBUG << "The game won screen has been set to play next" << std::endl;
+        return;
+    }
+
+    PRETTY_DEBUG << "Ticking the online brain" << std::endl;
+    _onlineBrain.tick(_bufferPackets);
+    PRETTY_DEBUG << "Rendering content" << std::endl;
+    _onlineBrain.render();
+    PRETTY_DEBUG << "Ticked and rendered content" << std::endl;
 }
 
 void Main::_demoScreen()
@@ -4267,8 +4337,12 @@ void Main::setPlayer(const std::string &player)
         PRETTY_WARNING << "Player name is empty, defaulting to 'Player'" << std::endl;
         _player = "Player";
     }
+    if (player.length() > 9) {
+        PRETTY_WARNING << "The player name is to long, defaulting to 'Player'" << std::endl;
+        _player = "Player";
+    }
     _player = player;
-    _networkManager.setPlayerName(_player);
+    _networkManager->setPlayerName(_player);
 }
 
 /**
@@ -4432,7 +4506,7 @@ void Main::_goConnect()
     PRETTY_DEBUG << "Attempting to connect" << std::endl;
     _initialiseConnection();
     PRETTY_DEBUG << "Checking if we are connected" << std::endl;
-    if (!_networkManager.isConnected()) {
+    if (!_networkManager->isConnected()) {
         PRETTY_DEBUG << "We are not connected" << std::endl;
         _goConnectionFailed();
     } else {
@@ -4988,9 +5062,9 @@ void Main::_mainLoop()
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
     PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
-    if (!_networkManager.isThreadAlive()) {
+    if (!_networkManager->isThreadAlive()) {
         PRETTY_DEBUG << "Initialising network thread" << std::endl;
-        _networkManager.initialize();
+        _networkManager->initialize();
         PRETTY_DEBUG << "Initialised network thread" << std::endl;
     }
     PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
@@ -5107,7 +5181,7 @@ void Main::setIp(const std::string &ip)
 {
     if (_isIpInRange(ip) == true) {
         _ip = ip;
-        _networkManager.setIp(ip);
+        _networkManager->setIp(ip);
     } else {
         throw CustomExceptions::InvalidIp(ip);
     }
@@ -5124,7 +5198,7 @@ void Main::setPort(const unsigned int port)
 {
     if (_isPortCorrect(port) == true) {
         _port = port;
-        _networkManager.setPort(_port);
+        _networkManager->setPort(_port);
     } else {
         throw CustomExceptions::InvalidPort(std::to_string(port));
     }
