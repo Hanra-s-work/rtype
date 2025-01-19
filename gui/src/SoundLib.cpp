@@ -5,13 +5,19 @@
 ** SoundLib.cpp
 */
 
+/**
+ * @file SoundLib.cpp
+ *
+ * @brief File in charge of containing the functions that define the soundLib class.
+ */
+
 #include "SoundLib.hpp"
 
-/**
- * @brief Construct a new Sound Lib:: Sound Lib object and optionally specify the id
- *
- * @param entityId
- */
+ /**
+  * @brief Construct a new Sound Lib:: Sound Lib object and optionally specify the id
+  *
+  * @param entityId
+  */
 SoundLib::SoundLib(const std::uint32_t entityId)
     : EntityNode(entityId)
 {
