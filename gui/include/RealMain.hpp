@@ -404,6 +404,7 @@ class Main {
   bool _onlineInitialised = false;
   bool _onlineStarted = false;
   bool _networkClassSet = false;
+  bool _connectionInitialised = false;
 
   // Settings variables
   bool _playMusic = true;

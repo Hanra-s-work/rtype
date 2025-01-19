@@ -51,6 +51,11 @@ namespace GUI
              * @param entityId The unique identifier for the entity (default is 0).
              */
             NetworkManager(const std::uint32_t entityId = 0);
+
+            /**
+             *@brief Destroy the Network Manager object
+             */
+            ~NetworkManager();
             /**
              * @brief Initializes the UDP socket and binds it to a local endpoint.
              * This function opens the socket and binds it to the specified port.
