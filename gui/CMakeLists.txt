@@ -18,6 +18,7 @@ set(SOURCES
     src/Log.cpp
     src/Main.cpp
     src/RealMain.cpp
+    src/SoundLib.cpp
     src/MainClass.cpp
     src/TOMLLoader.cpp
     src/HelpFunctions.cpp

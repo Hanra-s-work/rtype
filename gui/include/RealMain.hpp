@@ -35,6 +35,7 @@
 #include "TOMLLoader.hpp"
 #include "GUI/Network.hpp"
 #include "ActiveScreen.hpp"
+#include "SoundLib.hpp"
 #include "GUI/ECS/Demo.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
@@ -397,9 +398,8 @@ class Main {
   bool _demoStarted = false;
 
   // Settings variables
-  // bool _playMusic = true;
-  bool _playMusic = false;
-  bool _playSoundEffects = true;
+  bool _playMusic = true;
+  // bool _playMusic = false;
 
   // Settings tokens
   const std::string _playMusicToken = "settingsWindowPlayMusicButton";
