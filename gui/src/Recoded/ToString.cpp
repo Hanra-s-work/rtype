@@ -72,14 +72,15 @@ const std::string Recoded::myToString(const ActiveScreen &item)
     };
 };
 
-const std::string Recoded::myToString(const GUI::ECS::GameComponents::Package_t &item)
+const std::string Recoded::myToString(const GUI::ECS::GameComponents::Package &item)
 {
-    std::string result = "Package_t: {\n";
-    result += "- GraphicID: " + Recoded::myToString(item.GraphicID) + "\n";
-    result += "- EntityID: " + Recoded::myToString(item.EntityID) + "\n";
-    result += "- posx: " + Recoded::myToString(item.posx) + "\n";
-    result += "- posy: " + Recoded::myToString(item.posy) + "\n";
-    result += "}\n";
+    std::string indent = "";
+    std::string result = indent + "Package: {\n";
+    result += indent + "- GraphicID: " + Recoded::myToString(item.GraphicID) + "\n";
+    result += indent + "- EntityID: " + Recoded::myToString(item.EntityID) + "\n";
+    result += indent + "- posx: " + Recoded::myToString(item.posx) + "\n";
+    result += indent + "- posy: " + Recoded::myToString(item.posy) + "\n";
+    result += indent + "}\n";
     return result;
 }
 
@@ -101,23 +102,25 @@ const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityType
     return "UNKNOWN";
 };
 
-const std::string Recoded::myToString(const GUI::ECS::GameComponents::ECSPackage_t &item)
+const std::string Recoded::myToString(const GUI::ECS::GameComponents::ECSPackage &item)
 {
-    std::string result = "ECSPackage_t: {\n";
-    result += "- EntityID: " + Recoded::myToString(item.EntityID) + "\n";
-    result += "- posx: " + Recoded::myToString(item.posx) + "\n";
-    result += "- posy: " + Recoded::myToString(item.posy) + "\n";
-    result += "}\n";
+    std::string indent = "";
+    std::string result = indent + "ECSPackage: {\n";
+    result += indent + "- EntityID: " + Recoded::myToString(item.EntityID) + "\n";
+    result += indent + "- posx: " + Recoded::myToString(item.posx) + "\n";
+    result += indent + "- posy: " + Recoded::myToString(item.posy) + "\n";
+    result += indent + "}\n";
     return result;
 }
 
-const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityActions_t &item)
+const std::string Recoded::myToString(const GUI::ECS::GameComponents::EntityActions &item)
 {
-    std::string result = "EntityActions_t: {\n";
-    result += "- type: " + Recoded::myToString(item.type) + "\n";
-    result += "- posx: " + Recoded::myToString(item.posx) + "\n";
-    result += "- posy: " + Recoded::myToString(item.posy) + "\n";
-    result += "}\n";
+    std::string indent = "";
+    std::string result = indent + "EntityActions: {\n";
+    result += indent + "- type: " + Recoded::myToString(item.type) + "\n";
+    result += indent + "- posx: " + Recoded::myToString(item.posx) + "\n";
+    result += indent + "- posy: " + Recoded::myToString(item.posy) + "\n";
+    result += indent + "}\n";
     return result;
 }
 
@@ -166,12 +169,42 @@ const std::string Recoded::myToString(const GUI::Network::MessageType &messageTy
     if (messageType == GUI::Network::MessageType::SPAWN) {
         return "Spawn";
     }
-    if (messageType == GUI::Network::MessageType::UPDATE) {
-        return "Update";
+    if (messageType == GUI::Network::MessageType::KILL) {
+        return "Kill";
+    }
+    if (messageType == GUI::Network::MessageType::DAMAGE) {
+        return "Damage";
+    }
+    if (messageType == GUI::Network::MessageType::STATUS) {
+        return "Status";
     }
     if (messageType == GUI::Network::MessageType::ERROR) {
         return "Error";
     }
     return "Unknown";
+}
+
+const std::string Recoded::myToString(const GUI::Network::MessageInfo &messageInfo)
+{
+    std::string indent = "";
+    std::string node(messageInfo.username, 9);
+    std::string result = indent + "struct MessageInfo: {\n";
+    result += indent + "- status: " + Recoded::myToString(messageInfo.status) + "\n";
+    result += indent + "- asset_id: " + Recoded::myToString(messageInfo.assetId) + "\n";
+    result += indent + "- username: " + node + "\n";
+    result += indent + "- coords: " + Recoded::myToString(messageInfo.coords) + "\n";
+    result += indent + "}\n";
+    return result;
+}
+
+const std::string Recoded::myToString(const GUI::Network::MessageNode &messageNode)
+{
+    std::string indent = "";
+    std::string result = indent + "struct MessageNode: {\n";
+    result += indent + "- type: " + Recoded::myToString(messageNode.type) + "\n";
+    result += indent + "- id: " + Recoded::myToString(messageNode.id) + "\n";
+    result += indent + "- info: {\n" + Recoded::myToString(messageNode.info) + "}\n";
+    result += indent + "}\n";
+    return result;
 }
 

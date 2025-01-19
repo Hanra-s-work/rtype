@@ -36,8 +36,8 @@ namespace GUI
             void startThread();
             void stopThread();
 
-            void sendMessage(const std::string &message);
-            const std::vector<std::string> getReceivedMessages();
+            void sendMessage(const MessageNode &message);
+            const std::vector<GUI::Network::MessageNode> getReceivedMessages();
 
             void setPort(const unsigned int port);
             void setIp(const std::string &ip);
@@ -49,7 +49,7 @@ namespace GUI
 
             const float bytesToFloat(const uint8_t *bytes);
             const std::string bytesToHex(const std::vector<uint8_t> &bytes);
-            const std::string translateMessage(const std::vector<uint8_t> &message);
+            const GUI::Network::MessageNode translateMessage(const std::vector<uint8_t> &message);
             void receiveMessage();
 
             private:

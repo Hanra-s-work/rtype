@@ -37,6 +37,7 @@
 #include "ActiveScreen.hpp"
 #include "SoundLib.hpp"
 #include "GUI/ECS/Demo.hpp"
+#include "GUI/ECS/Online.hpp"
 #include "CustomExceptions.hpp"
 #include "GUI/ECS/Systems.hpp"
 #include "GUI/ECS/EntityNode.hpp"
@@ -390,12 +391,19 @@ class Main {
   const std::string _portV4ChunkKey = "connectionAddressScreenPortV4ChunkKey";
 
   // Network manager
-  GUI::Network::ThreadCapsule _networkManager;
+  std::shared_ptr<GUI::Network::ThreadCapsule> _networkManager;
+  std::vector<GUI::Network::MessageNode> _bufferPackets;
 
   // Singleplayer demo
   GUI::ECS::Demo::Orchestrator _demoBrain;
   bool _demoInitialised = false;
   bool _demoStarted = false;
+
+  // Multiplayer online game
+  GUI::ECS::Online::Orchestrator _onlineBrain;
+  bool _onlineInitialised = false;
+  bool _onlineStarted = false;
+  bool _networkClassSet = false;
 
   // Settings variables
   bool _playMusic = true;

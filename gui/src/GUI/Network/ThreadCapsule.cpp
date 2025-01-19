@@ -45,18 +45,16 @@ void GUI::Network::ThreadCapsule::stopThread()
     _killChild();
 }
 
-void GUI::Network::ThreadCapsule::sendMessage(const std::string &message)
+void GUI::Network::ThreadCapsule::sendMessage(const MessageNode &message)
 {
     ENSURE_THREAD_ALIVE("the function in charge of sending messages");
     return _childNode->sendMessage(message);
 };
 
-const std::vector<std::string> GUI::Network::ThreadCapsule::getReceivedMessages()
+const std::vector<GUI::Network::MessageNode> GUI::Network::ThreadCapsule::getReceivedMessages()
 {
     ENSURE_THREAD_ALIVE("the function in charge of returning messages received since the previous call");
-    // What is the function to get all the messages received up until now?
-    std::vector<std::string> e;
-    return e;
+    return _childNode->getBufferedMessages();
 };
 
 void GUI::Network::ThreadCapsule::setPort(const unsigned int port)
@@ -121,7 +119,7 @@ const std::string GUI::Network::ThreadCapsule::bytesToHex(const std::vector<uint
     return _childNode->bytesToHex(bytes);
 };
 
-const std::string GUI::Network::ThreadCapsule::translateMessage(const std::vector<uint8_t> &message)
+const GUI::Network::MessageNode GUI::Network::ThreadCapsule::translateMessage(const std::vector<uint8_t> &message)
 {
     ENSURE_THREAD_ALIVE("the function in charge of translating the message to a string");
     return _childNode->translateMessage(message);

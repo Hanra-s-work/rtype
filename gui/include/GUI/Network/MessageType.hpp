@@ -32,7 +32,9 @@ namespace GUI
             MOVE = 3,
             SHOOT = 4,
             SPAWN = 5,
-            UPDATE = 6,
+            KILL = 6,
+            DAMAGE = 7,
+            STATUS = 8,
             ERROR = 255
         };
     }

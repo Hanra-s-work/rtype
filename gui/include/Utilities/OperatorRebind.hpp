@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include "Recoded/ToString.hpp"
 #include "GUI/Network/MessageType.hpp"
+#include "GUI/Network/MessageStruct.hpp"
 #include "GUI/ECS/GameComponents/Package.hpp"
 #include "GUI/ECS/GameComponents/ECSPackage.hpp"
 #include "GUI/ECS/GameComponents/EntityType.hpp"
@@ -148,7 +149,7 @@ namespace Utilities
      * and then inserts the result into the output stream.
      *
      * @param os The output stream to which the ActiveScreen will be written.
-     * @param item The ActiveScreen enum value to output.
+     * @param item The ActiveScreen struct value to output.
      *
      * @return The modified output stream with the ActiveScreen's string representation appended.
      */
@@ -165,7 +166,7 @@ namespace Utilities
      * and then inserts the result into the output stream.
      *
      * @param os The output stream to which the Package_t will be written.
-     * @param item The Package_t enum value to output.
+     * @param item The Package_t struct value to output.
      *
      * @return The modified output stream with the Package_t's string representation appended.
      */
@@ -182,7 +183,7 @@ namespace Utilities
      * and then inserts the result into the output stream.
      *
      * @param os The output stream to which the EntityType will be written.
-     * @param item The EntityType enum value to output.
+     * @param item The EntityType struct value to output.
      *
      * @return The modified output stream with the EntityType's string representation appended.
      */
@@ -199,7 +200,7 @@ namespace Utilities
      * and then inserts the result into the output stream.
      *
      * @param os The output stream to which the ECSPackage_t will be written.
-     * @param item The ECSPackage_t enum value to output.
+     * @param item The ECSPackage_t struct value to output.
      *
      * @return The modified output stream with the ECSPackage_t's string representation appended.
      */
@@ -216,7 +217,7 @@ namespace Utilities
      * and then inserts the result into the output stream.
      *
      * @param os The output stream to which the EntityActions_t will be written.
-     * @param item The EntityActions_t enum value to output.
+     * @param item The EntityActions_t struct value to output.
      *
      * @return The modified output stream with the EntityActions_t's string representation appended.
      */
@@ -267,11 +268,45 @@ namespace Utilities
      * and then inserts the result into the output stream.
      *
      * @param os The output stream to which the MessageType will be written.
-     * @param item The MessageType MessageType value to output.
+     * @param item The MessageType value to output.
      *
      * @return The modified output stream with the MessageType's string representation appended.
      */
     inline std::ostream &operator<<(std::ostream &os, const GUI::Network::MessageType &item)
+    {
+        os << Recoded::myToString(item);
+        return os;
+    };
+
+    /**
+     * @brief Outputs a the string value of the MessageInfo enum to the given output stream using a custom string representation.
+     *
+     * This function uses the custom `Recoded::myToString` function to convert the MessageInfo to a string
+     * and then inserts the result into the output stream.
+     *
+     * @param os The output stream to which the MessageInfo will be written.
+     * @param item The MessageInfo value to output.
+     *
+     * @return The modified output stream with the MessageInfo's string representation appended.
+     */
+    inline std::ostream &operator<<(std::ostream &os, const GUI::Network::MessageInfo &item)
+    {
+        os << Recoded::myToString(item);
+        return os;
+    };
+
+    /**
+     * @brief Outputs a the string value of the MessageNode enum to the given output stream using a custom string representation.
+     *
+     * This function uses the custom `Recoded::myToString` function to convert the MessageNode to a string
+     * and then inserts the result into the output stream.
+     *
+     * @param os The output stream to which the MessageNode will be written.
+     * @param item The MessageNode value to output.
+     *
+     * @return The modified output stream with the MessageNode's string representation appended.
+     */
+    inline std::ostream &operator<<(std::ostream &os, const GUI::Network::MessageNode &item)
     {
         os << Recoded::myToString(item);
         return os;
