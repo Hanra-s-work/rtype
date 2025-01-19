@@ -4995,8 +4995,7 @@ void Main::_mainLoop()
     }
     PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
 
-    // setActiveScreen(ActiveScreen::MENU);
-    setActiveScreen(ActiveScreen::DEMO);
+    setActiveScreen(ActiveScreen::MENU);
 
     PRETTY_DEBUG << "Going to start the mainloop." << std::endl;
     while (window->isOpen()) {
