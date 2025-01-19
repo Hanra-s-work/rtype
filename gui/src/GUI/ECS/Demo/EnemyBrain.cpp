@@ -43,7 +43,8 @@ void GUI::ECS::Demo::EnemyBrain::setSprite(const std::shared_ptr<GUI::ECS::Compo
     _bullet.setSpeed(5);
     _bullet.setPosition({ 1,1 });
     _bullet.setDirection({ -1,0 });
-    _bullet.setSize({ 1,1 });
+    _bullet.setSize({ 0.5, 0.5 });
+    _bullet.tick();
     PRETTY_DEBUG << "Bullet info has been set" << std::endl;
     _collision.update(_sprite.getCollision());
     _collision.setPosition(_bullet.getPosition());
@@ -81,6 +82,11 @@ void GUI::ECS::Demo::EnemyBrain::setVisible(const bool visible)
     _sprite.setVisible(visible);
 };
 
+void GUI::ECS::Demo::EnemyBrain::setBulletSize(const std::pair<float, float> &size)
+{
+    _bullet.setSize(size);
+}
+
 const bool GUI::ECS::Demo::EnemyBrain::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
     return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
@@ -97,11 +103,11 @@ const std::optional<GUI::ECS::Demo::Bullet> GUI::ECS::Demo::EnemyBrain::tick()
     PRETTY_DEBUG << "In enemy brain tick" << std::endl;
     _sprite.checkTick();
     if (_delayBeforeShot == 0) {
-        _delayBeforeShot = _randInt(10, 25);
+        _delayBeforeShot = _randInt(20, 80);
         GUI::ECS::Demo::Bullet shot(_bullet);
+        shot.tick();
         shot.setDamage(_randInt(1, 20));
         shot.setPosition(_collision.getPosition());
-        shot.setSize({ 0.5,0.5 });
         PRETTY_DEBUG << "User Position: " << _collision << std::endl;
         PRETTY_DEBUG << "bullet: " << _bullet << ", shot: " << shot << std::endl;
         PRETTY_DEBUG << "Shot has been sent" << std::endl;

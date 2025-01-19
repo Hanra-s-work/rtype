@@ -43,6 +43,8 @@ namespace GUI
 
                 void setVisible(const bool visible);
 
+                void setBulletSize(const std::pair<float, float> &size);
+
                 const bool isColliding(const GUI::ECS::Systems::Collision &second) const;
 
                 const bool isVisible() const;

@@ -319,7 +319,7 @@ sprite_width = 18
 sprite_height = 18
 start_left = true
 start_top = true
-initial_frame = 0 # mas: 11
+initial_frame = 0 # max: 11
 end_frame = -1 #end of all the frames
 frame_delay = 100 # delay between each frame in milliseconds
 

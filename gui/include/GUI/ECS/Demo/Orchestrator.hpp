@@ -74,6 +74,8 @@ namespace GUI
 
                 void _setTheScene();
 
+                void _setTextComponents();
+
                 bool _playing = false;
                 bool _gameWon = false;
                 bool _gameOver = false;
@@ -83,6 +85,9 @@ namespace GUI
                 int _stepRight = 10;
                 float _screenPosXOffset = 75;
                 float _screenPosYOffset = 45;
+                std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _titleHealth;
+                std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _remainingEnemies;
+                std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> _backgroundItem;
                 std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBullet;
                 std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spriteBulletEnemy;
                 std::shared_ptr<GUI::ECS::Components::SpriteComponent> _spritePlayer;

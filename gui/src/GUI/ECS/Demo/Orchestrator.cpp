@@ -51,7 +51,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
     PRETTY_DEBUG << "The event manager has been fetched" << std::endl;
 
     PRETTY_DEBUG << "Fetching the sprites contained in the ecs array (if present)" << std::endl;
-    std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
+    const std::vector<std::any> sprites = _ecsEntities[typeid(GUI::ECS::Components::SpriteComponent)];
 
     for (std::any node : sprites) {
         const std::optional<std::shared_ptr<GUI::ECS::Components::SpriteComponent>> sprite = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::SpriteComponent>>(node, false);
@@ -102,6 +102,25 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
     }
     PRETTY_DEBUG << "The elements are loaded" << std::endl;
     _setTheScene();
+    _setTextComponents();
+    PRETTY_DEBUG << "Fetching a background for the game" << std::endl;
+    const std::vector<std::any> backgrounds = _ecsEntities[typeid(GUI::ECS::Components::ImageComponent)];
+    PRETTY_DEBUG << "Declaring the ressource required for the settings menu to have a background" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundItem;
+    PRETTY_DEBUG << "Declared the ressource required for the settings menu to have a background" << std::endl;
+
+    for (std::any backgroundCast : backgrounds) {
+        std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> backgroundCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::ImageComponent>>(backgroundCast, false);
+        if (!backgroundCapsule.has_value()) {
+            continue;
+        }
+        if (
+            backgroundCapsule.value()->getApplication() == "space" || backgroundCapsule.value()->getName() == "space" ||
+            backgroundCapsule.value()->getApplication() == "Space" || backgroundCapsule.value()->getName() == "Space"
+            ) {
+            backgroundItem.emplace(backgroundCapsule.value());
+        }
+    }
 };
 
 void GUI::ECS::Demo::Orchestrator::start()
@@ -153,6 +172,8 @@ void GUI::ECS::Demo::Orchestrator::tick()
         std::optional<GUI::ECS::Demo::Bullet> shot = _enemyBrain[index]->tick();
         if (shot.has_value()) {
             PRETTY_DEBUG << "Enemy shot a bullet, index: " << index << ", name: " << shot.value().getSprite().getName() << std::endl;
+            shot.value().setSize({ 0.5,0.5 });
+            PRETTY_DEBUG << "Enemy shot details: " << shot.value() << std::endl;
             _bullets.push_back(shot.value());
         }
     }
@@ -175,6 +196,8 @@ void GUI::ECS::Demo::Orchestrator::tick()
         // Handle shooting
         if (_event->isKeyPressed(GUI::ECS::Systems::Key::Space)) {
             _bullets.push_back(_playerBrain->shoot());
+            // _bullets[_bullets.size()].setSize({ 0.5,0.5 });
+            // PRETTY_DEBUG << "Player shot details: " << _bullets[_bullets.size()] << std::endl;
         }
 
         // Update player position
@@ -185,6 +208,7 @@ void GUI::ECS::Demo::Orchestrator::tick()
     // Bullets collisions
     PRETTY_DEBUG << "Bullet count : " << _bullets.size() << std::endl;
     for (unsigned int index = 0; index < _bullets.size(); index++) {
+        PRETTY_DEBUG << "Ticking bullet" << std::endl;
         _bullets[index].tick();
         PRETTY_DEBUG << "bullet: index: " << index << ", visible: " << Recoded::myToString(_bullets[index].isVisible()) << ", enemy: " << Recoded::myToString(_bullets[index].isEnemy()) << std::endl;
         // Skipping because the bullet is not visible
@@ -246,12 +270,28 @@ void GUI::ECS::Demo::Orchestrator::tick()
         _gameWon = false;
     }
 
+    // Updating the health text component (if present) 
+    if (_titleHealth.has_value()) {
+        _titleHealth.value()->setText("Player health: " + Recoded::myToString(_playerBrain->getHealth()));
+    }
+
+    // Updating the enemy count component (if present)
+    if (_remainingEnemies.has_value()) {
+        _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_enemyBrain.size()));
+    }
+
     PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;
 };
 
 void GUI::ECS::Demo::Orchestrator::render()
 {
     PRETTY_DEBUG << "In the render function" << std::endl;
+    PRETTY_DEBUG << "Displaying the background image (if present)" << std::endl;
+    if (_backgroundItem.has_value()) {
+        PRETTY_DEBUG << "The background is present, displaying" << std::endl;
+        _window->draw(*(_backgroundItem.value()));
+    }
+    PRETTY_DEBUG << "Displayed the background image (if present)" << std::endl;
     std::string name = _playerBrain->getSprite().getName();
     std::pair<float, float> pos = _playerBrain->getCollision().getPosition();
     std::pair<float, float> dim = _playerBrain->getCollision().getDimension();
@@ -284,6 +324,16 @@ void GUI::ECS::Demo::Orchestrator::render()
         index++;
     }
     PRETTY_DEBUG << "Bullets rendred" << std::endl;
+    PRETTY_DEBUG << "Rendering the overlay text (if present)" << std::endl;
+    if (_titleHealth.has_value()) {
+        PRETTY_DEBUG << "Title health has a value, displaying" << std::endl;
+        _window->draw(*(_titleHealth.value()));
+    }
+    if (_remainingEnemies.has_value()) {
+        PRETTY_DEBUG << "Remaining ennemies has a value, displaying" << std::endl;
+        _window->draw(*(_remainingEnemies.value()));
+    }
+    PRETTY_DEBUG << "Displayed the overlay text (if present)" << std::endl;
     PRETTY_DEBUG << "Out of render()" << std::endl;
 };
 
@@ -316,6 +366,18 @@ const std::string GUI::ECS::Demo::Orchestrator::getInfo(const unsigned int inden
     result += indentation + "- Step Right: '" + Recoded::myToString(_stepRight) + "'\n";
     result += indentation + "- Screen Position X Offset: '" + Recoded::myToString(_screenPosXOffset) + "'\n";
     result += indentation + "- Screen Position Y Offset: '" + Recoded::myToString(_screenPosYOffset) + "'\n";
+    result += indentation + "- Title health (has value): '" + Recoded::myToString(_titleHealth.has_value()) + "'\n";
+    if (_titleHealth.has_value()) {
+        result += indentation + "- Title health: {\n" + _titleHealth.value()->getInfo(indent + 1) + indentation + "}\n";
+    }
+    result += indentation + "- Remaining enemies (has value): '" + Recoded::myToString(_remainingEnemies.has_value()) + "'\n";
+    if (_remainingEnemies.has_value()) {
+        result += indentation + "- Remaining enemies: {\n" + _remainingEnemies.value()->getInfo(indent + 1) + indentation + "}\n";
+    }
+    result += indentation + "- background item (has value): '" + Recoded::myToString(_backgroundItem.has_value()) + "'\n";
+    if (_backgroundItem.has_value()) {
+        result += indentation + "- background item: {\n" + _backgroundItem.value()->getInfo(indent + 1) + indentation + "}\n";
+    }
     result += indentation + "- Sprite Bullet: {\n" + _spriteBullet->getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Sprite Bullet Enemy: {\n" + _spriteBulletEnemy->getInfo(indent + 1) + indentation + "}\n";
     result += indentation + "- Sprite Player: {\n" + _spritePlayer->getInfo(indent + 1) + indentation + "}\n";
@@ -358,6 +420,8 @@ void GUI::ECS::Demo::Orchestrator::_spawn()
     _playerBrain->setSprite(_spritePlayer, _spriteBullet);
     PRETTY_DEBUG << "The _playerBrain has been set with the sprites of bullet and player" << std::endl;
     _playerBrain->setDimension({ 2,2 });
+    _playerBrain->setPosition({ 10, 60 });
+    _playerBrain->setBulletSize({ 0.5,0.5 });
 }
 
 void GUI::ECS::Demo::Orchestrator::_kill()
@@ -402,6 +466,7 @@ void GUI::ECS::Demo::Orchestrator::_spawnEnemy(const std::pair<float, float> pos
     PRETTY_DEBUG << "The enemy has been set with the position: " << pos << std::endl;
     enemy->setVisible(true);
     enemy->setDimension({ 4,4 });
+    enemy->setBulletSize({ 0.5, 0.5 });
     PRETTY_DEBUG << "The enemy is visible" << std::endl;
     _enemyBrain.push_back(enemy);
     PRETTY_DEBUG << "The enemy has been added to the _enemyBrain" << std::endl;
@@ -425,8 +490,8 @@ void GUI::ECS::Demo::Orchestrator::_setTheScene()
     std::pair<float, float> pos = { 1,1 };
     _spriteBullet->setPosition(pos);
     _spriteBulletEnemy->setPosition(pos);
-    _spritePlayer->setPosition(pos);
     _spriteEnemy->setPosition(pos);
+    _spritePlayer->setPosition(pos);
     PRETTY_DEBUG << "Reset the position of the items on screen" << std::endl;
     PRETTY_DEBUG << "Spawning the player in the screen" << std::endl;
     _spawn();
@@ -453,6 +518,100 @@ void GUI::ECS::Demo::Orchestrator::_setTheScene()
         posY += _randInt(spriteHeight * 3, spriteHeight * 4);
     }
     PRETTY_DEBUG << "The enemies have been spawned" << std::endl;
+}
+
+void GUI::ECS::Demo::Orchestrator::_setTextComponents()
+{
+
+    PRETTY_DEBUG << "Setting the health value of the player" << std::endl;
+    const std::vector<std::any> fonts = _ecsEntities[typeid(GUI::ECS::Systems::Font)];
+
+    PRETTY_DEBUG << "Declaring font holder instances" << std::endl;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFont;
+    std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFont;
+    PRETTY_DEBUG << "Declared font holder instances" << std::endl;
+    PRETTY_DEBUG << "Fetching the fonts that will be used in the window" << std::endl;
+    unsigned int index = 0;
+    unsigned int titleFontIndex = 0;
+    unsigned int bodyFontIndex = 0;
+    unsigned int defaultFontIndex = 0;
+    unsigned int buttonFontIndex = 0;
+    for (std::any fontCast : fonts) {
+        std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> fontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fontCast, false);
+        if (!fontCapsule.has_value()) {
+            continue;
+        }
+        std::string applicationContext = fontCapsule.value()->getApplication();
+        if (applicationContext == "title") {
+            titleFontIndex = index;
+        } else if (applicationContext == "body") {
+            bodyFontIndex = index;
+        } else if (applicationContext == "default") {
+            defaultFontIndex = index;
+        } else if (applicationContext == "button") {
+            buttonFontIndex = index;
+        } else {
+            index++;
+            continue;
+        }
+        index++;
+    }
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> titleFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[titleFontIndex], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> bodyFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[bodyFontIndex], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> defaultFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[defaultFontIndex], false);
+    const std::optional<std::shared_ptr<GUI::ECS::Systems::Font>> buttonFontCapsule = Utilities::unCast<std::shared_ptr<GUI::ECS::Systems::Font>>(fonts[buttonFontIndex], false);
+    if (!defaultFontCapsule.has_value()) {
+        PRETTY_DEBUG << "No default font found, aborting program" << std::endl;
+        throw CustomExceptions::NoFont("<Default font not found>");
+    }
+    defaultFont.emplace(defaultFontCapsule.value());
+    titleFont.emplace(defaultFontCapsule.value());
+    bodyFont.emplace(defaultFontCapsule.value());
+    buttonFont.emplace(defaultFontCapsule.value());
+    if (titleFontCapsule.has_value()) {
+        PRETTY_SUCCESS << "Title font found, not defaulting to the default font." << std::endl;
+        titleFont.emplace(titleFontCapsule.value());
+    }
+    if (bodyFontCapsule.has_value()) {
+        PRETTY_SUCCESS << "Body font found, not defaulting to the default font." << std::endl;
+        bodyFont.emplace(bodyFontCapsule.value());
+    }
+    if (buttonFontCapsule.has_value()) {
+        PRETTY_SUCCESS << "Button font found, not defaulting to the default font." << std::endl;
+        buttonFont.emplace(buttonFontCapsule.value());
+    }
+    PRETTY_DEBUG << "Fetched the fonts that will be used in the window" << std::endl;
+    PRETTY_DEBUG << "Creating the text to display the user's health" << std::endl;
+    const unsigned int size = 20;
+    const std::pair<float, float> posTitle = { 10,10 };
+    const std::uint32_t entityId = 0;
+    std::shared_ptr<GUI::ECS::Components::TextComponent> text = std::make_shared<GUI::ECS::Components::TextComponent>(
+        entityId,
+        *(bodyFont.value()),
+        "Player health: ",
+        size,
+        GUI::ECS::Systems::Colour::Cyan,
+        GUI::ECS::Systems::Colour::Cyan,
+        GUI::ECS::Systems::Colour::Cyan,
+        posTitle
+    );
+    _titleHealth.emplace(text);
+    const std::pair<float, float> posEnnemies = { 10, 40 };
+    std::shared_ptr<GUI::ECS::Components::TextComponent> textEnnemies = std::make_shared<GUI::ECS::Components::TextComponent>(
+        entityId,
+        *(bodyFont.value()),
+        "Remaining ennemies: ",
+        size,
+        GUI::ECS::Systems::Colour::Red,
+        GUI::ECS::Systems::Colour::Red,
+        GUI::ECS::Systems::Colour::Red,
+        posEnnemies
+    );
+    _remainingEnemies.emplace(textEnnemies);
+    PRETTY_DEBUG << "Fonts gathered" << std::endl;
+
 }
 
 std::ostream &GUI::ECS::Demo::operator<<(std::ostream &os, const GUI::ECS::Demo::Orchestrator &item)

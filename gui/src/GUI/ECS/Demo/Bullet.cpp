@@ -95,6 +95,7 @@ void GUI::ECS::Demo::Bullet::tick()
     }
     PRETTY_DEBUG << "Checking sprite tick" << std::endl;
     _sprite.checkTick();
+    PRETTY_DEBUG << "Sprite has ticked: " << Recoded::myToString(_sprite.hasTicked()) << std::endl;
     PRETTY_DEBUG << "Calculating the new position" << std::endl;
     PRETTY_DEBUG << "Current collision: " << _collision.getPosition() << ", direction: " << _direction << ", speed :" << Recoded::myToString(_speed) << std::endl;
     const float offsetX = (_direction.first * static_cast<int>(_speed));

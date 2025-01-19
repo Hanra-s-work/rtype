@@ -44,7 +44,8 @@ void GUI::ECS::Demo::PlayerBrain::setSprite(const std::shared_ptr<GUI::ECS::Comp
     _bullet.setSpeed(5);
     _bullet.setPosition({ 1,1 });
     _bullet.setDirection({ -1,0 });
-    _bullet.setSize({ 1, 1 });
+    _bullet.setSize({ 0.5, 0.5 });
+    _bullet.tick();
     PRETTY_DEBUG << "Bullet info has been set" << std::endl;
     _collision.update(_sprite.getCollision());
     _collision.setPosition(_bullet.getPosition());
@@ -82,6 +83,11 @@ void GUI::ECS::Demo::PlayerBrain::setVisible(const bool visible)
     _sprite.setVisible(visible);
 };
 
+void GUI::ECS::Demo::PlayerBrain::setBulletSize(const std::pair<float, float> &size)
+{
+    _bullet.setSize(size);
+}
+
 const bool GUI::ECS::Demo::PlayerBrain::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
     return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
@@ -97,13 +103,15 @@ const bool GUI::ECS::Demo::PlayerBrain::isVisible() const
 void GUI::ECS::Demo::PlayerBrain::tick()
 {
     _sprite.checkTick();
+    _bullet.tick();
 };
 
 const GUI::ECS::Demo::Bullet GUI::ECS::Demo::PlayerBrain::shoot() const
 {
     GUI::ECS::Demo::Bullet shot(_bullet);
     shot.setPosition(_collision.getPosition());
-    shot.setSize({ 0.5,0.5 });
+    shot.setSize({ 0.05,0.05 });
+    shot.tick();
     PRETTY_DEBUG << "User Position: " << _collision << std::endl;
     PRETTY_DEBUG << "bullet: " << _bullet << ", shot: " << shot << std::endl;
     return shot;
