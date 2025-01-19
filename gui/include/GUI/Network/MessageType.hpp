@@ -35,6 +35,7 @@ namespace GUI
             KILL = 6,
             DAMAGE = 7,
             STATUS = 8,
+            HANDSHAKE = 254,
             ERROR = 255
         };
     }

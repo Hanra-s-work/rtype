@@ -59,6 +59,11 @@ void Server::handleMessage(std::size_t bytesReceived) {
         clientManager_.removeClient(remoteEndpoint_);
         break;
     }
+    case 0xFE: { // HANDSHAKE
+        sendToClient(clientId, {0xFE, {}});
+        std::cout << "[Server] Handshaked client " << clientId << ".\n";
+        break;
+    }
     default: {
         // Forward to game manager to interpret
         uint32_t gID = gameManager_.getGameIdForClient(clientId);
