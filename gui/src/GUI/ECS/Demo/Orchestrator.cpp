@@ -76,6 +76,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             //     ) {
             //     PRETTY_DEBUG << "Sprite bullet found" << std::endl;
             //     _spriteBullet = sprite.value();
+            //     // _spriteBullet->forceTick();
             //     PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         // } else if (
         //     applicationContext == "sprite30a" || name == "sprite30a" ||
@@ -84,6 +85,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
         //     PRETTY_DEBUG << "Sprite bullet found" << std::endl;
         //     _spriteBullet = sprite.value();
         //     // _spriteBullet->setDimension({ 0.5,0.5 });
+        //     // _spriteBullet->forceTick();
         //     PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         } else if (
             applicationContext == "sprite30b" || name == "sprite30b" ||
@@ -92,6 +94,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             PRETTY_DEBUG << "Sprite bullet found" << std::endl;
             _spriteBullet = sprite.value();
             // _spriteBullet->setDimension({ 0.5,0.5 });
+            _spriteBullet->forceTick();
             PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
             // } else if (
             //     applicationContext == "sprite3" || name == "sprite3" ||
@@ -100,6 +103,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             //     PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
             //     _spriteBulletEnemy = sprite.value();
             //     _spriteBulletEnemy->setDimension({ 0.5,0.5 });
+            //     _spriteBulletEnemy->forceTick();
             //     PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
             applicationContext == "sprite3b" || name == "sprite3b" ||
@@ -108,6 +112,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
             _spriteBulletEnemy = sprite.value();
             // _spriteBulletEnemy->setDimension({ 0.5,0.5 });
+            _spriteBullet->forceTick();
             PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
             applicationContext == "r-typesheet13" || name == "r-typesheet13" ||
@@ -221,8 +226,8 @@ void GUI::ECS::Demo::Orchestrator::tick()
         // Handle shooting
         if (_event->isKeyPressed(GUI::ECS::Systems::Key::Space)) {
             _bullets.push_back(_playerBrain->shoot());
-            // _bullets[_bullets.size()].setSize({ 0.5,0.5 });
-            // PRETTY_DEBUG << "Player shot details: " << _bullets[_bullets.size()] << std::endl;
+            _bullets[_bullets.size()].setSize({ 0.5,0.5 });
+            PRETTY_DEBUG << "Player shot details: " << _bullets[_bullets.size() - 1] << std::endl;
         }
 
         // Update player position
@@ -261,6 +266,7 @@ void GUI::ECS::Demo::Orchestrator::tick()
                     _bullets[index].setVisible(false);
                     if (_enemyBrain[eIndex]->getHealth() <= 0) {
                         _enemyBrain[eIndex]->setVisible(false);
+                        _activeEnemies -= 1;
                     } else {
                         _enemyBrain[eIndex]->setHealth(_enemyBrain[eIndex]->getHealth() - _bullets[index].getDamage());
                     }
@@ -302,7 +308,7 @@ void GUI::ECS::Demo::Orchestrator::tick()
 
     // Updating the enemy count component (if present)
     if (_remainingEnemies.has_value()) {
-        _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_enemyBrain.size()));
+        _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_activeEnemies));
     }
 
     PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;
@@ -391,6 +397,7 @@ const std::string GUI::ECS::Demo::Orchestrator::getInfo(const unsigned int inden
     result += indentation + "- Step Right: '" + Recoded::myToString(_stepRight) + "'\n";
     result += indentation + "- Screen Position X Offset: '" + Recoded::myToString(_screenPosXOffset) + "'\n";
     result += indentation + "- Screen Position Y Offset: '" + Recoded::myToString(_screenPosYOffset) + "'\n";
+    result += indentation + "- Active Enemies: '" + Recoded::myToString(_activeEnemies) + "'\n";
     result += indentation + "- Title health (has value): '" + Recoded::myToString(_titleHealth.has_value()) + "'\n";
     if (_titleHealth.has_value()) {
         result += indentation + "- Title health: {\n" + _titleHealth.value()->getInfo(indent + 1) + indentation + "}\n";
@@ -536,12 +543,14 @@ void GUI::ECS::Demo::Orchestrator::_setTheScene()
     posX -= (spriteWidth + _screenPosXOffset);
     float posY = spriteHeight;
     PRETTY_DEBUG << "posX: " << posX << ", posY: " << posY << std::endl;
-    for (unsigned int index = 0; index < 4; index++) {
+    unsigned int index = 0;
+    for (; index < 4; index++) {
         std::pair<float, float> pos = { posX - _randInt(0, spriteWidth * 4), posY };
         PRETTY_DEBUG << "Spawning enemy : " << index << ", pos: " << pos << std::endl;
         _spawnEnemy(pos);
         posY += _randInt(spriteHeight * 3, spriteHeight * 4);
     }
+    _activeEnemies = index;
     PRETTY_DEBUG << "The enemies have been spawned" << std::endl;
 }
 
