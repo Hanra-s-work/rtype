@@ -48,24 +48,26 @@ void GUI::Network::NetworkManager::handleMessages()
     }
 }
 
-void GUI::Network::NetworkManager::sendMessage(const std::string &message)
+void GUI::Network::NetworkManager::sendMessage(const GUI::Network::MessageNode &message)
 {
     if (!isConnected()) {
         std::cerr << "Cannot send message: No active connection." << std::endl;
         return;
     }
 
-    if (message.size() > 65507) {
-        std::cerr << "Message too large for UDP datagram." << std::endl;
-        return;
-    }
+    // if (message.size() > 65507) {
+    //     std::cerr << "Message too large for UDP datagram." << std::endl;
+    //     return;
+    // }
+
+    std::string serializedMessage = convertMessageToString(message);
 
     try {
         asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
-        std::vector<uint8_t> data(message.begin(), message.end());
+        std::vector<uint8_t> data(serializedMessage.begin(), serializedMessage.end());
 
         _socket.send_to(asio::buffer(data), remoteEndpoint);
-        std::cerr << "Message : " << message << " sent to " << _ip << ":" << _port << std::endl;
+        std::cerr << "Message : " << serializedMessage << " sent to " << _ip << ":" << _port << std::endl;
     }
     catch (const std::exception &e) {
         std::cerr << "Error sending message: " << e.what() << std::endl;
@@ -95,92 +97,137 @@ std::string GUI::Network::NetworkManager::bytesToHex(const std::vector<uint8_t> 
     return oss.str();
 }
 
-std::string GUI::Network::NetworkManager::translateMessage(const std::vector<uint8_t> &message)
+GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const std::vector<uint8_t> &message)
 {
-    if (message.empty()) {
-        return "[Error] Empty message received.";
-    }
+    // if (message.empty()) {
+    //     return "[Error] Empty message received.";
+    // }
 
-    std::ostringstream result;
-    uint8_t messageType = message[0];
-    result << "Message Type: 0x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(messageType) << "\n";
+    GUI::Network::MessageNode result;
+    result.type = static_cast<MessageType>(message[0]);
 
-    switch (messageType) {
-        case 0x01: { // CONNECT
-                std::string username(reinterpret_cast<const char *>(&message[1]), 8);
-                result << "CONNECT Message\nUsername: " << username << "\n";
+    switch (result.type) {
+        case MessageType::CONNECT: { // CONNECT
+                std::memcpy(result.info.username, message.data() + 1, 8);
+                result.info.username[8] = '\0';
                 break;
             }
-        case 0x02: { // DISCONNECT
+        case MessageType::DISCONNECT: { // DISCONNECT
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
-                result << "DISCONNECT Message\nEntity ID: " << id << "\n";
+                PRECISE_DEBUG << "DISCONNECT Message\nEntity ID: " << id << "\n";
+                result.id = id;
                 break;
             }
-        case 0x03: { // MOVE
+        case MessageType::MOVE: { // MOVE
                 size_t id;
                 float x, y;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 x = bytesToFloat(&message[1 + sizeof(size_t)]);
                 y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(float)]);
-                result << "MOVE Message\nEntity ID: " << id << "\nPosition: (" << x << ", " << y << ")\n";
+                PRETTY_DEBUG << "MOVE Message\nEntity ID: " << id << "\nPosition: (" << x << ", " << y << ")\n";
+                result.id = id;
+                result.info.coords.first = x;
+                result.info.coords.second = y;
                 break;
             }
-        case 0x04: { // SHOOT
+        case MessageType::SHOOT: { // SHOOT
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
-                result << "SHOOT Message\nEntity ID: " << id << "\n";
+                PRETTY_DEBUG << "SHOOT Message\nEntity ID: " << id << "\n";
+                result.id = id;
                 break;
             }
-        case 0x05: { // SPAWN
+        case MessageType::SPAWN: { // SPAWN
                 size_t id;
-                short asset;
+                int asset;
                 float x, y;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 std::memcpy(&asset, &message[1 + sizeof(size_t)], sizeof(short));
                 x = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short)]);
                 y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short) + sizeof(float)]);
-                result << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
+                PRETTY_CRITICAL << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
+                result.id = id;
+                result.info.assetId = asset;
+                result.info.coords.first = x;
+                result.info.coords.second = y;
                 break;
             }
-        case 0x06: { // KILL
+        case MessageType::KILL: { // KILL
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
-                result << "KILL Message\nEntity ID: " << id << "\n";
+                PRETTY_DEBUG << "KILL Message\nEntity ID: " << id << "\n";
+                result.id = id;
                 break;
             }
-        case 0x07: { // DAMAGE
+        case MessageType::DAMAGE: { // DAMAGE
                 size_t id;
+                PRETTY_DEBUG << "DAMAGE Message\nEntity ID: " << id << "\n";
                 std::memcpy(&id, &message[1], sizeof(size_t));
-                result << "DAMAGE Message\nEntity ID: " << id << "\n";
+                result.id = id;
                 break;
             }
-        case 0x0A: { // STATUS
+        case MessageType::STATUS: { // STATUS
                 uint8_t status = message[1];
-                result << "STATUS Message\nStatus: ";
+                PRETTY_DEBUG << "STATUS Message\nStatus: ";
                 if (status == 0x00) {
-                    result << "On going\n";
+                    PRETTY_DEBUG << "On going\n";
                 } else if (status == 0x01) {
-                    result << "Victory\n";
+                    PRETTY_DEBUG << "Victory\n";
                 } else if (status == 0xFF) {
-                    result << "Defeat\n";
+                    PRETTY_DEBUG << "Defeat\n";
                 } else {
-                    result << "Unknown\n";
+                    PRETTY_DEBUG << "Unknown\n";
                 }
                 break;
             }
-        case 0xFF: { // ERROR
+        case MessageType::ERROR: { // ERROR
                 uint8_t errorCode = message[1];
-                result << "ERROR Message\nError Code: 0x" << std::hex << static_cast<int>(errorCode) << "\n";
                 break;
             }
         default:
-            result << "Unknown Message Type\n";
+            PRETTY_DEBUG << "Unknown Message Type\n";
             break;
     }
 
-    result << "Raw Data: " << bytesToHex(message) << "\n";
-    return result.str();
+    return result;
+}
+
+std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Network::MessageNode &message)
+{
+    // if (message.empty()) {
+    //     return "[Error] Empty message received.";
+    // }
+
+    std::string result;
+    result[0] = static_cast<char>(message.type);
+
+    switch (message.type) {
+        case MessageType::CONNECT: { // CONNECT
+                std::memcpy(result.data() + 1, message.info.username, 8);
+                result[9] = '\0';
+                break;
+            }
+        case MessageType::DISCONNECT: { // DISCONNECT
+                std::memcpy(result.data() + 1, &message.id, sizeof(size_t));
+                break;
+            }
+        case MessageType::MOVE: { // MOVE
+                std::memcpy(result.data() + 1, &message.id, sizeof(size_t));
+                std::memcpy(result.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
+                std::memcpy(result.data() + 1 + sizeof(size_t) + sizeof(float), &message.info.coords.second, sizeof(float));
+                break;
+            }
+        case MessageType::SHOOT: { // SHOOT
+                std::memcpy(result.data() + 1, &message.id, sizeof(size_t));
+                break;
+            }
+        default:
+            PRETTY_DEBUG << "Unknown Message Type\n";
+            break;
+    }
+
+    return result;
 }
 
 void GUI::Network::NetworkManager::setPort(const unsigned int port)
@@ -250,8 +297,9 @@ void GUI::Network::NetworkManager::receiveMessage()
 
             if (bytesRecv > 0) {
                 std::vector<uint8_t> message(recvBuffer.begin(), recvBuffer.begin() + bytesRecv);
-                std::string translatedMessage = translateMessage(message);
-                std::cout << "[Client] Translated Message from " << remoteEndpoint << ":\n" << translatedMessage << "\n";
+                GUI::Network::MessageNode translatedMessage = translateMessage(message);
+                _bufferedMessages.push_back(translatedMessage);
+                std::cout << "[Client] Translated Message from " << remoteEndpoint << ":\n" << Recoded::myToString(translatedMessage) << "\n";
             }
         }
 
@@ -269,6 +317,13 @@ void GUI::Network::NetworkManager::startReceivingMessages()
 void GUI::Network::NetworkManager::stopReceivingMessages()
 {
     _continueListening = false;
+}
+
+std::vector<GUI::Network::MessageNode> GUI::Network::NetworkManager::getBufferedMessages()
+{
+    auto list = this->_bufferedMessages;
+    _bufferedMessages.clear();
+    return list;
 }
 
 void GUI::Network::NetworkManager::_connect()

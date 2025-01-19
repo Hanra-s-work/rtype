@@ -30,6 +30,7 @@
 #include "LogMacros.hpp"
 #include "Utilities.hpp"
 #include "GUI/ECS/EntityNode.hpp"
+#include "GUI/Network/MessageStruct.hpp"
 
 namespace GUI
 {
@@ -70,7 +71,7 @@ namespace GUI
              * This function will check if the socket is connected, validate the message size,
              * and send the message to the server.
              */
-            void sendMessage(const std::string &message);
+            void sendMessage(const MessageNode &message);
 
             /**
              * @brief Sets the port for communication.
@@ -122,16 +123,24 @@ namespace GUI
              */
             std::string bytesToHex(const std::vector<uint8_t> &bytes);
             /**
-             * @brief Translates a message into a human-readable string format.
+             * @brief Translates a message into a MessageNode.
              *
              * @param message The byte array representing the message.
              *
-             * @return A string representation of the message.
+             * @return A MessageNode representation of the message.
              *
              * This function decodes different message types such as connect, disconnect, move, shoot, etc.
              * and returns a description of the message contents.
              */
-            std::string translateMessage(const std::vector<uint8_t> &message);
+            MessageNode translateMessage(const std::vector<uint8_t> &message);
+            /**
+             * @brief Translates a MessageNode into a string.
+             *
+             * @param message The MessageNode to be converted.
+             *
+             * @return A string with bytes that corresponds to the message to be sent to server.
+             */
+            std::string convertMessageToString(const MessageNode &message);
             /**
              * @brief Receives messages continuously from the server.
              *
@@ -143,6 +152,8 @@ namespace GUI
             void startReceivingMessages();
 
             void stopReceivingMessages();
+
+            std::vector<GUI::Network::MessageNode> getBufferedMessages();
 
             private:
             /**
@@ -161,6 +172,7 @@ namespace GUI
             bool _connectionActive = false;                                     //!< Flag indicating the connection status.
             bool _continueListening = true;                                     //!< The variable in charge of tracking if the loop in receiveMessage should continue listening for messages or not
             unsigned int _port = -1;                                            //!< The port number for communication.
+            std::vector<MessageNode> _bufferedMessages;                         //!< The message buffer
             std::string _ip = "127.0.0.1";                                      //!< The IP address for the server.
             std::string _playerName = "Player";                                 //!< The name of the player.
             asio::io_context _ioContext;                                        //!< The ASIO IO context for network operations.
