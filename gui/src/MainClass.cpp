@@ -117,9 +117,9 @@ _player(player)
     PRETTY_INFO << "Setting the player name" << std::endl;
     _networkManager->setPlayerName(_player);
     PRETTY_INFO << "End of processing" << std::endl;
-    PRETTY_INFO << "Initialising the connection with the server" << std::endl;
-    _networkManager->setAddress(_ip, _port);
-    PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
+    // PRETTY_INFO << "Initialising the connection with the server" << std::endl;
+    // _networkManager->setAddress(_ip, _port);
+    // PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
 }
 
 /**
@@ -359,7 +359,14 @@ const bool Main::_isKeyPresentAndOfCorrectType(const TOMLLoader &node, const std
 void Main::_initialiseConnection()
 {
     std::string address = _ip + ":" + std::to_string(_port);
+    PRETTY_DEBUG << "Connecting to the server at " << address << std::endl;
     _networkManager->setAddress(_ip, _port);
+    _networkManager->startGame();
+    // if (_networkManager->isConnected()) {
+    //     PRETTY_SUCCESS << "We are connected to the server" << std::endl;
+    // } else {
+    //     PRETTY_WARNING << "We are not connected to the server" << std::endl;
+    // }
 }
 
 /**
@@ -1015,7 +1022,9 @@ void Main::_sendAllPackets()
     // item.info.status = 0;
     // item.info.username = "user";
     // item.type = GUI::Network::MessageType::ERROR;
-    // _networkManager->sendMessage(item);
+    // if (_networkManager->isConnected()){
+    //     _networkManager->sendMessage(item);
+    // }
 };
 
 /**
@@ -1027,7 +1036,13 @@ void Main::_processIncommingPackets()
 {
     PRETTY_DEBUG << "Getting the buffer from the incoming packets" << std::endl;
     _bufferPackets.clear();
-    _bufferPackets = _networkManager->getReceivedMessages();
+    const bool connected = _networkManager->isConnected();
+    PRETTY_DEBUG << "Connection status: " << Recoded::myToString(connected) << std::endl;
+    if (connected) {
+        _bufferPackets = _networkManager->getReceivedMessages();
+        PRETTY_DEBUG << "Buffer packet size: " << Recoded::myToString(_bufferPackets.size()) << std::endl;
+    }
+    PRETTY_DEBUG << "Out of _processIncommingPackets" << std::endl;
 }
 
 /**
@@ -1749,6 +1764,8 @@ void Main::_gameScreen()
         _onlineBrain.reset();
         _onlineBrain.stop();
         _onlineStarted = false;
+        _connectionInitialised = false;
+        _networkManager->stopThread();
         _goHome();
         return;
     }
@@ -1758,6 +1775,8 @@ void Main::_gameScreen()
         _onlineBrain.reset();
         _onlineBrain.stop();
         _onlineStarted = false;
+        _connectionInitialised = false;
+        _networkManager->stopThread();
         PRETTY_DEBUG << "The online has been reset" << std::endl;
         PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
         _goGameOver();
@@ -1770,11 +1789,20 @@ void Main::_gameScreen()
         _onlineBrain.reset();
         _onlineBrain.stop();
         _onlineStarted = false;
+        _connectionInitialised = false;
+        _networkManager->stopThread();
         PRETTY_DEBUG << "The online has been reset" << std::endl;
         PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
         _goGameWon();
         PRETTY_DEBUG << "The game won screen has been set to play next" << std::endl;
         return;
+    }
+
+    if (!_connectionInitialised) {
+        PRETTY_INFO << "Initialising the connection with the server" << std::endl;
+        _initialiseConnection();
+        PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
+        _connectionInitialised = true;
     }
 
     PRETTY_DEBUG << "Ticking the online brain" << std::endl;
@@ -4506,7 +4534,7 @@ void Main::_goConnect()
     PRETTY_DEBUG << "Attempting to connect" << std::endl;
     _initialiseConnection();
     PRETTY_DEBUG << "Checking if we are connected" << std::endl;
-    if (!_networkManager->isConnected()) {
+    if (/*!_networkManager->isConnected()*/false) {
         PRETTY_DEBUG << "We are not connected" << std::endl;
         _goConnectionFailed();
     } else {
@@ -4986,8 +5014,8 @@ void Main::_winSound()
 
 /**
  * @brief Small function in charge of launching all the loaded musics.
- *
- */
+*
+*/
 void Main::_testContent()
 {
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];

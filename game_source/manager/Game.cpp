@@ -44,6 +44,17 @@ void Game::onGameEventReceived(const GameMessage &event)
     _eventsFromGame.push_front(event);
 }
 
+std::forward_list<std::string> Game::getCurrentGameState(void)
+{
+    std::forward_list<std::string> serializedMessages;
+    for (const auto& event : _game->sync_game()) {
+        std::ostringstream oss;
+        serialize(event, oss);
+        serializedMessages.push_front(oss.str());
+    }
+    return serializedMessages;
+}
+
 void Game::onServerEventReceived(std::string &event)
 {
     std::istringstream iss(event);

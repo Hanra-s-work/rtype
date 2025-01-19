@@ -51,6 +51,11 @@ namespace GUI
              * @param entityId The unique identifier for the entity (default is 0).
              */
             NetworkManager(const std::uint32_t entityId = 0);
+
+            /**
+             *@brief Destroy the Network Manager object
+             */
+            ~NetworkManager();
             /**
              * @brief Initializes the UDP socket and binds it to a local endpoint.
              * This function opens the socket and binds it to the specified port.
@@ -72,6 +77,11 @@ namespace GUI
              * and send the message to the server.
              */
             void sendMessage(const MessageNode &message);
+
+            /**
+             * @brief starts a game by sending CONNECT TO server.
+             */
+            void startGame();
 
             /**
              * @brief Sets the port for communication.
@@ -171,7 +181,7 @@ namespace GUI
 
             bool _connectionActive = false;                                     //!< Flag indicating the connection status.
             bool _continueListening = true;                                     //!< The variable in charge of tracking if the loop in receiveMessage should continue listening for messages or not
-            unsigned int _port = -1;                                            //!< The port number for communication.
+            unsigned int _port = 9000;                                            //!< The port number for communication.
             std::vector<MessageNode> _bufferedMessages;                         //!< The message buffer
             std::string _ip = "127.0.0.1";                                      //!< The IP address for the server.
             std::string _playerName = "Player";                                 //!< The name of the player.

@@ -45,6 +45,12 @@ void GUI::Network::ThreadCapsule::stopThread()
     _killChild();
 }
 
+void GUI::Network::ThreadCapsule::startGame()
+{
+    ENSURE_THREAD_ALIVE("the function in charge of sending messages");
+    return _childNode->startGame();
+}
+
 void GUI::Network::ThreadCapsule::sendMessage(const MessageNode &message)
 {
     ENSURE_THREAD_ALIVE("the function in charge of sending messages");
@@ -141,6 +147,7 @@ void GUI::Network::ThreadCapsule::_spawnChild()
     _childAlive = true;
     try {
         _childNode = std::make_shared<NetworkManager>(getEntityNodeId());
+        _childNode->initialize();
         _childNode->startReceivingMessages();
         _childThread = std::thread(&NetworkManager::receiveMessage, _childNode);
     }

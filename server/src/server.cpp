@@ -41,13 +41,27 @@ void Server::handleMessage(std::size_t bytesReceived) {
     case 1: { // CONNECT
         std::cout << "[Server] Client " << clientId 
                   << " connected from " << remoteEndpoint_ << "\n";
-        gameManager_.assignClientToGame(clientId);
+        
+        auto sync = gameManager_.syncClientToGame(clientId);
+        std::cout << "[Server] Syncing " << clientId << " to game...\n";
+        for (auto &packet : sync) {
+            Message msg;
+            decodeMessage(packet.c_str(), packet.size(), msg);
+            sendToClient(clientId, msg);
+        }
+        std::cout << "[Server] Synced " << clientId << " to game.\n";
+        //gameManager_.assignClientToGame(clientId); << deprecated
         break;
     }
     case 2: { // DISCONNECT
         std::cout << "[Server] Client " << clientId << " disconnected.\n";
         gameManager_.removeClientFromGame(clientId);
         clientManager_.removeClient(remoteEndpoint_);
+        break;
+    }
+    case 0xFE: { // HANDSHAKE
+        sendToClient(clientId, {0xFE, {}});
+        std::cout << "[Server] Handshaked client " << clientId << ".\n";
         break;
     }
     default: {

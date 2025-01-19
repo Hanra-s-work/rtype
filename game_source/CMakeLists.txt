@@ -23,6 +23,7 @@ set(SOURCES
     systems/MovementSystem.cpp
     systems/PlayerMiscellaneous.cpp
     systems/SpawnSystem.cpp
+    systems/SyncingSystem.cpp
     systems/Systems.cpp
     systems/WeaponSystem.cpp
 )

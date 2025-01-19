@@ -15,12 +15,17 @@
 
 GUI::Network::NetworkManager::NetworkManager(const std::uint32_t entityId) : EntityNode(entityId) {}
 
+GUI::Network::NetworkManager::~NetworkManager()
+{
+    if (isConnected()) {
+        _disconnect();
+    }
+}
+
 void GUI::Network::NetworkManager::initialize()
 {
     try {
-        asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), _port);
-        _socket.open(asio::ip::udp::v4());
-        _socket.bind(localEndpoint);
+        _connect();
         PRETTY_INFO << "UDP Socket initialized on port " << _port << std::endl;
     }
     catch (const std::exception &e) {
@@ -74,10 +79,16 @@ void GUI::Network::NetworkManager::sendMessage(const GUI::Network::MessageNode &
     }
 }
 
+void GUI::Network::NetworkManager::startGame()
+{
+    //core dump on this
+    //sendMessage({MessageType::CONNECT, 0, {0, 0, "", {0, 0}}});
+}
+
 const bool GUI::Network::NetworkManager::isConnected() const
 {
-    std::cerr << "In is connected" << std::endl;
-    std::cerr << "status: " << Recoded::myToString(_socket.is_open()) << std::endl;
+    //std::cerr << "In is connected" << std::endl;
+    //std::cerr << "status: " << Recoded::myToString(_socket.is_open()) << std::endl;
     return _socket.is_open();
 }
 
@@ -181,6 +192,9 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 }
                 break;
             }
+        case MessageType::HANDSHAKE: {
+            PRETTY_DEBUG << "Handshake OK\n";
+        }
         case MessageType::ERROR: { // ERROR
                 uint8_t errorCode = message[1];
                 break;
@@ -232,7 +246,7 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
 
 void GUI::Network::NetworkManager::setPort(const unsigned int port)
 {
-    std::cerr << "In the set Port" << std::endl;
+    //std::cerr << "In the set Port" << std::endl;
     if (_port == port) {
         return;
     };
@@ -243,7 +257,7 @@ void GUI::Network::NetworkManager::setPort(const unsigned int port)
 
 void GUI::Network::NetworkManager::setIp(const std::string &ip)
 {
-    std::cerr << "In the set ip" << std::endl;
+    //std::cerr << "In the set ip" << std::endl;
     if (_ip == ip) {
         return;
     };
@@ -275,10 +289,10 @@ void GUI::Network::NetworkManager::setAddress(const std::string &ip, const unsig
 
 void GUI::Network::NetworkManager::receiveMessage()
 {
-    if (!isConnected()) {
-        std::cerr << "Cannot receive message: No active connection." << std::endl;
-        return;
-    }
+    // if (!isConnected()) {
+    //     std::cerr << "Cannot receive message: No active connection." << std::endl;
+    //     return;
+    // }
 
     try {
         std::array<char, 2048> recvBuffer;
@@ -321,14 +335,14 @@ void GUI::Network::NetworkManager::stopReceivingMessages()
 
 std::vector<GUI::Network::MessageNode> GUI::Network::NetworkManager::getBufferedMessages()
 {
-    auto list = this->_bufferedMessages;
+    std::vector<GUI::Network::MessageNode> list = this->_bufferedMessages;
     _bufferedMessages.clear();
     return list;
 }
 
 void GUI::Network::NetworkManager::_connect()
 {
-    std::cerr << "In the connect function " << std::endl;
+    //std::cerr << "In the connect function " << std::endl;
     PRETTY_DEBUG << "Connecting" << std::endl;
     try {
         if (isConnected()) {
@@ -341,23 +355,13 @@ void GUI::Network::NetworkManager::_connect()
 
         asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
 
-        if (!_socket.is_open()) {
-            _socket.open(asio::ip::udp::v4());
-        }
-
+        _socket.open(asio::ip::udp::v4());
         asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), 0);
         _socket.bind(localEndpoint);
 
         PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
 
-        // Send a CONNECT packet
-        std::string username = _playerName;
-        std::vector<uint8_t> payload(username.begin(), username.end());
-        if (payload.size() < 8) {
-            payload.resize(8, 0x00);
-        }
-
-        Packet connectPacket(MessageType::CONNECT, payload);
+        Packet connectPacket(MessageType::HANDSHAKE);
         std::vector<uint8_t> serializedData = Packet::serialize(connectPacket);
 
         try {

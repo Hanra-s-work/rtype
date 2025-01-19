@@ -8,13 +8,14 @@ GameManager::GameManager(BroadcastFunc broadcastFunc)
   : broadcastFunc_(std::move(broadcastFunc))
 { }
 
-uint32_t GameManager::assignClientToGame(uint32_t clientId) {
-    // If already assigned, return existing
+std::forward_list<std::string> GameManager::syncClientToGame(uint32_t clientId) {
+    // If already assigned, return syncing with existing game
     auto it = clientToGame_.find(clientId);
     if (it != clientToGame_.end()) {
-        return it->second;
+        auto &gInst = games_.at(it->second);
+        return gInst.game->getCurrentGameState();
     }
-
+    
     // Otherwise find/create
     uint32_t gid = findOrCreateGame();
     auto &gInst = games_.at(gid);
@@ -25,10 +26,26 @@ uint32_t GameManager::assignClientToGame(uint32_t clientId) {
     std::cout << "[GameManager] Added client " << clientId 
               << " to game " << gid << "\n";
 
-    // Possibly let the Game know about a connect event:
-    // e.g. some string or a custom GameMessage
+    // getting current game status before entering
+    auto gameState = gInst.game->getCurrentGameState();
+
     std::string evt = "\x01" + std::to_string(clientId);
     gInst.game->onServerEventReceived(evt);
+    return gameState;
+}
+
+uint32_t GameManager::assignClientToGame(uint32_t clientId) {
+    
+
+    // Otherwise find/create
+    uint32_t gid = findOrCreateGame();
+    auto &gInst = games_.at(gid);
+
+    gInst.clients.push_back(clientId);
+    clientToGame_[clientId] = gid;
+
+    std::cout << "[GameManager] Added client " << clientId 
+              << " to game " << gid << "\n";
 
     return gid;
 }

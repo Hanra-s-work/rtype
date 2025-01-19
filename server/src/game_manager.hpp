@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <functional>
-#include "../../game_source/manager/include/Game.hpp"
+#include "Game.hpp"
 #include "message.hpp"
 #include "memory"
 
@@ -33,6 +33,11 @@ public:
      * @param broadcastFunc A function that can do "sendToClient(clientId, msg)".
      */
     explicit GameManager(BroadcastFunc broadcastFunc);
+
+    /**
+     * @brief Gets the current game state for syncing.
+     */
+    std::forward_list<std::string> syncClientToGame(uint32_t clientId);
 
     /**
      * @brief Assign a client to a new or existing game.
