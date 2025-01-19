@@ -137,8 +137,7 @@ If needed, check the opposite condition, as if<object> was the target and target
 */
 const bool GUI::ECS::Demo::Bullet::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
-    return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
-        && second.getPositionX() < _collision.getPositionX() + _collision.getWidth();
+    return _collision.isColliding(second);
 }
 
 /**

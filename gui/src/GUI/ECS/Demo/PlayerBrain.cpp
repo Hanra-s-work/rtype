@@ -90,8 +90,7 @@ void GUI::ECS::Demo::PlayerBrain::setBulletSize(const std::pair<float, float> &s
 
 const bool GUI::ECS::Demo::PlayerBrain::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
-    return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
-        && second.getPositionX() < _collision.getPositionX() + _collision.getWidth();
+    return _collision.isColliding(second);
 };
 
 const bool GUI::ECS::Demo::PlayerBrain::isVisible() const
@@ -110,7 +109,7 @@ const GUI::ECS::Demo::Bullet GUI::ECS::Demo::PlayerBrain::shoot() const
 {
     GUI::ECS::Demo::Bullet shot(_bullet);
     shot.setPosition(_collision.getPosition());
-    shot.setSize({ 0.05,0.05 });
+    shot.setSize({ 0.5,0.5 });
     shot.tick();
     PRETTY_DEBUG << "User Position: " << _collision << std::endl;
     PRETTY_DEBUG << "bullet: " << _bullet << ", shot: " << shot << std::endl;

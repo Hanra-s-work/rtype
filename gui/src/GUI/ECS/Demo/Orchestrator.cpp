@@ -70,12 +70,20 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             PRETTY_DEBUG << "Sprite player has been found" << std::endl;
             _spritePlayer = sprite.value();
             PRETTY_DEBUG << "Sprite player content:\n" << *_spritePlayer << std::endl;
+            // } else if (
+            //     applicationContext == "sprite43_laser" || name == "sprite43_laser" ||
+            //     applicationContext == "sprite43_laser" || name == "sprite43_laser"
+            //     ) {
+            //     PRETTY_DEBUG << "Sprite bullet found" << std::endl;
+            //     _spriteBullet = sprite.value();
+            //     PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         } else if (
-            applicationContext == "sprite43_laser" || name == "sprite43_laser" ||
-            applicationContext == "sprite43_laser" || name == "sprite43_laser"
+            applicationContext == "sprite30a" || name == "sprite30a" ||
+            applicationContext == "typesheet30a" || name == "typesheet30a"
             ) {
             PRETTY_DEBUG << "Sprite bullet found" << std::endl;
             _spriteBullet = sprite.value();
+            _spriteBullet->setDimension({ 0.5,0.5 });
             PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         } else if (
             applicationContext == "sprite3" || name == "sprite3" ||
@@ -83,6 +91,7 @@ void GUI::ECS::Demo::Orchestrator::initialiseClass(std::unordered_map<std::type_
             ) {
             PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
             _spriteBulletEnemy = sprite.value();
+            _spriteBulletEnemy->setDimension({ 0.5,0.5 });
             PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
             applicationContext == "r-typesheet13" || name == "r-typesheet13" ||

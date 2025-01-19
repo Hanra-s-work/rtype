@@ -89,8 +89,7 @@ void GUI::ECS::Demo::EnemyBrain::setBulletSize(const std::pair<float, float> &si
 
 const bool GUI::ECS::Demo::EnemyBrain::isColliding(const GUI::ECS::Systems::Collision &second) const
 {
-    return second.getPositionY() < _collision.getPositionY() + _collision.getHeight()
-        && second.getPositionX() < _collision.getPositionX() + _collision.getWidth();
+    return _collision.isColliding(second);
 };
 
 const bool GUI::ECS::Demo::EnemyBrain::isVisible() const
