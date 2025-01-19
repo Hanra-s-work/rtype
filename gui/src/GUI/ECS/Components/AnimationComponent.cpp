@@ -127,6 +127,13 @@ void GUI::ECS::Components::AnimationComponent::checkTick()
     }
 }
 
+void GUI::ECS::Components::AnimationComponent::forceTick()
+{
+    _tick();
+    _hasTicked = true;
+    _clock.reset();
+}
+
 void GUI::ECS::Components::AnimationComponent::start()
 {
     _clock.start();

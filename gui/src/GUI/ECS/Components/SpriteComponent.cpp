@@ -605,6 +605,42 @@ void GUI::ECS::Components::SpriteComponent::checkTick()
     _spriteSet = true;
 }
 
+void GUI::ECS::Components::SpriteComponent::forceTick()
+{
+    PRETTY_DEBUG << "Checking sprite tick" << std::endl;
+    _spriteSet = false;
+    if (!_animationSet) {
+        PRETTY_ERROR << "There are no animations set, skipping tick" << std::endl;
+        return;
+    }
+    PRETTY_INFO << "Running animation.forceTick()" << std::endl;
+    _animation.forceTick();
+    PRETTY_INFO << "Animation forceTick ran, updating the frame." << std::endl;
+    PRETTY_DEBUG << "Animation has ticked, Getting the updated rectangle." << std::endl;
+    Recoded::IntRect RectComponent = _animation.getCurrentRectangle();
+    PRETTY_DEBUG << "Got the updated rectangle, updating sprite." << std::endl;
+    if (!_sfSprite.has_value()) {
+        PRETTY_WARNING << "There is no sprite value, initialising sprite." << std::endl;
+        _initialiseSprite();
+        PRETTY_SUCCESS << "Sprite initialised." << std::endl;
+    }
+    PRETTY_DEBUG << "Converting internal rectangle to sf::IntRect." << std::endl;
+    sf::IntRect transporter = {
+        {
+            RectComponent.position.first,
+            RectComponent.position.second
+        },
+        {
+            RectComponent.size.first,
+            RectComponent.size.second
+        }
+    };
+    PRETTY_DEBUG << "sf::IntRect initialised." << std::endl;
+    _sfSprite->setTextureRect(transporter);
+    PRETTY_DEBUG << "Texture rect set." << std::endl;
+    _spriteSet = true;
+}
+
 const bool GUI::ECS::Components::SpriteComponent::getVisible() const
 {
     return _visible;

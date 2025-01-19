@@ -673,6 +673,11 @@ namespace GUI
                 void checkTick();
 
                 /**
+                 * @brief Updates the animation frame regardless of the delay
+                 */
+                void forceTick();
+
+                /**
                  * @brief Check if the sprite is set to be rendred or not
                  *
                  * @return true
