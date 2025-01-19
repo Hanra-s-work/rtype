@@ -17,6 +17,7 @@ cmake_install.cmake
 # No executables
 r-type_server
 r-type_client
+RTypeTests
 rtype
 rtype_gui
 rtype_server
