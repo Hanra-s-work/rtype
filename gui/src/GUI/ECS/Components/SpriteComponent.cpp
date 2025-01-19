@@ -736,10 +736,6 @@ void GUI::ECS::Components::SpriteComponent::_initialiseSprite()
         return;
     }
     std::any textureCapsule = _spritesheet.getTexture();
-    if (textureCapsule.type() != typeid(std::shared_ptr<sf::Texture>)) {
-        PRETTY_ERROR << "There is no texture to be set, the type was not: std::shared_ptr<sf::Texture>" << std::endl;
-        throw CustomExceptions::NoTexture("There is no texture to be set.");
-    }
     if (textureCapsule.has_value()) {
         std::optional<std::shared_ptr<sf::Texture>> texture = std::any_cast<std::shared_ptr<sf::Texture>>(textureCapsule);
         if (!texture.has_value()) {
@@ -778,11 +774,6 @@ void GUI::ECS::Components::SpriteComponent::_processSpriteColor()
         systemColour = _normalColor.getRenderColour();
     }
     const std::string errMsg = "<The content returned by the getRenderColour function is not of type sf::Color>, system error: ";
-    if (systemColour.type() != typeid(sf::Color)) {
-        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
-            << "No Color found, " << errMsg << std::endl;
-        throw CustomExceptions::NoColour(errMsg);
-    }
     const std::optional<sf::Color> color = Utilities::unCast<sf::Color, CustomExceptions::NoColour>(systemColour, true, errMsg);
     if (!color.has_value()) {
         PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "

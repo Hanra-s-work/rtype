@@ -525,11 +525,6 @@ void GUI::ECS::Components::AnimationComponent::_processAnimation(const unsigned 
             << "Texture is not set." << std::endl;
         throw CustomExceptions::NoTexture("Base texture for the spritesheet animation");
     }
-    if (textureCapsule.type() != typeid(std::shared_ptr<sf::Texture>)) {
-        PRETTY_CRITICAL << "BaseId: '" << Recoded::myToString(getEntityNodeId()) << "' "
-            << "Texture is no std::shared_ptr<sf::Texture> instance." << std::endl;
-        throw CustomExceptions::NoTexture("The texture type provided does not match std::shared_ptr<sf::Texture>");
-    }
     PRETTY_DEBUG << "Getting the texture" << std::endl;
     std::optional<std::shared_ptr<sf::Texture>> OptionalTexture = Utilities::unCast<std::shared_ptr<sf::Texture>, CustomExceptions::NoTexture>(textureCapsule, true, "Base texture for the spritesheet animation, <std::any , bad cast error>, system error: ");
     if (!OptionalTexture.has_value()) {
