@@ -79,7 +79,6 @@ void GUI::ECS::Online::Orchestrator::initialiseClass(std::unordered_map<std::typ
             ) {
             PRETTY_DEBUG << "Sprite bullet found" << std::endl;
             _spriteBullet = sprite.value();
-            // _spriteBullet->setDimension({ 0.5,0.5 });
             _spriteBullet->forceTick();
             PRETTY_DEBUG << "Sprite bullet content:\n" << *_spriteBullet << std::endl;
         } else if (
@@ -88,6 +87,7 @@ void GUI::ECS::Online::Orchestrator::initialiseClass(std::unordered_map<std::typ
             ) {
             PRETTY_DEBUG << "Sprite bullet enemy found" << std::endl;
             _spriteBulletEnemy = sprite.value();
+            _spriteBulletEnemy->forceTick();
             PRETTY_DEBUG << "Sprite bullet enemy content:\n" << *_spriteBulletEnemy << std::endl;
         } else if (
             applicationContext == "r-typesheet13" || name == "r-typesheet13" ||
@@ -126,6 +126,7 @@ void GUI::ECS::Online::Orchestrator::initialiseClass(std::unordered_map<std::typ
             backgroundItem.emplace(backgroundCapsule.value());
         }
     }
+    PRETTY_DEBUG << "Background fetched if present" << std::endl;
 };
 
 void GUI::ECS::Online::Orchestrator::setNetworkClass(const std::shared_ptr<GUI::Network::ThreadCapsule> &network)
@@ -203,134 +204,51 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
         }
     }
 
-    // // Declaring a list to contain the bullets to remove
-    // std::vector<unsigned int> bulletsToRemove;
-
-    // // Tick the player logic 
-    // _playerBrain->tick();
-
-    // // Tick the enemy logic
-    // PRETTY_DEBUG << "Ennemies on screen: " << _enemyBrain.size() << std::endl;
-    // for (unsigned int index = 0; index < _enemyBrain.size(); index++) {
-    //     PRETTY_DEBUG << "Ticking the enemy, index: " << index << ", name: " << _enemyBrain[index]->getSprite().getName() << std::endl;
-    //     std::optional<GUI::ECS::Online::Bullet> shot = _enemyBrain[index]->tick();
-    //     if (shot.has_value()) {
-    //         PRETTY_DEBUG << "Enemy shot a bullet, index: " << index << ", name: " << shot.value().getSprite().getName() << std::endl;
-    //         shot.value().setSize({ 0.5,0.5 });
-    //         PRETTY_DEBUG << "Enemy shot details: " << shot.value() << std::endl;
-    //         _bullets.push_back(shot.value());
-    //     }
-    //     if (_enemyBrain[index]->isColliding(_playerBrain->getCollision())) {
-    //         _playerBrain->setHealth(0);
-    //         _gameOver = true;
-    //         return;
-    //     }
-    // }
-
     // Update player movements
     if (_event->getKeys().size() > 0) {
-        std::pair<float, float> position = _playerBrain[_playerId]->getCollision().getPosition();
+        if (_playerId < _playerBrain.size()) {
+            std::pair<float, float> position = _playerBrain[_playerId]->getCollision().getPosition();
 
-        // Handle movement
-        if (_event->isKeyPressed(GUI::ECS::Systems::Key::Up) && position.second > 0) {
-            position.second += _stepUp;
-        } else if (_event->isKeyPressed(GUI::ECS::Systems::Key::Down) && position.second < _window->getDimensions().second - _screenPosYOffset) {
-            position.second += _stepDown;
-        } else if (_event->isKeyPressed(GUI::ECS::Systems::Key::Left) && position.first > 0) {
-            position.first += _stepLeft;
-        } else if (_event->isKeyPressed(GUI::ECS::Systems::Key::Right) && position.first < _window->getDimensions().first - _screenPosXOffset) {
-            position.first += _stepRight;
+            // Handle movement
+            if (_event->isKeyPressed(GUI::ECS::Systems::Key::Up) && position.second > 0) {
+                position.second += _stepUp;
+            } else if (_event->isKeyPressed(GUI::ECS::Systems::Key::Down) && position.second < _window->getDimensions().second - _screenPosYOffset) {
+                position.second += _stepDown;
+            } else if (_event->isKeyPressed(GUI::ECS::Systems::Key::Left) && position.first > 0) {
+                position.first += _stepLeft;
+            } else if (_event->isKeyPressed(GUI::ECS::Systems::Key::Right) && position.first < _window->getDimensions().first - _screenPosXOffset) {
+                position.first += _stepRight;
+            }
+
+            // Handle shooting
+            if (_event->isKeyPressed(GUI::ECS::Systems::Key::Space)) {
+                if (_playerId < _playerBrain.size()) {
+                    PRETTY_DEBUG << "Player shot" << std::endl;
+                    _sendMessage({ GUI::Network::MessageType::SHOOT, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {0, 0}} });
+                    _shootSound();
+                } else {
+                    PRETTY_WARNING << "There is no player to update" << std::endl;
+                    throw CustomExceptions::NoSprite("<No player>");
+                }
+            }
+
+            // Update player position
+            if (_playerId < _playerBrain.size()) {
+                _playerBrain[_playerId]->setPosition(position);
+                _sendMessage({ GUI::Network::MessageType::MOVE, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {position.first, position.second}} });
+            } else {
+                PRETTY_WARNING << "There is no player to update" << std::endl;
+                throw CustomExceptions::NoSprite("<No player>");
+            }
+        } else {
+            PRETTY_WARNING << "There is no player to update" << std::endl;
+            throw CustomExceptions::NoSprite("<No player>");
         }
-
-        // Handle shooting
-        if (_event->isKeyPressed(GUI::ECS::Systems::Key::Space)) {
-            PRETTY_DEBUG << "Player shot" << std::endl;
-            _sendMessage({ GUI::Network::MessageType::SHOOT, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {0, 0}} });
-            _shootSound();
-        }
-
-        // Update player position
-        _playerBrain[_playerId]->setPosition(position);
-        _sendMessage({ GUI::Network::MessageType::MOVE, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {position.first, position.second}} });
     }
-
-    // // Bullets collisions
-    // PRETTY_DEBUG << "Bullet count : " << _bullets.size() << std::endl;
-    // for (unsigned int index = 0; index < _bullets.size(); index++) {
-    //     PRETTY_DEBUG << "Ticking bullet" << std::endl;
-    //     _bullets[index].tick();
-    //     PRETTY_DEBUG << "bullet: index: " << index << ", visible: " << Recoded::myToString(_bullets[index].isVisible()) << ", enemy: " << Recoded::myToString(_bullets[index].isEnemy()) << std::endl;
-    //     // Skipping because the bullet is not visible
-    //     if (!_bullets[index].isVisible()) {
-    //         bulletsToRemove.push_back(index);
-    //         continue;
-    //     }
-    //     // Checking if the bullets aren't out of bounds
-    //     float bulletPosX = _bullets[index].getCollision().getPositionX();
-    //     float bulletPosY = _bullets[index].getCollision().getPositionY();
-    //     if (
-    //         bulletPosX <= 0 || bulletPosX >= _window->getDimensions().first ||
-    //         bulletPosY <= 0 || bulletPosY >= _window->getDimensions().second
-    //         ) {
-    //         PRETTY_DEBUG << "Adding bullet index: " << index << " to the list of items to remove, is enemy: " << Recoded::myToString(_bullets[index].isEnemy()) << ", bullet pos: " << _bullets[index].getCollision() << std::endl;
-    //         bulletsToRemove.push_back(index);
-    //         continue;
-    //     }
-    //     // The bullet is comming from a player, if so check the enemies
-    //     if (!_bullets[index].isEnemy()) {
-    //         for (unsigned int eIndex = 0; eIndex < _enemyBrain.size(); eIndex++) {
-    //             // Check if the bullet has hit it's target and that the enemy is still alive
-    //             if (_bullets[index].isColliding(_enemyBrain[eIndex]->getCollision())) {
-    //                 // hide the bullet an check the health
-    //                 _bullets[index].setVisible(false);
-    //                 if (_enemyBrain[eIndex]->getHealth() <= 0) {
-    //                     _enemyBrain[eIndex]->setVisible(false);
-    //                     _activeEnemies -= 1;
-    //                 } else {
-    //                     _enemyBrain[eIndex]->setHealth(_enemyBrain[eIndex]->getHealth() - _bullets[index].getDamage());
-    //                 }
-    //             }
-    //         }
-    //     } else {
-    //         if (_playerBrain->isColliding(_bullets[index].getCollision())) {
-    //             _playerBrain->setHealth(_playerBrain->getHealth() - _bullets[index].getDamage());
-    //             _bullets[index].setVisible(false);
-    //             _damageSound();
-    //         }
-    //     }
-    // }
-
-    // // Removing bullets that are not rendered anymore
-    // PRETTY_DEBUG << "Bullets to be removed: list size: " << bulletsToRemove.size() << std::endl;
-    // for (unsigned int index = 0; index < bulletsToRemove.size(); index++) {
-    //     PRETTY_DEBUG << "Bullet " << index << " removed" << std::endl;
-    //     _bullets.erase(_bullets.begin() + bulletsToRemove[index]);
-    // }
-
-    // // Check if all the enemies are dead
-    // unsigned int index = 0;
-    // _activeEnemies = 0;
-    // for (; index < _enemyBrain.size(); index++) {
-    //     if (_enemyBrain[index]->isVisible()) {
-    //         _activeEnemies += 1;
-    //     }
-    // }
-    // if (_activeEnemies <= 0) {
-    //     PRETTY_DEBUG << "All the enemies are dead, the game is won" << std::endl;
-    //     _gameWon = true;
-    // }
-
-    // // Check if the player is dead.
-    // if (_playerBrain->getHealth() <= 0) {
-    //     _gameOver = true;
-    //     _gameWon = false;
-    // }
-
-    // // Updating the enemy count component (if present)
-    // if (_remainingEnemies.has_value()) {
-    //     _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_activeEnemies));
-    // }
-
+    PRETTY_DEBUG << "Updating the enemy count component (if present)" << std::endl;
+    if (_remainingEnemies.has_value()) {
+        _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_activeEnemies));
+    }
     PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;
 };
 
@@ -341,6 +259,8 @@ void GUI::ECS::Online::Orchestrator::render()
     if (_backgroundItem.has_value()) {
         PRETTY_DEBUG << "The background is present, displaying" << std::endl;
         _window->draw(*(_backgroundItem.value()));
+    } else {
+        PRETTY_WARNING << "There is no background to display" << std::endl;
     }
     PRETTY_DEBUG << "Displayed the background image (if present)" << std::endl;
     PRETTY_DEBUG << "Going to render the players" << std::endl;
@@ -475,6 +395,7 @@ const std::string GUI::ECS::Online::Orchestrator::getInfo(const unsigned int ind
         result += indentation + "\t}\n";
     }
     result += indentation + "}\n";
+    result += indentation + "- Entity Id: " + Recoded::myToString(getEntityNodeId()) + "\n";
     return result;
 }
 
@@ -499,6 +420,7 @@ void GUI::ECS::Online::Orchestrator::_spawn(const std::uint32_t id, const std::p
     playerEntity->setPosition(pos);
     playerEntity->setBulletSize({ 0.5,0.5 });
     _playerBrain.push_back(playerEntity);
+    PRETTY_DEBUG << "Friend spawned" << std::endl;
 };
 
 void GUI::ECS::Online::Orchestrator::_spawnFriendBullet(const std::uint32_t id, const std::pair<float, float> &pos)
@@ -518,6 +440,7 @@ void GUI::ECS::Online::Orchestrator::_spawnFriendBullet(const std::uint32_t id, 
     bullet.setDirection({ 1,0 });
     bullet.setSpeed(1);
     _playerBullets.push_back(bullet);
+    PRETTY_DEBUG << "Friend bullet created" << std::endl;
 };
 
 void GUI::ECS::Online::Orchestrator::_spawnEnemyBullet(const std::uint32_t id, const std::pair<float, float> &pos)
@@ -537,6 +460,7 @@ void GUI::ECS::Online::Orchestrator::_spawnEnemyBullet(const std::uint32_t id, c
     bullet.setDirection({ 1,0 });
     bullet.setSpeed(1);
     _enemyBullets.push_back(bullet);
+    PRETTY_DEBUG << "Enemy bullet created" << std::endl;
 };
 
 
@@ -669,6 +593,7 @@ void GUI::ECS::Online::Orchestrator::_sendMessage(const GUI::Network::MessageNod
         PRETTY_CRITICAL << "There is no network manager to use to send packets" << std::endl;
         throw CustomExceptions::NoNetworkClass("<No network manager for the online brain>");
     }
+    PRETTY_DEBUG << "Sending message" << std::endl;
     _network.value()->sendMessage(node);
 }
 
