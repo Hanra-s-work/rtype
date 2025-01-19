@@ -85,6 +85,7 @@ namespace GUI
                 int _stepRight = 10;
                 float _screenPosXOffset = 75;
                 float _screenPosYOffset = 45;
+                unsigned int _activeEnemies = 0;
                 std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _titleHealth;
                 std::optional<std::shared_ptr<GUI::ECS::Components::TextComponent>> _remainingEnemies;
                 std::optional<std::shared_ptr<GUI::ECS::Components::ImageComponent>> _backgroundItem;
