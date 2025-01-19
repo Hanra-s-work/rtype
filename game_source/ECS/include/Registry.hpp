@@ -11,6 +11,7 @@
 #include "ComponentContainer.hpp"
 #include "Entity.hpp"
 #include "Systems.hpp"
+#include "SyncingSystem.hpp"
 
 /**
  * @class Registry
@@ -66,6 +67,13 @@ public:
      * @brief Executes all registered systems.
      */
     void run_systems();
+
+    /**
+     * @brief Creates a list of GameMessages that syncs the player to the game.
+     * 
+     * @return A vector with GameMessages of the current game state.
+     */
+    std::vector<GameMessage> sync_game();
 
     /**
      * @brief Registers a new component type.

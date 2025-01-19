@@ -15,6 +15,11 @@ void Registry::run_systems()
     }
 }
 
+std::vector<GameMessage> Registry::sync_game()
+{
+    return syncGameState(*this);
+}
+
 Entity Registry::spawn_entity()
 {
     size_t entity_id = _next_entity_id++;

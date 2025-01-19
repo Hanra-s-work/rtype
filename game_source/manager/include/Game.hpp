@@ -55,6 +55,16 @@ public:
     std::forward_list<std::string> getGameEvents(void);
 
     /**
+     * @brief Gets the current game state (syncing)
+     * 
+     * This function returns a list of `std::string` objects.
+     * These messages can be used to get the current game state.
+     *
+     * @return A forward list of `std::string` objects.
+     */
+    std::forward_list<std::string> getCurrentGameState(void);
+
+    /**
      * @brief Handles an event received from server.
      * 
      * This function processes incoming events from server.
