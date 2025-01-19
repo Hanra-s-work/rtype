@@ -25,6 +25,7 @@
 
 #include "ActiveScreen.hpp"
 #include "GUI/Network/MessageType.hpp"
+#include "GUI/Network/MessageStruct.hpp"
 #include "GUI/ECS/Systems/ActiveShape.hpp"
 #include "GUI/ECS/GameComponents/Package.hpp"
 #include "GUI/ECS/GameComponents/ECSPackage.hpp"
@@ -374,4 +375,22 @@ namespace Recoded
      * @return const std::string
      */
     const std::string myToString(const GUI::Network::MessageType &messageType);
+
+    /**
+     * @brief Overload for the Message Type enum so that the user can just output the type of the message that was received.
+     *
+     * @param shape GUI::Network::MessageInfo
+     *
+     * @return const std::string
+     */
+    const std::string myToString(const GUI::Network::MessageInfo &messageInfo);
+
+    /**
+     * @brief Overload for the Message Type enum so that the user can just output the type of the message that was received.
+     *
+     * @param shape GUI::Network::MessageNode
+     *
+     * @return const std::string
+     */
+    const std::string myToString(const GUI::Network::MessageNode &messageNode);
 }
