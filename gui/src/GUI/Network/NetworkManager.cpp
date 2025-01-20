@@ -83,7 +83,7 @@ void GUI::Network::NetworkManager::startGame()
 {
     //core dump on this
     MessageNode msg;
-    msg.type = MessageType::CONNECT;
+    msg.type = MessageType::P_CONNECT;
     msg.id = 0;
     std::memcpy(msg.info.username, _playerName.c_str(), 8);
     msg.info.username[8] = '\0';
@@ -123,19 +123,19 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
     result.type = static_cast<MessageType>(message[0]);
 
     switch (result.type) {
-        case MessageType::CONNECT: { // CONNECT
+        case MessageType::P_CONNECT: { // CONNECT
                 std::memcpy(result.info.username, message.data() + 1, 8);
                 result.info.username[8] = '\0';
                 break;
             }
-        case MessageType::DISCONNECT: { // DISCONNECT
+        case MessageType::P_DISCONNECT: { // DISCONNECT
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRECISE_DEBUG << "DISCONNECT Message\nEntity ID: " << id << "\n";
                 result.id = id;
                 break;
             }
-        case MessageType::MOVE: { // MOVE
+        case MessageType::P_MOVE: { // MOVE
                 size_t id;
                 float x, y;
                 std::memcpy(&id, &message[1], sizeof(size_t));
@@ -147,14 +147,14 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 result.info.coords.second = y;
                 break;
             }
-        case MessageType::SHOOT: { // SHOOT
+        case MessageType::P_SHOOT: { // SHOOT
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRETTY_DEBUG << "SHOOT Message\nEntity ID: " << id << "\n";
                 result.id = id;
                 break;
             }
-        case MessageType::SPAWN: { // SPAWN
+        case MessageType::P_SPAWN: { // SPAWN
                 size_t id;
                 int asset;
                 float x, y;
@@ -169,21 +169,21 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 result.info.coords.second = y;
                 break;
             }
-        case MessageType::KILL: { // KILL
+        case MessageType::P_KILL: { // KILL
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRETTY_DEBUG << "KILL Message\nEntity ID: " << id << "\n";
                 result.id = id;
                 break;
             }
-        case MessageType::DAMAGE: { // DAMAGE
+        case MessageType::P_DAMAGE: { // DAMAGE
                 size_t id;
                 PRETTY_DEBUG << "DAMAGE Message\nEntity ID: " << id << "\n";
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 result.id = id;
                 break;
             }
-        case MessageType::STATUS: { // STATUS
+        case MessageType::P_STATUS: { // STATUS
                 uint8_t status = message[1];
                 PRETTY_DEBUG << "STATUS Message\nStatus: ";
                 if (status == 0x00) {
@@ -197,10 +197,10 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 }
                 break;
             }
-        case MessageType::HANDSHAKE: {
+        case MessageType::P_HANDSHAKE: {
                 PRETTY_DEBUG << "Handshake OK\n";
             }
-        case MessageType::ERROR: { // ERROR
+        case MessageType::P_ERROR: { // ERROR
                 uint8_t errorCode = message[1];
                 break;
             }
@@ -222,25 +222,25 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
     serializedMessage[0] = static_cast<uint8_t>(message.type);
 
     switch (message.type) {
-        case MessageType::CONNECT: { // CONNECT
+        case MessageType::P_CONNECT: { // CONNECT
                 serializedMessage.resize(10);
                 std::memcpy(serializedMessage.data() + 1, message.info.username, 8);
                 serializedMessage[9] = 0;
                 break;
             }
-        case MessageType::DISCONNECT: { // DISCONNECT
+        case MessageType::P_DISCONNECT: { // DISCONNECT
                 serializedMessage.resize(1 + sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
             }
-        case MessageType::MOVE: { // MOVE
+        case MessageType::P_MOVE: { // MOVE
                 serializedMessage.resize(1 + sizeof(size_t) + sizeof(float) * 2);
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
                 std::memcpy(serializedMessage.data() + 1 + sizeof(size_t) + sizeof(float), &message.info.coords.second, sizeof(float));
                 break;
             }
-        case MessageType::SHOOT: { // SHOOT
+        case MessageType::P_SHOOT: { // SHOOT
                 serializedMessage.resize(1 + sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
@@ -371,7 +371,7 @@ void GUI::Network::NetworkManager::_connect()
 
         PRETTY_SUCCESS << "Connected to server at " << _ip << ":" << _port << std::endl;
 
-        Packet connectPacket(MessageType::HANDSHAKE);
+        Packet connectPacket(MessageType::P_HANDSHAKE);
         std::vector<uint8_t> serializedData = Packet::serialize(connectPacket);
 
         try {

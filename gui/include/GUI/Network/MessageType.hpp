@@ -27,16 +27,16 @@ namespace GUI
         * The types include `CONNECT`, `DISCONNECT`, `MOVE`, `SHOOT`, `SPAWN`, `UPDATE`, and a generic `ERROR` type.
         */
         enum class MessageType : uint8_t {
-            CONNECT = 1,
-            DISCONNECT = 2,
-            MOVE = 3,
-            SHOOT = 4,
-            SPAWN = 5,
-            KILL = 6,
-            DAMAGE = 7,
-            STATUS = 8,
-            HANDSHAKE = 254,
-            ERROR = 255
+            P_CONNECT = 1,
+            P_DISCONNECT = 2,
+            P_MOVE = 3,
+            P_SHOOT = 4,
+            P_SPAWN = 5,
+            P_KILL = 6,
+            P_DAMAGE = 7,
+            P_STATUS = 8,
+            P_HANDSHAKE = 254,
+            P_ERROR = 255
         };
     }
 }
