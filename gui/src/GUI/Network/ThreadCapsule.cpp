@@ -101,7 +101,9 @@ void GUI::Network::ThreadCapsule::setAddress(const std::string &ip, const unsign
 
 const bool GUI::Network::ThreadCapsule::isConnected() const
 {
-    ENSURE_THREAD_ALIVE("the function in charge of checking if we are connected to the server");
+    if (!isThreadAlive()) {
+        return false;
+    }
     return _childNode->isConnected();
 };
 
