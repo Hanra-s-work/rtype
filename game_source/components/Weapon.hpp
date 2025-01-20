@@ -12,4 +12,5 @@ struct Weapon {
     int damage;       /**< The damage dealt by the weapon on each shot. */
     float fire_rate;  /**< The rate at which the weapon can fire, in shots per second. */
     float cooldown;   /**< The time, in seconds, before the weapon can fire again after each shot. */
+    bool shot;        /**< The state of the firing */
 };

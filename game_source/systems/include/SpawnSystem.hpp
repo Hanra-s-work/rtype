@@ -4,7 +4,7 @@
 
 class Registry;
 
-#define DEFAULT_TIMER 5.0f
+#define DEFAULT_TIMER 10.0f
 
 /**
  * @brief Spawns a monster at the specified position.

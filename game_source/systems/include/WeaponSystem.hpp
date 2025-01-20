@@ -18,3 +18,11 @@
  * @param types The container of the component `Type`.
  */
 void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentContainer<Position> &positions, ComponentContainer<Type> &types);
+
+/**
+ * @brief Changes the state of the weapon.
+ * 
+ * @param r The `Registry` that contains all game entities and their components.
+ * @param id The id of the entity.
+ */
+void make_shot(Registry &r, size_t id);

@@ -12,8 +12,8 @@ void spawn_monster_system(Registry &r)
 {
     spawn_timer -= Time::deltaTime;
     if (spawn_timer <= 0.0f) {
-        float x = 2000.f;
-        float y = randint(60, 960);
+        float x = 825.f;
+        float y = randint(60, 540);
         spawn_monster(r, x, y);
         std::cout << "spawning monster..." << std::endl;
         spawn_timer = DEFAULT_TIMER;
@@ -38,7 +38,7 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uin
     r.add_component<Image>(player, {image_enum::PLAYER_ASSET, 20.f, 20.f});
     r.add_component<Collider>(player, {10.f});
     r.add_component<Health>(player, {3, 3});
-    r.add_component<Weapon>(player, {1, .5f, 0.f});
+    r.add_component<Weapon>(player, {1, .5f, 0.f, false});
     r.add_component<PowerUp>(player, {false});
     r.add_component<Type>(player, {type_enum::PLAYER});
     r.add_component<PlayerInfo>(player, {client_id, username});
@@ -51,11 +51,11 @@ void spawn_monster(Registry &r, const float &pos_x, const float &pos_y)
 {
     Entity monster = r.spawn_entity();
     r.add_component<Position>(monster, {pos_x, pos_y});
-    r.add_component<Velocity>(monster, {-1.f, 0.f});
+    r.add_component<Velocity>(monster, {-10.f, 0.f});
     r.add_component<Image>(monster, {image_enum::MONSTER1_ASSET, 20.f, 20.f});
     r.add_component<Collider>(monster, {10.f});
     r.add_component<Health>(monster, {3, 3});
-    r.add_component<Weapon>(monster, {1, .5f, 1.f});
+    r.add_component<Weapon>(monster, {1, .5f, 1.f, true});
     r.add_component<Type>(monster, {type_enum::MONSTER});
     r.add_component<Behaviour>(monster, {behaviour_enum::DEFAULT});
     r.add_component<LootDrop>(monster, {loot_enum::NONE});
@@ -80,14 +80,15 @@ void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const ty
 {
     Entity missile = r.spawn_entity();
     r.add_component<Position>(missile, {pos_x, pos_y});
-    r.add_component<Image>(missile, {image_enum::MISSILE1_ASSET, 20.f, 20.f});
     r.add_component<Collider>(missile, {10.f});
     r.add_component<Type>(missile, {type_enum::MISSILE});
     if (owner == type_enum::PLAYER) {
+        r.add_component<Image>(missile, {image_enum::MISSILE2_ASSET, 20.f, 20.f});
         r.add_component<Team>(missile, {team_enum::ALLY});
         r.add_component<Velocity>(missile, {2.f, 0.f});
     }
     else {
+        r.add_component<Image>(missile, {image_enum::MISSILE1_ASSET, 20.f, 20.f});
         r.add_component<Team>(missile, {team_enum::ENEMY});
         r.add_component<Velocity>(missile, {-2.f, 0.f});
     }

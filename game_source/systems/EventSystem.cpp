@@ -2,6 +2,7 @@
 #include "EventSystem.hpp"
 #include "SpawnSystem.hpp"
 #include "MovementSystem.hpp"
+#include "WeaponSystem.hpp"
 #include "PlayerMiscellaneous.hpp"
 
 void event_system(Registry& r)
@@ -42,12 +43,13 @@ bool performAction(const GameMessage& event, Registry& r)
     case DISCONNECT:
         id = getIdByClientId(r, event.msg.cli_id);
         r.kill_entity(Entity(id));
+        //notify death
         break;
     case MOVE:
         move_player(r, event.id, event.msg.coords.x, event.msg.coords.y);
         break;
     case SHOOT:
-        spawn_missile(r, event.msg.coords.x, event.msg.coords.y, type_enum::PLAYER);
+        make_shot(r, event.id);
         break;
     default:
         return false;
