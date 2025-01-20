@@ -154,31 +154,31 @@ const std::string Recoded::myToString(const GUI::ECS::Systems::ActiveShape &shap
 
 const std::string Recoded::myToString(const GUI::Network::MessageType &messageType)
 {
-    if (messageType == GUI::Network::MessageType::CONNECT) {
+    if (messageType == GUI::Network::MessageType::P_CONNECT) {
         return "Connect";
     }
-    if (messageType == GUI::Network::MessageType::DISCONNECT) {
+    if (messageType == GUI::Network::MessageType::P_DISCONNECT) {
         return "Disconnect";
     }
-    if (messageType == GUI::Network::MessageType::MOVE) {
+    if (messageType == GUI::Network::MessageType::P_MOVE) {
         return "Move";
     }
-    if (messageType == GUI::Network::MessageType::SHOOT) {
+    if (messageType == GUI::Network::MessageType::P_SHOOT) {
         return "Shoot";
     }
-    if (messageType == GUI::Network::MessageType::SPAWN) {
+    if (messageType == GUI::Network::MessageType::P_SPAWN) {
         return "Spawn";
     }
-    if (messageType == GUI::Network::MessageType::KILL) {
+    if (messageType == GUI::Network::MessageType::P_KILL) {
         return "Kill";
     }
-    if (messageType == GUI::Network::MessageType::DAMAGE) {
+    if (messageType == GUI::Network::MessageType::P_DAMAGE) {
         return "Damage";
     }
-    if (messageType == GUI::Network::MessageType::STATUS) {
+    if (messageType == GUI::Network::MessageType::P_STATUS) {
         return "Status";
     }
-    if (messageType == GUI::Network::MessageType::ERROR) {
+    if (messageType == GUI::Network::MessageType::P_ERROR) {
         return "Error";
     }
     return "Unknown";
