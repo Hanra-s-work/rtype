@@ -362,11 +362,11 @@ void Main::_initialiseConnection()
     PRETTY_DEBUG << "Connecting to the server at " << address << std::endl;
     _networkManager->setAddress(_ip, _port);
     _networkManager->startGame();
-    // if (_networkManager->isConnected()) {
-    //     PRETTY_SUCCESS << "We are connected to the server" << std::endl;
-    // } else {
-    //     PRETTY_WARNING << "We are not connected to the server" << std::endl;
-    // }
+    if (_networkManager->isConnected()) {
+        PRETTY_SUCCESS << "We are connected to the server" << std::endl;
+    } else {
+        PRETTY_WARNING << "We are not connected to the server" << std::endl;
+    }
 }
 
 /**
