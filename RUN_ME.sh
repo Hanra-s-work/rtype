@@ -43,7 +43,7 @@ fi
 
 # Compile the project
 echo "Compiling"
-cmake --build $DEST_FOLDER
+cmake --build $DEST_FOLDER -j 8
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
     echo "Error: build failed"
