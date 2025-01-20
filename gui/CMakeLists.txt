@@ -92,6 +92,7 @@ target_link_libraries(r-type_client
     PRIVATE
     rtype_client_libraries
     Threads::Threads
+    sfml-graphics sfml-window sfml-audio sfml-network sfml-system
 )
 
 # Enable debug mode

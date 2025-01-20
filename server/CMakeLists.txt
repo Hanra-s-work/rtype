@@ -33,6 +33,7 @@ target_link_libraries(r-type_server
     PRIVATE
     RTypeSource # from game_source/CMakeLists
 
-    # Threads::Threads    # if needed
+    # Threads::Threads # if needed
+
     # other libs (asio, etc.) if needed
 )
