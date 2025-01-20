@@ -82,7 +82,12 @@ void GUI::Network::NetworkManager::sendMessage(const GUI::Network::MessageNode &
 void GUI::Network::NetworkManager::startGame()
 {
     //core dump on this
-    //sendMessage({MessageType::CONNECT, 0, {0, 0, "", {0, 0}}});
+    MessageNode msg;
+    msg.type = MessageType::CONNECT;
+    msg.id = 0;
+    std::memcpy(msg.info.username, "Player1", 8);
+    msg.info.username[8] = '\0';
+    sendMessage(msg);
 }
 
 const bool GUI::Network::NetworkManager::isConnected() const
@@ -214,6 +219,7 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
     // }
 
     std::string result;
+    result.reserve(10);
     result[0] = static_cast<char>(message.type);
 
     switch (message.type) {
