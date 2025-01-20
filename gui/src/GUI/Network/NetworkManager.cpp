@@ -218,28 +218,31 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
     //     return "[Error] Empty message received.";
     // }
 
-    std::string result;
-    result.reserve(10);
-    result[0] = static_cast<char>(message.type);
+    std::vector<uint8_t> serializedMessage(1);
+    serializedMessage[0] = static_cast<uint8_t>(message.type);
 
     switch (message.type) {
         case MessageType::CONNECT: { // CONNECT
-                std::memcpy(result.data() + 1, message.info.username, 8);
-                result[9] = '\0';
+                serializedMessage.resize(10);
+                std::memcpy(serializedMessage.data() + 1, message.info.username, 8);
+                serializedMessage[9] = 0;
                 break;
             }
         case MessageType::DISCONNECT: { // DISCONNECT
-                std::memcpy(result.data() + 1, &message.id, sizeof(size_t));
+                serializedMessage.resize(1 + sizeof(size_t));
+                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
             }
         case MessageType::MOVE: { // MOVE
-                std::memcpy(result.data() + 1, &message.id, sizeof(size_t));
-                std::memcpy(result.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
-                std::memcpy(result.data() + 1 + sizeof(size_t) + sizeof(float), &message.info.coords.second, sizeof(float));
+                serializedMessage.resize(1 + sizeof(size_t) + sizeof(float) * 2);
+                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
+                std::memcpy(serializedMessage.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
+                std::memcpy(serializedMessage.data() + 1 + sizeof(size_t) + sizeof(float), &message.info.coords.second, sizeof(float));
                 break;
             }
         case MessageType::SHOOT: { // SHOOT
-                std::memcpy(result.data() + 1, &message.id, sizeof(size_t));
+                serializedMessage.resize(1 + sizeof(size_t));
+                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
             }
         default:
@@ -247,6 +250,7 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
             break;
     }
 
+    std::string result(serializedMessage.begin(), serializedMessage.end());
     return result;
 }
 
