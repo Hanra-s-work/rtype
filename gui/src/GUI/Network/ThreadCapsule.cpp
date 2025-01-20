@@ -48,13 +48,13 @@ void GUI::Network::ThreadCapsule::stopThread()
 void GUI::Network::ThreadCapsule::startGame()
 {
     ENSURE_THREAD_ALIVE("the function in charge of sending messages");
-    return _childNode->startGame();
+    _childNode->startGame();
 }
 
 void GUI::Network::ThreadCapsule::sendMessage(const MessageNode &message)
 {
     ENSURE_THREAD_ALIVE("the function in charge of sending messages");
-    return _childNode->sendMessage(message);
+    _childNode->sendMessage(message);
 };
 
 const std::vector<GUI::Network::MessageNode> GUI::Network::ThreadCapsule::getReceivedMessages()
@@ -69,7 +69,8 @@ void GUI::Network::ThreadCapsule::setPort(const unsigned int port)
         PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
         _spawnChild();
     }
-    return _childNode->setPort(port);
+    _childNode->setPlayerName(_playerName);
+    _childNode->setPort(port);
 };
 
 void GUI::Network::ThreadCapsule::setIp(const std::string &ip)
@@ -78,16 +79,13 @@ void GUI::Network::ThreadCapsule::setIp(const std::string &ip)
         PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
         _spawnChild();
     }
-    return _childNode->setIp(ip);
+    _childNode->setPlayerName(_playerName);
+    _childNode->setIp(ip);
 };
 
 void GUI::Network::ThreadCapsule::setPlayerName(const std::string &name)
 {
-    if (!isThreadAlive()) {
-        PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
-        _spawnChild();
-    }
-    return _childNode->setPlayerName(name);
+    _playerName = name;
 };
 
 void GUI::Network::ThreadCapsule::setAddress(const std::string &ip, const unsigned int port)
@@ -96,7 +94,8 @@ void GUI::Network::ThreadCapsule::setAddress(const std::string &ip, const unsign
         PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
         _spawnChild();
     }
-    return _childNode->setAddress(ip, port);
+    _childNode->setPlayerName(_playerName);
+    _childNode->setAddress(ip, port);
 };
 
 
@@ -134,7 +133,7 @@ const GUI::Network::MessageNode GUI::Network::ThreadCapsule::translateMessage(co
 void GUI::Network::ThreadCapsule::receiveMessage()
 {
     ENSURE_THREAD_ALIVE("the function in charge of receiving messages");
-    return _childNode->receiveMessage();
+    _childNode->receiveMessage();
 };
 
 

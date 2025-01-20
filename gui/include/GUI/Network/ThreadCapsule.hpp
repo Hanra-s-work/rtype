@@ -64,6 +64,7 @@ namespace GUI
             std::thread _childThread;                                           //!< Thread running the worker
             std::atomic<bool> _childAlive = false;                              //!< Thread state
             std::shared_ptr<NetworkManager> _childNode;                         //!< The worker
+            std::string _playerName = "Player";                                 //!< The name of the player
         };
     }
 }
