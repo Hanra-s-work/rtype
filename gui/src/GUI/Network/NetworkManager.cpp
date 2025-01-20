@@ -85,7 +85,7 @@ void GUI::Network::NetworkManager::startGame()
     MessageNode msg;
     msg.type = MessageType::CONNECT;
     msg.id = 0;
-    std::memcpy(msg.info.username, "Player1", 8);
+    std::memcpy(msg.info.username, _playerName.c_str(), 8);
     msg.info.username[8] = '\0';
     sendMessage(msg);
 }
@@ -198,8 +198,8 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::HANDSHAKE: {
-            PRETTY_DEBUG << "Handshake OK\n";
-        }
+                PRETTY_DEBUG << "Handshake OK\n";
+            }
         case MessageType::ERROR: { // ERROR
                 uint8_t errorCode = message[1];
                 break;
