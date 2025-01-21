@@ -1,17 +1,65 @@
 #include "src/server.hpp"
 #include <thread>
 #include <iostream>
+#include <string>
 
 /**
  * @file main.cpp
  * @brief Entry point for the R-Type server application.
  */
-int main() {
+
+// A small helper to print usage
+static void print_usage(const char* progName) {
+    std::cout << "Usage: " << progName << " [OPTIONS]\n"
+              << "\nOptions:\n"
+              << "  --help           Show this help message and exit\n"
+              << "  --port <number>  Specify the UDP port to use (default: 9000)\n"
+              << std::endl;
+}
+
+int main(int argc, char* argv[])
+{
+    // Default port
+    unsigned short port = 9000;
+
+    // Parse command-line arguments
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+
+        if (arg == "--help") {
+            // Print usage and exit
+            print_usage(argv[0]);
+            return 0;
+        } 
+        else if (arg == "--port") {
+            if (i + 1 < argc) {
+                ++i; // move to the next argument
+                try {
+                    port = static_cast<unsigned short>(std::stoi(argv[i]));
+                } catch (...) {
+                    std::cerr << "[Error] Invalid or out-of-range port: " << argv[i] << "\n";
+                    return 1;
+                }
+            } else {
+                // Missing port number
+                std::cerr << "[Error] '--port' requires an argument.\n";
+                print_usage(argv[0]);
+                return 1;
+            }
+        } 
+        else {
+            std::cerr << "[Error] Unknown option: " << arg << "\n";
+            print_usage(argv[0]);
+            return 1;
+        }
+    }
+
     try {
+        // Create the io_context
         asio::io_context io_context;
 
-        // Create the server listening on UDP port 9000
-        auto server = std::make_shared<Server>(io_context, 9000);
+        // Create the server listening on the parsed 'port'
+        auto server = std::make_shared<Server>(io_context, port);
 
         // Start multiple I/O threads
         unsigned int numThreads = std::max(4u, std::thread::hardware_concurrency());
@@ -23,6 +71,7 @@ int main() {
             });
         }
 
+        // Run game loop
         bool running = true;
         std::thread gameLoopThread([&]() {
             using clock = std::chrono::steady_clock;
@@ -41,10 +90,12 @@ int main() {
             }
         });
 
-        std::cout << "[Server] Listening on 0.0.0.0:9000 (UDP)\n";
+        // Inform user
+        std::cout << "[Server] Listening on 0.0.0.0:" << port << " (UDP)\n";
         std::cout << "[Server] Press ENTER to quit.\n";
         std::cin.get();
 
+        // Stop
         running = false;
         io_context.stop();
 
@@ -57,6 +108,7 @@ int main() {
 
     } catch (std::exception& e) {
         std::cerr << "[Server] Exception: " << e.what() << "\n";
+        return 1;
     }
 
     return 0;
