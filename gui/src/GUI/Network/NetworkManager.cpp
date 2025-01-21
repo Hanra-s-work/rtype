@@ -72,10 +72,10 @@ void GUI::Network::NetworkManager::sendMessage(const GUI::Network::MessageNode &
         std::vector<uint8_t> data(serializedMessage.begin(), serializedMessage.end());
 
         _socket.send_to(asio::buffer(data), remoteEndpoint);
-        std::cerr << "Message : " << serializedMessage << " sent to " << _ip << ":" << _port << std::endl;
+        PRETTY_DEBUG << "Message : " << std::hex << serializedMessage << " sent to " << _ip << ":" << _port << std::endl;
     }
     catch (const std::exception &e) {
-        std::cerr << "Error sending message: " << e.what() << std::endl;
+        PRETTY_CRITICAL << "Error sending message: " << e.what() << std::endl;
     }
 }
 
@@ -148,7 +148,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_SHOOT: { // SHOOT
-                std::cout << "Shoot" << std::endl;
+                //std::cout << "Shoot" << std::endl;
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRETTY_DEBUG << "SHOOT Message\nEntity ID: " << id << "\n";
@@ -156,7 +156,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_SPAWN: { // SPAWN
-                std::cout << "Spawn" << std::endl;
+                //std::cout << "Spawn" << std::endl;
                 size_t id;
                 int asset;
                 float x, y;
@@ -172,7 +172,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_KILL: { // KILL
-                std::cout << "Kill" << std::endl;
+                //std::cout << "Kill" << std::endl;
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRETTY_DEBUG << "KILL Message\nEntity ID: " << id << "\n";
@@ -180,7 +180,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_DAMAGE: { // DAMAGE
-                std::cout << "Damage" << std::endl;
+                //std::cout << "Damage" << std::endl;
                 size_t id;
                 PRETTY_DEBUG << "DAMAGE Message\nEntity ID: " << id << "\n";
                 std::memcpy(&id, &message[1], sizeof(size_t));
@@ -188,7 +188,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_STATUS: { // STATUS
-                std::cout << "Status" << std::endl;
+                //std::cout << "Status" << std::endl;
                 uint8_t status = message[1];
                 PRETTY_DEBUG << "STATUS Message\nStatus: ";
                 if (status == 0x00) {
@@ -203,11 +203,11 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_HANDSHAKE: {
-                std::cout << "Handshake" << std::endl;
+                //std::cout << "Handshake" << std::endl;
                 PRETTY_DEBUG << "Handshake OK\n";
             }
         case MessageType::P_ERROR: { // ERROR
-                std::cout << "Error" << std::endl;
+                //std::cout << "Error" << std::endl;
                 uint8_t errorCode = message[1];
                 break;
             }
@@ -230,20 +230,20 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
 
     switch (message.type) {
         case MessageType::P_CONNECT: { // CONNECT
-                std::cout << "Connect" << std::endl;
+                //std::cout << "Connect" << std::endl;
                 serializedMessage.resize(10);
                 std::memcpy(serializedMessage.data() + 1, message.info.username, 8);
                 serializedMessage[9] = 0;
                 break;
             }
         case MessageType::P_DISCONNECT: { // DISCONNECT
-                std::cout << "Disconnect" << std::endl;
+                //std::cout << "Disconnect" << std::endl;
                 serializedMessage.resize(1 + sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
             }
         case MessageType::P_MOVE: { // MOVE
-                std::cout << "Move" << std::endl;
+                //std::cout << "Move" << std::endl;
                 serializedMessage.resize(1 + sizeof(size_t) + sizeof(float) * 2);
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
@@ -251,7 +251,7 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
                 break;
             }
         case MessageType::P_SHOOT: { // SHOOT
-                std::cout << "Shoot" << std::endl;
+                //std::cout << "Shoot" << std::endl;
                 serializedMessage.resize(1 + sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
@@ -298,7 +298,6 @@ void GUI::Network::NetworkManager::setPlayerName(const std::string &playerName)
 
 void GUI::Network::NetworkManager::setAddress(const std::string &ip, const unsigned int port)
 {
-    std::cerr << "Setting address" << std::endl;
     if (_ip == ip && _port == port) {
         return;
     }
@@ -326,7 +325,7 @@ void GUI::Network::NetworkManager::receiveMessage()
             );
 
             if (ec) {
-                std::cerr << "[Client] Receive error: " << ec.message() << "\n";
+                PRETTY_ERROR << "[Client] Receive error: " << ec.message() << "\n";
                 break;
             }
 
@@ -334,13 +333,13 @@ void GUI::Network::NetworkManager::receiveMessage()
                 std::vector<uint8_t> message(recvBuffer.begin(), recvBuffer.begin() + bytesRecv);
                 GUI::Network::MessageNode translatedMessage = translateMessage(message);
                 _bufferedMessages.push_back(translatedMessage);
-                std::cout << "[Client] Translated Message from " << remoteEndpoint << ":\n" << Recoded::myToString(translatedMessage) << "\n";
+                PRETTY_DEBUG << "[Client] Translated Message from " << remoteEndpoint << ":\n" << Recoded::myToString(translatedMessage) << "\n";
             }
         }
 
     }
     catch (const std::exception &e) {
-        std::cerr << "[Client] Exception in receiveMessage: " << e.what() << "\n";
+        PRETTY_CRITICAL << "[Client] Exception in receiveMessage: " << e.what() << "\n";
     }
 }
 
@@ -376,7 +375,11 @@ void GUI::Network::NetworkManager::_connect()
 
         asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
 
-        _socket.open(asio::ip::udp::v4());
+        asio::error_code ec;
+        _socket.open(asio::ip::udp::v4(), ec);
+        if (ec) {
+            std::cerr << "[CLIENT] can't open socket bc: " << ec.message() << std::endl;
+        }
         asio::ip::udp::endpoint localEndpoint(asio::ip::udp::v4(), 0);
         _socket.bind(localEndpoint);
 
@@ -388,14 +391,11 @@ void GUI::Network::NetworkManager::_connect()
         try {
             asio::ip::udp::endpoint remoteEndpoint(asio::ip::make_address(_ip), _port);
             _socket.send_to(asio::buffer(serializedData), remoteEndpoint);
-            std::cerr << "CONNECT packet sent to " << _ip << ":" << _port << std::endl;
-
+            _connectionActive = true;
         }
         catch (const std::exception &e) {
-            std::cerr << "Error sending CONNECT packet: " << e.what() << std::endl;
+            PRETTY_ERROR << "Error sending CONNECT packet: " << e.what() << std::endl;
         }
-
-        _connectionActive = true;
     }
     catch (const std::exception &e) {
         PRETTY_CRITICAL << "Error connecting to server: " << e.what() << std::endl;
@@ -408,13 +408,13 @@ void GUI::Network::NetworkManager::_disconnect()
     try {
         if (_socket.is_open()) {
             _socket.close();
-            std::cerr << "Disconnected from server at " << _ip << ":" << _port << std::endl;
+            PRECISE_DEBUG << "Disconnected from server at " << _ip << ":" << _port << std::endl;
         } else {
-            std::cerr << "Socket is already closed." << std::endl;
+            PRETTY_ERROR << "Socket is already closed." << std::endl;
         }
         _connectionActive = false;
     }
     catch (const std::exception &e) {
-        std::cerr << "Error disconnecting from server: " << e.what() << std::endl;
+        PRETTY_CRITICAL << "Error disconnecting from server: " << e.what() << std::endl;
     }
 }
