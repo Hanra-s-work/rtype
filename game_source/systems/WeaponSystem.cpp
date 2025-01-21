@@ -20,7 +20,7 @@ void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentCo
     }
 }
 
-void make_shot(Registry &r, size_t id)
+void make_shot(Registry &r, std::size_t id)
 {
     auto &weapons = r.get_components<Weapon>();
     if (weapons[id])

@@ -31,7 +31,7 @@ public:
     using value_type = std::tuple<it_reference_t<Containers>...>;
     using reference = value_type&; /**< Reference type for the value. */
     using pointer = void; /**< Pointer type (not applicable for this iterator). */
-    using difference_type = size_t; /**< Difference type for iterator arithmetic. */
+    using difference_type = std::size_t; /**< Difference type for iterator arithmetic. */
     using iterator_category = std::input_iterator_tag; /**< Iterator category. */
 
     /// Type alias for the tuple of iterators used in the zipped containers.
@@ -43,7 +43,7 @@ public:
      * @param it_tuple A tuple of iterators pointing to the current positions in the containers.
      * @param max The maximum number of elements to iterate over (determined by the smallest container size).
      */
-    ZipperIterator(iterator_tuple const& it_tuple, size_t max, size_t idx = 0) : _current(it_tuple), _max(max), _idx(idx) {}
+    ZipperIterator(iterator_tuple const& it_tuple, std::size_t max, std::size_t idx = 0) : _current(it_tuple), _max(max), _idx(idx) {}
 
     /**
      * @brief Copy constructor.
@@ -131,7 +131,7 @@ private:
      * 
      * @tparam Is Index sequence for accessing the iterators in the tuple.
      */
-    template <size_t... Is>
+    template <std::size_t... Is>
     void incr_all(std::index_sequence<Is...>) {
         (++std::get<Is>(_current), ...);
         ++_idx;
@@ -148,7 +148,7 @@ private:
      * @tparam Is Index sequence for accessing the iterators in the tuple.
      * @return `true` if all iterators are valid; otherwise `false`.
      */
-    template <size_t... Is>
+    template <std::size_t... Is>
     bool all_set(std::index_sequence<Is...>) {
         return (... && std::get<Is>(_current)[0].has_value());
     }
@@ -159,14 +159,14 @@ private:
      * @tparam Is Index sequence for accessing the iterators in the tuple.
      * @return A tuple containing references to the container elements at the current position.
      */
-    template <size_t... Is>
+    template <std::size_t... Is>
     value_type to_value(std::index_sequence<Is...>) {
         return std::tuple<it_reference_t<Containers>...>(*(std::get<Is>(_current))...);
     }
 
 private:
     iterator_tuple _current; /**< Tuple of iterators pointing to the current positions in the containers. */
-    size_t _max; /**< The maximum number of elements to iterate over (smallest container size). */
-    size_t _idx; /**< Current index in the iteration. */
+    std::size_t _max; /**< The maximum number of elements to iterate over (smallest container size). */
+    std::size_t _idx; /**< Current index in the iteration. */
     static constexpr std::index_sequence_for<Containers...> _seq{}; /**< Index sequence for accessing tuple elements. */
 };

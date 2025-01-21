@@ -16,7 +16,7 @@
  * @param x The new x-coordinate of the player's position.
  * @param y The new y-coordinate of the player's position.
  */
-void move_player(Registry &r, size_t id, float x, float y);
+void move_player(Registry &r, std::size_t id, float x, float y);
 
 /**
  * @brief Handles the movement of entities based on their velocity.

@@ -2,7 +2,7 @@
 #include "IndexedZipper.hpp"
 #include "Time.hpp"
 
-void move_player(Registry &r, size_t id, float x, float y)
+void move_player(Registry &r, std::size_t id, float x, float y)
 {
     auto &position = r.get_components<Position>();
 

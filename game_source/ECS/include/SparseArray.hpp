@@ -73,7 +73,7 @@ public:
      * @param idx The index to access.
      * @return A reference to the optional value at the specified index.
      */
-    reference_type operator[](size_t idx) {
+    reference_type operator[](std::size_t idx) {
         assert(idx < _data.size() && "Index out of bounds");
         return _data[idx];
     }
@@ -84,7 +84,7 @@ public:
      * @param idx The index to access.
      * @return A const reference to the optional value at the specified index.
      */
-    const_reference_type operator[](size_t idx) const {
+    const_reference_type operator[](std::size_t idx) const {
         assert(idx < _data.size() && "Index out of bounds");
         return _data[idx];
     }

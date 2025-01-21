@@ -34,7 +34,7 @@ bool validateAction(const GameMessage& event, Registry& r)
 
 bool performAction(const GameMessage& event, Registry& r)
 {
-    size_t id;
+    std::size_t id;
     switch (event.type)
     {
     case CONNECT:

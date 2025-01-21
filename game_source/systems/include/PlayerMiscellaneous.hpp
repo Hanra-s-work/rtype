@@ -11,4 +11,4 @@ class Registry;
  * @param client_id The Id of the player's client.
  * @return Id of the entity.
  */
-size_t getIdByClientId(Registry &r, const unsigned int client_id);
+std::size_t getIdByClientId(Registry &r, const unsigned int client_id);

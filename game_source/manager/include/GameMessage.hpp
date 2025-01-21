@@ -58,7 +58,7 @@ struct messageInfo {
  */
 struct GameMessage {
     messageType type;   ///< The type of message (e.g., SPAWN, MOVE, etc.).
-    size_t id;          ///< The unique identifier for the entity or object involved in the event.
+    std::size_t id;          ///< The unique identifier for the entity or object involved in the event.
     messageInfo msg;    ///< Additional information about the event (status, asset ID, and coordinates).
 };
 

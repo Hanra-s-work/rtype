@@ -25,4 +25,4 @@ void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentCo
  * @param r The `Registry` that contains all game entities and their components.
  * @param id The id of the entity.
  */
-void make_shot(Registry &r, size_t id);
+void make_shot(Registry &r, std::size_t id);
