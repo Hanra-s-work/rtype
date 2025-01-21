@@ -66,19 +66,11 @@ const std::vector<GUI::Network::MessageNode> GUI::Network::ThreadCapsule::getRec
 void GUI::Network::ThreadCapsule::setPort(const unsigned int port)
 {
     _port = port;
-    if (!isThreadAlive()) {
-        PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
-        _spawnChild();
-    }
 };
 
 void GUI::Network::ThreadCapsule::setIp(const std::string &ip)
 {
     _ip = ip;
-    if (!isThreadAlive()) {
-        PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
-        _spawnChild();
-    }
 };
 
 void GUI::Network::ThreadCapsule::setPlayerName(const std::string &name)
@@ -90,10 +82,6 @@ void GUI::Network::ThreadCapsule::setAddress(const std::string &ip, const unsign
 {
     _ip = ip;
     _port = port;
-    if (!isThreadAlive()) {
-        PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
-        _spawnChild();
-    }
 };
 
 
