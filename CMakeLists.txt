@@ -17,10 +17,18 @@ file(DOWNLOAD
 
 include(${CPM_PATH})
 
+if(WIN32)
+    add_definitions(-DWINDOWS)
+    add_definitions(-DWINVER=0x0A00)
+    add_definitions(-D_WIN32_WINNT=0x0A00)
+endif()
+
 # Adding sfml and asio libraries
 CPMAddPackage(NAME asio
     GITHUB_REPOSITORY chriskohlhoff/asio
-    GIT_TAG asio-1-32-0)
+    GIT_TAG asio-1-32-0
+)
+
 set(ASIO_INCLUDE_DIR ${asio_SOURCE_DIR}/asio/include)
 
 # Installing sfml 3.0.0
@@ -43,29 +51,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 add_subdirectory(gui)
 add_subdirectory(server)
 add_subdirectory(game_source)
-
-if(WIN32)
-    file(GLOB SFML_DLLS
-        "${SFML_BINARY_DIR}/lib/*.dll"
-        "${SFML_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}/*.dll"
-    )
-
-    add_custom_command(TARGET rtype-client POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${SFML_BINARY_DIR}/lib $<TARGET_FILE_DIR:rtype-client>)
-
-    if(EXISTS "${SFML_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}")
-        add_custom_command(TARGET rtype-client POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${SFML_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-            $<TARGET_FILE_DIR:rtype-client>)
-    endif()
-
-    add_custom_command(TARGET rtype-client POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_BINARY_DIR}/_deps/sfml-src/extlibs/bin/x64"
-        $<TARGET_FILE_DIR:rtype-client>)
-endif()
 
 # Secondary output directory: source folder
 set(SECONDARY_OUTPUT_DIR ${CMAKE_SOURCE_DIR})
