@@ -60,11 +60,13 @@ namespace GUI
 
             void _killChild();
 
-            mutable std::mutex _mutex;
             std::thread _childThread;                                           //!< Thread running the worker
+            unsigned int _port = 9000;                                          //!< The port on which to connect
+            mutable std::mutex _mutex;                                          //!< The mutex in charge of protecting the thread when being accessed
+            std::string _ip = "127.0.0.1";                                      //!< The ip on which to connect
+            std::string _playerName = "Player";                                 //!< The name of the player
             std::atomic<bool> _childAlive = false;                              //!< Thread state
             std::shared_ptr<NetworkManager> _childNode;                         //!< The worker
-            std::string _playerName = "Player";                                 //!< The name of the player
         };
     }
 }

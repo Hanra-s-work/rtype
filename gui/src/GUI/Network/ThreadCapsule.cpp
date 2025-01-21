@@ -65,22 +65,20 @@ const std::vector<GUI::Network::MessageNode> GUI::Network::ThreadCapsule::getRec
 
 void GUI::Network::ThreadCapsule::setPort(const unsigned int port)
 {
+    _port = port;
     if (!isThreadAlive()) {
         PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
         _spawnChild();
     }
-    _childNode->setPlayerName(_playerName);
-    _childNode->setPort(port);
 };
 
 void GUI::Network::ThreadCapsule::setIp(const std::string &ip)
 {
+    _ip = ip;
     if (!isThreadAlive()) {
         PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
         _spawnChild();
     }
-    _childNode->setPlayerName(_playerName);
-    _childNode->setIp(ip);
 };
 
 void GUI::Network::ThreadCapsule::setPlayerName(const std::string &name)
@@ -90,12 +88,12 @@ void GUI::Network::ThreadCapsule::setPlayerName(const std::string &name)
 
 void GUI::Network::ThreadCapsule::setAddress(const std::string &ip, const unsigned int port)
 {
+    _ip = ip;
+    _port = port;
     if (!isThreadAlive()) {
         PRETTY_INFO << "There is no thread started, starting the thread" << std::endl;
         _spawnChild();
     }
-    _childNode->setPlayerName(_playerName);
-    _childNode->setAddress(ip, port);
 };
 
 
@@ -148,6 +146,8 @@ void GUI::Network::ThreadCapsule::_spawnChild()
     _childAlive = true;
     try {
         _childNode = std::make_shared<NetworkManager>(getEntityNodeId());
+        _childNode->setPlayerName(_playerName);
+        _childNode->setAddress(_ip, _port);
         _childNode->initialize();
         _childNode->startReceivingMessages();
         _childThread = std::thread(&NetworkManager::receiveMessage, _childNode);
