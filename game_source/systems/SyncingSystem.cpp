@@ -30,6 +30,7 @@ std::vector<GameMessage> syncGameState(Registry &r)
         }
 
         // done
+        state.push_back(msg);
     }
     return state;
 }

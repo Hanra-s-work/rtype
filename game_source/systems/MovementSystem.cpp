@@ -5,6 +5,7 @@
 void move_player(Registry &r, std::size_t id, float x, float y)
 {
     auto &position = r.get_components<Position>();
+    if (position.size() <= id) return;
 
     position[id]->X = x;
     position[id]->Y = y;

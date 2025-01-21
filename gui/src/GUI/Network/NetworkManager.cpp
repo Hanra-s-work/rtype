@@ -129,18 +129,18 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_DISCONNECT: { // DISCONNECT
-                size_t id;
-                std::memcpy(&id, &message[1], sizeof(size_t));
+                std::size_t id;
+                std::memcpy(&id, &message[1], sizeof(std::size_t));
                 PRECISE_DEBUG << "DISCONNECT Message\nEntity ID: " << id << "\n";
                 result.id = id;
                 break;
             }
         case MessageType::P_MOVE: { // MOVE
-                size_t id;
+                std::size_t id;
                 float x, y;
-                std::memcpy(&id, &message[1], sizeof(size_t));
-                x = bytesToFloat(&message[1 + sizeof(size_t)]);
-                y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(float)]);
+                std::memcpy(&id, &message[1], sizeof(std::size_t));
+                x = bytesToFloat(&message[1 + sizeof(std::size_t)]);
+                y = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(float)]);
                 PRETTY_DEBUG << "MOVE Message\nEntity ID: " << id << "\nPosition: (" << x << ", " << y << ")\n";
                 result.id = id;
                 result.info.coords.first = x;
@@ -149,21 +149,21 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
             }
         case MessageType::P_SHOOT: { // SHOOT
                 //std::cout << "Shoot" << std::endl;
-                size_t id;
-                std::memcpy(&id, &message[1], sizeof(size_t));
+                std::size_t id;
+                std::memcpy(&id, &message[1], sizeof(std::size_t));
                 PRETTY_DEBUG << "SHOOT Message\nEntity ID: " << id << "\n";
                 result.id = id;
                 break;
             }
         case MessageType::P_SPAWN: { // SPAWN
                 //std::cout << "Spawn" << std::endl;
-                size_t id;
+                std::size_t id;
                 int asset;
                 float x, y;
-                std::memcpy(&id, &message[1], sizeof(size_t));
-                std::memcpy(&asset, &message[1 + sizeof(size_t)], sizeof(short));
-                x = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short)]);
-                y = bytesToFloat(&message[1 + sizeof(size_t) + sizeof(short) + sizeof(float)]);
+                std::memcpy(&id, &message[1], sizeof(std::size_t));
+                std::memcpy(&asset, &message[1 + sizeof(std::size_t)], sizeof(short));
+                x = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(short)]);
+                y = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(short) + sizeof(float)]);
                 PRETTY_CRITICAL << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
                 result.id = id;
                 result.info.assetId = asset;
@@ -173,17 +173,17 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
             }
         case MessageType::P_KILL: { // KILL
                 //std::cout << "Kill" << std::endl;
-                size_t id;
-                std::memcpy(&id, &message[1], sizeof(size_t));
+                std::size_t id;
+                std::memcpy(&id, &message[1], sizeof(std::size_t));
                 PRETTY_DEBUG << "KILL Message\nEntity ID: " << id << "\n";
                 result.id = id;
                 break;
             }
         case MessageType::P_DAMAGE: { // DAMAGE
                 //std::cout << "Damage" << std::endl;
-                size_t id;
+                std::size_t id;
                 PRETTY_DEBUG << "DAMAGE Message\nEntity ID: " << id << "\n";
-                std::memcpy(&id, &message[1], sizeof(size_t));
+                std::memcpy(&id, &message[1], sizeof(std::size_t));
                 result.id = id;
                 break;
             }
@@ -238,22 +238,22 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
             }
         case MessageType::P_DISCONNECT: { // DISCONNECT
                 //std::cout << "Disconnect" << std::endl;
-                serializedMessage.resize(1 + sizeof(size_t));
-                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
+                serializedMessage.resize(1 + sizeof(std::size_t));
+                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(std::size_t));
                 break;
             }
         case MessageType::P_MOVE: { // MOVE
                 //std::cout << "Move" << std::endl;
-                serializedMessage.resize(1 + sizeof(size_t) + sizeof(float) * 2);
-                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
-                std::memcpy(serializedMessage.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
-                std::memcpy(serializedMessage.data() + 1 + sizeof(size_t) + sizeof(float), &message.info.coords.second, sizeof(float));
+                serializedMessage.resize(1 + sizeof(std::size_t) + sizeof(float) * 2);
+                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(std::size_t));
+                std::memcpy(serializedMessage.data() + 1 + sizeof(std::size_t), &message.info.coords.first, sizeof(float));
+                std::memcpy(serializedMessage.data() + 1 + sizeof(std::size_t) + sizeof(float), &message.info.coords.second, sizeof(float));
                 break;
             }
         case MessageType::P_SHOOT: { // SHOOT
                 //std::cout << "Shoot" << std::endl;
-                serializedMessage.resize(1 + sizeof(size_t));
-                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
+                serializedMessage.resize(1 + sizeof(std::size_t));
+                std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(std::size_t));
                 break;
             }
         default:

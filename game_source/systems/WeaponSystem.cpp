@@ -23,6 +23,8 @@ void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentCo
 void make_shot(Registry &r, std::size_t id)
 {
     auto &weapons = r.get_components<Weapon>();
+    if (weapons.size() <= id) return;
+
     if (weapons[id])
         weapons[id]->shot = true;
 }
