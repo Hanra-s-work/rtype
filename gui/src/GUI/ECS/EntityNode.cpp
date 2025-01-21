@@ -13,9 +13,9 @@
 
 #include "GUI/ECS/EntityNode.hpp"
 
-GUI::ECS::EntityNode::EntityNode(const std::uint32_t entityId) : _entityID(entityId) {};
+GUI::ECS::EntityNode::EntityNode(const size_t entityId) : _entityID(entityId) {};
 
-std::uint32_t GUI::ECS::EntityNode::getEntityNodeId() const
+size_t GUI::ECS::EntityNode::getEntityNodeId() const
 {
     return _entityID;
 }

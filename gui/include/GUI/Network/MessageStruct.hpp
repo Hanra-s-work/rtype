@@ -25,7 +25,7 @@ namespace GUI
 
         struct MessageNode {
             MessageType type;
-            std::size_t id;
+            size_t id;
             MessageInfo info;
         };
     }

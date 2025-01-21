@@ -261,7 +261,26 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
         _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_activeEnemies));
     }
     PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;
+
+    PRETTY_DEBUG << "Ticking all entities.";
+    tick_all();
 };
+
+void GUI::ECS::Online::Orchestrator::tick_all()
+{
+    for (std::size_t i = 0; i < _playerBrain.size(); i++) {
+        _playerBrain[i]->tick();
+    }
+    for (std::size_t i = 0; i < _enemyBrain.size(); i++) {
+        _enemyBrain[i]->tick();
+    }
+    for (std::size_t i = 0; i < _enemyBullets.size(); i++) {
+        _enemyBullets[i].tick();
+    }
+    for (std::size_t i = 0; i < _playerBullets.size(); i++) {
+        _playerBullets[i].tick();
+    }
+}
 
 void GUI::ECS::Online::Orchestrator::render()
 {

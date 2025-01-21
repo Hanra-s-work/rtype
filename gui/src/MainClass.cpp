@@ -360,6 +360,7 @@ void Main::_initialiseConnection()
 {
     std::string address = _ip + ":" + std::to_string(_port);
     PRETTY_DEBUG << "Connecting to the server at " << address << std::endl;
+    _networkManager->initialize();
     _networkManager->setAddress(_ip, _port);
     _networkManager->startGame();
     _connectionInitialised = _networkManager->isConnected();
@@ -5089,13 +5090,13 @@ void Main::_mainLoop()
     _updateLoadingText("All the ressources have been loaded.");
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
-    PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
-    if (!_networkManager->isThreadAlive()) {
-        PRETTY_DEBUG << "Initialising network thread" << std::endl;
-        _networkManager->initialize();
-        PRETTY_DEBUG << "Initialised network thread" << std::endl;
-    }
-    PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
+    // PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
+    // if (!_networkManager->isThreadAlive()) {
+    //     PRETTY_DEBUG << "Initialising network thread" << std::endl;
+    //     _networkManager->initialize();
+    //     PRETTY_DEBUG << "Initialised network thread" << std::endl;
+    // }
+    // PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
 
     setActiveScreen(ActiveScreen::MENU);
 
