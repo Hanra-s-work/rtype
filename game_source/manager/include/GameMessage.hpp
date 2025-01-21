@@ -12,18 +12,18 @@
  * like spawning, movement, damage, and status updates.
  */
 enum messageType : uint8_t {
-    EMPTY,
-    CONNECT,     ///< Represents a connecting player event.
-    DISCONNECT,  ///< Represents a disconnecting player event.
-    MOVE,        ///< Represents a movement event.
-    SHOOT,       ///< Represents a player shooting event
-    SPAWN,       ///< Represents a spawn event.
-    KILL,        ///< Represents a kill event.
-    DAMAGE,      ///< Represents a damage event.
-    HEAL,        ///< Represents a healing event.
-    BUFF,        ///< Represents a buff event.
-    STATUS,      ///< Represents a status event.
-    ERROR = 0xFF ///< Represents an error occurred.
+    P_EMPTY,
+    P_CONNECT,     ///< Represents a connecting player event.
+    P_DISCONNECT,  ///< Represents a disconnecting player event.
+    P_MOVE,        ///< Represents a movement event.
+    P_SHOOT,       ///< Represents a player shooting event
+    P_SPAWN,       ///< Represents a spawn event.
+    P_KILL,        ///< Represents a kill event.
+    P_DAMAGE,      ///< Represents a damage event.
+    P_HEAL,        ///< Represents a healing event.
+    P_BUFF,        ///< Represents a buff event.
+    P_STATUS,      ///< Represents a status event.
+    P_ERROR = 0xFF ///< Represents an error occurred.
 };
 
 /**

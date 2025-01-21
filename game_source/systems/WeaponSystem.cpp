@@ -13,7 +13,7 @@ void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentCo
         
         if (weapon->shot && weapon->cooldown <= 0) {
             spawn_missile(r, position->X, position->Y, type->type);
-            r.dispatcher->notify({SHOOT, idx, {0, 0, 0, "", {position->X, position->Y}}});
+            r.dispatcher->notify({P_SHOOT, idx, {0, 0, 0, "", {position->X, position->Y}}});
             weapon->cooldown = 1.0f / weapon->fire_rate;
             weapon->shot = false;
         }

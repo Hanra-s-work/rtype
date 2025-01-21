@@ -10,7 +10,7 @@ void lifetime_system(Registry &r, ComponentContainer<Lifetime> &lifetimes)
         lif->time_left -= Time::deltaTime;
         if (lif->time_left <= 0.f){
             r.kill_entity(Entity(idx));
-            r.dispatcher->notify({messageType::KILL, idx, {0, 0, 0, "", {0, 0}}});
+            r.dispatcher->notify({messageType::P_KILL, idx, {0, 0, 0, "", {0, 0}}});
         }
     }
 }

@@ -37,18 +37,18 @@ bool performAction(const GameMessage& event, Registry& r)
     std::size_t id;
     switch (event.type)
     {
-    case CONNECT:
+    case P_CONNECT:
         spawn_player(r, 120, 540, event.msg.cli_id, event.msg.username);
         break;
-    case DISCONNECT:
+    case P_DISCONNECT:
         id = getIdByClientId(r, event.msg.cli_id);
         r.kill_entity(Entity(id));
         //notify death
         break;
-    case MOVE:
+    case P_MOVE:
         move_player(r, event.id, event.msg.coords.x, event.msg.coords.y);
         break;
-    case SHOOT:
+    case P_SHOOT:
         make_shot(r, event.id);
         break;
     default:

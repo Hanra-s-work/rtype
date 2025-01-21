@@ -9,22 +9,22 @@ inline void printMessage(GameMessage &msg)
 {
     switch (msg.type)
     {
-    case MOVE:
+    case P_MOVE:
         std::cout << "MOVE " << msg.id << " " << msg.msg.coords.x << " " << msg.msg.coords.y;
         break;
-    case SHOOT:
+    case P_SHOOT:
         std::cout << "SHOOT " << msg.id;
         break;
-    case SPAWN:
+    case P_SPAWN:
         std::cout << "SPAWN " << msg.id << " " << msg.msg.asset_id << " " << msg.msg.coords.x << " " << msg.msg.coords.y;
         break;
-    case KILL:
+    case P_KILL:
         std::cout << "KILL " << msg.id;
         break;
-    case DAMAGE:
+    case P_DAMAGE:
         std::cout << "MOVE " << msg.id;
         break;
-    case STATUS:
+    case P_STATUS:
         std::cout << "STATUS ";
         switch (msg.msg.status)
         {
@@ -182,7 +182,7 @@ int test_get_game_event(void)
 
 int test_send_msg(void)
 {
-    GameMessage msg = {messageType::CONNECT, 0, {0, 0, 0, "Player1", {0, 0}}};
+    GameMessage msg = {messageType::P_CONNECT, 0, {0, 0, 0, "Player1", {0, 0}}};
     std::ostringstream oss;
     std::string s;
     try {
@@ -209,8 +209,8 @@ int test_send_msg(void)
 
 int test_stress(void)
 {
-    GameMessage msg1 = {messageType::CONNECT, 0, {0, 0, 0, "Player1", {0, 0}}};
-    GameMessage msg2 = {messageType::CONNECT, 0, {0, 0, 1, "Player2", {0, 0}}};
+    GameMessage msg1 = {messageType::P_CONNECT, 0, {0, 0, 0, "Player1", {0, 0}}};
+    GameMessage msg2 = {messageType::P_CONNECT, 0, {0, 0, 1, "Player2", {0, 0}}};
     try {
         Game newGame;
         std::ostringstream oss;
