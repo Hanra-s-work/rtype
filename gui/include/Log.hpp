@@ -18,7 +18,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
-#include <unistd.h>
+// #include <unistd.h>
 #include "Utilities/OperatorRebind.hpp"
 
 namespace Logging
@@ -188,6 +188,7 @@ namespace Logging
      */
     inline bool isRedirected()
     {
-        return !isatty(fileno(stdout));
+        // return !isatty(fileno(stdout));
+        return false;
     }
 }
