@@ -94,6 +94,7 @@ void Server::sendToClient(uint32_t clientId, const Message &msg)
 
 
     // 4) async_send
+    // std::cout << "Sending message" << std::endl;
     socket_.async_send_to(
         asio::buffer(buffer),
         ep,

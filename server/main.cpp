@@ -6,7 +6,8 @@
  * @file main.cpp
  * @brief Entry point for the R-Type server application.
  */
-int main() {
+int main()
+{
     try {
         asio::io_context io_context;
 
@@ -20,7 +21,7 @@ int main() {
         for (unsigned i = 0; i < numThreads; ++i) {
             threadPool.emplace_back([&io_context]() {
                 io_context.run();
-            });
+                });
         }
 
         bool running = true;
@@ -39,7 +40,7 @@ int main() {
                 // Sleep ~16ms => ~60 FPS
                 std::this_thread::sleep_for(std::chrono::milliseconds(16));
             }
-        });
+            });
 
         std::cout << "[Server] Listening on 0.0.0.0:9000 (UDP)\n";
         std::cout << "[Server] Press ENTER to quit.\n";
@@ -55,7 +56,8 @@ int main() {
             gameLoopThread.join();
         }
 
-    } catch (std::exception& e) {
+    }
+    catch (std::exception &e) {
         std::cerr << "[Server] Exception: " << e.what() << "\n";
     }
 
