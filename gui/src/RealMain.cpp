@@ -12,7 +12,6 @@
  */
 
 #include "RealMain.hpp"
-#include "LogMacros.hpp"
 
  /**
  * @brief Extracts the flag and value from a command-line argument.
