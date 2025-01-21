@@ -148,6 +148,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_SHOOT: { // SHOOT
+                std::cout << "Shoot" << std::endl;
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRETTY_DEBUG << "SHOOT Message\nEntity ID: " << id << "\n";
@@ -155,6 +156,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_SPAWN: { // SPAWN
+                std::cout << "Spawn" << std::endl;
                 size_t id;
                 int asset;
                 float x, y;
@@ -170,6 +172,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_KILL: { // KILL
+                std::cout << "Kill" << std::endl;
                 size_t id;
                 std::memcpy(&id, &message[1], sizeof(size_t));
                 PRETTY_DEBUG << "KILL Message\nEntity ID: " << id << "\n";
@@ -177,6 +180,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_DAMAGE: { // DAMAGE
+                std::cout << "Damage" << std::endl;
                 size_t id;
                 PRETTY_DEBUG << "DAMAGE Message\nEntity ID: " << id << "\n";
                 std::memcpy(&id, &message[1], sizeof(size_t));
@@ -184,6 +188,7 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_STATUS: { // STATUS
+                std::cout << "Status" << std::endl;
                 uint8_t status = message[1];
                 PRETTY_DEBUG << "STATUS Message\nStatus: ";
                 if (status == 0x00) {
@@ -198,9 +203,11 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 break;
             }
         case MessageType::P_HANDSHAKE: {
+                std::cout << "Handshake" << std::endl;
                 PRETTY_DEBUG << "Handshake OK\n";
             }
         case MessageType::P_ERROR: { // ERROR
+                std::cout << "Error" << std::endl;
                 uint8_t errorCode = message[1];
                 break;
             }
@@ -223,17 +230,20 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
 
     switch (message.type) {
         case MessageType::P_CONNECT: { // CONNECT
+                std::cout << "Connect" << std::endl;
                 serializedMessage.resize(10);
                 std::memcpy(serializedMessage.data() + 1, message.info.username, 8);
                 serializedMessage[9] = 0;
                 break;
             }
         case MessageType::P_DISCONNECT: { // DISCONNECT
+                std::cout << "Disconnect" << std::endl;
                 serializedMessage.resize(1 + sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
             }
         case MessageType::P_MOVE: { // MOVE
+                std::cout << "Move" << std::endl;
                 serializedMessage.resize(1 + sizeof(size_t) + sizeof(float) * 2);
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1 + sizeof(size_t), &message.info.coords.first, sizeof(float));
@@ -241,6 +251,7 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
                 break;
             }
         case MessageType::P_SHOOT: { // SHOOT
+                std::cout << "Shoot" << std::endl;
                 serializedMessage.resize(1 + sizeof(size_t));
                 std::memcpy(serializedMessage.data() + 1, &message.id, sizeof(size_t));
                 break;
@@ -256,7 +267,7 @@ std::string GUI::Network::NetworkManager::convertMessageToString(const GUI::Netw
 
 void GUI::Network::NetworkManager::setPort(const unsigned int port)
 {
-    //std::cerr << "In the set Port" << std::endl;
+    PRETTY_DEBUG << "In the set Port" << std::endl;
     if (_port == port) {
         return;
     };
@@ -267,7 +278,7 @@ void GUI::Network::NetworkManager::setPort(const unsigned int port)
 
 void GUI::Network::NetworkManager::setIp(const std::string &ip)
 {
-    //std::cerr << "In the set ip" << std::endl;
+    PRETTY_DEBUG << "In the set ip" << std::endl;
     if (_ip == ip) {
         return;
     };
