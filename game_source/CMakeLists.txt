@@ -26,6 +26,7 @@ set(SOURCES
     systems/SyncingSystem.cpp
     systems/Systems.cpp
     systems/WeaponSystem.cpp
+    systems/WinSystem.cpp
 )
 
 # Static library
