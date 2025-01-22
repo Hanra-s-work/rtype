@@ -38,12 +38,12 @@ bool performAction(const GameMessage& event, Registry& r)
     switch (event.type)
     {
     case P_CONNECT:
-        spawn_player(r, 120, 540, event.msg.cli_id, event.msg.username);
+        spawn_player(r, 120.f, 540.f, event.msg.cli_id, event.msg.username);
         break;
     case P_DISCONNECT:
         id = getIdByClientId(r, event.msg.cli_id);
         r.kill_entity(Entity(id));
-        //notify death
+        r.dispatcher->notify({P_KILL, id, { 0, 0, 0, "", {0, 0} }});
         break;
     case P_MOVE:
         move_player(r, event.id, event.msg.coords.x, event.msg.coords.y);
