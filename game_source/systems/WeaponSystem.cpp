@@ -9,12 +9,22 @@ void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentCo
         if (!weapon) continue;
 
         weapon->cooldown -= Time::deltaTime;
-        if (type->type != type_enum::MONSTER) continue;
+         if (type->type == type_enum::MONSTER && !weapon->shot) weapon->shot = true;
         
-        if (weapon->cooldown <= 0) {
+        if (weapon->shot && weapon->cooldown <= 0) {
             spawn_missile(r, position->X, position->Y, type->type);
-            r.dispatcher->notify({SHOOT, idx, {0, 0, 0, "", {position->X, position->Y}}});
+            r.dispatcher->notify({P_SHOOT, idx, {0, 0, 0, "", {position->X, position->Y}}});
             weapon->cooldown = 1.0f / weapon->fire_rate;
+            weapon->shot = false;
         }
     }
+}
+
+void make_shot(Registry &r, std::size_t id)
+{
+    auto &weapons = r.get_components<Weapon>();
+    if (weapons.size() <= id) return;
+
+    if (weapons[id])
+        weapons[id]->shot = true;
 }

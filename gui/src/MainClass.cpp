@@ -360,13 +360,15 @@ void Main::_initialiseConnection()
 {
     std::string address = _ip + ":" + std::to_string(_port);
     PRETTY_DEBUG << "Connecting to the server at " << address << std::endl;
+    _networkManager->initialize();
     _networkManager->setAddress(_ip, _port);
     _networkManager->startGame();
-    // if (_networkManager->isConnected()) {
-    //     PRETTY_SUCCESS << "We are connected to the server" << std::endl;
-    // } else {
-    //     PRETTY_WARNING << "We are not connected to the server" << std::endl;
-    // }
+    _connectionInitialised = _networkManager->isConnected();
+    if (_connectionInitialised) {
+        PRETTY_SUCCESS << "We are connected to the server" << std::endl;
+    } else {
+        PRETTY_WARNING << "We are not connected to the server" << std::endl;
+    }
 }
 
 /**
@@ -376,6 +378,7 @@ void Main::_initialiseConnection()
 void Main::_closeConnection()
 {
     _networkManager->stopThread();
+    _connectionInitialised = _networkManager->isConnected();
 }
 
 /**
@@ -1764,8 +1767,7 @@ void Main::_gameScreen()
         _onlineBrain.reset();
         _onlineBrain.stop();
         _onlineStarted = false;
-        _connectionInitialised = false;
-        _networkManager->stopThread();
+        _closeConnection();
         _goHome();
         return;
     }
@@ -1775,8 +1777,7 @@ void Main::_gameScreen()
         _onlineBrain.reset();
         _onlineBrain.stop();
         _onlineStarted = false;
-        _connectionInitialised = false;
-        _networkManager->stopThread();
+        _closeConnection();
         PRETTY_DEBUG << "The online has been reset" << std::endl;
         PRETTY_DEBUG << "The user has lost, going to the game over screen" << std::endl;
         _goGameOver();
@@ -1789,8 +1790,7 @@ void Main::_gameScreen()
         _onlineBrain.reset();
         _onlineBrain.stop();
         _onlineStarted = false;
-        _connectionInitialised = false;
-        _networkManager->stopThread();
+        _closeConnection();
         PRETTY_DEBUG << "The online has been reset" << std::endl;
         PRETTY_DEBUG << "The user has won, going to the game won screen" << std::endl;
         _goGameWon();
@@ -1802,7 +1802,7 @@ void Main::_gameScreen()
         PRETTY_INFO << "Initialising the connection with the server" << std::endl;
         _initialiseConnection();
         PRETTY_SUCCESS << "Connection with ther server initialised" << std::endl;
-        _connectionInitialised = true;
+        _connectionInitialised = _networkManager->isConnected();
     }
 
     PRETTY_DEBUG << "Ticking the online brain" << std::endl;
@@ -4533,13 +4533,14 @@ void Main::_goConnect()
     PRETTY_DEBUG << "Current address: " << _ip << ":" << Recoded::myToString(_port) << std::endl;
     PRETTY_DEBUG << "Attempting to connect" << std::endl;
     _initialiseConnection();
+    _connectionInitialised = _networkManager->isConnected();
     PRETTY_DEBUG << "Checking if we are connected" << std::endl;
-    if (/*!_networkManager->isConnected()*/false) {
-        PRETTY_DEBUG << "We are not connected" << std::endl;
-        _goConnectionFailed();
-    } else {
+    if (_connectionInitialised) {
         PRETTY_DEBUG << "We are connected" << std::endl;
         _goPlay();
+    } else {
+        PRETTY_DEBUG << "We are not connected" << std::endl;
+        _goConnectionFailed();
     }
 };
 
@@ -5089,13 +5090,13 @@ void Main::_mainLoop()
     _updateLoadingText("All the ressources have been loaded.");
     PRETTY_INFO << "Updated loading text to 'All the ressources have been loaded'." << std::endl;
 
-    PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
-    if (!_networkManager->isThreadAlive()) {
-        PRETTY_DEBUG << "Initialising network thread" << std::endl;
-        _networkManager->initialize();
-        PRETTY_DEBUG << "Initialised network thread" << std::endl;
-    }
-    PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
+    // PRETTY_DEBUG << "Checking if the network thread is initialised" << std::endl;
+    // if (!_networkManager->isThreadAlive()) {
+    //     PRETTY_DEBUG << "Initialising network thread" << std::endl;
+    //     _networkManager->initialize();
+    //     PRETTY_DEBUG << "Initialised network thread" << std::endl;
+    // }
+    // PRETTY_DEBUG << "Checked if the network thread is initialised" << std::endl;
 
     setActiveScreen(ActiveScreen::MENU);
 

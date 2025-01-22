@@ -13,7 +13,7 @@ std::vector<GameMessage> syncGameState(Registry &r)
 
         // need to spawn
         GameMessage msg;
-        msg.type = SPAWN;
+        msg.type = P_SPAWN;
         msg.id = idx;
 
         // get position
@@ -30,6 +30,7 @@ std::vector<GameMessage> syncGameState(Registry &r)
         }
 
         // done
+        state.push_back(msg);
     }
     return state;
 }

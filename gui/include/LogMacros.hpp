@@ -105,7 +105,7 @@
         #if defined(__GNUG__) || defined(__GNUC__) || defined(__GNUC_MINOR__) || defined(__GNUC_PATCHLEVEL__)
             #define _FUNC_NAME __PRETTY_FUNCTION__
         #else
-            #define _FUNC_NAME __PRETTY_FUNCTION__ << '(' << __func__ << ')' 
+            #define _FUNC_NAME "Function name: (" << __func__ << ')' 
         #endif
     #endif
 

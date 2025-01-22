@@ -272,11 +272,11 @@ void process_arguments(Main &main, int argc, char **argv)
  * @param argc The number of command-line arguments.
  * @param argv The array of command-line arguments as C-style strings.
  *
- * @return An integer status code: SUCCESS (0) on successful execution, ERROR (non-zero) on failure.
+ * @return An integer status code: MY_SUCCESS (0) on successful execution, MY_ERROR (non-zero) on failure.
  */
 int RealMain(int argc, char **argv)
 {
-    int status = SUCCESS;
+    int status = MY_SUCCESS;
     bool help_found = false;
     bool version_found = false;
 
@@ -287,23 +287,23 @@ int RealMain(int argc, char **argv)
             process_arguments(MyMain, argc, argv);
         }
         catch (const CustomExceptions::HelpFound &e) {
-            status = SUCCESS;
+            status = MY_SUCCESS;
             help_found = true;
             PRETTY_SUCCESS << "Help was found: '" << e.what() << "'." << std::endl;
         }
         catch (const CustomExceptions::VersionFound &e) {
-            status = SUCCESS;
+            status = MY_SUCCESS;
             version_found = true;
             PRETTY_SUCCESS << "Version was found: '" << e.what() << "'." << std::endl;
         }
         catch (const std::exception &e) {
-            status = ERROR;
+            status = MY_ERROR;
             PRETTY_CRITICAL << "An error occurred: '" << e.what() << "'." << std::endl;
             std::cerr << "An error occurred: '" << e.what() << "'." << std::endl;
         }
     }
 
-    if (help_found || version_found || status == ERROR) {
+    if (help_found || version_found || status == MY_ERROR) {
         PRETTY_INFO << "The program exited with status: " << status << std::endl;
         std::cout << RESET_COL << std::endl;
         return status;
@@ -316,7 +316,7 @@ int RealMain(int argc, char **argv)
         std::cerr << e.what() << std::endl;
         PRETTY_CRITICAL << "Failed to load the config file, aborting program." << std::endl;
         std::cout << RESET_COL << std::endl;
-        return ERROR;
+        return MY_ERROR;
     }
 
     try {
@@ -324,7 +324,7 @@ int RealMain(int argc, char **argv)
     }
     catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
-        status = ERROR;
+        status = MY_ERROR;
     }
     PRETTY_INFO << "Exit status : '" << status << "'." << std::endl;
     std::cout << RESET_COL << std::endl;

@@ -178,7 +178,7 @@ public:
      * @param idx The index of the entity.
      * @return The entity corresponding to the given index.
      */
-    Entity entity_from_index(size_t idx) const;
+    Entity entity_from_index(std::size_t idx) const;
 
     /**
      * @brief Deletes an entity and removes all its components.
@@ -193,8 +193,8 @@ public:
 
 private:
     std::unordered_map<std::type_index, std::any> _components; /**< Stores component containers indexed by type. */
-    size_t _next_entity_id; /**< The ID for the next entity to be created. */
-    std::vector<size_t> _entities; /**< A list of active entity IDs. */
+    std::size_t _next_entity_id; /**< The ID for the next entity to be created. */
+    std::vector<std::size_t> _entities; /**< A list of active entity IDs. */
     std::unordered_map<std::type_index, eraseFunc> _erase_functions; /**< Maps component types to their erase functions. */
     std::vector<std::function<void()>> _systems; /**< A list of system functions to execute. */
 };

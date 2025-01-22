@@ -55,7 +55,7 @@ private:
      * @param containers The containers to compute the size from.
      * @return The size of the smallest container.
      */
-    static size_t _compute_size(Containers&... containers) {
+    static std::size_t _compute_size(Containers&... containers) {
         return std::min({containers.size()...});
     }
 
@@ -82,5 +82,5 @@ private:
 private:
     iterator_t _begin; /**< Tuple of iterators pointing to the beginning of the containers. */
     iterator_t _end; /**< Tuple of iterators pointing to the end of the containers. */
-    size_t _size; /**< The minimum size of the containers being zipped. */
+    std::size_t _size; /**< The minimum size of the containers being zipped. */
 };

@@ -16,7 +16,7 @@ public:
      * 
      * @param id The unique identifier for the entity.
      */
-    explicit Entity(size_t id);
+    explicit Entity(std::size_t id);
 
     /**
      * @brief Implicit conversion operator to `size_t`.
@@ -25,15 +25,15 @@ public:
      * 
      * @return The unique ID of the entity.
      */
-    operator size_t() const;
+    operator std::size_t() const;
 
     /**
      * @brief Retrieves the ID of the entity.
      * 
      * @return The unique identifier of the entity.
      */
-    size_t getID() const;
+    std::size_t getID() const;
 
 private:
-    size_t _id; /**< The unique identifier for the entity. */
+    std::size_t _id; /**< The unique identifier for the entity. */
 };

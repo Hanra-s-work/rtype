@@ -50,7 +50,7 @@ namespace GUI
              * @param type The type of message for the packet (default is `ERROR`).
              * @param payload The data to be included in the packet as the payload (optional, defaults to empty).
              */
-            Packet(MessageType type = MessageType::ERROR, const std::vector<uint8_t> &payload = {});
+            Packet(MessageType type = MessageType::P_ERROR, const std::vector<uint8_t> &payload = {});
             /**
              * @brief Destructor for the `Packet` class.
              *

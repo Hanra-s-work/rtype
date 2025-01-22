@@ -178,13 +178,13 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
     for (const GUI::Network::MessageNode &packet : packets) {
         PRETTY_DEBUG << "Packet received: " << Recoded::myToString(packet) << std::endl;
         switch (packet.type) {
-            case GUI::Network::MessageType::MOVE:
+            case GUI::Network::MessageType::P_MOVE:
                 _setPosition(packet.id, packet.info.coords);
                 break;
-            case GUI::Network::MessageType::SHOOT:
+            case GUI::Network::MessageType::P_SHOOT:
                 /* animation */
                 break;
-            case GUI::Network::MessageType::SPAWN:
+            case GUI::Network::MessageType::P_SPAWN:
                 if (packet.info.assetId == static_cast<int>(GUI::ECS::GameComponents::EntityType::ENEMY)) {
                     _spawnEnemy(packet.id, packet.info.coords);
                 } else if (packet.info.assetId == static_cast<int>(GUI::ECS::GameComponents::EntityType::PLAYER)) {
@@ -195,10 +195,10 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
                     _spawnFriendBullet(packet.id, packet.info.coords);
                 }
                 break;
-            case GUI::Network::MessageType::KILL:
+            case GUI::Network::MessageType::P_KILL:
                 _killEntity(packet.id);
                 break;
-            case GUI::Network::MessageType::DAMAGE:
+            case GUI::Network::MessageType::P_DAMAGE:
                 /* animation */
                 break;
             default:
@@ -231,7 +231,7 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
                 PRETTY_DEBUG << "The player has shot" << std::endl;
                 if (_playerId < _playerBrain.size()) {
                     PRETTY_DEBUG << "Player shot" << std::endl;
-                    _sendMessage({ GUI::Network::MessageType::SHOOT, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {0, 0}} });
+                    _sendMessage({ GUI::Network::MessageType::P_SHOOT, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {0, 0}} });
                     _shootSound();
                 } else {
                     PRETTY_WARNING << "There is no player to update" << std::endl;
@@ -244,7 +244,7 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
             PRETTY_DEBUG << "Updating the player's position" << std::endl;
             if (_playerId < _playerBrain.size()) {
                 _playerBrain[_playerId]->setPosition(position);
-                _sendMessage({ GUI::Network::MessageType::MOVE, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {position.first, position.second}} });
+                _sendMessage({ GUI::Network::MessageType::P_MOVE, _playerBrain[_playerId]->getEntityNodeId(), {0, 0, "", {position.first, position.second}} });
             } else {
                 PRETTY_WARNING << "There is no player to update" << std::endl;
                 throw CustomExceptions::NoSprite("<No player>");
@@ -261,7 +261,26 @@ void GUI::ECS::Online::Orchestrator::tick(const std::vector<GUI::Network::Messag
         _remainingEnemies.value()->setText("Remaining ennemies: " + Recoded::myToString(_activeEnemies));
     }
     PRETTY_DEBUG << "Orchestrator dump (after tick): \n" << getInfo(0) << std::endl;
+
+    PRETTY_DEBUG << "Ticking all entities.";
+    tick_all();
 };
+
+void GUI::ECS::Online::Orchestrator::tick_all()
+{
+    for (std::size_t i = 0; i < _playerBrain.size(); i++) {
+        _playerBrain[i]->tick();
+    }
+    for (std::size_t i = 0; i < _enemyBrain.size(); i++) {
+        _enemyBrain[i]->tick();
+    }
+    for (std::size_t i = 0; i < _enemyBullets.size(); i++) {
+        _enemyBullets[i].tick();
+    }
+    for (std::size_t i = 0; i < _playerBullets.size(); i++) {
+        _playerBullets[i].tick();
+    }
+}
 
 void GUI::ECS::Online::Orchestrator::render()
 {

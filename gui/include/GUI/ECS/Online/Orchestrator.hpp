@@ -90,6 +90,11 @@ namespace GUI
                 void tick(const std::vector<GUI::Network::MessageNode> &packets);
 
                 /**
+                 * @brief Ticks all entities.
+                 */
+                void tick_all();
+
+                /**
                  * @brief Renders the game entities to the window.
                  */
                 void render();

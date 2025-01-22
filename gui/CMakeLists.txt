@@ -101,6 +101,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(r-type_client PRIVATE -g)
 endif()
 
+target_include_directories(r-type_client PUBLIC ${ASIO_INCLUDE_DIR})
+
 # Custom target to clean build artifacts
 add_custom_target(fclean
     COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}

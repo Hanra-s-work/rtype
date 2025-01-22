@@ -7,6 +7,8 @@
  * @file main.cpp
  * @brief Entry point for the R-Type server application.
  */
+int main()
+{
 
 // A small helper to print usage
 static void print_usage(const char* progName) {
@@ -53,7 +55,6 @@ int main(int argc, char* argv[])
             return 1;
         }
     }
-
     try {
         // Create the io_context
         asio::io_context io_context;
@@ -68,7 +69,7 @@ int main(int argc, char* argv[])
         for (unsigned i = 0; i < numThreads; ++i) {
             threadPool.emplace_back([&io_context]() {
                 io_context.run();
-            });
+                });
         }
 
         // Run game loop
@@ -88,7 +89,7 @@ int main(int argc, char* argv[])
                 // Sleep ~16ms => ~60 FPS
                 std::this_thread::sleep_for(std::chrono::milliseconds(16));
             }
-        });
+            });
 
         // Inform user
         std::cout << "[Server] Listening on 0.0.0.0:" << port << " (UDP)\n";
@@ -106,7 +107,8 @@ int main(int argc, char* argv[])
             gameLoopThread.join();
         }
 
-    } catch (std::exception& e) {
+    }
+    catch (std::exception &e) {
         std::cerr << "[Server] Exception: " << e.what() << "\n";
         return 1;
     }

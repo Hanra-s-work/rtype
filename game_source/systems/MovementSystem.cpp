@@ -2,14 +2,15 @@
 #include "IndexedZipper.hpp"
 #include "Time.hpp"
 
-void move_player(Registry &r, size_t id, float x, float y)
+void move_player(Registry &r, std::size_t id, float x, float y)
 {
     auto &position = r.get_components<Position>();
+    if (position.size() <= id) return;
 
     position[id]->X = x;
     position[id]->Y = y;
 
-    r.dispatcher->notify({MOVE, id, {0, 0, 0, "", {x, y}}});
+    r.dispatcher->notify({P_MOVE, id, {0, 0, 0, "", {x, y}}});
 }
 
 void movement_system(Registry &r, ComponentContainer<Position> &positions, ComponentContainer<Velocity> &velocities)
@@ -18,7 +19,7 @@ void movement_system(Registry &r, ComponentContainer<Position> &positions, Compo
         if (pos && vel) {
             pos->X += vel->vX * Time::deltaTime;
             pos->Y += vel->vY * Time::deltaTime;
-            r.dispatcher->notify({MOVE, idx, {0, 0, 0, "", {pos->X, pos->Y}}});
+            r.dispatcher->notify({P_MOVE, idx, {0, 0, 0, "", {pos->X, pos->Y}}});
         }
     }
 }

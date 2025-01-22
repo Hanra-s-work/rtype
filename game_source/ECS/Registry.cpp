@@ -22,12 +22,12 @@ std::vector<GameMessage> Registry::sync_game()
 
 Entity Registry::spawn_entity()
 {
-    size_t entity_id = _next_entity_id++;
+    std::size_t entity_id = _next_entity_id++;
     _entities.push_back(entity_id);
     return Entity(entity_id);
 }
 
-Entity Registry::entity_from_index(size_t idx) const
+Entity Registry::entity_from_index(std::size_t idx) const
 {
     return Entity(idx);
 }

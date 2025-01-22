@@ -1,6 +1,9 @@
 # No build/cache files
 *.o
+*.vs
 *.out
+*.idea
+**/out/**
 *.vscode
 *.DS_Store
 *.code-workspace
@@ -8,6 +11,9 @@ Makefile
 CMakeFiles
 CMakeCache.txt
 CPackConfig.cmake
+CMakeSettings.json
+**/cmake-build-debug/**
+**/cmake-build-debug-visual-studio/**
 CPackSourceConfig.cmake
 cmake_install.cmake
 

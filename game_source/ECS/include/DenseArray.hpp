@@ -24,7 +24,7 @@ public:
     using optional_t = std::optional<Component>; /**< Optional type for components. */
     using reference_type = optional_t&; /**< Reference to a component. */
     using const_reference_type = const optional_t&; /**< Const reference to a component. */
-    using id_type = size_t; /**< Type used for entity IDs. */
+    using id_type = std::size_t; /**< Type used for entity IDs. */
     using id_container_t = std::vector<id_type>; /**< Container type for storing entity IDs. */
     using component_container_t = std::vector<optional_t, Allocator>; /**< Container type for storing components. */
     using size_type = typename component_container_t::size_type; /**< Size type for the container. */
