@@ -175,6 +175,7 @@ const bool GUI::ECS::Online::Bullet::isColliding(const GUI::ECS::Systems::Collis
  */
 void GUI::ECS::Online::Bullet::update(const GUI::ECS::Online::Bullet &copy)
 {
+    _entityID = copy._entityID;
     _speed = copy.getSpeed();
     _sprite = copy.getSprite();
     _damage = copy.getDamage();
