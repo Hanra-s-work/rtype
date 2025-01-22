@@ -31,7 +31,7 @@ void spawn_obstacle_system(Registry &r)
     }
 }
 
-void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uint32_t &client_id, const std::string &username)
+void spawn_player(Registry &r, const float pos_x, const float pos_y, const uint32_t client_id, const std::string &username)
 {
     Entity player = r.spawn_entity();
     r.add_component<Position>(player, {pos_x, pos_y});
@@ -43,11 +43,11 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uin
     r.add_component<Type>(player, {type_enum::PLAYER});
     r.add_component<PlayerInfo>(player, {client_id, username});
     GameMessage msg = {messageType::P_SPAWN, player, {0, image_enum::PLAYER_ASSET, 0, "", {pos_x, pos_y}}};
-    username.copy(msg.msg.username, 8, 0);
+    //username.copy(msg.msg.username, 8, 0);
     r.dispatcher->notify(msg);
 }
 
-void spawn_monster(Registry &r, const float &pos_x, const float &pos_y)
+void spawn_monster(Registry &r, const float pos_x, const float pos_y)
 {
     Entity monster = r.spawn_entity();
     r.add_component<Position>(monster, {pos_x, pos_y});
@@ -63,7 +63,7 @@ void spawn_monster(Registry &r, const float &pos_x, const float &pos_y)
     r.dispatcher->notify({messageType::P_SPAWN, monster, {0, image_enum::MONSTER1_ASSET, 0, "", {pos_x, pos_y}}});
 }
 
-void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y)
+void spawn_obstacle(Registry &r, const float pos_x, const float pos_y)
 {
     Entity obstacle = r.spawn_entity();
     r.add_component<Position>(obstacle, {pos_x, pos_y});
@@ -76,27 +76,28 @@ void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y)
     r.dispatcher->notify({messageType::P_SPAWN, obstacle, {0, image_enum::OBSTACLE1_ASSET, 0, "", {pos_x, pos_y}}});
 }
 
-void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const type_enum &owner)
+void spawn_missile(Registry &r, const float pos_x, const float pos_y, const type_enum owner)
 {
     Entity missile = r.spawn_entity();
     r.add_component<Position>(missile, {pos_x, pos_y});
     r.add_component<Collider>(missile, {10.f});
     r.add_component<Type>(missile, {type_enum::MISSILE});
+    r.add_component<Lifetime>(missile, {10.f});
     if (owner == type_enum::PLAYER) {
-        r.add_component<Image>(missile, {image_enum::MISSILE2_ASSET, 20.f, 20.f});
+        r.add_component<Image>(missile, {image_enum::PLAYER_MISSILE_ASSET, 20.f, 20.f});
         r.add_component<Team>(missile, {team_enum::ALLY});
-        r.add_component<Velocity>(missile, {2.f, 0.f});
+        r.add_component<Velocity>(missile, {100.f, 0.f});
+        r.dispatcher->notify({messageType::P_SPAWN, missile, {0, image_enum::PLAYER_MISSILE_ASSET, 0, "", {pos_x, pos_y}}});
     }
     else {
-        r.add_component<Image>(missile, {image_enum::MISSILE1_ASSET, 20.f, 20.f});
+        r.add_component<Image>(missile, {image_enum::MONSTER_MISSILE_ASSET, 20.f, 20.f});
         r.add_component<Team>(missile, {team_enum::ENEMY});
-        r.add_component<Velocity>(missile, {-2.f, 0.f});
+        r.add_component<Velocity>(missile, {-100.f, 0.f});
+        r.dispatcher->notify({messageType::P_SPAWN, missile, {0, image_enum::MONSTER_MISSILE_ASSET, 0, "", {pos_x, pos_y}}});
     }
-    r.add_component<Lifetime>(missile, {10.f});
-    r.dispatcher->notify({messageType::P_SPAWN, missile, {0, image_enum::MISSILE1_ASSET, 0, "", {pos_x, pos_y}}});
 }
 
-void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum &type)
+void spawn_powerup(Registry &r, const float pos_x, const float pos_y, const loot_enum type)
 {
     Entity powerup = r.spawn_entity();
     r.add_component<Position>(powerup, {pos_x, pos_y});

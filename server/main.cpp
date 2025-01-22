@@ -7,9 +7,6 @@
  * @file main.cpp
  * @brief Entry point for the R-Type server application.
  */
-int main()
-{
-
 // A small helper to print usage
 static void print_usage(const char* progName) {
     std::cout << "Usage: " << progName << " [OPTIONS]\n"

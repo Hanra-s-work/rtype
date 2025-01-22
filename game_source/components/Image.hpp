@@ -10,8 +10,8 @@
 enum image_enum {
     PLAYER_ASSET,      /**< The image representing the player. */
     MONSTER1_ASSET,    /**< The image representing the first type of monster. */
-    MISSILE1_ASSET,    /**< The image representing the first type of missile. */
-    MISSILE2_ASSET,    /**< The image representing the second type of missile. */
+    MONSTER_MISSILE_ASSET,    /**< The image representing the first type of missile. */
+    PLAYER_MISSILE_ASSET,    /**< The image representing the second type of missile. */
     MONSTER2_ASSET,    /**< The image representing the second type of monster. */
     OBSTACLE1_ASSET,   /**< The image representing the first type of obstacle. */
     OBSTACLE2_ASSET,   /**< The image representing the second type of obstacle. */

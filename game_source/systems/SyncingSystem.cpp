@@ -6,7 +6,7 @@
 std::vector<GameMessage> syncGameState(Registry &r)
 {
     std::vector<GameMessage> state;
-    auto &&[positions, types] = r.get_component_array<Position, Type>();
+    auto &&[positions, types, teams] = r.get_component_array<Position, Type, Team>();
     for (auto &&[idx, pos, type] : IndexedZipper(positions, types)) {
         // if killed or not created continue
         if (!pos || !type) continue;
@@ -26,7 +26,10 @@ std::vector<GameMessage> syncGameState(Registry &r)
         } else if (type->type == MONSTER) {
             msg.msg.asset_id = MONSTER1_ASSET;
         } else {
-            msg.msg.asset_id = MISSILE1_ASSET;
+            if (teams[idx]->team == ENEMY)
+                msg.msg.asset_id = MONSTER_MISSILE_ASSET;
+            else
+                msg.msg.asset_id = PLAYER_MISSILE_ASSET;
         }
 
         // done

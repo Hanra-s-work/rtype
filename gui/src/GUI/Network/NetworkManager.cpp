@@ -161,9 +161,9 @@ GUI::Network::MessageNode GUI::Network::NetworkManager::translateMessage(const s
                 int asset;
                 float x, y;
                 std::memcpy(&id, &message[1], sizeof(std::size_t));
-                std::memcpy(&asset, &message[1 + sizeof(std::size_t)], sizeof(short));
-                x = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(short)]);
-                y = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(short) + sizeof(float)]);
+                std::memcpy(&asset, &message[1 + sizeof(std::size_t)], sizeof(int));
+                x = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(int)]);
+                y = bytesToFloat(&message[1 + sizeof(std::size_t) + sizeof(int) + sizeof(float)]);
                 PRETTY_CRITICAL << "SPAWN Message\nEntity ID: " << id << "\nAsset ID: " << asset << "\nPosition: (" << x << ", " << y << ")\n";
                 result.id = id;
                 result.info.assetId = asset;

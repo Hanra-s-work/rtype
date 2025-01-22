@@ -16,7 +16,7 @@ class Registry;
  * @param pos_x The X-coordinate for the monster's initial position.
  * @param pos_y The Y-coordinate for the monster's initial position.
  */
-void spawn_monster(Registry &r, const float &pos_x, const float &pos_y);
+void spawn_monster(Registry &r, const float pos_x, const float pos_y);
 
 /**
  * @brief Spawns an obstacle at the specified position.
@@ -28,7 +28,7 @@ void spawn_monster(Registry &r, const float &pos_x, const float &pos_y);
  * @param pos_x The X-coordinate for the obstacle's initial position.
  * @param pos_y The Y-coordinate for the obstacle's initial position.
  */
-void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y);
+void spawn_obstacle(Registry &r, const float pos_x, const float pos_y);
 
 /**
  * @brief Spawns a player with the specified username at the given position.
@@ -42,7 +42,7 @@ void spawn_obstacle(Registry &r, const float &pos_x, const float &pos_y);
  * @param client_it The client id of the player.
  * @param username The username of the player.
  */
-void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uint32_t &client_id, const std::string &username);
+void spawn_player(Registry &r, const float pos_x, const float pos_y, const uint32_t client_id, const std::string &username);
 
 /**
  * @brief Spawns a missile at the specified position.
@@ -55,7 +55,7 @@ void spawn_player(Registry &r, const float &pos_x, const float &pos_y, const uin
  * @param pos_y The Y-coordinate for the missile's initial position.
  * @param owner The type of the entity that owns the missile (player or monster).
  */
-void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const type_enum &owner);
+void spawn_missile(Registry &r, const float pos_x, const float pos_y, const type_enum owner);
 
 /**
  * @brief Spawns a power-up at the specified position.
@@ -68,7 +68,7 @@ void spawn_missile(Registry &r, const float &pos_x, const float &pos_y, const ty
  * @param pos_y The Y-coordinate for the power-up's initial position.
  * @param loot The type of loot (power-up or health) to be spawned.
  */
-void spawn_powerup(Registry &r, const float &pos_x, const float &pos_y, const loot_enum &loot);
+void spawn_powerup(Registry &r, const float pos_x, const float pos_y, const loot_enum loot);
 
 /**
  * @brief Spawns a monster periodically based on the spawn timer.

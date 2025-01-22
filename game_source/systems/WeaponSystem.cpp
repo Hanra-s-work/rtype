@@ -6,10 +6,10 @@
 void weapon_system(Registry &r, ComponentContainer<Weapon> &weapons, ComponentContainer<Position> &positions, ComponentContainer<Type> &types)
 {
     for (auto &&[idx, weapon, position, type] : IndexedZipper(weapons, positions, types)) {
-        if (!weapon) continue;
+        if (!weapon || !position || !type) continue;
 
         weapon->cooldown -= Time::deltaTime;
-         if (type->type == type_enum::MONSTER && !weapon->shot) weapon->shot = true;
+        if (type->type == type_enum::MONSTER && !weapon->shot) weapon->shot = true;
         
         if (weapon->shot && weapon->cooldown <= 0) {
             spawn_missile(r, position->X, position->Y, type->type);
