@@ -43,7 +43,7 @@ struct coord {
  * coordinates. This information is used to describe the context of a specific event in the game.
  */
 struct messageInfo {
-    int status;         ///< Status of the event (e.g., success or failure).
+    uint8_t status;         ///< Status of the event (e.g., success or failure).
     int asset_id;       ///< ID representing the game asset related to the event (e.g., entity or object).
     uint32_t cli_id;    ///< Id of the player's client.
     char username[9];   ///< Username of player connecting.

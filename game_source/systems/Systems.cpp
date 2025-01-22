@@ -8,11 +8,13 @@
 #include "SpawnSystem.hpp"
 #include "WeaponSystem.hpp"
 #include "EventSystem.hpp"
+#include "WinSystem.hpp"
 
 void setup_systems(Registry &r)
 {
     r.add_system(event_system);
     r.add_system(spawn_monster_system);
+    r.add_system(win_system);
     //r.add_system(spawn_obstacle_system);
     r.add_system<Behaviour, Velocity>(ai_system);
     r.add_system<Position, Velocity>(movement_system);

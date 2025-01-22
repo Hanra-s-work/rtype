@@ -3,6 +3,7 @@
 #include "IndexedZipper.hpp"
 #include "Components.hpp"
 #include "SpawnSystem.hpp"
+#include "WinSystem.hpp"
 
 void collision_player_missile(Registry &r, std::size_t &entity1, std::size_t &entity2)
 {
@@ -30,9 +31,10 @@ void collision_monster_missile(Registry &r, std::size_t &entity1, std::size_t &e
         r.dispatcher->notify({messageType::P_DAMAGE, entity1, {0, 0, 0, "", {0, 0}}});
 
         if (healths[entity1]->current == 0) {
-            auto loot = loot_drops[entity1];
-            spawn_powerup(r, positions[entity1]->X, positions[entity1]->Y, loot->loot);
+            // auto loot = loot_drops[entity1];
+            // spawn_powerup(r, positions[entity1]->X, positions[entity1]->Y, loot->loot);
 
+            Win::enemies_left--;
             r.kill_entity(Entity(entity1));
             r.dispatcher->notify({messageType::P_KILL, entity1, {0, 0, 0, "", {0, 0}}});
         }
