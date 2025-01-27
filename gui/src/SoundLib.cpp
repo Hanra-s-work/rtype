@@ -88,15 +88,22 @@ const bool SoundLib::isEnabled() const
 void SoundLib::shootSound()
 {
     if (!_playSound) {
+        std::cout << "Play Sound is disabled" << std::endl;
         PRETTY_WARNING << "The sound playing has been disabled, skipping sound" << std::endl;
         return;
     }
+    std::cout << "The shoot sound is enabled" << std::endl;
     std::vector<std::any> musics = _ecsEntities[typeid(GUI::ECS::Components::MusicComponent)];
+    std::cout << "The music vector length is: " << std::to_string(musics.size()) << std::endl;
     for (std::any music : musics) {
+        std::cout << "Getting the music node" << std::endl;
         std::optional<std::shared_ptr<GUI::ECS::Components::MusicComponent>> node = Utilities::unCast<std::shared_ptr<GUI::ECS::Components::MusicComponent>, CustomExceptions::MusicNotInitialised>(music, true, "<There was no music found in the vector item>");
+        std::cout << "Fetched the music node" << std::endl;
         if (!node.has_value()) {
+            std::cout << "The sound value node is empty" << std::endl;
             continue;
         }
+        std::cout << "Sound application: " << node.value()->getApplication() << ", name: " << node.value()->getMusicName() << std::endl;
         if (
             node.value()->getApplication() == "shooting" ||
             node.value()->getMusicName() == "shooting" ||
@@ -106,6 +113,7 @@ void SoundLib::shootSound()
             node.value()->setLoopMusic(false);
             PRETTY_DEBUG << "Playing sound: Shoot" << std::endl;
             node.value()->play();
+            return;
         }
     }
 }
@@ -139,6 +147,7 @@ void SoundLib::damageSound()
             node.value()->setLoopMusic(false);
             PRETTY_DEBUG << "Playing sound: Damage" << std::endl;
             node.value()->play();
+            return;
         }
     }
 };
@@ -172,6 +181,7 @@ void SoundLib::deadSound()
             node.value()->setLoopMusic(false);
             PRETTY_DEBUG << "Playing sound: Dead" << std::endl;
             node.value()->play();
+            return;
         }
     }
 };
@@ -205,6 +215,7 @@ void SoundLib::buttonSound()
             node.value()->setLoopMusic(false);
             PRETTY_DEBUG << "Playing sound: Button" << std::endl;
             node.value()->play();
+            return;
         }
     }
 };
@@ -238,6 +249,7 @@ void SoundLib::gameOverSound()
             node.value()->setLoopMusic(false);
             PRETTY_DEBUG << "Playing sound: Game Over" << std::endl;
             node.value()->play();
+            return;
         }
     }
 };
@@ -271,6 +283,7 @@ void SoundLib::winSound()
             node.value()->setLoopMusic(false);
             PRETTY_DEBUG << "Playing sound: win" << std::endl;
             node.value()->play();
+            return;
         }
     }
 };

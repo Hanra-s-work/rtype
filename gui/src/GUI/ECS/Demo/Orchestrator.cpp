@@ -224,6 +224,7 @@ void GUI::ECS::Demo::Orchestrator::tick()
         }
         if (_enemyBrain[index]->isColliding(_playerBrain->getCollision())) {
             _playerBrain->setHealth(0);
+            _deadSound();
             _gameOver = true;
             return;
         }
@@ -689,14 +690,17 @@ void GUI::ECS::Demo::Orchestrator::_setTextComponents()
 void GUI::ECS::Demo::Orchestrator::_shootSound()
 {
     if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        std::cout << "Sound is empty" << std::endl;
         PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
         return;
     }
     std::optional<std::shared_ptr<SoundLib>> soundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
     if (!soundLib.has_value()) {
+        std::cout << "Sound lib not found" << std::endl;
         PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
         return;
     }
+    std::cout << "Calling shoot" << std::endl;
     soundLib.value()->shootSound();
 }
 
