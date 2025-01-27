@@ -889,6 +889,18 @@ void Main::_initialiseRessources()
     _baseId = _initialiseBackgrounds();
     _baseId = _initialiseSprites();
     _baseId = _initialiseAudio();
+    if (_ecsEntities[typeid(SoundLib)].size() == 0) {
+        std::cout << "Sound is empty" << std::endl;
+        PRETTY_WARNING << "Skipping audio playing because the sound library is missing" << std::endl;
+        return;
+    }
+    std::optional<std::shared_ptr<SoundLib>> internalSoundLib = Utilities::unCast<std::shared_ptr<SoundLib>>(_ecsEntities[typeid(SoundLib)][0], false);
+    if (!(internalSoundLib.has_value())) {
+        std::cout << "Sound lib not found" << std::endl;
+        PRETTY_WARNING << "The library to find the found player is missing, skipping sound" << std::endl;
+        return;
+    }
+    internalSoundLib.value()->updateSoundLib(_ecsEntities);
     PRETTY_INFO << "Final value of the base Id: " << std::to_string(_baseId) << std::endl;
 }
 
