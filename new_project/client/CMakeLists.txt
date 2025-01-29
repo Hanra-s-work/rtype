@@ -7,11 +7,6 @@ find_package(SFML 2.5 COMPONENTS window graphics system network REQUIRED)
 # Include directories
 include_directories(include ${SFML_INCLUDE_DIR})
 
-# Add subdirectories
-# add_subdirectory(src)
-# If you have other subdirectories like lib/asio, add them here
-add_subdirectory(lib)
-
 # Create executable
 add_executable(rtype_client 
     src/Client.cpp
@@ -22,8 +17,8 @@ add_executable(rtype_client
 
 # Link SFML libraries
 target_link_libraries(rtype_client 
-    SFML::Window
-    SFML::Graphics
-    SFML::System
-    SFML::Network
+    sfml-window
+    sfml-graphics
+    sfml-system
+    sfml-network
 )
