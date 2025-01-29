@@ -1,24 +1,37 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.28)
 project(RTypeClient)
 
-# Find SFML packages
-find_package(SFML 2.5 COMPONENTS window graphics system network REQUIRED)
+# Set the C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Include directories
-include_directories(include ${SFML_INCLUDE_DIR})
+# Include directories for headers
+include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
+
+# Include the CMakeLists.txt from the Lib folder
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib)
 
 # Create executable
-add_executable(rtype_client 
+set(SOURCES 
     src/Client.cpp
     src/main.cpp
     src/NetworkClient.cpp
     src/ParallaxBackground.cpp
 )
 
-# Link SFML libraries
-target_link_libraries(rtype_client 
-    sfml-window
-    sfml-graphics
-    sfml-system
-    sfml-network
+# Check for threads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
+# Add executable for the GUI client
+add_executable(r-type_client ${SOURCES})
+
+# Link required libraries (SFML + toml++)
+target_link_libraries(r-type_client
+    PRIVATE
+    rtype_client_libraries
+    Threads::Threads
+    sfml-graphics sfml-window sfml-audio sfml-network sfml-system
 )
+
+target_include_directories(r-type_client PUBLIC ${ASIO_INCLUDE_DIR})
