@@ -19,11 +19,11 @@ public:
     // Stop network
     void disconnect();
 
-    // Poll messages from server (call every frame in the main thread)
-    void pollMessages();
-
-    void sendMessage(const std::string& msg);
     void sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload);
+
+    std::vector<ParsedMessage> retrieveMessages();
+
+    void sendConnectRequest();
 
 private:
     // Start async receives
@@ -32,7 +32,6 @@ private:
     // Handle incoming data
     void onDataReceived(const std::string& data, const asio::ip::udp::endpoint& sender);
 
-private:
     asio::io_context _ioContext;
     std::unique_ptr<asio::ip::udp::socket> _socket;
 

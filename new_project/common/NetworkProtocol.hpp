@@ -1,28 +1,21 @@
 #pragma once
-#include <vector>
 #include <cstdint>
+#include <vector>
 #include <optional>
 
 enum class MessageType : uint32_t {
-    HELLO = 0,
-    JOIN,
-    LEAVE,
-    MOVE,
-    SHOOT,
+    CONNECT = 1,
+    CONNECT_OK,
+    // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
 
 struct ParsedMessage {
     MessageType type;
-    std::vector<uint8_t> payload;
+    std::vector<uint8_t> payload; // optional data for each message
 };
 
-/**
- * Build a packet with 8-byte header [type + payloadSize], then payload data.
- */
+// Build a packet with an 8-byte header: [type(4 bytes), payloadSize(4 bytes)]
 std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload);
 
-/**
- * Parse a packet into {type, payload}.
- * Returns std::nullopt if data is incomplete or invalid.
- */
+// Parse a packet into {type, payload}; returns std::nullopt if data is invalid/incomplete
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);

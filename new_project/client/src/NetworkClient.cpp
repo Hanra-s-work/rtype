@@ -40,9 +40,6 @@ void NetworkClient::connect(const std::string& serverIp, unsigned short serverPo
             }
         });
     }
-
-    // Optionally send a "HELLO" or "JOIN" message
-    sendMessage("JOIN");
 }
 
 void NetworkClient::disconnect()
@@ -64,44 +61,6 @@ void NetworkClient::disconnect()
         if (t.joinable()) t.join();
     }
     _ioThreads.clear();
-}
-
-void NetworkClient::pollMessages()
-{
-    std::vector<ParsedMessage> messagesCopy;
-    {
-        std::lock_guard<std::mutex> lock(_messageMutex);
-        messagesCopy.swap(_incomingMessages);
-    }
-
-    // Process
-    for (auto &msg : messagesCopy) {
-        switch (msg.type) {
-            case MessageType::HELLO:
-            {
-                std::string payloadStr(msg.payload.begin(), msg.payload.end());
-                std::cout << "[Client] Server says: " << payloadStr << "\n";
-                break;
-            }
-            default:
-                std::cout << "[Client] Received unknown message type.\n";
-                break;
-        }
-    }
-}
-
-void NetworkClient::sendMessage(const std::string& msg)
-{
-    if (!_running) return;
-
-    auto buffer = std::make_shared<std::string>(msg);
-    _socket->async_send_to(
-        asio::buffer(*buffer),
-        _serverEndpoint,
-        [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
-            // send callback
-        }
-    );
 }
 
 void NetworkClient::doReceive()
@@ -155,6 +114,39 @@ void NetworkClient::sendBinaryMessage(MessageType type, const std::vector<uint8_
         asio::buffer(*buffer), _serverEndpoint,
         [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
             // data is kept alive until this lambda finishes
+        }
+    );
+}
+
+std::vector<ParsedMessage> NetworkClient::retrieveMessages()
+{
+    // Lock the mutex so we don't race with onDataReceived()
+    std::lock_guard<std::mutex> lock(_messageMutex);
+
+    // Move _incomingMessages into a temporary vector
+    // so we can clear it in one step
+    std::vector<ParsedMessage> result = std::move(_incomingMessages);
+
+    // Now _incomingMessages is empty, so the next call to retrieveMessages()
+    // won't return duplicates.
+    _incomingMessages.clear();
+
+    return result;
+}
+
+void NetworkClient::sendConnectRequest()
+{
+    if (!_running) return;
+
+    std::vector<uint8_t> emptyPayload; // We don't need any data in the CONNECT request
+    std::vector<uint8_t> msg = buildMessage(MessageType::CONNECT, emptyPayload);
+
+    auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
+    _socket->async_send_to(
+        asio::buffer(*buffer),
+        _serverEndpoint,
+        [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+            // On completion
         }
     );
 }

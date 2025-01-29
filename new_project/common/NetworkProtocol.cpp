@@ -3,19 +3,19 @@
 
 std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload)
 {
-    uint32_t typeInt = static_cast<uint32_t>(type);
-    uint32_t sizeInt = static_cast<uint32_t>(payload.size());
+    uint32_t typeInt  = static_cast<uint32_t>(type);
+    uint32_t sizeInt  = static_cast<uint32_t>(payload.size());
 
     std::vector<uint8_t> data;
-    data.reserve(sizeof(typeInt) + sizeof(sizeInt) + payload.size());
+    data.reserve(8 + payload.size()); // 8 for type+size
 
-    // Copy MessageType (4 bytes)
+    // Copy the 4 bytes of type
     const uint8_t* typePtr = reinterpret_cast<const uint8_t*>(&typeInt);
-    data.insert(data.end(), typePtr, typePtr + sizeof(typeInt));
+    data.insert(data.end(), typePtr, typePtr + 4);
 
-    // Copy Payload size (4 bytes)
+    // Copy the 4 bytes of payload size
     const uint8_t* sizePtr = reinterpret_cast<const uint8_t*>(&sizeInt);
-    data.insert(data.end(), sizePtr, sizePtr + sizeof(sizeInt));
+    data.insert(data.end(), sizePtr, sizePtr + 4);
 
     // Copy payload
     data.insert(data.end(), payload.begin(), payload.end());
@@ -26,14 +26,14 @@ std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& 
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data)
 {
     if (data.size() < 8) {
-        return std::nullopt; // not enough bytes for header
+        return std::nullopt; // not enough for header
     }
 
-    // Extract type
+    // Read type
     uint32_t typeInt;
     std::memcpy(&typeInt, data.data(), 4);
 
-    // Extract payload size
+    // Read payload size
     uint32_t payloadSize;
     std::memcpy(&payloadSize, data.data() + 4, 4);
 
@@ -43,7 +43,10 @@ std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data)
 
     ParsedMessage msg;
     msg.type = static_cast<MessageType>(typeInt);
-    msg.payload.assign(data.begin() + 8, data.begin() + 8 + payloadSize);
+    msg.payload.assign(
+        data.begin() + 8,
+        data.begin() + 8 + payloadSize
+    );
 
     return msg;
 }

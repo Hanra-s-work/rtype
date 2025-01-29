@@ -5,9 +5,8 @@ Client::Client()
 {
     initWindow();
     
-
     // Load a font (placeholder)
-    if (!_font.loadFromFile("../assets/font/Arial.ttf")) {
+    if (!_font.loadFromFile("client/assets/font/Arial.ttf")) {
         std::cerr << "Error loading font!\n";
     }
 
@@ -24,10 +23,8 @@ Client::Client()
     _connectButton.setPosition(btnX, btnY);
 
     // Create the parallax background
-    _parallaxBackground.addLayer("../assets/vaisseau-spatial.png", 20.f);
-    std::cout << "Added layer: ../assets/vaisseau-spatial.png\n";
-    _parallaxBackground.addLayer("../assets/background.jpg", 40.f);
-    std::cout << "Added layer: ../assets/background.png\n";
+    _parallaxBackground.addLayer("client/assets/vaisseau-spatial.png", 20.f);
+    _parallaxBackground.addLayer("client/assets/background.jpg", 40.f);
 
 
     // Create network client
@@ -66,8 +63,6 @@ void Client::run()
         // 1. Handle input/events
         handleEvents();
 
-        connectToServer();
-
         // 2. Update
         update(dt);
 
@@ -86,16 +81,32 @@ void Client::handleEvents()
         case sf::Event::Closed:
             _window.close();
             break;
+
         case sf::Event::Resized:
+        {
+            // Keep the button in the center if you want
+            sf::Vector2u newSize = _window.getSize();
+            float btnX = newSize.x / 2.f - 50.f;
+            float btnY = newSize.y / 2.f - 20.f;
+            _connectButton.setPosition(btnX, btnY);
+
+            // Adjust view if desired
+            sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
+            _window.setView(sf::View(visibleArea));
             break;
+        }
+
         case sf::Event::MouseButtonPressed:
+        {
             if (!_connected && event.mouseButton.button == sf::Mouse::Left) {
                 sf::Vector2i mousePos(event.mouseButton.x, event.mouseButton.y);
                 if (isConnectButtonClicked(mousePos)) {
+                    // Attempt to connect
                     connectToServer();
                 }
             }
             break;
+        }
         default:
             break;
         }
@@ -111,25 +122,34 @@ bool Client::isConnectButtonClicked(const sf::Vector2i& mousePos)
 
 void Client::connectToServer()
 {
-    // Attempt to connect
-    std::cout << "Connecting to server...\n";
-    _networkClient->connect("127.0.0.1", 9000); // Example IP/port
-    _connected = true;
-    // Example: client sends HELLO with a small string payload
-    std::string testStr = "Hello from client";
-    std::vector<uint8_t> payload(testStr.begin(), testStr.end());
-    _networkClient->sendBinaryMessage(MessageType::HELLO, payload);
+    std::cout << "Trying to connect...\n";
+
+    // Start the network client
+    _networkClient->connect("127.0.0.1", 9000);
+
+    // Send a CONNECT request once the socket is ready
+    _networkClient->sendConnectRequest();
 }
+
 
 void Client::update(float dt)
 {
-    _parallaxBackground.update(dt);
+    if (_connected)
+        _parallaxBackground.update(dt);
 
-    if (_connected) {
-        _networkClient->pollMessages();
-
-        // Based on messages, update any local game state (positions of players, enemies, etc.)
-        // For now, we'll just assume we have some data in _networkClient->getEntities() or similar.
+    // Grab new messages
+    auto messages = _networkClient->retrieveMessages();
+    for (auto &msg : messages) {
+        switch (msg.type) {
+            case MessageType::CONNECT_OK:
+                std::cout << "[Client] CONNECT_OK received!\n";
+                _connected = true;
+                break;
+            // Possibly handle other messages
+            default:
+                std::cout << "[Client] Unknown message type.\n";
+                break;
+        }
     }
 }
 
@@ -137,19 +157,14 @@ void Client::render()
 {
     _window.clear(sf::Color::Black);
 
-    _parallaxBackground.draw(_window);
+    if (_connected)
+        _parallaxBackground.draw(_window);
 
     if (!_connected) {
+        // Show the connect button
         _window.draw(_connectButton);
-    }
-    else {
-        // Draw game entities, UI, etc.
-        // For example:
-        //
-        // auto& entities = _networkClient->getEntities();
-        // for (auto &e : entities) { e.draw(_window); }
-        //
-        // For now, we’ll omit the actual drawing code.
+    } else {
+        // If connected, draw the main game (players, enemies, etc.)
     }
 
     _window.display();

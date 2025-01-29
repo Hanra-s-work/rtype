@@ -86,38 +86,47 @@ void NetworkManager::doReceive()
     );
 }
 
-void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::udp::endpoint& senderEndpoint)
+void NetworkManager::onDataReceived(const std::string& dataStr,
+                                    const asio::ip::udp::endpoint& senderEndpoint)
 {
+    // Convert to a byte vector
     std::vector<uint8_t> data(dataStr.begin(), dataStr.end());
 
+    // Parse the message
     auto msgOpt = parseMessage(data);
     if (!msgOpt.has_value()) {
-        std::cerr << "Received invalid or incomplete message from " << senderEndpoint << "\n";
+        std::cerr << "[Server] Invalid or incomplete message from " << senderEndpoint << "\n";
         return;
     }
 
     ParsedMessage msg = msgOpt.value();
-    switch (msg.type) {
-        case MessageType::HELLO:
-        {
-            std::cout << "[Server] HELLO received from " << senderEndpoint << "\n";
-            // Optionally parse payload
-            std::string payloadStr(msg.payload.begin(), msg.payload.end());
-            std::cout << "Payload: " << payloadStr << "\n";
 
-            // Reply with HELLO
-            std::string serverReply = "Hello from server!";
-            std::vector<uint8_t> replyData(serverReply.begin(), serverReply.end());
-            sendBinaryMessage(MessageType::HELLO, replyData, senderEndpoint);
+    switch (msg.type) {
+        case MessageType::CONNECT:
+        {
+            std::cout << "[Server] CONNECT received from " << senderEndpoint << "\n";
+            
+            // Add the client to your list if not present
+            bool knownClient = false;
+            for (auto& c : _clients) {
+                if (c == senderEndpoint) {
+                    knownClient = true;
+                    break;
+                }
+            }
+            if (!knownClient) {
+                _clients.push_back(senderEndpoint);
+            }
+
+            // Now send back CONNECT_OK
+            std::vector<uint8_t> emptyPayload; // No extra data needed
+            sendBinaryMessage(MessageType::CONNECT_OK, emptyPayload, senderEndpoint);
             break;
         }
-        case MessageType::JOIN:
-            std::cout << "[Server] JOIN received\n";
-            break;
-        case MessageType::MOVE:
-            break;
+        // ... other message types (MOVE, SHOOT, etc.) ...
+        
         default:
-            std::cout << "[Server] Unknown message type received.\n";
+            std::cout << "[Server] Received unknown message type from " << senderEndpoint << "\n";
             break;
     }
 }
