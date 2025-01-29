@@ -114,15 +114,40 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     break;
                 }
             }
-            if (!knownClient) {
+            if (!knownClient)
                 _clients.push_back(senderEndpoint);
-            }
+            _clientHeartbeats[senderEndpoint] = std::chrono::steady_clock::now();
 
             // Now send back CONNECT_OK
             std::vector<uint8_t> emptyPayload; // No extra data needed
             sendBinaryMessage(MessageType::CONNECT_OK, emptyPayload, senderEndpoint);
             break;
         }
+        case MessageType::DISCONNECT:
+        {
+            std::cout << "[Server] DISCONNECT from " << senderEndpoint << "\n";
+
+            // 1. Remove this client from your list
+            auto it = std::find(_clients.begin(), _clients.end(), senderEndpoint);
+            if (it != _clients.end()) {
+                _clients.erase(it);
+                std::cout << "[Server] Removed client " << senderEndpoint << "\n";
+            }
+            broadcastPlayerLeft(senderEndpoint);
+
+            // 2. Optionally notify other clients that this client left
+            // e.g. broadcast a "player left" message, etc.
+
+            break;
+        }
+        case MessageType::HEARTBEAT:
+        {
+            // Just update the client's last heartbeat time
+            _clientHeartbeats[senderEndpoint] = std::chrono::steady_clock::now();
+            std::cout << "[Server] Received heartbeat from " << senderEndpoint << std::endl;
+            break;
+        }
+
         // ... other message types (MOVE, SHOOT, etc.) ...
         
         default:
@@ -144,4 +169,63 @@ void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8
         [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
         }
     );
+}
+
+void NetworkManager::checkHeartbeats()
+{
+    auto now = std::chrono::steady_clock::now();
+    const auto TIMEOUT = std::chrono::seconds(15); // 15s with no heartbeat = offline
+
+    for (auto it = _clientHeartbeats.begin(); it != _clientHeartbeats.end(); /* no ++ here */)
+    {
+        auto elapsed = now - it->second;
+        if (elapsed > TIMEOUT)
+        {
+            // Timed out => remove from _clients
+            asio::ip::udp::endpoint timedOutClient = it->first;
+            std::cout << "[Server] Client timed out: " << timedOutClient << "\n";
+
+            // Remove from _clients vector
+            auto vecIt = std::find(_clients.begin(), _clients.end(), timedOutClient);
+            if (vecIt != _clients.end()) {
+                _clients.erase(vecIt);
+            }
+
+            // Notify other clients that this one left
+            broadcastPlayerLeft(timedOutClient);
+
+            // Erase from _clientHeartbeats
+            it = _clientHeartbeats.erase(it);
+        }
+        else {
+            ++it; // only increment if we didn't erase
+        }
+    }
+}
+
+void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint)
+{
+    // Optional: store some "player ID" or transform the endpoint into a string
+    std::string leftInfo = clientEndpoint.address().to_string() + ":" +
+                           std::to_string(clientEndpoint.port());
+
+    // Convert string to bytes
+    std::vector<uint8_t> payload(leftInfo.begin(), leftInfo.end());
+
+    // Build the message
+    auto msg = buildMessage(MessageType::PLAYER_LEFT, payload);
+
+    // Send to all other clients
+    for (auto &ep : _clients)
+    {
+        if (ep != clientEndpoint) {
+            auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+            _socket->async_send_to(
+                asio::buffer(*buffer), ep,
+                [buffer](std::error_code, std::size_t) {
+                    // done
+                }
+            );
+        }
+    }
 }

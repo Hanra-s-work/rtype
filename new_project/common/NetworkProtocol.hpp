@@ -6,6 +6,9 @@
 enum class MessageType : uint32_t {
     CONNECT = 1,
     CONNECT_OK,
+    DISCONNECT,
+    HEARTBEAT,
+    PLAYER_LEFT,
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
 

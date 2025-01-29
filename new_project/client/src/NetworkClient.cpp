@@ -42,26 +42,34 @@ void NetworkClient::connect(const std::string& serverIp, unsigned short serverPo
     }
 }
 
+// NetworkClient.cpp
+
 void NetworkClient::disconnect()
 {
     if (!_running) return;
+
+    // 1. Gracefully notify the server
+    sendBinaryMessage(MessageType::DISCONNECT, {});
+
+    // 2. Then proceed with your existing disconnect logic
     _running = false;
 
-    // Close socket
     if (_socket) {
         asio::error_code ec;
         _socket->close(ec);
     }
-
-    // Stop io_context
     _ioContext.stop();
 
-    // Join threads
     for (auto &t : _ioThreads) {
-        if (t.joinable()) t.join();
+        if (t.joinable()) {
+            t.join();
+        }
     }
     _ioThreads.clear();
+
+    std::cout << "[NetworkClient] Disconnected.\n";
 }
+
 
 void NetworkClient::doReceive()
 {

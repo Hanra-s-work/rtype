@@ -59,7 +59,6 @@ void Client::run()
     while (_window.isOpen())
     {
         float dt = _clock.restart().asSeconds();
-
         // 1. Handle input/events
         handleEvents();
 
@@ -145,11 +144,27 @@ void Client::update(float dt)
                 std::cout << "[Client] CONNECT_OK received!\n";
                 _connected = true;
                 break;
+            case MessageType::PLAYER_LEFT:
+            {
+                // Convert payload back to string
+                std::string whoLeft(msg.payload.begin(), msg.payload.end());
+                std::cout << "[Client] Player " << whoLeft << " left the game!\n";
+
+                // E.g. remove them from the local entity list, scoreboard, etc.
+                break;
+            }
             // Possibly handle other messages
             default:
                 std::cout << "[Client] Unknown message type.\n";
                 break;
         }
+    }
+    static float heartbeatTimer = 0.f;
+    heartbeatTimer += dt;
+    if (heartbeatTimer >= 5.f) // send heartbeat every 5 seconds
+    {
+        heartbeatTimer = 0.f;
+        _networkClient->sendBinaryMessage(MessageType::HEARTBEAT, {});
     }
 }
 

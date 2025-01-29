@@ -8,6 +8,8 @@
 #include <optional>
 #include <iostream>
 #include <cstdint>
+#include <chrono>
+#include <unordered_map>
 #include <cstring>
 #include "../../common/NetworkProtocol.hpp"
 
@@ -25,6 +27,8 @@ class NetworkManager {
         void pollMessages(GameWorld& gameWorld);
         void broadcastState(const GameWorld& gameWorld);
         void sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target);
+        void checkHeartbeats();
+        void broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint);
 
     private:
         void doReceive();
@@ -37,6 +41,7 @@ class NetworkManager {
         std::atomic<bool> _running { false };
 
         std::vector<asio::ip::udp::endpoint> _clients;
+        std::unordered_map<asio::ip::udp::endpoint, std::chrono::steady_clock::time_point> _clientHeartbeats;
 };
 
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);
