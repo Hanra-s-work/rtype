@@ -4,30 +4,21 @@
 Client::Client()
 {
     initWindow();
-    
-    // Load a font (placeholder)
+
     if (!_font.loadFromFile("client/assets/font/Arial.ttf")) {
         std::cerr << "Error loading font!\n";
     }
 
-    // Setup connect button
     _connectButton.setFont(_font);
     _connectButton.setString("Connect");
     _connectButton.setCharacterSize(24);
     _connectButton.setFillColor(sf::Color::White);
 
-    // Position the button roughly in the center
     sf::Vector2u winSize = _window.getSize();
-    float btnX = winSize.x / 2.f - 50;  // approximate width
+    float btnX = winSize.x / 2.f - 50;
     float btnY = winSize.y / 2.f - 20;
     _connectButton.setPosition(btnX, btnY);
 
-    // Create the parallax background
-    _parallaxBackground.addLayer("client/assets/vaisseau-spatial.png", 20.f);
-    _parallaxBackground.addLayer("client/assets/background.jpg", 40.f);
-
-
-    // Create network client
     _networkClient = std::make_unique<NetworkClient>();
 }
 
@@ -47,7 +38,8 @@ void Client::initWindow()
     // Create a resizable window
     // NOTE: On some OSes, setPosition might need to be called after creation
     _window.create(sf::VideoMode(width, height), "R-Type Client",
-                   sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                   sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
+                   sf::ContextSettings(0, 0, 0, 2, 1));
     
     _window.setVerticalSyncEnabled(true);
 
@@ -89,9 +81,12 @@ void Client::handleEvents()
             float btnY = newSize.y / 2.f - 20.f;
             _connectButton.setPosition(btnX, btnY);
 
-            // Adjust view if desired
             sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
             _window.setView(sf::View(visibleArea));
+            
+            if (_parallaxBackground) {
+                _parallaxBackground->loadTextures({"client/assets/rougevif.jpg"}, _window);
+            }
             break;
         }
 
@@ -131,11 +126,8 @@ void Client::connectToServer()
 }
 
 
-void Client::update(float dt)
+    void Client::update(float dt)
 {
-    if (_connected)
-        _parallaxBackground.update(dt);
-
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
@@ -143,6 +135,11 @@ void Client::update(float dt)
             case MessageType::CONNECT_OK:
                 std::cout << "[Client] CONNECT_OK received!\n";
                 _connected = true;
+                // Charger le background parallaxe après la connexion
+                _parallaxBackground = std::make_unique<ParallaxBackground>();
+                _parallaxBackground->loadTextures({
+                    "client/assets/rougevif.jpg"
+                }, _window);
                 break;
             case MessageType::PLAYER_LEFT:
             {
@@ -159,6 +156,9 @@ void Client::update(float dt)
                 break;
         }
     }
+    if (_connected && _parallaxBackground){
+        _parallaxBackground->update(dt, _window);
+    }
     static float heartbeatTimer = 0.f;
     heartbeatTimer += dt;
     if (heartbeatTimer >= 5.f) // send heartbeat every 5 seconds
@@ -170,17 +170,21 @@ void Client::update(float dt)
 
 void Client::render()
 {
-    _window.clear(sf::Color::Black);
+    _window.clear(sf::Color::Blue);
 
-    if (_connected)
-        _parallaxBackground.draw(_window);
+    if (_connected && _parallaxBackground) {
+        _parallaxBackground->render(_window);
+    }
+
+     sf::RectangleShape testRect(sf::Vector2f(100, 100));
+    testRect.setFillColor(sf::Color::Red);
+    testRect.setPosition(50, 50);
+    _window.draw(testRect);
 
     if (!_connected) {
-        // Show the connect button
         _window.draw(_connectButton);
-    } else {
-        // If connected, draw the main game (players, enemies, etc.)
     }
 
     _window.display();
 }
+

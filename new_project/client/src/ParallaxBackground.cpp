@@ -1,51 +1,63 @@
 #include "ParallaxBackground.hpp"
 #include <iostream>
 
-void ParallaxBackground::addLayer(const std::string& textureFile, float speed)
+ParallaxBackground::ParallaxBackground() {}
+
+void ParallaxBackground::loadTextures(const std::vector<std::string>& texturePaths, sf::RenderWindow& window)
 {
-    Layer layer;
-    if (!layer.texture.loadFromFile(textureFile)) {
-        std::cerr << "Failed to load " << textureFile << "\n";
-    }
-    layer.texture.setRepeated(true); // if you want seamless repeat
+    float speedFactor = 30.0f;
+    float windowHeight = window.getSize().y;
 
-    layer.sprite1.setTexture(layer.texture);
-    layer.sprite2.setTexture(layer.texture);
-
-    // Position sprite2 to start immediately after sprite1
-    sf::Vector2u size = layer.texture.getSize();
-
-    // For a horizontal scroll, set the second sprite's x to the texture width
-    layer.sprite2.setPosition((float)size.x, 0.f);
-
-    layer.speed = speed;
-    layer.offsetX = 0.f;
-
-    _layers.push_back(std::move(layer));
-}
-
-void ParallaxBackground::update(float dt)
-{
-    // Scroll each layer horizontally
-    for (auto &layer : _layers) {
-        layer.offsetX += layer.speed * dt;
-
-        // If offset is bigger than the texture width, wrap around
-        float texWidth = (float)layer.texture.getSize().x;
-        if (layer.offsetX >= texWidth) {
-            layer.offsetX -= texWidth;
+    for (size_t i = 0; i < texturePaths.size(); ++i) {
+        Layer layer;
+        if (!layer.texture.loadFromFile(texturePaths[i])) {
+            std::cerr << "❌ Erreur : Impossible de charger " << texturePaths[i] << "\n";
+            continue;
+        } else {
+            std::cout << "✅ Chargé avec succès : " << texturePaths[i] << "\n";
         }
 
-        // Update the sprite positions
-        layer.sprite1.setPosition(-layer.offsetX, 0.f);
-        layer.sprite2.setPosition(-layer.offsetX + texWidth, 0.f);
+        float scaleX = static_cast<float>(window.getSize().x) / layer.texture.getSize().x;
+        float scaleY = static_cast<float>(window.getSize().y) / layer.texture.getSize().y;
+        float scale = std::max(scaleX, scaleY); // Conserve le ratio
+        layer.sprite.setScale(scale, scale);
+        layer.texture.setRepeated(true);
+        layer.sprite.setTextureRect(sf::IntRect(0, 0, window.getSize().x, window.getSize().y));
+        std::cout << "Texture size: " << layer.texture.getSize().x << "x" << layer.texture.getSize().y << "\n";
+        std::cout << "Sprite scale: " << scale << "\n";
+        std::cout << "Sprite size after scaling: " << layer.sprite.getGlobalBounds().width << "x" << layer.sprite.getGlobalBounds().height << "\n";
+        layer.sprite.setPosition(0, 0); // Position de départ fixe
+        layer.speed = speedFactor * (i + 1);
+        _layers.push_back(layer);
     }
 }
 
-void ParallaxBackground::draw(sf::RenderWindow &window)
+// ParallaxBackground.cpp (méthode update)
+void ParallaxBackground::update(float dt, sf::RenderWindow& window)
 {
-    for (auto &layer : _layers) {
-        window.draw(layer.sprite1);
-        window.draw(layer.sprite2);
+    for (auto& layer : _layers) {
+        layer.sprite.move(-layer.speed * dt, 0);
+        float spriteWidth = layer.sprite.getGlobalBounds().width;
+        if (layer.sprite.getPosition().x <= -spriteWidth) {
+            layer.sprite.setPosition(0, 0);
+        }
+    }
+}
+
+// ParallaxBackground.cpp (méthode render)
+void ParallaxBackground::render(sf::RenderWindow& window)
+{
+    if (_layers.empty()) return;
+
+    for (auto& layer : _layers) {
+        // Dessiner le sprite principal
+        window.draw(layer.sprite);
+        
+        // Dessiner une copie à droite pour le défilement continu
+        sf::Sprite secondSprite = layer.sprite;
+        secondSprite.setPosition(layer.sprite.getPosition().x + layer.sprite.getGlobalBounds().width, 0);
+        // Dans ParallaxBackground::render()
+std::cout << "Sprite position: " << layer.sprite.getPosition().x << ", " << layer.sprite.getPosition().y << "\n";
+        window.draw(secondSprite);
     }
 }
