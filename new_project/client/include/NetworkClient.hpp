@@ -6,6 +6,7 @@
 #include <vector>
 #include <mutex>
 #include <string>
+#include "../../common/NetworkProtocol.hpp"
 
 class NetworkClient {
 public:
@@ -22,6 +23,7 @@ public:
     void pollMessages();
 
     void sendMessage(const std::string& msg);
+    void sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload);
 
 private:
     // Start async receives
@@ -43,5 +45,5 @@ private:
 
     // For thread-safe incoming messages
     std::mutex _messageMutex;
-    std::vector<std::string> _incomingMessages;
+    std::vector<ParsedMessage> _incomingMessages;
 };

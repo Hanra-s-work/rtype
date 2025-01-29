@@ -28,5 +28,6 @@ CPMAddPackage(NAME SFML
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 # Add Server and Client subdirs (each with its own CMakeLists)
+add_subdirectory(common)
 add_subdirectory(server)
 add_subdirectory(client)

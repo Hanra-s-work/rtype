@@ -66,6 +66,8 @@ void Client::run()
         // 1. Handle input/events
         handleEvents();
 
+        connectToServer();
+
         // 2. Update
         update(dt);
 
@@ -111,8 +113,12 @@ void Client::connectToServer()
 {
     // Attempt to connect
     std::cout << "Connecting to server...\n";
-    _networkClient->connect("127.0.0.1", 45000); // Example IP/port
+    _networkClient->connect("127.0.0.1", 9000); // Example IP/port
     _connected = true;
+    // Example: client sends HELLO with a small string payload
+    std::string testStr = "Hello from client";
+    std::vector<uint8_t> payload(testStr.begin(), testStr.end());
+    _networkClient->sendBinaryMessage(MessageType::HELLO, payload);
 }
 
 void Client::update(float dt)

@@ -11,3 +11,8 @@ target_include_directories(r-type_server
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
+target_link_libraries(r-type_server
+    PRIVATE
+        rtype_protocol
+)
