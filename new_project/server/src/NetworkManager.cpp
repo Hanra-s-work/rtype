@@ -1,6 +1,5 @@
 #include "NetworkManager.hpp"
 #include "GameWorld.hpp"
-#include <iostream>
 
 static const unsigned short SERVER_PORT = 9000;
 
@@ -87,17 +86,53 @@ void NetworkManager::doReceive()
     );
 }
 
-void NetworkManager::onDataReceived(const std::string& data, const asio::ip::udp::endpoint& senderEndpoint)
+void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::udp::endpoint& senderEndpoint)
 {
-    bool knownClient = false;
-    for (auto& c : _clients) {
-        if (c == senderEndpoint) {
-            knownClient = true;
+    std::vector<uint8_t> data(dataStr.begin(), dataStr.end());
+
+    auto msgOpt = parseMessage(data);
+    if (!msgOpt.has_value()) {
+        std::cerr << "Received invalid or incomplete message from " << senderEndpoint << "\n";
+        return;
+    }
+
+    ParsedMessage msg = msgOpt.value();
+    switch (msg.type) {
+        case MessageType::HELLO:
+        {
+            std::cout << "[Server] HELLO received from " << senderEndpoint << "\n";
+            // Optionally parse payload
+            std::string payloadStr(msg.payload.begin(), msg.payload.end());
+            std::cout << "Payload: " << payloadStr << "\n";
+
+            // Reply with HELLO
+            std::string serverReply = "Hello from server!";
+            std::vector<uint8_t> replyData(serverReply.begin(), serverReply.end());
+            sendBinaryMessage(MessageType::HELLO, replyData, senderEndpoint);
             break;
         }
+        case MessageType::JOIN:
+            std::cout << "[Server] JOIN received\n";
+            break;
+        case MessageType::MOVE:
+            break;
+        default:
+            std::cout << "[Server] Unknown message type received.\n";
+            break;
     }
-    if (!knownClient) {
-        _clients.push_back(senderEndpoint);
-        std::cout << "New client connected: " << senderEndpoint << "\n";
-    }
+}
+
+void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target)
+{
+    if (!_running) return;
+
+    std::vector<uint8_t> msg = buildMessage(type, payload);
+
+    auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
+
+    _socket->async_send_to(
+        asio::buffer(*buffer), target,
+        [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+        }
+    );
 }

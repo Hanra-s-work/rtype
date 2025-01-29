@@ -68,17 +68,25 @@ void NetworkClient::disconnect()
 
 void NetworkClient::pollMessages()
 {
-    // Here we can safely copy or process any newly received messages
-    std::vector<std::string> messagesCopy;
+    std::vector<ParsedMessage> messagesCopy;
     {
         std::lock_guard<std::mutex> lock(_messageMutex);
         messagesCopy.swap(_incomingMessages);
     }
 
-    // Process them
+    // Process
     for (auto &msg : messagesCopy) {
-        std::cout << "[Client] Received: " << msg << "\n";
-        // Then update local game state accordingly
+        switch (msg.type) {
+            case MessageType::HELLO:
+            {
+                std::string payloadStr(msg.payload.begin(), msg.payload.end());
+                std::cout << "[Client] Server says: " << payloadStr << "\n";
+                break;
+            }
+            default:
+                std::cout << "[Client] Received unknown message type.\n";
+                break;
+        }
     }
 }
 
@@ -116,11 +124,37 @@ void NetworkClient::doReceive()
     );
 }
 
-void NetworkClient::onDataReceived(const std::string& data, const asio::ip::udp::endpoint& /*sender*/)
+void NetworkClient::onDataReceived(const std::string& dataStr,
+                                   const asio::ip::udp::endpoint& senderEndpoint)
 {
-    // Lock and push to the incoming message vector
+    // Convert std::string -> vector<uint8_t>
+    std::vector<uint8_t> data(dataStr.begin(), dataStr.end());
+
+    auto msgOpt = parseMessage(data);
+    if (!msgOpt.has_value()) {
+        // incomplete or invalid message
+        return;
+    }
+    ParsedMessage msg = msgOpt.value();
+
+    // You can store it in _incomingMessages as a structured message
     {
         std::lock_guard<std::mutex> lock(_messageMutex);
-        _incomingMessages.push_back(data);
+        _incomingMessages.push_back(msg);
     }
+}
+
+void NetworkClient::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload)
+{
+    if (!_running) return;
+
+    std::vector<uint8_t> msg = buildMessage(type, payload);
+    auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
+
+    _socket->async_send_to(
+        asio::buffer(*buffer), _serverEndpoint,
+        [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+            // data is kept alive until this lambda finishes
+        }
+    );
 }

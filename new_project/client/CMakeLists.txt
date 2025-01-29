@@ -30,6 +30,7 @@ add_executable(r-type_client ${SOURCES})
 target_link_libraries(r-type_client
     PRIVATE
     rtype_client_libraries
+    rtype_protocol
     Threads::Threads
     sfml-graphics sfml-window sfml-audio sfml-network sfml-system
 )

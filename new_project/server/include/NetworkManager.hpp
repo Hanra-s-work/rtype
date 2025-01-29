@@ -5,6 +5,12 @@
 #include <atomic>
 #include <vector>
 #include <memory>
+#include <optional>
+#include <iostream>
+#include <cstdint>
+#include <cstring>
+#include "../../common/NetworkProtocol.hpp"
+
 
 class GameWorld;
 
@@ -18,6 +24,7 @@ class NetworkManager {
         
         void pollMessages(GameWorld& gameWorld);
         void broadcastState(const GameWorld& gameWorld);
+        void sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target);
 
     private:
         void doReceive();
@@ -31,3 +38,6 @@ class NetworkManager {
 
         std::vector<asio::ip::udp::endpoint> _clients;
 };
+
+std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);
+std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload);
