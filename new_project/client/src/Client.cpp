@@ -4,9 +4,10 @@
 Client::Client()
 {
     initWindow();
+    
 
     // Load a font (placeholder)
-    if (!_font.loadFromFile("arial.ttf")) {
+    if (!_font.loadFromFile("../assets/font/Arial.ttf")) {
         std::cerr << "Error loading font!\n";
     }
 
@@ -14,7 +15,7 @@ Client::Client()
     _connectButton.setFont(_font);
     _connectButton.setString("Connect");
     _connectButton.setCharacterSize(24);
-    _connectButton.setColor(sf::Color::White);
+    _connectButton.setFillColor(sf::Color::White);
 
     // Position the button roughly in the center
     sf::Vector2u winSize = _window.getSize();
@@ -23,8 +24,11 @@ Client::Client()
     _connectButton.setPosition(btnX, btnY);
 
     // Create the parallax background
-    _parallaxBackground.addLayer("stars_layer1.png", 20.f);
-    _parallaxBackground.addLayer("stars_layer2.png", 40.f);
+    _parallaxBackground.addLayer("../assets/vaisseau-spatial.png", 20.f);
+    std::cout << "Added layer: ../assets/vaisseau-spatial.png\n";
+    _parallaxBackground.addLayer("../assets/background.jpg", 40.f);
+    std::cout << "Added layer: ../assets/background.png\n";
+
 
     // Create network client
     _networkClient = std::make_unique<NetworkClient>();
@@ -47,6 +51,8 @@ void Client::initWindow()
     // NOTE: On some OSes, setPosition might need to be called after creation
     _window.create(sf::VideoMode(width, height), "R-Type Client",
                    sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+    
+    _window.setVerticalSyncEnabled(true);
 
     _window.setPosition(sf::Vector2<int>(posX, posY));
 }
