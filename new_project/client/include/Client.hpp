@@ -5,7 +5,7 @@
 #include <SFML/System.hpp>
 #include <memory>
 #include "NetworkClient.hpp"
-#include "ParallaxBackground.hpp"
+#include "HandleBackground.hpp"
 
 class Client {
 public:
@@ -31,5 +31,5 @@ private:
     sf::Text _connectButton;
 
     std::unique_ptr<NetworkClient> _networkClient;
-    std::unique_ptr<ParallaxBackground> _parallaxBackground;
+    HandleBackground _background;
 };

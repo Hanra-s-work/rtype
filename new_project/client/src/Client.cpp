@@ -1,9 +1,13 @@
 #include "Client.hpp"
 #include <iostream>
 
-Client::Client()
+Client::Client() : _background(_window)
 {
     initWindow();
+
+    if (!_background.loadAssets("client/assets/background.jpg", "client/assets/etoiles-lointaines.png")) {
+        std::cerr << "Erreur chargement du background et des étoiles.\n";
+    }
 
     if (!_font.loadFromFile("client/assets/font/Arial.ttf")) {
         std::cerr << "Error loading font!\n";
@@ -80,13 +84,10 @@ void Client::handleEvents()
             float btnX = newSize.x / 2.f - 50.f;
             float btnY = newSize.y / 2.f - 20.f;
             _connectButton.setPosition(btnX, btnY);
-
+            _background.resize(_window.getSize()); // Adapter le fond
             sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
             _window.setView(sf::View(visibleArea));
             
-            if (_parallaxBackground) {
-                _parallaxBackground->loadTextures({"client/assets/rougevif.jpg"}, _window);
-            }
             break;
         }
 
@@ -126,8 +127,9 @@ void Client::connectToServer()
 }
 
 
-    void Client::update(float dt)
+void Client::update(float dt)
 {
+    _background.update(dt);
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
@@ -135,11 +137,6 @@ void Client::connectToServer()
             case MessageType::CONNECT_OK:
                 std::cout << "[Client] CONNECT_OK received!\n";
                 _connected = true;
-                // Charger le background parallaxe après la connexion
-                _parallaxBackground = std::make_unique<ParallaxBackground>();
-                _parallaxBackground->loadTextures({
-                    "client/assets/rougevif.jpg"
-                }, _window);
                 break;
             case MessageType::PLAYER_LEFT:
             {
@@ -156,9 +153,6 @@ void Client::connectToServer()
                 break;
         }
     }
-    if (_connected && _parallaxBackground){
-        _parallaxBackground->update(dt, _window);
-    }
     static float heartbeatTimer = 0.f;
     heartbeatTimer += dt;
     if (heartbeatTimer >= 5.f) // send heartbeat every 5 seconds
@@ -171,16 +165,8 @@ void Client::connectToServer()
 void Client::render()
 {
     _window.clear(sf::Color::Blue);
-
-    if (_connected && _parallaxBackground) {
-        _parallaxBackground->render(_window);
-    }
-
-     sf::RectangleShape testRect(sf::Vector2f(100, 100));
-    testRect.setFillColor(sf::Color::Red);
-    testRect.setPosition(50, 50);
-    _window.draw(testRect);
-
+    if (_connected)
+        _background.render(_window);
     if (!_connected) {
         _window.draw(_connectButton);
     }
