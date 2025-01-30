@@ -9,6 +9,11 @@ enum class MessageType : uint32_t {
     DISCONNECT,
     HEARTBEAT,
     PLAYER_LEFT,
+    MOVE_UP,
+    MOVE_DOWN,
+    MOVE_RIGHT,
+    MOVE_LEFT,
+
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
 

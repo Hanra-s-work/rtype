@@ -94,7 +94,29 @@ void Client::handleEvents()
             
             break;
         }
-
+        case sf::Event::KeyPressed:
+        {
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::Z || event.key.code == sf::Keyboard::Up) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_UP, {});
+                }
+            }
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::S|| event.key.code == sf::Keyboard::Down) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN, {});
+                }
+            }
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::D || event.key.code == sf::Keyboard::Right) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT, {});
+                }
+            }
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Left) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
+                }
+            }
+        }
         case sf::Event::MouseButtonPressed:
         {
             if (!_connected && event.mouseButton.button == sf::Mouse::Left) {

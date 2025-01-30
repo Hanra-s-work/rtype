@@ -147,6 +147,26 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             std::cout << "[Server] Received heartbeat from " << senderEndpoint << std::endl;
             break;
         }
+        case MessageType::MOVE_UP:
+        {
+            std::cout << "[Server][MOVE] player has pressed key (UP) 1 time" <<std::endl;
+            break;
+        }
+        case MessageType::MOVE_DOWN:
+        {
+            std::cout << "[Server][MOVE] player has pressed key (DOWN) 1 time" <<std::endl;
+            break;
+        }
+        case MessageType::MOVE_RIGHT:
+        {
+            std::cout << "[Server][MOVE] player has pressed key (RIGHT) 1 time" <<std::endl;
+            break;
+        }
+        case MessageType::MOVE_LEFT:
+        {
+            std::cout << "[Server][MOVE] player has pressed key (LEFT) 1 time" <<std::endl;
+            break;
+        }
 
         // ... other message types (MOVE, SHOOT, etc.) ...
         
