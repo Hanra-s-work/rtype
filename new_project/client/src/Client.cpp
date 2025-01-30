@@ -1,34 +1,33 @@
 #include "Client.hpp"
 #include <iostream>
 
-Client::Client()
+Client::Client() : _background(_window), _sprites("client/assets/vaisseau-spatial.png", 400, 300, false)
 {
     initWindow();
-    
-    // Load a font (placeholder)
+
+    if (!_background.loadAssets("client/assets/background.jpg", "client/assets/etoiles-lointaines.png")) {
+        std::cerr << "Erreur chargement du background et des étoiles.\n";
+    }
+
     if (!_font.loadFromFile("client/assets/font/Arial.ttf")) {
         std::cerr << "Error loading font!\n";
     }
 
-    // Setup connect button
     _connectButton.setFont(_font);
     _connectButton.setString("Connect");
     _connectButton.setCharacterSize(24);
     _connectButton.setFillColor(sf::Color::White);
 
-    // Position the button roughly in the center
     sf::Vector2u winSize = _window.getSize();
-    float btnX = winSize.x / 2.f - 50;  // approximate width
+    float btnX = winSize.x / 2.f - 50;
     float btnY = winSize.y / 2.f - 20;
     _connectButton.setPosition(btnX, btnY);
 
-    // Create the parallax background
-    _parallaxBackground.addLayer("client/assets/vaisseau-spatial.png", 20.f);
-    _parallaxBackground.addLayer("client/assets/background.jpg", 40.f);
-
-
-    // Create network client
     _networkClient = std::make_unique<NetworkClient>();
+
+    _sprites.setScale(0.2f, 0.2f);
+    _sprites.rotate(90.f);
+    _sprites.setPosition(100.0f, 250.0f);
 }
 
 void Client::initWindow()
@@ -47,7 +46,8 @@ void Client::initWindow()
     // Create a resizable window
     // NOTE: On some OSes, setPosition might need to be called after creation
     _window.create(sf::VideoMode(width, height), "R-Type Client",
-                   sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
+                   sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
+                   sf::ContextSettings(0, 0, 0, 2, 1));
     
     _window.setVerticalSyncEnabled(true);
 
@@ -88,13 +88,35 @@ void Client::handleEvents()
             float btnX = newSize.x / 2.f - 50.f;
             float btnY = newSize.y / 2.f - 20.f;
             _connectButton.setPosition(btnX, btnY);
-
-            // Adjust view if desired
+            _background.resize(_window.getSize()); // Adapter le fond
             sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
             _window.setView(sf::View(visibleArea));
+            
             break;
         }
-
+        case sf::Event::KeyPressed:
+        {
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::Z || event.key.code == sf::Keyboard::Up) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_UP, {});
+                }
+            }
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::S|| event.key.code == sf::Keyboard::Down) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN, {});
+                }
+            }
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::D || event.key.code == sf::Keyboard::Right) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT, {});
+                }
+            }
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Left) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
+                }
+            }
+        }
         case sf::Event::MouseButtonPressed:
         {
             if (!_connected && event.mouseButton.button == sf::Mouse::Left) {
@@ -133,9 +155,8 @@ void Client::connectToServer()
 
 void Client::update(float dt)
 {
-    if (_connected)
-        _parallaxBackground.update(dt);
-
+    _background.update(dt);
+    _sprites.update(dt);
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
@@ -170,17 +191,15 @@ void Client::update(float dt)
 
 void Client::render()
 {
-    _window.clear(sf::Color::Black);
-
-    if (_connected)
-        _parallaxBackground.draw(_window);
-
+    _window.clear(sf::Color::Blue);
+    if (_connected){
+        _background.render(_window);
+        _sprites.draw(_window);
+    }
     if (!_connected) {
-        // Show the connect button
         _window.draw(_connectButton);
-    } else {
-        // If connected, draw the main game (players, enemies, etc.)
     }
 
     _window.display();
 }
+
