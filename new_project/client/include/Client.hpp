@@ -6,6 +6,7 @@
 #include <memory>
 #include "NetworkClient.hpp"
 #include "HandleBackground.hpp"
+#include "HandleSprites.hpp"
 
 class Client {
 public:
@@ -32,4 +33,5 @@ private:
 
     std::unique_ptr<NetworkClient> _networkClient;
     HandleBackground _background;
+    SpriteEntity _sprites;
 };

@@ -1,7 +1,7 @@
 #include "Client.hpp"
 #include <iostream>
 
-Client::Client() : _background(_window)
+Client::Client() : _background(_window), _sprites("client/assets/vaisseau-spatial.png", 400, 300, false)
 {
     initWindow();
 
@@ -24,6 +24,10 @@ Client::Client() : _background(_window)
     _connectButton.setPosition(btnX, btnY);
 
     _networkClient = std::make_unique<NetworkClient>();
+
+    _sprites.setScale(0.2f, 0.2f);
+    _sprites.rotate(90.f);
+    _sprites.setPosition(100.0f, 250.0f);
 }
 
 void Client::initWindow()
@@ -130,6 +134,7 @@ void Client::connectToServer()
 void Client::update(float dt)
 {
     _background.update(dt);
+    _sprites.update(dt);
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
@@ -165,8 +170,10 @@ void Client::update(float dt)
 void Client::render()
 {
     _window.clear(sf::Color::Blue);
-    if (_connected)
+    if (_connected){
         _background.render(_window);
+        _sprites.draw(_window);
+    }
     if (!_connected) {
         _window.draw(_connectButton);
     }
