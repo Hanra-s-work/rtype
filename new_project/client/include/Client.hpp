@@ -34,4 +34,5 @@ private:
     std::unique_ptr<NetworkClient> _networkClient;
     HandleBackground _background;
     SpriteEntity _sprites;
+    std::map<uint32_t, SpriteEntity> _monsters;
 };

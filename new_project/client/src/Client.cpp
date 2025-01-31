@@ -116,6 +116,7 @@ void Client::handleEvents()
                     _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
                 }
             }
+            break;
         }
         case sf::Event::MouseButtonPressed:
         {
@@ -174,6 +175,39 @@ void Client::update(float dt)
                 // E.g. remove them from the local entity list, scoreboard, etc.
                 break;
             }
+            case MessageType::SPAWN_MONSTER:
+            {
+                // On s’attend à recevoir : [ monsterID (uint32_t), posX (float), posY (float) ]
+                if (msg.payload.size() < sizeof(uint32_t) + 2 * sizeof(float)) {
+                    std::cerr << "[Client] SPAWN_MONSTER payload too small!\n";
+                    break;
+                }
+
+                // Extraire l'ID
+                uint32_t monsterID;
+                std::memcpy(&monsterID, msg.payload.data(), sizeof(monsterID));
+
+                // Extraire posX
+                float posX;
+                std::memcpy(&posX, msg.payload.data() + sizeof(monsterID), sizeof(posX));
+
+                // Extraire posY
+                float posY;
+                std::memcpy(&posY, msg.payload.data() + sizeof(monsterID) + sizeof(posX), sizeof(posY));
+
+                std::cout << "[Client] SPAWN_MONSTER -> ID=" << monsterID
+                        << " pos=(" << posX << ", " << posY << ")\n";
+
+                // Ensuite, créer un sprite local, ou un "monster entity" pour l'affichage
+                // Par ex. :
+                SpriteEntity monster("client/assets/alien.png", posX, posY, false);
+                monster.setScale(0.2f, 0.2f);
+
+                // Stocker ce nouveau SpriteEntity dans un conteneur local du client, e.g.:
+                _monsters[monsterID] = monster;
+
+                break;
+            }
             // Possibly handle other messages
             default:
                 std::cout << "[Client] Unknown message type.\n";
@@ -195,6 +229,9 @@ void Client::render()
     if (_connected){
         _background.render(_window);
         _sprites.draw(_window);
+    }
+    for (auto &pair : _monsters) {
+            pair.second.draw(_window);
     }
     if (!_connected) {
         _window.draw(_connectButton);

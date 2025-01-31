@@ -8,6 +8,7 @@
 
 class SpriteEntity {
     public:
+        SpriteEntity();
         SpriteEntity(const std::string& imagePath, float posX = 0, float posY = 0, bool moving = false);
 
         void draw(sf::RenderWindow& window);
