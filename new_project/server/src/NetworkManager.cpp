@@ -167,7 +167,11 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             std::cout << "[Server][MOVE] player has pressed key (LEFT) 1 time" <<std::endl;
             break;
         }
-
+        case MessageType::PLAYER_FIRE:
+        {
+            std::cout << "[Server][FIRE] player has pressed key (SPACE) 1 time" <<std::endl;
+            break;
+        }
         // ... other message types (MOVE, SHOOT, etc.) ...
         
         default:

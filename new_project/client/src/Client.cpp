@@ -100,22 +100,26 @@ void Client::handleEvents()
                 if (event.key.code == sf::Keyboard::Z || event.key.code == sf::Keyboard::Up) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_UP, {});
                 }
-            }
-            if (_connected) {
+            
+
                 if (event.key.code == sf::Keyboard::S|| event.key.code == sf::Keyboard::Down) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN, {});
                 }
-            }
-            if (_connected) {
+            
+
                 if (event.key.code == sf::Keyboard::D || event.key.code == sf::Keyboard::Right) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT, {});
                 }
-            }
-            if (_connected) {
+            
+
                 if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Left) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
                 }
+
+                if (event.key.code == sf::Keyboard::Space)
+                    _networkClient->sendBinaryMessage(MessageType::PLAYER_FIRE, {});
             }
+            break;
         }
         case sf::Event::MouseButtonPressed:
         {
@@ -152,19 +156,56 @@ void Client::connectToServer()
     _networkClient->sendConnectRequest();
 }
 
+void Client::sendPlayerPosition(uint32_t playerID, float posX, float posY)
+{
+    // Construire la payload binaire [ id (uint32_t), posX (float), posY (float) ]
+    std::vector<uint8_t> payload;
+    payload.reserve(sizeof(playerID) + sizeof(posX) + sizeof(posY));
+
+    // On insère l'ID
+    const uint8_t* idPtr = reinterpret_cast<const uint8_t*>(&playerID);
+    payload.insert(payload.end(), idPtr, idPtr + sizeof(playerID));
+
+    // On insère posX
+    const uint8_t* xPtr = reinterpret_cast<const uint8_t*>(&posX);
+    payload.insert(payload.end(), xPtr, xPtr + sizeof(posX));
+
+    // On insère posY
+    const uint8_t* yPtr = reinterpret_cast<const uint8_t*>(&posY);
+    payload.insert(payload.end(), yPtr, yPtr + sizeof(posY));
+
+    // Puis on envoie avec notre NetworkClient
+    _networkClient->sendBinaryMessage(MessageType::PLAYER_POSITION, payload);
+}
 
 void Client::update(float dt)
 {
     _background.update(dt);
     _sprites.update(dt);
+
+    if (_connected) {
+        sf::Vector2f playerPos = _sprites.getPosition();
+        sendPlayerPosition(_playerID, playerPos.x, playerPos.y);
+    }
+    
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
         switch (msg.type) {
-            case MessageType::CONNECT_OK:
-                std::cout << "[Client] CONNECT_OK received!\n";
-                _connected = true;
-                break;
+    case MessageType::CONNECT_OK:
+    {
+        _connected = true;
+        // Imaginons que le serveur envoie (uint32_t) comme ID en payload :
+        if (msg.payload.size() >= sizeof(uint32_t)) {
+            uint32_t playerID;
+            std::memcpy(&playerID, msg.payload.data(), sizeof(playerID));
+            _playerID = playerID;
+            std::cout << "[Client] CONNECT_OK received! My ID = " << _playerID << "\n";
+        } else {
+            std::cout << "[Client] CONNECT_OK received but no ID in payload.\n";
+        }
+        break;
+    }
             case MessageType::PLAYER_LEFT:
             {
                 // Convert payload back to string
@@ -172,6 +213,39 @@ void Client::update(float dt)
                 std::cout << "[Client] Player " << whoLeft << " left the game!\n";
 
                 // E.g. remove them from the local entity list, scoreboard, etc.
+                break;
+            }
+            case MessageType::SPAWN_MONSTER:
+            {
+                // On s’attend à recevoir : [ monsterID (uint32_t), posX (float), posY (float) ]
+                if (msg.payload.size() < sizeof(uint32_t) + 2 * sizeof(float)) {
+                    std::cerr << "[Client] SPAWN_MONSTER payload too small!\n";
+                    break;
+                }
+
+                // Extraire l'ID
+                uint32_t monsterID;
+                std::memcpy(&monsterID, msg.payload.data(), sizeof(monsterID));
+
+                // Extraire posX
+                float posX;
+                std::memcpy(&posX, msg.payload.data() + sizeof(monsterID), sizeof(posX));
+
+                // Extraire posY
+                float posY;
+                std::memcpy(&posY, msg.payload.data() + sizeof(monsterID) + sizeof(posX), sizeof(posY));
+
+                std::cout << "[Client] SPAWN_MONSTER -> ID=" << monsterID
+                        << " pos=(" << posX << ", " << posY << ")\n";
+
+                // Ensuite, créer un sprite local, ou un "monster entity" pour l'affichage
+                // Par ex. :
+                SpriteEntity monster("client/assets/alien.png", posX, posY, false);
+                monster.setScale(0.2f, 0.2f);
+
+                // Stocker ce nouveau SpriteEntity dans un conteneur local du client, e.g.:
+                _monsters[monsterID] = monster;
+
                 break;
             }
             // Possibly handle other messages
@@ -195,6 +269,9 @@ void Client::render()
     if (_connected){
         _background.render(_window);
         _sprites.draw(_window);
+    }
+    for (auto &pair : _monsters) {
+            pair.second.draw(_window);
     }
     if (!_connected) {
         _window.draw(_connectButton);
