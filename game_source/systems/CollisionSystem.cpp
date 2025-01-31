@@ -7,6 +7,7 @@
 
 void collision_player_missile(Registry &r, std::size_t &entity1, std::size_t &entity2)
 {
+    std::cout << "Collision Player Missile" << std::endl;
     auto &&[healths, teams] = r.get_component_array<Health, Team>();
     if (teams[entity2]->team == team_enum::ENEMY) {
 
@@ -25,6 +26,7 @@ void collision_player_missile(Registry &r, std::size_t &entity1, std::size_t &en
 
 void collision_monster_missile(Registry &r, std::size_t &entity1, std::size_t &entity2)
 {
+    std::cout << "Collision Monster Missile" << std::endl;
     auto &&[healths, teams, loot_drops, positions] = r.get_component_array<Health, Team, LootDrop, Position>();
     if (teams[entity2]->team == team_enum::ALLY) {
         healths[entity1]->current -= 1;
@@ -46,6 +48,7 @@ void collision_monster_missile(Registry &r, std::size_t &entity1, std::size_t &e
 
 void collision_player_obstacle(Registry &r, std::size_t &entity1, std::size_t &entity2)
 {
+    std::cout << "Collision Player Obstacle" << std::endl;
     auto &healths = r.get_components<Health>();
     healths[entity1]->current -= 1;
     r.dispatcher->notify({messageType::P_DAMAGE, entity1, {0, 0, 0, "", {0, 0}}});
@@ -58,6 +61,7 @@ void collision_monster_obstacle(Registry &r, std::size_t &entity1, std::size_t &
 
 void collision_player_powerup(Registry &r, std::size_t &entity1, std::size_t &entity2)
 {
+    std::cout << "Collision Player Powerup" << std::endl;
     auto &&[healths, loots] = r.get_component_array<Health, LootDrop>();
     if (loots[entity2]->loot == loot_enum::HEALTH_DROP) {
         healths[entity1]->current = healths[entity1]->max;
@@ -72,6 +76,7 @@ void collision_player_powerup(Registry &r, std::size_t &entity1, std::size_t &en
 
 void collision_obstacle_missile(Registry &r, std::size_t &entity1, std::size_t &entity2)
 {
+    std::cout << "Collision Obstacle Missile" << std::endl;
     r.kill_entity(Entity(entity2));
     r.dispatcher->notify({messageType::P_KILL, entity2, {0, 0, 0, "", {0, 0}}});
 }
