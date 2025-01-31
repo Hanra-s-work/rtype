@@ -156,19 +156,56 @@ void Client::connectToServer()
     _networkClient->sendConnectRequest();
 }
 
+void Client::sendPlayerPosition(uint32_t playerID, float posX, float posY)
+{
+    // Construire la payload binaire [ id (uint32_t), posX (float), posY (float) ]
+    std::vector<uint8_t> payload;
+    payload.reserve(sizeof(playerID) + sizeof(posX) + sizeof(posY));
+
+    // On insère l'ID
+    const uint8_t* idPtr = reinterpret_cast<const uint8_t*>(&playerID);
+    payload.insert(payload.end(), idPtr, idPtr + sizeof(playerID));
+
+    // On insère posX
+    const uint8_t* xPtr = reinterpret_cast<const uint8_t*>(&posX);
+    payload.insert(payload.end(), xPtr, xPtr + sizeof(posX));
+
+    // On insère posY
+    const uint8_t* yPtr = reinterpret_cast<const uint8_t*>(&posY);
+    payload.insert(payload.end(), yPtr, yPtr + sizeof(posY));
+
+    // Puis on envoie avec notre NetworkClient
+    _networkClient->sendBinaryMessage(MessageType::PLAYER_POSITION, payload);
+}
 
 void Client::update(float dt)
 {
     _background.update(dt);
     _sprites.update(dt);
+
+    if (_connected) {
+        sf::Vector2f playerPos = _sprites.getPosition();
+        sendPlayerPosition(_playerID, playerPos.x, playerPos.y);
+    }
+    
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
         switch (msg.type) {
-            case MessageType::CONNECT_OK:
-                std::cout << "[Client] CONNECT_OK received!\n";
-                _connected = true;
-                break;
+    case MessageType::CONNECT_OK:
+    {
+        _connected = true;
+        // Imaginons que le serveur envoie (uint32_t) comme ID en payload :
+        if (msg.payload.size() >= sizeof(uint32_t)) {
+            uint32_t playerID;
+            std::memcpy(&playerID, msg.payload.data(), sizeof(playerID));
+            _playerID = playerID;
+            std::cout << "[Client] CONNECT_OK received! My ID = " << _playerID << "\n";
+        } else {
+            std::cout << "[Client] CONNECT_OK received but no ID in payload.\n";
+        }
+        break;
+    }
             case MessageType::PLAYER_LEFT:
             {
                 // Convert payload back to string
