@@ -14,6 +14,7 @@ enum class MessageType : uint32_t {
     MOVE_RIGHT,
     MOVE_LEFT,
     SPAWN_MONSTER,
+    PLAYER_FIRE,
 
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
