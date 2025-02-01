@@ -1,5 +1,11 @@
 #include "HandleSprites.hpp"
 
+SpriteEntity::SpriteEntity() : velocity(0.f, 0.f), isMoving(false)
+{
+    // Ici, tu peux laisser texture et sprite "vides" 
+    // ou charger une image par défaut.
+}
+
 SpriteEntity::SpriteEntity(const std::string& imagePath, float posX, float posY, bool moving)
     : velocity(0.f, 0.f), isMoving(moving) {
     if (!texture.loadFromFile(imagePath)) {

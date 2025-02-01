@@ -22,6 +22,7 @@ private:
     void render();
     bool isConnectButtonClicked(const sf::Vector2i& mousePos);
     void connectToServer();
+    void sendPlayerPosition(uint32_t playerID, float posX, float posY);
 
 private:
     sf::RenderWindow _window;
@@ -34,4 +35,6 @@ private:
     std::unique_ptr<NetworkClient> _networkClient;
     HandleBackground _background;
     SpriteEntity _sprites;
+    std::map<uint32_t, SpriteEntity> _monsters;
+    uint32_t _playerID = 0;
 };
