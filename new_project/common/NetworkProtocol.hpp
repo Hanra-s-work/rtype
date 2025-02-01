@@ -5,17 +5,21 @@
 
 enum class MessageType : uint32_t {
     CONNECT = 1,
-    CONNECT_OK,
-    DISCONNECT,
-    HEARTBEAT,
-    PLAYER_LEFT,
-    MOVE_UP,
-    MOVE_DOWN,
-    MOVE_RIGHT,
-    MOVE_LEFT,
-    SPAWN_MONSTER,
-    PLAYER_FIRE,
-    PLAYER_POSITION,
+    CONNECT_OK = 2,
+    DISCONNECT = 3,
+    HEARTBEAT = 4,
+    PLAYER_LEFT = 5,
+    MOVE_UP = 6,
+    MOVE_DOWN = 7,
+    MOVE_RIGHT = 8,
+    MOVE_LEFT = 9,
+    SPAWN_MONSTER = 10,
+    PLAYER_FIRE = 11,
+    PLAYER_POSITION = 12,
+    MOVE_UP_STOP = 13,
+    MOVE_DOWN_STOP = 14,
+    MOVE_LEFT_STOP = 15,
+    MOVE_RIGHT_STOP = 16,
 
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };

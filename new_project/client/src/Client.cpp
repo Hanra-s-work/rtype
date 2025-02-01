@@ -100,24 +100,32 @@ void Client::handleEvents()
                 if (event.key.code == sf::Keyboard::Z || event.key.code == sf::Keyboard::Up) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_UP, {});
                 }
-            
-
                 if (event.key.code == sf::Keyboard::S|| event.key.code == sf::Keyboard::Down) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN, {});
                 }
-            
-
                 if (event.key.code == sf::Keyboard::D || event.key.code == sf::Keyboard::Right) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT, {});
                 }
-            
-
                 if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Left) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
                 }
-
                 if (event.key.code == sf::Keyboard::Space)
                     _networkClient->sendBinaryMessage(MessageType::PLAYER_FIRE, {});
+            }
+            break;
+        }
+        case sf::Event::KeyReleased:
+        {
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Z) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_UP_STOP, {});
+                } else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN_STOP, {});
+                } else if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Q) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT_STOP, {});
+                } else if (event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::D) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT_STOP, {});
+                }
             }
             break;
         }
@@ -185,7 +193,7 @@ void Client::update(float dt)
 
     if (_connected) {
         sf::Vector2f playerPos = _sprites.getPosition();
-        sendPlayerPosition(_playerID, playerPos.x, playerPos.y);
+        // sendPlayerPosition(_playerID, playerPos.x, playerPos.y);
     }
     
     // Grab new messages

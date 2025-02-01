@@ -1,33 +1,64 @@
 #pragma once
 
-#include <string>
+#include <cstdint>
 
+/// Basic 2D vector struct
 struct Vector2 {
     float x;
     float y;
 };
 
+/// Distinguish teams (players, monsters, etc.)
+enum class EntityTeam : uint8_t {
+    Players   = 1,
+    Monsters  = 2,
+};
+
+/// Distinguish specific entity types (player, monster, missile, etc.)
+enum class EntityType : uint8_t {
+    Player          = 1,
+    Monster         = 2,
+    PlayerMissile   = 3,
+    MonsterMissile  = 4,
+    Powerup         = 5,
+    Boss            = 6,
+};
+
 class Entity {
 public:
-    Entity() : _id(++s_nextId) {}
-    virtual ~Entity() = default;
+    Entity(EntityTeam team, EntityType type, uint32_t id);
+    virtual ~Entity();
 
-    virtual void update(double dt) = 0;
+    /// Update the entity state each frame (e.g. movement)
+    virtual void update(float dt) = 0;
 
-    virtual bool collidesWith(const Entity& other) const { return false; /* TODO */ }
+    /// Simple collision check (e.g. bounding box or circle)
+    virtual bool collidesWith(const Entity& other) const = 0;
 
-    virtual void destroy() { _destroyed = true; }
-    bool isDestroyed() const { return _destroyed; }
+    /// Called when a collision is detected
+    virtual void onCollision(Entity& other) = 0;
 
-    int getId() const { return _id; }
-    Vector2 getPosition() const { return _position; }
-    void setPosition(const Vector2& pos) { _position = pos; }
+    /// Mark entity for removal
+    void destroy();
+    bool isDestroyed() const;
+
+    // Getters
+    EntityTeam   getTeam() const;
+    EntityType   getType() const;
+    uint32_t     getId()   const;
+
+    Vector2      getPosition() const;
+    void         setPosition(const Vector2& pos);
+
+    Vector2      getVelocity() const;
+    void         setVelocity(const Vector2& vel);
 
 protected:
-    static int s_nextId;
+    EntityTeam   _team;
+    EntityType   _type;
+    uint32_t     _id; // unique ID for networking sync
 
-    int _id;
-    Vector2 _position {0.f, 0.f};
-    Vector2 _velocity {0.f, 0.f};
-    bool _destroyed  = false;
+    Vector2      _position {0.f, 0.f};
+    Vector2      _velocity {0.f, 0.f};
+    bool         _destroyed {false};
 };

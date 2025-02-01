@@ -2,18 +2,12 @@
 
 #include "Entity.hpp"
 
-class Player : public Entity {
+class Monster : public Entity {
 public:
-    Player(uint32_t id);
-    virtual ~Player();
+    Monster(uint32_t id);
+    virtual ~Monster();
 
     void update(float dt) override;
     bool collidesWith(const Entity& other) const override;
     void onCollision(Entity& other) override;
-
-    void addScore(int points);
-    int  getScore() const;
-
-private:
-    int _score;
 };

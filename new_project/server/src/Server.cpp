@@ -4,8 +4,8 @@
 
 Server::Server()
 {
-    _networkManager = std::make_unique<NetworkManager>();
     _gameWorld = std::make_unique<GameWorld>();
+    _networkManager = std::make_unique<NetworkManager>(*_gameWorld);
 }
 
 Server::~Server()
@@ -44,13 +44,11 @@ void Server::gameLoop()
             previous = current;
         }
 
-        _networkManager->pollMessages(*_gameWorld);
-
         _gameWorld->update(dt);
 
-        _networkManager->broadcastState(*_gameWorld);
-
         _networkManager->checkHeartbeats();
+
+        // _networkManager->broadcastState(*_gameWorld);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
