@@ -1,3 +1,5 @@
+//HandleBackground.hpp
+
 #ifndef HANDLEBACKGROUND_HPP
 #define HANDLEBACKGROUND_HPP
 

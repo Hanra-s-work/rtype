@@ -1,39 +1,43 @@
-#ifndef HANDLESPRITES_HPP
-#define HANDLESPRITES_HPP
+//HandleSprites.hpp
 
+#pragma once
+#include "Entity.hpp"
 #include <SFML/Graphics.hpp>
-#include <iostream>
+#include <string>
+#include <stdexcept>
+#include "TextureManager.hpp"
+#include <tgmath.h>
 
-#include <SFML/Graphics.hpp>
+class SpriteEntity : public Entity {
+public:
+    // Constructeur qui charge l'image spécifiée et positionne le sprite
+    SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving = false);
 
-class SpriteEntity {
-    public:
-        SpriteEntity();
-        SpriteEntity(const std::string& imagePath, float posX = 0, float posY = 0, bool moving = false);
+    void setTargetPosition(float x, float y) { 
+        _targetPos = sf::Vector2f(x, y); 
+    }
+    // Méthodes de l'interface Entity
+    void update(float dt) override;
+    
+    void render(sf::RenderWindow &window) override;
+    void setPosition(float x, float y) override;
+    
+    sf::Vector2f getPosition() const override;
+    
+    // Méthodes complémentaires
+    void setVelocity(float vx, float vy);
+    
+    void setMoving(bool moving);
+    
+    void setScale(float scaleX, float scaleY);
+    
+    void rotate(float angle);
 
-        void draw(sf::RenderWindow& window);
-
-        void setVelocity(float vx, float vy);
-
-        void setMoving(bool moving);
-
-        void update(float deltaTime);
-
-        void setPosition(float x, float y);
-
-        void setScale(float scaleX, float scaleY);
-
-        void rotate(float angle);
-
-        sf::Vector2f getPosition() const;
-
-        sf::Sprite& getSprite();
-        
-    private:
-        sf::Texture texture;
-        sf::Sprite sprite;
-        sf::Vector2f velocity;
-        bool isMoving;
+    void draw(sf::RenderWindow &window);
+private:
+    sf::Vector2f _targetPos;
+    sf::Texture texture;
+    sf::Sprite sprite;
+    sf::Vector2f velocity;
+    bool isMoving;
 };
-
-#endif // HANDLESPRITES_HPP
