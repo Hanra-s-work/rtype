@@ -1,8 +1,7 @@
 #include "Entity.hpp"
 
-Entity::Entity(EntityTeam team, EntityType type, uint32_t id)
-: _team(team)
-, _type(type)
+Entity::Entity(EntityType type, uint32_t id)
+: _type(type)
 , _id(id)
 {
 }
@@ -17,11 +16,6 @@ void Entity::destroy()
 bool Entity::isDestroyed() const
 {
     return _destroyed;
-}
-
-EntityTeam Entity::getTeam() const
-{
-    return _team;
 }
 
 EntityType Entity::getType() const
@@ -52,4 +46,11 @@ Vector2 Entity::getVelocity() const
 void Entity::setVelocity(const Vector2& vel)
 {
     _velocity = vel;
+}
+
+uint32_t generateEntityId()
+{
+    // Start from 10,000 so it doesn't clash with players that start from 1
+    static std::atomic<uint32_t> nextEntity_Id{10000};
+    return nextEntity_Id.fetch_add(1, std::memory_order_relaxed);
 }

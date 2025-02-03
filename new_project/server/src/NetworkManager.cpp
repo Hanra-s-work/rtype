@@ -73,12 +73,106 @@ void NetworkManager::pollMessages()
 
 // Also empty: you'd fill this in if you want to broadcast positions, etc.
 // from your game world to clients each frame or periodically
-void NetworkManager::broadcastState()
+void NetworkManager::broadcastFullState()
 {
-    // Example usage:
-    // 1) gather entity states from _gameWorld
-    // 2) build a big packet
-    // 3) sendBinaryMessage(...) to all endpoints in _clients
+    std::lock_guard<std::mutex> lock(_mutex);
+    // 1. Gather all entities
+    const auto& entities = _gameWorld.getEntitiesSnapshot(); // or some accessor
+    uint32_t count = static_cast<uint32_t>(entities.size());
+
+    // Build a packet: [ENTITY_COUNT (4 bytes)] then repeated blocks [id, type, x, y]
+    std::vector<uint8_t> payload;
+    payload.reserve(4 + count * (4 + 4 + 4 + 4)); // 16 bytes per entity
+    // Insert the count
+    payload.insert(payload.end(),
+                   reinterpret_cast<uint8_t*>(&count),
+                   reinterpret_cast<uint8_t*>(&count) + 4);
+
+    // For each entity, insert data
+    for (auto & e : entities) {
+        uint32_t eid   = e->getId();
+        uint32_t etype = static_cast<uint32_t>(e->getType());
+        float x        = e->getPosition().x;
+        float y        = e->getPosition().y;
+
+        // Insert ID
+        auto eidPtr = reinterpret_cast<uint8_t*>(&eid);
+        payload.insert(payload.end(), eidPtr, eidPtr + 4);
+
+        // Insert type
+        auto etypePtr = reinterpret_cast<uint8_t*>(&etype);
+        payload.insert(payload.end(), etypePtr, etypePtr + 4);
+
+        // Insert x
+        auto xPtr = reinterpret_cast<uint8_t*>(&x);
+        payload.insert(payload.end(), xPtr, xPtr + 4);
+
+        // Insert y
+        auto yPtr = reinterpret_cast<uint8_t*>(&y);
+        payload.insert(payload.end(), yPtr, yPtr + 4);
+    }
+
+    // Build final message
+    auto msg = buildMessage(MessageType::STATE_UPDATE, payload);
+
+    // 2. Send to all clients
+    for (auto & ep : _clients) {
+        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+        _socket->async_send_to(
+            asio::buffer(*buffer), ep,
+            [buffer](std::error_code, std::size_t) {
+                // done
+            }
+        );
+    }
+}
+
+void NetworkManager::broadcastEntityState(Entity* e)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    if (!e) return;
+
+    // Build a small packet for just this one entity
+    // e.g. [1 count], [eid, type, x, y]
+    std::vector<uint8_t> payload;
+    payload.reserve(4 + 16); // 4 bytes for count=1, plus 16 for data
+
+    uint32_t count = 1;
+    payload.insert(payload.end(),
+                   reinterpret_cast<uint8_t*>(&count),
+                   reinterpret_cast<uint8_t*>(&count) + 4);
+
+    // Now the entity data
+    uint32_t eid   = e->getId();
+    uint32_t etype = static_cast<uint32_t>(e->getType());
+    float x        = e->getPosition().x;
+    float y        = e->getPosition().y;
+
+    auto eidPtr = reinterpret_cast<uint8_t*>(&eid);
+    payload.insert(payload.end(), eidPtr, eidPtr + 4);
+
+    auto etypePtr = reinterpret_cast<uint8_t*>(&etype);
+    payload.insert(payload.end(), etypePtr, etypePtr + 4);
+
+    auto xPtr = reinterpret_cast<uint8_t*>(&x);
+    payload.insert(payload.end(), xPtr, xPtr + 4);
+
+    auto yPtr = reinterpret_cast<uint8_t*>(&y);
+    payload.insert(payload.end(), yPtr, yPtr + 4);
+
+    // Build final
+    auto msg = buildMessage(MessageType::STATE_UPDATE, payload);
+
+    // Send to all
+    for (auto & ep : _clients) {
+        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+        _socket->async_send_to(
+            asio::buffer(*buffer), ep,
+            [buffer](std::error_code, std::size_t) {
+                // done
+            }
+        );
+    }
 }
 
 void NetworkManager::doReceive()
@@ -118,19 +212,15 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
     }
 
     ParsedMessage msg = msgOpt.value();
-
-    // Debug: see what numeric type was parsed
-    std::cout << "Parsed message type (numeric) = "
-              << static_cast<uint32_t>(msg.type) << std::endl;
-
     switch (msg.type) {
 
         case MessageType::CONNECT:
         {
+            std::lock_guard<std::mutex> lock(_mutex);
             std::cout << "[Server] CONNECT received from " << senderEndpoint << "\n";
 
             // 1) Generate a new player ID
-            uint32_t newId = _nextPlayerId.fetch_add(1);
+            uint32_t newId = generateEntityId();
 
             // 2) Create a PlayerInfo struct
             PlayerInfo info;
@@ -175,18 +265,24 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
         {
             std::cout << "[Server] DISCONNECT from " << senderEndpoint << "\n";
 
-            // Remove from _clients vector
-            auto it = std::find(_clients.begin(), _clients.end(), senderEndpoint);
-            if (it != _clients.end()) {
-                _clients.erase(it);
-                std::cout << "[Server] Removed client " << senderEndpoint << "\n";
+            {
+                std::unique_lock<std::mutex> lock(_mutex);
+
+                // Remove from _clients vector
+                auto it = std::find(_clients.begin(), _clients.end(), senderEndpoint);
+                if (it != _clients.end()) {
+                    _clients.erase(it);
+                    std::cout << "[Server] Removed client " << senderEndpoint << "\n";
+                }
+
+                // Remove from _connectedPlayers
+                _connectedPlayers.erase(senderEndpoint);
+
+                // At this point, we need to notify others,
+                // so release the lock before calling broadcastPlayerLeft:
+                lock.unlock();
             }
-
-            // Possibly remove from _connectedPlayers, or mark that entity as destroyed
-            // For now:
-            _connectedPlayers.erase(senderEndpoint);
-
-            // Notify others
+            
             broadcastPlayerLeft(senderEndpoint);
             break;
         }
@@ -199,6 +295,7 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
         }
         case MessageType::MOVE_UP:
         {
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -212,12 +309,14 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     }
                 }
             }
+            std::cout << "[Server] MOVE_UP received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_UP_STOP: reset upward velocity (if currently moving upward)
         case MessageType::MOVE_UP_STOP:
         {
-            // Reset the Y velocity to 0 (only if we wanted up movement)
-            // If you want separate handling for up/down, you might do checks
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -226,17 +325,21 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        // If vel.y is -speed (or close to it), set it to 0
-                        // (Or do advanced logic if multiple directions might overlap.)
-                        if (vel.y < 0) vel.y = 0.f;
-                        player->setVelocity(vel);
+                        if (vel.y < 0) { // if moving upward
+                            vel.y = 0.f;
+                            player->setVelocity(vel);
+                        }
                     }
                 }
             }
+            std::cout << "[Server] MOVE_UP_STOP received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_DOWN_START: set downward velocity (positive Y)
         case MessageType::MOVE_DOWN:
         {
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -245,17 +348,19 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.y = +speed;   // move up
+                        vel.y = speed;   // move down
                         player->setVelocity(vel);
                     }
                 }
             }
+            std::cout << "[Server] MOVE_DOWN received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_DOWN_STOP: reset downward velocity (if currently moving downward)
         case MessageType::MOVE_DOWN_STOP:
         {
-            // Reset the Y velocity to 0 (only if we wanted up movement)
-            // If you want separate handling for up/down, you might do checks
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -264,18 +369,21 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        // If vel.y is -speed (or close to it), set it to 0
-                        // (Or do advanced logic if multiple directions might overlap.)
-                        if (vel.y < 0)
+                        if (vel.y > 0) { // if moving down
                             vel.y = 0.f;
-                        player->setVelocity(vel);
+                            player->setVelocity(vel);
+                        }
                     }
                 }
             }
+            std::cout << "[Server] MOVE_DOWN_STOP received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_LEFT_START: set leftward velocity (negative X)
         case MessageType::MOVE_LEFT:
         {
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -284,17 +392,19 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.y = -speed;   // move up
+                        vel.x = -speed;  // move left
                         player->setVelocity(vel);
                     }
                 }
             }
+            std::cout << "[Server] MOVE_LEFT received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_LEFT_STOP: reset leftward velocity (if currently moving left)
         case MessageType::MOVE_LEFT_STOP:
         {
-            // Reset the Y velocity to 0 (only if we wanted up movement)
-            // If you want separate handling for up/down, you might do checks
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -303,18 +413,21 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        // If vel.y is -speed (or close to it), set it to 0
-                        // (Or do advanced logic if multiple directions might overlap.)
-                        if (vel.y < 0)
-                            vel.y = 0.f;
-                        player->setVelocity(vel);
+                        if (vel.x < 0) { // if moving left
+                            vel.x = 0.f;
+                            player->setVelocity(vel);
+                        }
                     }
                 }
             }
+            std::cout << "[Server] MOVE_LEFT_STOP received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_RIGHT_START: set rightward velocity (positive X)
         case MessageType::MOVE_RIGHT:
         {
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -323,17 +436,19 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.y = +speed;   // move up
+                        vel.x = speed;   // move right
                         player->setVelocity(vel);
                     }
                 }
             }
+            std::cout << "[Server] MOVE_RIGHT received from " << senderEndpoint << "\n";
             break;
         }
+
+        // MOVE_RIGHT_STOP: reset rightward velocity (if currently moving right)
         case MessageType::MOVE_RIGHT_STOP:
         {
-            // Reset the Y velocity to 0 (only if we wanted up movement)
-            // If you want separate handling for up/down, you might do checks
+            std::lock_guard<std::mutex> lock(_mutex);
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId;
@@ -342,19 +457,20 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        // If vel.y is -speed (or close to it), set it to 0
-                        // (Or do advanced logic if multiple directions might overlap.)
-                        if (vel.y < 0)
-                            vel.y = 0.f;
-                        player->setVelocity(vel);
+                        if (vel.x > 0) { // if moving right
+                            vel.x = 0.f;
+                            player->setVelocity(vel);
+                        }
                     }
                 }
             }
+            std::cout << "[Server] MOVE_RIGHT_STOP received from " << senderEndpoint << "\n";
             break;
         }
         case MessageType::PLAYER_FIRE:
         {
-            uint32_t newId = _nextMissileId.fetch_add(1);
+            std::lock_guard<std::mutex> lock(_mutex);
+            uint32_t newId = generateEntityId();
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
                 uint32_t entityId = it->second.entityId; // player's entity
@@ -378,6 +494,7 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     }
                 }
             }
+            std::cout << "[Server] PLAYER_FIRE received from " << senderEndpoint << "\n";
             break;
         }
         default:
@@ -386,9 +503,7 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
     }
 }
 
-void NetworkManager::sendBinaryMessage(MessageType type,
-                                       const std::vector<uint8_t>& payload,
-                                       const asio::ip::udp::endpoint& target)
+void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target)
 {
     if (!_running) return;
 
@@ -408,6 +523,8 @@ void NetworkManager::checkHeartbeats()
 {
     auto now = std::chrono::steady_clock::now();
     const auto TIMEOUT = std::chrono::seconds(15); // no heartbeat in 15s => timed out
+
+    std::lock_guard<std::mutex> lock(_mutex);
 
     for (auto it = _clientHeartbeats.begin(); it != _clientHeartbeats.end(); /* no ++ here */)
     {
@@ -440,6 +557,7 @@ void NetworkManager::checkHeartbeats()
 
 void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint)
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     // For example, we encode the address+port in a string
     std::string leftInfo = clientEndpoint.address().to_string() + ":" +
                            std::to_string(clientEndpoint.port());

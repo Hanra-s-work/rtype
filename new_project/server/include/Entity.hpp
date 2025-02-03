@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "NetworkProtocol.hpp"
+#include <atomic>
 
 /// Basic 2D vector struct
 struct Vector2 {
@@ -9,25 +9,19 @@ struct Vector2 {
     float y;
 };
 
-/// Distinguish teams (players, monsters, etc.)
-// enum class EntityTeam : uint8_t {
-//     Players   = 1,
-//     Monsters  = 2,
-// };
-
-/// Distinguish specific entity types (player, monster, missile, etc.)
-// enum class EntityType : uint8_t {
-//     Player          = 1,
-//     Monster         = 2,
-//     PlayerMissile   = 3,
-//     MonsterMissile  = 4,
-//     Powerup         = 5,
-//     Boss            = 6,
-// };
+/* Distinguish specific entity types (player, monster, missile, etc.)*/
+enum class EntityType : uint8_t {
+    Player          = 1,
+    Monster         = 2,
+    PlayerMissile   = 3,
+    MonsterMissile  = 4,
+    Powerup         = 5,
+    Boss            = 6,
+};
 
 class Entity {
 public:
-    Entity(EntityTeam team, EntityType type, uint32_t id);
+    Entity(EntityType type, uint32_t id);
     virtual ~Entity();
 
     /// Update the entity state each frame (e.g. movement)
@@ -44,7 +38,6 @@ public:
     bool isDestroyed() const;
 
     // Getters
-    EntityTeam   getTeam() const;
     EntityType   getType() const;
     uint32_t     getId()   const;
 
@@ -55,7 +48,6 @@ public:
     void         setVelocity(const Vector2& vel);
 
 protected:
-    EntityTeam   _team;
     EntityType   _type;
     uint32_t     _id; // unique ID for networking sync
 
@@ -63,3 +55,5 @@ protected:
     Vector2      _velocity {0.f, 0.f};
     bool         _destroyed {false};
 };
+
+uint32_t generateEntityId();

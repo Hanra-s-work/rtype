@@ -2,7 +2,7 @@
 #include <cmath> // if needed for collisions
 
 Player::Player(uint32_t id)
-: Entity(EntityTeam::Players, EntityType::Player, id)
+: Entity(EntityType::Player, id)
 , _score(0)
 {
 }
