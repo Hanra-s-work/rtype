@@ -10,18 +10,18 @@ SpriteEntity::SpriteEntity(const std::string &imagePath, float posX, float posY,
         sprite.setPosition(posX, posY);
     }
 
-    // Méthodes de l'interface Entity
     void SpriteEntity::update(float dt) {
+        // On récupère la position actuelle du sprite
         sf::Vector2f currentPos = sprite.getPosition();
-        sf::Vector2f dir = _targetPos - currentPos;
-        float distance = std::hypot(dir.x, dir.y);
-        if (distance > 1.0f) { // seuil pour éviter les oscillations
-            dir /= distance; // normalisation
-            sprite.move(dir * dt * 500.0f); // 500.0f représente la vitesse (à ajuster)
-        }
+        // On définit un facteur de lissage (plus il est grand, plus le sprite "s'accrochera" rapidement à sa cible)
+        // Vous pouvez ajuster cette valeur selon le ressenti (par exemple 5.0f ou 10.0f)
+        float smoothingFactor = 5.0f;
+        
+        // Calcul d'une nouvelle position interpolée
+        sf::Vector2f newPos = currentPos + ( _targetPos - currentPos ) * smoothingFactor * dt;
+        
+        sprite.setPosition(newPos);
     }
-
-
     
     void SpriteEntity::render(sf::RenderWindow &window) {
         window.draw(sprite);
