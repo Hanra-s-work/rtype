@@ -20,10 +20,20 @@ void EntityManager::render(sf::RenderWindow &window) {
 void EntityManager::updateEntity(uint32_t entityId, EntityType type, float posX, float posY) {
     auto it = _entities.find(entityId);
     if (it == _entities.end()) {
-        // Création de la nouvelle entité via la factory
+        // L'entité n'existe pas encore : on la crée.
         _entities[entityId] = createEntity(type, posX, posY);
     } else {
-        // Mise à jour de la position de l'entité existante
-        it->second->setPosition(posX, posY);
+        // L'entité existe : on met à jour sa position cible pour l'interpolation (si applicable).
+        auto* se = dynamic_cast<SpriteEntity*>(it->second.get());
+        if (se) {
+            se->setTargetPosition(posX, posY);
+        } else {
+            // Pour les entités qui ne sont pas des SpriteEntity, on peut faire :
+            it->second->setPosition(posX, posY);
+        }
     }
+}
+
+void EntityManager::removeEntity(uint32_t entityId) {
+    _entities.erase(entityId);
 }

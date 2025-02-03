@@ -17,6 +17,7 @@ public:
     
     // Met à jour une entité existante ou la crée si elle n'existe pas
     void updateEntity(uint32_t entityId, EntityType type, float posX, float posY);
+    void removeEntity(uint32_t entityId);
 private:
     // Factory qui crée l'entité selon son type
     std::unique_ptr<Entity> createEntity(EntityType type, float posX, float posY) {
@@ -35,6 +36,8 @@ private:
             default:
                 // En cas d'erreur, retourne un sprite par défaut
                 return std::make_unique<SpriteEntity>("client/assets/default.png", posX, posY);
+                std::unordered_map<uint32_t, std::unique_ptr<Entity>> _entities;
+
         }
     }
     

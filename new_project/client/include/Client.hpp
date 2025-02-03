@@ -37,7 +37,6 @@ private:
 
     std::unique_ptr<NetworkClient> _networkClient;
     HandleBackground _background;
-    SpriteEntity _sprites;
     // std::map<uint32_t, std::unique_ptr<SpriteEntity>> _monsters;
     EntityManager _entityManager;
     uint32_t _playerID = 0;

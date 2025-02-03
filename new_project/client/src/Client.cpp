@@ -3,7 +3,7 @@
 #include "Client.hpp"
 #include <iostream>
 
-Client::Client() : _background(_window), _sprites("client/assets/vaisseau-spatial.png", 400, 300, false)
+Client::Client() : _background(_window)
 {
     initWindow();
 
@@ -26,10 +26,6 @@ Client::Client() : _background(_window), _sprites("client/assets/vaisseau-spatia
     _connectButton.setPosition(btnX, btnY);
 
     _networkClient = std::make_unique<NetworkClient>();
-
-    _sprites.setScale(0.2f, 0.2f);
-    _sprites.rotate(90.f);
-    _sprites.setPosition(100.0f, 250.0f);
 }
 
 void Client::initWindow()
@@ -166,38 +162,10 @@ void Client::connectToServer()
     _networkClient->sendConnectRequest();
 }
 
-void Client::sendPlayerPosition(uint32_t playerID, float posX, float posY)
-{
-    // Construire la payload binaire [ id (uint32_t), posX (float), posY (float) ]
-    std::vector<uint8_t> payload;
-    payload.reserve(sizeof(playerID) + sizeof(posX) + sizeof(posY));
-
-    // On insère l'ID
-    const uint8_t* idPtr = reinterpret_cast<const uint8_t*>(&playerID);
-    payload.insert(payload.end(), idPtr, idPtr + sizeof(playerID));
-
-    // On insère posX
-    const uint8_t* xPtr = reinterpret_cast<const uint8_t*>(&posX);
-    payload.insert(payload.end(), xPtr, xPtr + sizeof(posX));
-
-    // On insère posY
-    const uint8_t* yPtr = reinterpret_cast<const uint8_t*>(&posY);
-    payload.insert(payload.end(), yPtr, yPtr + sizeof(posY));
-
-    // Puis on envoie avec notre NetworkClient
-    _networkClient->sendBinaryMessage(MessageType::PLAYER_POSITION, payload);
-}
-
 void Client::update(float dt)
 {
     _background.update(dt);
-    _sprites.update(dt);
     _entityManager.update(dt);
-
-    if (_connected) {
-        sf::Vector2f playerPos = _sprites.getPosition();
-        // sendPlayerPosition(_playerID, playerPos.x, playerPos.y);
-    }
     
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
@@ -206,14 +174,16 @@ void Client::update(float dt)
     case MessageType::CONNECT_OK:
     {
         _connected = true;
-        // Imaginons que le serveur envoie (uint32_t) comme ID en payload :
-        if (msg.payload.size() >= sizeof(uint32_t)) {
+        if (msg.payload.size() >= sizeof(uint32_t) + 2*sizeof(float)) {
+            // Exemple de payload : [playerID, posX, posY]
             uint32_t playerID;
+            float posX, posY;
             std::memcpy(&playerID, msg.payload.data(), sizeof(playerID));
+            std::memcpy(&posX, msg.payload.data() + sizeof(playerID), sizeof(posX));
+            std::memcpy(&posY, msg.payload.data() + sizeof(playerID) + sizeof(posX), sizeof(posY));
+            
             _playerID = playerID;
-            std::cout << "[Client] CONNECT_OK received! My ID = " << _playerID << "\n";
-        } else {
-            std::cout << "[Client] CONNECT_OK received but no ID in payload.\n";
+            _entityManager.updateEntity(_playerID, EntityType::Player, posX, posY);
         }
         break;
     }
@@ -299,7 +269,6 @@ void Client::render() {
     _window.clear(sf::Color::Blue);
     if (_connected){
         _background.render(_window);
-        _sprites.draw(_window);
         _entityManager.render(_window); // Gère maintenant toutes les entités
     }
     // Supprimer la boucle de rendu des monstres

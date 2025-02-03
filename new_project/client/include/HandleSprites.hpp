@@ -5,12 +5,17 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <stdexcept>
+#include "TextureManager.hpp"
+#include <tgmath.h>
 
 class SpriteEntity : public Entity {
 public:
     // Constructeur qui charge l'image spécifiée et positionne le sprite
     SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving = false);
 
+    void setTargetPosition(float x, float y) { 
+        _targetPos = sf::Vector2f(x, y); 
+    }
     // Méthodes de l'interface Entity
     void update(float dt) override;
     
@@ -27,9 +32,10 @@ public:
     void setScale(float scaleX, float scaleY);
     
     void rotate(float angle);
-    
+
     void draw(sf::RenderWindow &window);
 private:
+    sf::Vector2f _targetPos;
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f velocity;
