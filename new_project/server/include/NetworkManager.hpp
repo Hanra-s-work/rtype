@@ -33,22 +33,24 @@ public:
 
     void start();
     void stop();
-    
-    // Potentially used to process queued messages or do other periodic tasks
-    void pollMessages();
-    void broadcastFullState();
-    void broadcastEntityState(Entity* e);
 
     // For sending a binary message to a specific client
     void sendBinaryMessage(MessageType type,
                            const std::vector<uint8_t>& payload,
                            const asio::ip::udp::endpoint& target);
 
+    void sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target);
+    void sendEntityUpdateMessage(Entity* entity, const asio::ip::udp::endpoint& target);
+
     // Check for heartbeat timeouts
     void checkHeartbeats();
 
     // Notify other clients that a particular endpoint left the game
     void broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint);
+
+
+    std::unordered_map<uint32_t, Vector2> _lastBroadcastedEntityPositions;
+    void broadcastStateDelta();
 
 private:
     // Start async receive
@@ -79,8 +81,6 @@ private:
                        std::chrono::steady_clock::time_point> _clientHeartbeats;
 };
 
-// These remain your functions for building/parsing messages.
-// Keep them in a shared location if both server & client use them.
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);
 std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload);
-
+std::vector<uint8_t> buildEntityPayload(Entity* entity);

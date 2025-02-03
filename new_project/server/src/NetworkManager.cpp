@@ -64,117 +64,6 @@ void NetworkManager::stop()
     std::cout << "NetworkManager stopped\n";
 }
 
-// Currently empty, but you could store incoming messages in a queue
-// and process them here if you wanted a "polling" approach
-void NetworkManager::pollMessages()
-{
-    // For now, we do everything asynchronously in onDataReceived()
-}
-
-// Also empty: you'd fill this in if you want to broadcast positions, etc.
-// from your game world to clients each frame or periodically
-void NetworkManager::broadcastFullState()
-{
-    std::lock_guard<std::mutex> lock(_mutex);
-    // 1. Gather all entities
-    const auto& entities = _gameWorld.getEntitiesSnapshot(); // or some accessor
-    uint32_t count = static_cast<uint32_t>(entities.size());
-
-    // Build a packet: [ENTITY_COUNT (4 bytes)] then repeated blocks [id, type, x, y]
-    std::vector<uint8_t> payload;
-    payload.reserve(4 + count * (4 + 4 + 4 + 4)); // 16 bytes per entity
-    // Insert the count
-    payload.insert(payload.end(),
-                   reinterpret_cast<uint8_t*>(&count),
-                   reinterpret_cast<uint8_t*>(&count) + 4);
-
-    // For each entity, insert data
-    for (auto & e : entities) {
-        uint32_t eid   = e->getId();
-        uint32_t etype = static_cast<uint32_t>(e->getType());
-        float x        = e->getPosition().x;
-        float y        = e->getPosition().y;
-
-        // Insert ID
-        auto eidPtr = reinterpret_cast<uint8_t*>(&eid);
-        payload.insert(payload.end(), eidPtr, eidPtr + 4);
-
-        // Insert type
-        auto etypePtr = reinterpret_cast<uint8_t*>(&etype);
-        payload.insert(payload.end(), etypePtr, etypePtr + 4);
-
-        // Insert x
-        auto xPtr = reinterpret_cast<uint8_t*>(&x);
-        payload.insert(payload.end(), xPtr, xPtr + 4);
-
-        // Insert y
-        auto yPtr = reinterpret_cast<uint8_t*>(&y);
-        payload.insert(payload.end(), yPtr, yPtr + 4);
-    }
-
-    // Build final message
-    auto msg = buildMessage(MessageType::STATE_UPDATE, payload);
-
-    // 2. Send to all clients
-    for (auto & ep : _clients) {
-        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
-        _socket->async_send_to(
-            asio::buffer(*buffer), ep,
-            [buffer](std::error_code, std::size_t) {
-                // done
-            }
-        );
-    }
-}
-
-void NetworkManager::broadcastEntityState(Entity* e)
-{
-    std::lock_guard<std::mutex> lock(_mutex);
-    if (!e) return;
-
-    // Build a small packet for just this one entity
-    // e.g. [1 count], [eid, type, x, y]
-    std::vector<uint8_t> payload;
-    payload.reserve(4 + 16); // 4 bytes for count=1, plus 16 for data
-
-    uint32_t count = 1;
-    payload.insert(payload.end(),
-                   reinterpret_cast<uint8_t*>(&count),
-                   reinterpret_cast<uint8_t*>(&count) + 4);
-
-    // Now the entity data
-    uint32_t eid   = e->getId();
-    uint32_t etype = static_cast<uint32_t>(e->getType());
-    float x        = e->getPosition().x;
-    float y        = e->getPosition().y;
-
-    auto eidPtr = reinterpret_cast<uint8_t*>(&eid);
-    payload.insert(payload.end(), eidPtr, eidPtr + 4);
-
-    auto etypePtr = reinterpret_cast<uint8_t*>(&etype);
-    payload.insert(payload.end(), etypePtr, etypePtr + 4);
-
-    auto xPtr = reinterpret_cast<uint8_t*>(&x);
-    payload.insert(payload.end(), xPtr, xPtr + 4);
-
-    auto yPtr = reinterpret_cast<uint8_t*>(&y);
-    payload.insert(payload.end(), yPtr, yPtr + 4);
-
-    // Build final
-    auto msg = buildMessage(MessageType::STATE_UPDATE, payload);
-
-    // Send to all
-    for (auto & ep : _clients) {
-        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
-        _socket->async_send_to(
-            asio::buffer(*buffer), ep,
-            [buffer](std::error_code, std::size_t) {
-                // done
-            }
-        );
-    }
-}
-
 void NetworkManager::doReceive()
 {
     auto buffer        = std::make_shared<std::array<char, 1024>>();
@@ -229,17 +118,16 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             // 3) Create a new Player entity in the GameWorld
             auto playerEntity = std::make_unique<Player>(newId);
             playerEntity->setPosition({100.f, 300.f}); // example starting pos
-
             uint32_t entityId = playerEntity->getId(); // typically same as newId
-            info.entityId     = entityId;
+            info.entityId = entityId;
 
             // Add the player entity to the world
             _gameWorld.addEntity(std::move(playerEntity));
 
-            // 4) Store info in our _connectedPlayers map
+            // 4) Store info in _connectedPlayers map
             _connectedPlayers[senderEndpoint] = info;
 
-            // Check if we already have this endpoint in _clients
+            // Check and add to _clients vector if not already there
             bool knownClient = false;
             for (auto& ep : _clients) {
                 if (ep == senderEndpoint) {
@@ -254,12 +142,32 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             // 5) Track heartbeat
             _clientHeartbeats[senderEndpoint] = std::chrono::steady_clock::now();
 
-            // 6) Send CONNECT_OK with the new player ID
+            // 6) Send CONNECT_OK with the new player ID (existing behavior)
             std::vector<uint8_t> payload(sizeof(uint32_t));
             std::memcpy(payload.data(), &newId, sizeof(uint32_t));
             sendBinaryMessage(MessageType::CONNECT_OK, payload, senderEndpoint);
+
+            // 7) Now, send SPAWN_ENTITY messages:
+            //    a) For every existing entity in the GameWorld, send SPAWN_ENTITY to the new client.
+            {
+                // We can get a snapshot of entities from GameWorld:
+                auto entitiesSnapshot = _gameWorld.getEntitiesSnapshot();
+                for (Entity* entity : entitiesSnapshot) {
+                    sendEntitySpawnMessage(entity, senderEndpoint);
+                }
+            }
+
+            //    b) Broadcast a SPAWN_ENTITY for the new client's player entity to every other client.
+            Entity* newPlayerEntity = _gameWorld.getEntityById(info.entityId);
+            for (const auto &ep : _clients) {
+                if (ep != senderEndpoint) {
+                    sendEntitySpawnMessage(newPlayerEntity, ep);
+                }
+            }
+
             break;
         }
+
 
         case MessageType::DISCONNECT:
         {
@@ -577,4 +485,119 @@ void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEn
             );
         }
     }
+}
+
+std::vector<uint8_t> buildEntityPayload(Entity* entity) {
+    std::vector<uint8_t> payload;
+    // 1 byte for entity_type, 4 for entity_id, 4 for posX, 4 for posY = 13 bytes total
+    payload.reserve(1 + sizeof(uint32_t) + sizeof(float) + sizeof(float));
+
+    // Entity type as uint8_t:
+    uint8_t etype = static_cast<uint8_t>(entity->getType());
+    payload.push_back(etype);
+
+    // Entity id as uint32_t:
+    uint32_t eid = entity->getId();
+    uint8_t* idPtr = reinterpret_cast<uint8_t*>(&eid);
+    payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
+
+    // posX as float:
+    float posX = entity->getPosition().x;
+    uint8_t* posXPtr = reinterpret_cast<uint8_t*>(&posX);
+    payload.insert(payload.end(), posXPtr, posXPtr + sizeof(float));
+
+    // posY as float:
+    float posY = entity->getPosition().y;
+    uint8_t* posYPtr = reinterpret_cast<uint8_t*>(&posY);
+    payload.insert(payload.end(), posYPtr, posYPtr + sizeof(float));
+
+    return payload;
+}
+
+void NetworkManager::sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target) {
+    if (!entity) return;
+    std::vector<uint8_t> payload = buildEntityPayload(entity);
+    sendBinaryMessage(MessageType::SPAWN_ENTITY, payload, target);
+}
+
+void NetworkManager::sendEntityUpdateMessage(Entity* entity, const asio::ip::udp::endpoint& target) {
+    if (!entity) return;
+    std::vector<uint8_t> payload = buildEntityPayload(entity);
+    sendBinaryMessage(MessageType::UPDATE_ENTITY, payload, target);
+}
+
+void NetworkManager::broadcastStateDelta()
+{
+    // Lock _mutex to protect access to _clients and _lastBroadcastedEntityPositions.
+    std::lock_guard<std::mutex> lock(_mutex);
+
+    // Get a snapshot of entities (raw pointers)
+    auto entities = _gameWorld.getEntitiesSnapshot(); // returns std::vector<Entity*>
+
+    // Define a threshold (in world units) for considering an update significant.
+    const float threshold = 1.0f;
+
+    // For each entity, compare its current position to the last broadcasted position.
+    for (Entity* e : entities) {
+        if (!e) continue;
+        uint32_t id = e->getId();
+        Vector2 currentPos = e->getPosition();
+
+        bool shouldUpdate = false;
+        // Check if we have broadcasted this entity before.
+        auto it = _lastBroadcastedEntityPositions.find(id);
+        if (it == _lastBroadcastedEntityPositions.end()) {
+            // No previous broadcast—so consider this a new entity.
+            shouldUpdate = true;
+        } else {
+            Vector2 lastPos = it->second;
+            float dx = currentPos.x - lastPos.x;
+            float dy = currentPos.y - lastPos.y;
+            if (std::fabs(dx) >= threshold || std::fabs(dy) >= threshold) {
+                shouldUpdate = true;
+            }
+        }
+
+        if (shouldUpdate) {
+            // Update the stored position
+            _lastBroadcastedEntityPositions[id] = currentPos;
+            // Send an UPDATE_ENTITY message for this entity.
+            // (Alternatively, you could choose to send a SPAWN_ENTITY if this is the first time.)
+            // For now, we'll send UPDATE_ENTITY.
+            // Use your helper function that builds a payload in the desired format.
+            // Here is an inline version using the new format:
+            uint8_t etype = static_cast<uint8_t>(e->getType());
+            uint32_t eid  = id;
+            float posX    = currentPos.x;
+            float posY    = currentPos.y;
+
+            std::vector<uint8_t> payload;
+            payload.reserve(1 + sizeof(uint32_t) + sizeof(float) + sizeof(float));
+            // Append entity_type (1 byte)
+            payload.push_back(etype);
+            // Append entity_id (4 bytes)
+            uint8_t* idPtr = reinterpret_cast<uint8_t*>(&eid);
+            payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
+            // Append posX (4 bytes)
+            uint8_t* xPtr = reinterpret_cast<uint8_t*>(&posX);
+            payload.insert(payload.end(), xPtr, xPtr + sizeof(float));
+            // Append posY (4 bytes)
+            uint8_t* yPtr = reinterpret_cast<uint8_t*>(&posY);
+            payload.insert(payload.end(), yPtr, yPtr + sizeof(float));
+
+            // Build the final message using your helper function.
+            std::vector<uint8_t> msg = buildMessage(MessageType::UPDATE_ENTITY, payload);
+
+            // Send the message to all connected clients.
+            for (const auto &ep : _clients) {
+                auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+                _socket->async_send_to(
+                    asio::buffer(*buffer), ep,
+                    [buffer](std::error_code, std::size_t) {
+                        // done
+                    }
+                );
+            }
+        } // end if shouldUpdate
+    } // end for each entity
 }
