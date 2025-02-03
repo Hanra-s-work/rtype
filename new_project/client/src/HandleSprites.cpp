@@ -10,6 +10,16 @@ SpriteEntity::SpriteEntity(const std::string &imagePath, float posX, float posY,
         sprite.setPosition(posX, posY);
     }
 
+    void SpriteEntity::setLife(uint32_t life)
+    {
+        _life = life;
+    }
+    
+    uint32_t SpriteEntity::getLife() const
+    {
+        return _life;
+    }
+
     void SpriteEntity::update(float dt) {
         // On récupère la position actuelle du sprite
         sf::Vector2f currentPos = sprite.getPosition();

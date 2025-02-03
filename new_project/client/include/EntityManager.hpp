@@ -18,6 +18,8 @@ public:
     // Met à jour une entité existante ou la crée si elle n'existe pas
     void updateEntity(uint32_t entityId, EntityType type, float posX, float posY);
     void removeEntity(uint32_t entityId);
+    void updateLife(uint32_t entityId, EntityType type, uint32_t life);
+    SpriteEntity* getSpriteEntity(uint32_t entityId);
 private:
     // Factory qui crée l'entité selon son type
     std::unique_ptr<Entity> createEntity(EntityType type, float posX, float posY) {
