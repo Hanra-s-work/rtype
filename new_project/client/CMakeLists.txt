@@ -18,6 +18,7 @@ set(SOURCES
     src/NetworkClient.cpp
     src/HandleBackground.cpp
     src/HandleSprites.cpp
+    src/EntityManager.cpp
 )
 
 # Check for threads
