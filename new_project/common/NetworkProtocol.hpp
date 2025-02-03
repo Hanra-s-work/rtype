@@ -26,6 +26,22 @@ enum class MessageType : uint32_t {
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
 
+/// Distinguish teams (players, monsters, etc.)
+enum class EntityTeam : uint8_t {
+    Players   = 1,
+    Monsters  = 2,
+};
+
+/// Distinguish specific entity types (player, monster, missile, etc.)
+enum class EntityType : uint8_t {
+    Player          = 1,
+    Monster         = 2,
+    PlayerMissile   = 3,
+    MonsterMissile  = 4,
+    Powerup         = 5,
+    Boss            = 6,
+};
+
 struct ParsedMessage {
     MessageType type;
     std::vector<uint8_t> payload; // optional data for each message

@@ -9,7 +9,7 @@ struct Vector2 {
     float y;
 };
 
-/// Distinguish specific entity types (player, monster, missile, etc.)
+/* Distinguish specific entity types (player, monster, missile, etc.)*/
 enum class EntityType : uint8_t {
     Player          = 1,
     Monster         = 2,
