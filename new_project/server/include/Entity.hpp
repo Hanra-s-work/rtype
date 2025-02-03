@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include "NetworkProtocol.hpp"
 
 /// Basic 2D vector struct
 struct Vector2 {
@@ -9,20 +10,20 @@ struct Vector2 {
 };
 
 /// Distinguish teams (players, monsters, etc.)
-enum class EntityTeam : uint8_t {
-    Players   = 1,
-    Monsters  = 2,
-};
+// enum class EntityTeam : uint8_t {
+//     Players   = 1,
+//     Monsters  = 2,
+// };
 
 /// Distinguish specific entity types (player, monster, missile, etc.)
-enum class EntityType : uint8_t {
-    Player          = 1,
-    Monster         = 2,
-    PlayerMissile   = 3,
-    MonsterMissile  = 4,
-    Powerup         = 5,
-    Boss            = 6,
-};
+// enum class EntityType : uint8_t {
+//     Player          = 1,
+//     Monster         = 2,
+//     PlayerMissile   = 3,
+//     MonsterMissile  = 4,
+//     Powerup         = 5,
+//     Boss            = 6,
+// };
 
 class Entity {
 public:
