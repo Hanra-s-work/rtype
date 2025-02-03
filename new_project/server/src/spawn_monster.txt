@@ -1,2 +1,0 @@
-Message type = SPAWN_MONSTER
-payload = [ monsterID (uint32_t), posX (float), posY (float) ]

@@ -4,8 +4,8 @@
 
 Server::Server()
 {
-    _networkManager = std::make_unique<NetworkManager>();
     _gameWorld = std::make_unique<GameWorld>();
+    _networkManager = std::make_unique<NetworkManager>(*_gameWorld);
 }
 
 Server::~Server()
@@ -33,25 +33,23 @@ void Server::gameLoop()
 {
     using clock = std::chrono::steady_clock;
     auto previous = clock::now();
-    const double dt = 1.0 / 60.0;
-    const auto step = std::chrono::duration<double>(dt);
 
     while (_running) {
         auto current = clock::now();
-        auto elapsed = std::chrono::duration<double>(current - previous);
+        // Calculate dt as the actual elapsed time in seconds
+        double dt = std::chrono::duration<double>(current - previous).count();
+        previous = current; // Update previous time for the next iteration
 
-        if (elapsed >= step) {
-            previous = current;
-        }
-
-        _networkManager->pollMessages(*_gameWorld);
-
+        // Update game world with the actual dt
         _gameWorld->update(dt);
 
-        _networkManager->broadcastState(*_gameWorld);
-
+        // Check heartbeats
         _networkManager->checkHeartbeats();
 
+        // Optionally broadcast state
+        // _networkManager->broadcastState();
+
+        // Sleep to avoid busy-waiting (adjust as needed)
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "Game loop ended.\n";

@@ -1,7 +1,9 @@
+//Client.cpp
+
 #include "Client.hpp"
 #include <iostream>
 
-Client::Client() : _background(_window), _sprites("client/assets/vaisseau-spatial.png", 400, 300, false)
+Client::Client() : _background(_window)
 {
     initWindow();
 
@@ -24,10 +26,6 @@ Client::Client() : _background(_window), _sprites("client/assets/vaisseau-spatia
     _connectButton.setPosition(btnX, btnY);
 
     _networkClient = std::make_unique<NetworkClient>();
-
-    _sprites.setScale(0.2f, 0.2f);
-    _sprites.rotate(90.f);
-    _sprites.setPosition(100.0f, 250.0f);
 }
 
 void Client::initWindow()
@@ -100,24 +98,32 @@ void Client::handleEvents()
                 if (event.key.code == sf::Keyboard::Z || event.key.code == sf::Keyboard::Up) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_UP, {});
                 }
-            
-
                 if (event.key.code == sf::Keyboard::S|| event.key.code == sf::Keyboard::Down) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN, {});
                 }
-            
-
                 if (event.key.code == sf::Keyboard::D || event.key.code == sf::Keyboard::Right) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT, {});
                 }
-            
-
                 if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Left) {
                     _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
                 }
-
                 if (event.key.code == sf::Keyboard::Space)
                     _networkClient->sendBinaryMessage(MessageType::PLAYER_FIRE, {});
+            }
+            break;
+        }
+        case sf::Event::KeyReleased:
+        {
+            if (_connected) {
+                if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Z) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_UP_STOP, {});
+                } else if (event.key.code == sf::Keyboard::Down || event.key.code == sf::Keyboard::S) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_DOWN_STOP, {});
+                } else if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Q) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT_STOP, {});
+                } else if (event.key.code == sf::Keyboard::Right || event.key.code == sf::Keyboard::D) {
+                    _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT_STOP, {});
+                }
             }
             break;
         }
@@ -156,37 +162,10 @@ void Client::connectToServer()
     _networkClient->sendConnectRequest();
 }
 
-void Client::sendPlayerPosition(uint32_t playerID, float posX, float posY)
-{
-    // Construire la payload binaire [ id (uint32_t), posX (float), posY (float) ]
-    std::vector<uint8_t> payload;
-    payload.reserve(sizeof(playerID) + sizeof(posX) + sizeof(posY));
-
-    // On insère l'ID
-    const uint8_t* idPtr = reinterpret_cast<const uint8_t*>(&playerID);
-    payload.insert(payload.end(), idPtr, idPtr + sizeof(playerID));
-
-    // On insère posX
-    const uint8_t* xPtr = reinterpret_cast<const uint8_t*>(&posX);
-    payload.insert(payload.end(), xPtr, xPtr + sizeof(posX));
-
-    // On insère posY
-    const uint8_t* yPtr = reinterpret_cast<const uint8_t*>(&posY);
-    payload.insert(payload.end(), yPtr, yPtr + sizeof(posY));
-
-    // Puis on envoie avec notre NetworkClient
-    _networkClient->sendBinaryMessage(MessageType::PLAYER_POSITION, payload);
-}
-
 void Client::update(float dt)
 {
     _background.update(dt);
-    _sprites.update(dt);
-
-    if (_connected) {
-        sf::Vector2f playerPos = _sprites.getPosition();
-        sendPlayerPosition(_playerID, playerPos.x, playerPos.y);
-    }
+    _entityManager.update(dt);
     
     // Grab new messages
     auto messages = _networkClient->retrieveMessages();
@@ -195,63 +174,86 @@ void Client::update(float dt)
     case MessageType::CONNECT_OK:
     {
         _connected = true;
-        // Imaginons que le serveur envoie (uint32_t) comme ID en payload :
-        if (msg.payload.size() >= sizeof(uint32_t)) {
+        if (msg.payload.size() >= sizeof(uint32_t) + 2*sizeof(float)) {
+            // Exemple de payload : [playerID, posX, posY]
             uint32_t playerID;
+            float posX, posY;
             std::memcpy(&playerID, msg.payload.data(), sizeof(playerID));
+            std::memcpy(&posX, msg.payload.data() + sizeof(playerID), sizeof(posX));
+            std::memcpy(&posY, msg.payload.data() + sizeof(playerID) + sizeof(posX), sizeof(posY));
+            
             _playerID = playerID;
-            std::cout << "[Client] CONNECT_OK received! My ID = " << _playerID << "\n";
-        } else {
-            std::cout << "[Client] CONNECT_OK received but no ID in payload.\n";
+            _entityManager.updateEntity(_playerID, EntityType::Player, posX, posY);
         }
         break;
     }
-            case MessageType::PLAYER_LEFT:
-            {
-                // Convert payload back to string
-                std::string whoLeft(msg.payload.begin(), msg.payload.end());
-                std::cout << "[Client] Player " << whoLeft << " left the game!\n";
+        case MessageType::PLAYER_LEFT:
+        {
+            // Convert payload back to string
+            std::string whoLeft(msg.payload.begin(), msg.payload.end());
+            std::cout << "[Client] Player " << whoLeft << " left the game!\n";
 
-                // E.g. remove them from the local entity list, scoreboard, etc.
+            // E.g. remove them from the local entity list, scoreboard, etc.
+            break;
+        }
+        case MessageType::SPAWN_ENTITY: // Remplacez SPAWN_MONSTER par SPAWN_ENTITY
+        {
+            // Payload attendue : [entity_type (uint8_t), entity_id (uint32_t), posX (float), posY (float)]
+            const size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t) + 2 * sizeof(float);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] SPAWN_ENTITY payload trop petit!\n";
                 break;
             }
-            case MessageType::SPAWN_MONSTER:
-            {
-                // On s’attend à recevoir : [ monsterID (uint32_t), posX (float), posY (float) ]
-                if (msg.payload.size() < sizeof(uint32_t) + 2 * sizeof(float)) {
-                    std::cerr << "[Client] SPAWN_MONSTER payload too small!\n";
-                    break;
-                }
 
-                // Extraire l'ID
-                uint32_t monsterID;
-                std::memcpy(&monsterID, msg.payload.data(), sizeof(monsterID));
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
 
-                // Extraire posX
-                float posX;
-                std::memcpy(&posX, msg.payload.data() + sizeof(monsterID), sizeof(posX));
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + 1, sizeof(entityId));
 
-                // Extraire posY
-                float posY;
-                std::memcpy(&posY, msg.payload.data() + sizeof(monsterID) + sizeof(posX), sizeof(posY));
+            float posX;
+            std::memcpy(&posX, msg.payload.data() + 1 + sizeof(entityId), sizeof(posX));
 
-                std::cout << "[Client] SPAWN_MONSTER -> ID=" << monsterID
-                        << " pos=(" << posX << ", " << posY << ")\n";
+            float posY;
+            std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
 
-                // Ensuite, créer un sprite local, ou un "monster entity" pour l'affichage
-                // Par ex. :
-                SpriteEntity monster("client/assets/alien.png", posX, posY, false);
-                monster.setScale(0.2f, 0.2f);
-
-                // Stocker ce nouveau SpriteEntity dans un conteneur local du client, e.g.:
-                _monsters[monsterID] = monster;
-
+            // Utiliser EntityManager pour créer/mettre à jour l'entité
+            _entityManager.updateEntity(entityId, entityType, posX, posY);
+            break;
+        }
+        case MessageType::UPDATE_ENTITY:
+        {
+            // On s'attend à recevoir : [ entityType (uint8_t), entityId (uint32_t), posX (float), posY (float) ]
+            const size_t expectedSize = 1 + sizeof(uint32_t) + 2 * sizeof(float);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] UPDATE_ENTITY payload trop petit!\n";
                 break;
             }
-            // Possibly handle other messages
-            default:
-                std::cout << "[Client] Unknown message type.\n";
-                break;
+            
+            // Extraction de l'EntityType (premier octet)
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
+            
+            size_t offset = 1;
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + offset, sizeof(entityId));
+            offset += sizeof(entityId);
+            
+            float posX;
+            std::memcpy(&posX, msg.payload.data() + offset, sizeof(posX));
+            offset += sizeof(posX);
+            
+            float posY;
+            std::memcpy(&posY, msg.payload.data() + offset, sizeof(posY));
+            
+            // Mise à jour/création de l'entité via l'EntityManager
+            _entityManager.updateEntity(entityId, entityType, posX, posY);
+            break;
+        }
+        // Possibly handle other messages
+        default:
+            std::cout << "[Client] Unknown message type.\n";
+            break;
         }
     }
     static float heartbeatTimer = 0.f;
@@ -263,20 +265,15 @@ void Client::update(float dt)
     }
 }
 
-void Client::render()
-{
+void Client::render() {
     _window.clear(sf::Color::Blue);
     if (_connected){
         _background.render(_window);
-        _sprites.draw(_window);
+        _entityManager.render(_window); // Gère maintenant toutes les entités
     }
-    for (auto &pair : _monsters) {
-            pair.second.draw(_window);
-    }
+    // Supprimer la boucle de rendu des monstres
     if (!_connected) {
         _window.draw(_connectButton);
     }
-
     _window.display();
 }
-

@@ -4,15 +4,16 @@
 
 class Player : public Entity {
 public:
-    Player() = default;
-    virtual ~Player() = default;
+    Player(uint32_t id);
+    virtual ~Player();
 
-    void update(double dt) override {
-        _position.x += _velocity.x * dt;
-        _position.y += _velocity.y * dt;
-    }
+    void update(float dt) override;
+    bool collidesWith(const Entity& other) const override;
+    void onCollision(Entity& other) override;
 
-    bool collidesWith(const Entity& other) const override {
-        return false;
-    }
+    void addScore(int points);
+    int  getScore() const;
+
+private:
+    int _score;
 };
