@@ -1,3 +1,5 @@
+//NetworkProtocol.hpp
+
 #pragma once
 #include <cstdint>
 #include <vector>
@@ -20,6 +22,7 @@ enum class MessageType : uint32_t {
     MOVE_DOWN_STOP = 14,
     MOVE_LEFT_STOP = 15,
     MOVE_RIGHT_STOP = 16,
+    UPDATE_ENTITY = 17,
 
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };

@@ -1,3 +1,5 @@
+//Client.cpp
+
 #include "Client.hpp"
 #include <iostream>
 
@@ -190,6 +192,7 @@ void Client::update(float dt)
 {
     _background.update(dt);
     _sprites.update(dt);
+    _entityManager.update(dt);
 
     if (_connected) {
         sf::Vector2f playerPos = _sprites.getPosition();
@@ -214,52 +217,74 @@ void Client::update(float dt)
         }
         break;
     }
-            case MessageType::PLAYER_LEFT:
-            {
-                // Convert payload back to string
-                std::string whoLeft(msg.payload.begin(), msg.payload.end());
-                std::cout << "[Client] Player " << whoLeft << " left the game!\n";
+        case MessageType::PLAYER_LEFT:
+        {
+            // Convert payload back to string
+            std::string whoLeft(msg.payload.begin(), msg.payload.end());
+            std::cout << "[Client] Player " << whoLeft << " left the game!\n";
 
-                // E.g. remove them from the local entity list, scoreboard, etc.
+            // E.g. remove them from the local entity list, scoreboard, etc.
+            break;
+        }
+        case MessageType::SPAWN_MONSTER:
+        {
+            if (msg.payload.size() < sizeof(uint32_t) + 2 * sizeof(float)) {
+                std::cerr << "[Client] SPAWN_MONSTER payload too small!\n";
                 break;
             }
-            case MessageType::SPAWN_MONSTER:
-            {
-                // On s’attend à recevoir : [ monsterID (uint32_t), posX (float), posY (float) ]
-                if (msg.payload.size() < sizeof(uint32_t) + 2 * sizeof(float)) {
-                    std::cerr << "[Client] SPAWN_MONSTER payload too small!\n";
-                    break;
-                }
 
-                // Extraire l'ID
-                uint32_t monsterID;
-                std::memcpy(&monsterID, msg.payload.data(), sizeof(monsterID));
+            uint32_t monsterID;
+            std::memcpy(&monsterID, msg.payload.data(), sizeof(monsterID));
 
-                // Extraire posX
-                float posX;
-                std::memcpy(&posX, msg.payload.data() + sizeof(monsterID), sizeof(posX));
+            float posX;
+            std::memcpy(&posX, msg.payload.data() + sizeof(monsterID), sizeof(posX));
 
-                // Extraire posY
-                float posY;
-                std::memcpy(&posY, msg.payload.data() + sizeof(monsterID) + sizeof(posX), sizeof(posY));
+            float posY;
+            std::memcpy(&posY, msg.payload.data() + sizeof(monsterID) + sizeof(posX), sizeof(posY));
 
-                std::cout << "[Client] SPAWN_MONSTER -> ID=" << monsterID
-                        << " pos=(" << posX << ", " << posY << ")\n";
+            std::cout << "[Client] SPAWN_MONSTER -> ID=" << monsterID
+                    << " pos=(" << posX << ", " << posY << ")\n";
 
-                // Ensuite, créer un sprite local, ou un "monster entity" pour l'affichage
-                // Par ex. :
-                SpriteEntity monster("client/assets/alien.png", posX, posY, false);
-                monster.setScale(0.2f, 0.2f);
+            // Créez un nouveau SpriteEntity et stockez-le dans la map
+            auto monster = std::make_unique<SpriteEntity>("client/assets/alien.png", posX, posY, false);
+            monster->setScale(0.2f, 0.2f);
 
-                // Stocker ce nouveau SpriteEntity dans un conteneur local du client, e.g.:
-                _monsters[monsterID] = monster;
-
+            _monsters[monsterID] = std::move(monster);
+            break;
+        }
+        case MessageType::UPDATE_ENTITY:
+        {
+            // On s'attend à recevoir : [ entityType (uint8_t), entityId (uint32_t), posX (float), posY (float) ]
+            const size_t expectedSize = 1 + sizeof(uint32_t) + 2 * sizeof(float);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] UPDATE_ENTITY payload trop petit!\n";
                 break;
             }
-            // Possibly handle other messages
-            default:
-                std::cout << "[Client] Unknown message type.\n";
-                break;
+            
+            // Extraction de l'EntityType (premier octet)
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
+            
+            size_t offset = 1;
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + offset, sizeof(entityId));
+            offset += sizeof(entityId);
+            
+            float posX;
+            std::memcpy(&posX, msg.payload.data() + offset, sizeof(posX));
+            offset += sizeof(posX);
+            
+            float posY;
+            std::memcpy(&posY, msg.payload.data() + offset, sizeof(posY));
+            
+            // Mise à jour/création de l'entité via l'EntityManager
+            _entityManager.updateEntity(entityId, entityType, posX, posY);
+            break;
+        }
+        // Possibly handle other messages
+        default:
+            std::cout << "[Client] Unknown message type.\n";
+            break;
         }
     }
     static float heartbeatTimer = 0.f;
@@ -277,9 +302,11 @@ void Client::render()
     if (_connected){
         _background.render(_window);
         _sprites.draw(_window);
+        _entityManager.render(_window);
+
     }
     for (auto &pair : _monsters) {
-            pair.second.draw(_window);
+        pair.second->draw(_window);
     }
     if (!_connected) {
         _window.draw(_connectButton);

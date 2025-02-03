@@ -1,3 +1,5 @@
+//Client.hpp
+
 #pragma once
 
 #include <SFML/Graphics.hpp>
@@ -7,6 +9,7 @@
 #include "NetworkClient.hpp"
 #include "HandleBackground.hpp"
 #include "HandleSprites.hpp"
+#include "EntityManager.hpp"
 
 class Client {
 public:
@@ -35,6 +38,7 @@ private:
     std::unique_ptr<NetworkClient> _networkClient;
     HandleBackground _background;
     SpriteEntity _sprites;
-    std::map<uint32_t, SpriteEntity> _monsters;
+    std::map<uint32_t, std::unique_ptr<SpriteEntity>> _monsters;
+    EntityManager _entityManager;
     uint32_t _playerID = 0;
 };
