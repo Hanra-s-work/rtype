@@ -226,30 +226,29 @@ void Client::update(float dt)
             // E.g. remove them from the local entity list, scoreboard, etc.
             break;
         }
-        case MessageType::SPAWN_MONSTER:
+        case MessageType::SPAWN_ENTITY: // Remplacez SPAWN_MONSTER par SPAWN_ENTITY
         {
-            if (msg.payload.size() < sizeof(uint32_t) + 2 * sizeof(float)) {
-                std::cerr << "[Client] SPAWN_MONSTER payload too small!\n";
+            // Payload attendue : [entity_type (uint8_t), entity_id (uint32_t), posX (float), posY (float)]
+            const size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t) + 2 * sizeof(float);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] SPAWN_ENTITY payload trop petit!\n";
                 break;
             }
 
-            uint32_t monsterID;
-            std::memcpy(&monsterID, msg.payload.data(), sizeof(monsterID));
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
+
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + 1, sizeof(entityId));
 
             float posX;
-            std::memcpy(&posX, msg.payload.data() + sizeof(monsterID), sizeof(posX));
+            std::memcpy(&posX, msg.payload.data() + 1 + sizeof(entityId), sizeof(posX));
 
             float posY;
-            std::memcpy(&posY, msg.payload.data() + sizeof(monsterID) + sizeof(posX), sizeof(posY));
+            std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
 
-            std::cout << "[Client] SPAWN_MONSTER -> ID=" << monsterID
-                    << " pos=(" << posX << ", " << posY << ")\n";
-
-            // Créez un nouveau SpriteEntity et stockez-le dans la map
-            auto monster = std::make_unique<SpriteEntity>("client/assets/alien.png", posX, posY, false);
-            monster->setScale(0.2f, 0.2f);
-
-            _monsters[monsterID] = std::move(monster);
+            // Utiliser EntityManager pour créer/mettre à jour l'entité
+            _entityManager.updateEntity(entityId, entityType, posX, posY);
             break;
         }
         case MessageType::UPDATE_ENTITY:
@@ -296,22 +295,16 @@ void Client::update(float dt)
     }
 }
 
-void Client::render()
-{
+void Client::render() {
     _window.clear(sf::Color::Blue);
     if (_connected){
         _background.render(_window);
         _sprites.draw(_window);
-        _entityManager.render(_window);
-
+        _entityManager.render(_window); // Gère maintenant toutes les entités
     }
-    for (auto &pair : _monsters) {
-        pair.second->draw(_window);
-    }
+    // Supprimer la boucle de rendu des monstres
     if (!_connected) {
         _window.draw(_connectButton);
     }
-
     _window.display();
 }
-

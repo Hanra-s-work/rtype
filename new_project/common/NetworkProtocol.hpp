@@ -23,6 +23,7 @@ enum class MessageType : uint32_t {
     MOVE_LEFT_STOP = 15,
     MOVE_RIGHT_STOP = 16,
     UPDATE_ENTITY = 17,
+    SPAWN_ENTITY = 18,
 
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
