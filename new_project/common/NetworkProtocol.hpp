@@ -20,6 +20,8 @@ enum class MessageType : uint32_t {
     MOVE_DOWN_STOP = 14,
     MOVE_LEFT_STOP = 15,
     MOVE_RIGHT_STOP = 16,
+    STATE_UPDATE = 17,
+    
 
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };

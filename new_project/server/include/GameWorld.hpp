@@ -1,8 +1,11 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Monster.hpp"
 #include <iostream>
+#include <algorithm>
+#include <mutex>
+#include "Entity.hpp"
+#include "Monster.hpp"
 
 class GameWorld {
 public:
@@ -15,9 +18,10 @@ public:
     void addEntity(std::unique_ptr<Entity> entity);
 
     /// Access current entities
-    const std::vector<std::unique_ptr<Entity>>& getEntities() const;
+    std::vector<Entity*> getEntitiesSnapshot() const;
 
     Entity* getEntityById(uint32_t id);
+    mutable std::mutex _entitiesMutex;
 
 private:
     std::vector<std::unique_ptr<Entity>> _entities;

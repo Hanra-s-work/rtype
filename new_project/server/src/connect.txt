@@ -1,2 +1,0 @@
-Message type = CONNECT_OK
-payload = [ playerID (uint32_t) ]

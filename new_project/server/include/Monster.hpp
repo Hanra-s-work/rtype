@@ -1,15 +1,17 @@
 #pragma once
 
-#include "Entity.hpp"
 #include <cstdlib>
 #include <iostream>
-#include "GameWorld.hpp"
 #include <cmath>
+#include "Entity.hpp"
+#include "GameWorld.hpp"
 #include "Missile.hpp"
+
+class GameWorld;
 
 class Monster : public Entity {
     public:
-        Monster(uint32_t id, GameWorld&);
+        Monster(uint32_t id, GameWorld& world);
         virtual ~Monster();
 
         void update(float dt) override;
@@ -19,5 +21,5 @@ class Monster : public Entity {
     private:
         float _shootTimer     = 0.f;
         float _shootInterval  = 2.f;
-        GameWorld _world;
+        GameWorld& _world;
 };

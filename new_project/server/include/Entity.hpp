@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <atomic>
 
 /// Basic 2D vector struct
 struct Vector2 {
@@ -54,3 +55,5 @@ protected:
     Vector2      _velocity {0.f, 0.f};
     bool         _destroyed {false};
 };
+
+uint32_t generateEntityId();

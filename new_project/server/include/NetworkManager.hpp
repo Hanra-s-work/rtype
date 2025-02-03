@@ -11,6 +11,7 @@
 #include <chrono>
 #include <unordered_map>
 #include <cstring>
+#include <mutex>
 #include "../../common/NetworkProtocol.hpp"
 #include "Player.hpp"
 #include "Missile.hpp"
@@ -35,7 +36,8 @@ public:
     
     // Potentially used to process queued messages or do other periodic tasks
     void pollMessages();
-    void broadcastState();
+    void broadcastFullState();
+    void broadcastEntityState(Entity* e);
 
     // For sending a binary message to a specific client
     void sendBinaryMessage(MessageType type,
@@ -64,16 +66,13 @@ private:
     std::unique_ptr<asio::ip::udp::socket> _socket;
     std::vector<std::thread> _ioThreads;
     std::atomic<bool> _running { false };
+    std::mutex _mutex;
 
     // A list of all connected client endpoints for broadcasts
     std::vector<asio::ip::udp::endpoint> _clients;
 
     // Maps each endpoint -> PlayerInfo (which includes playerId, entityId, etc.)
     std::unordered_map<asio::ip::udp::endpoint, PlayerInfo> _connectedPlayers;
-
-    // Used to generate unique player IDs
-    std::atomic<uint32_t> _nextPlayerId {1};
-    std::atomic<uint32_t> _nextMissileId {10000};
 
     // Heartbeat tracking: endpoint -> last heartbeat time
     std::unordered_map<asio::ip::udp::endpoint,

@@ -27,7 +27,8 @@ void Monster::update(float dt)
         float vx = std::cos(angle) * speed;
         float vy = std::sin(angle) * speed;
 
-        auto bullet = std::make_unique<Missile>(generateBulletId());
+        uint32_t bulletId = generateEntityId();
+        auto bullet = std::make_unique<Missile>(bulletId);
         bullet->setPosition(_position);
 
         bullet->setVelocity({vx, vy});
