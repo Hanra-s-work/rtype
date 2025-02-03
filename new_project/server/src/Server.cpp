@@ -33,23 +33,27 @@ void Server::gameLoop()
 {
     using clock = std::chrono::steady_clock;
     auto previous = clock::now();
+    double broadcastTimer = 0.0;
+    const double broadcastInterval = 0.1; // broadcast delta updates every 100ms
 
     while (_running) {
         auto current = clock::now();
-        // Calculate dt as the actual elapsed time in seconds
         double dt = std::chrono::duration<double>(current - previous).count();
-        previous = current; // Update previous time for the next iteration
+        previous = current;
 
-        // Update game world with the actual dt
+        // Update the game world (spawning monsters, moving entities, collision detection, etc.)
         _gameWorld->update(dt);
+
+        // Accumulate time for broadcasting updates.
+        broadcastTimer += dt;
+        if (broadcastTimer >= broadcastInterval) {
+            broadcastTimer = 0.0;
+            _networkManager->broadcastStateDelta(); // You can rename broadcastStateDelta to broadcastStateDelta() as implemented above.
+        }
 
         // Check heartbeats
         _networkManager->checkHeartbeats();
 
-        // Optionally broadcast state
-        // _networkManager->broadcastState();
-
-        // Sleep to avoid busy-waiting (adjust as needed)
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "Game loop ended.\n";

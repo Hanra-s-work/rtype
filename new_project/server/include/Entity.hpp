@@ -2,21 +2,12 @@
 
 #include <cstdint>
 #include <atomic>
+#include "../../common/NetworkProtocol.hpp"
 
 /// Basic 2D vector struct
 struct Vector2 {
     float x;
     float y;
-};
-
-/* Distinguish specific entity types (player, monster, missile, etc.)*/
-enum class EntityType : uint8_t {
-    Player          = 1,
-    Monster         = 2,
-    PlayerMissile   = 3,
-    MonsterMissile  = 4,
-    Powerup         = 5,
-    Boss            = 6,
 };
 
 class Entity {
