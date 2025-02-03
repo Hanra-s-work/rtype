@@ -8,12 +8,6 @@ struct Vector2 {
     float y;
 };
 
-/// Distinguish teams (players, monsters, etc.)
-enum class EntityTeam : uint8_t {
-    Players   = 1,
-    Monsters  = 2,
-};
-
 /// Distinguish specific entity types (player, monster, missile, etc.)
 enum class EntityType : uint8_t {
     Player          = 1,
@@ -26,7 +20,7 @@ enum class EntityType : uint8_t {
 
 class Entity {
 public:
-    Entity(EntityTeam team, EntityType type, uint32_t id);
+    Entity(EntityType type, uint32_t id);
     virtual ~Entity();
 
     /// Update the entity state each frame (e.g. movement)
@@ -43,7 +37,6 @@ public:
     bool isDestroyed() const;
 
     // Getters
-    EntityTeam   getTeam() const;
     EntityType   getType() const;
     uint32_t     getId()   const;
 
@@ -54,7 +47,6 @@ public:
     void         setVelocity(const Vector2& vel);
 
 protected:
-    EntityTeam   _team;
     EntityType   _type;
     uint32_t     _id; // unique ID for networking sync
 

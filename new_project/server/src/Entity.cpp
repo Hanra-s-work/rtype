@@ -1,6 +1,6 @@
 #include "Entity.hpp"
 
-Entity::Entity(EntityTeam team, EntityType type, uint32_t id)
+Entity::Entity(EntityType type, uint32_t id)
 : _team(team)
 , _type(type)
 , _id(id)
@@ -17,11 +17,6 @@ void Entity::destroy()
 bool Entity::isDestroyed() const
 {
     return _destroyed;
-}
-
-EntityTeam Entity::getTeam() const
-{
-    return _team;
 }
 
 EntityType Entity::getType() const

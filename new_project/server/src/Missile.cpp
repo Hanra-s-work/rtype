@@ -2,7 +2,7 @@
 #include <cmath> // if needed for collision checks
 
 Missile::Missile(uint32_t id)
-: Entity(EntityTeam::Players, EntityType::PlayerMissile, id)
+: Entity(EntityType::PlayerMissile, id)
 {
     // Optionally set a default velocity here, or do it after creation.
 }
@@ -35,7 +35,7 @@ void Missile::onCollision(Entity& other)
 {
     // If we collide with an enemy (team=Monsters),
     // we might destroy both
-    if (other.getTeam() == EntityTeam::Monsters) {
+    if (other.getType() == EntityType::Monster || other.getType() == EntityType::MonsterMissile) {
         destroy();
         other.destroy();
     }

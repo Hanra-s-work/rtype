@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Entity.hpp"
+#include "Monster.hpp"
+#include <iostream>
 
 class GameWorld {
 public:
@@ -20,4 +21,9 @@ public:
 
 private:
     std::vector<std::unique_ptr<Entity>> _entities;
+
+    double _monsterSpawnTimer   = 0.0;
+    double _monsterSpawnInterval = 5.0; // spawn a monster every 5 seconds
+
+    void spawnMonster();
 };

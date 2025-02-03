@@ -386,9 +386,7 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
     }
 }
 
-void NetworkManager::sendBinaryMessage(MessageType type,
-                                       const std::vector<uint8_t>& payload,
-                                       const asio::ip::udp::endpoint& target)
+void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target)
 {
     if (!_running) return;
 
