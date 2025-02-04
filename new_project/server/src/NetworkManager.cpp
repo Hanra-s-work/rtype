@@ -111,23 +111,19 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             // 1) Generate a new player ID
             uint32_t newId = generateEntityId();
 
-            // 2) Create a PlayerInfo struct
+            // 2) Create a PlayerInfo struct and new Player entity
             PlayerInfo info;
             info.playerId = newId;
-
-            // 3) Create a new Player entity in the GameWorld
             auto playerEntity = std::make_unique<Player>(newId);
-            playerEntity->setPosition({100.f, 300.f}); // example starting pos
-            uint32_t entityId = playerEntity->getId(); // typically same as newId
+            playerEntity->setPosition({100.f, 300.f}); // example starting position
+            uint32_t entityId = playerEntity->getId();
             info.entityId = entityId;
-
-            // Add the player entity to the world
             _gameWorld.addEntity(std::move(playerEntity));
 
-            // 4) Store info in _connectedPlayers map
+            // 3) Store info in the connected players map
             _connectedPlayers[senderEndpoint] = info;
 
-            // Check and add to _clients vector if not already there
+            // 4) If this endpoint isn't in _clients yet, add it.
             bool knownClient = false;
             for (auto& ep : _clients) {
                 if (ep == senderEndpoint) {
@@ -135,9 +131,8 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     break;
                 }
             }
-            if (!knownClient) {
+            if (!knownClient)
                 _clients.push_back(senderEndpoint);
-            }
 
             // 5) Track heartbeat
             _clientHeartbeats[senderEndpoint] = std::chrono::steady_clock::now();
@@ -147,27 +142,21 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             std::memcpy(payload.data(), &newId, sizeof(uint32_t));
             sendBinaryMessage(MessageType::CONNECT_OK, payload, senderEndpoint);
 
-            // 7) Now, send SPAWN_ENTITY messages:
-            //    a) For every existing entity in the GameWorld, send SPAWN_ENTITY to the new client.
-            {
-                // We can get a snapshot of entities from GameWorld:
-                auto entitiesSnapshot = _gameWorld.getEntitiesSnapshot();
-                for (Entity* entity : entitiesSnapshot) {
-                    sendEntitySpawnMessage(entity, senderEndpoint);
-                }
+            // 7a) Send SPAWN_ENTITY for every existing entity to the new client.
+            auto entitiesSnapshot = _gameWorld.getEntitiesSnapshot(); // returns std::vector<Entity*>
+            for (Entity* e : entitiesSnapshot) {
+                sendEntitySpawnMessage(e, senderEndpoint);
             }
 
-            //    b) Broadcast a SPAWN_ENTITY for the new client's player entity to every other client.
+            // 7b) Broadcast SPAWN_ENTITY for the new player's entity to every other client.
             Entity* newPlayerEntity = _gameWorld.getEntityById(info.entityId);
             for (const auto &ep : _clients) {
                 if (ep != senderEndpoint) {
                     sendEntitySpawnMessage(newPlayerEntity, ep);
                 }
             }
-
             break;
         }
-
 
         case MessageType::DISCONNECT:
         {
@@ -411,57 +400,73 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
     }
 }
 
-void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target)
-{
+void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target) {
     if (!_running) return;
-
-    // Build final packet (type + size + payload)
     std::vector<uint8_t> msg = buildMessage(type, payload);
     auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
-
     _socket->async_send_to(
         asio::buffer(*buffer), target,
         [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
-            // The shared_ptr keeps 'buffer' alive until send completes
+            // done
         }
     );
+}
+
+void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload) {
+    // Overloaded version that broadcasts to all clients
+    std::vector<uint8_t> msg = buildMessage(type, payload);
+    for (const auto &target : _clients) {
+        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+        _socket->async_send_to(
+            asio::buffer(*buffer), target,
+            [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+                // done
+            }
+        );
+    }
 }
 
 void NetworkManager::checkHeartbeats()
 {
     auto now = std::chrono::steady_clock::now();
-    const auto TIMEOUT = std::chrono::seconds(15); // no heartbeat in 15s => timed out
+    const auto TIMEOUT = std::chrono::seconds(15); // 15s timeout
 
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::vector<asio::ip::udp::endpoint> timedOutEndpoints;
 
-    for (auto it = _clientHeartbeats.begin(); it != _clientHeartbeats.end(); /* no ++ here */)
     {
-        auto elapsed = now - it->second;
-        if (elapsed > TIMEOUT)
-        {
-            auto timedOutClient = it->first;
-            std::cout << "[Server] Client timed out: " << timedOutClient << "\n";
+        std::lock_guard<std::mutex> lock(_mutex);
 
-            // Remove from _clients vector
-            auto vecIt = std::find(_clients.begin(), _clients.end(), timedOutClient);
-            if (vecIt != _clients.end()) {
-                _clients.erase(vecIt);
+        for (auto it = _clientHeartbeats.begin(); it != _clientHeartbeats.end(); ) {
+            auto elapsed = now - it->second;
+            if (elapsed > TIMEOUT) {
+                // Save the endpoint for later broadcasting
+                timedOutEndpoints.push_back(it->first);
+
+                std::cout << "[Server] Client timed out: " << it->first << "\n";
+
+                // Remove from _clients vector
+                auto vecIt = std::find(_clients.begin(), _clients.end(), it->first);
+                if (vecIt != _clients.end()) {
+                    _clients.erase(vecIt);
+                }
+
+                // Remove from _connectedPlayers
+                _connectedPlayers.erase(it->first);
+
+                // Erase from _clientHeartbeats and continue the loop
+                it = _clientHeartbeats.erase(it);
+            } else {
+                ++it;
             }
-
-            // Also remove from connectedPlayers
-            _connectedPlayers.erase(timedOutClient);
-
-            // Notify others
-            broadcastPlayerLeft(timedOutClient);
-
-            // Erase from _clientHeartbeats
-            it = _clientHeartbeats.erase(it);
         }
-        else {
-            ++it;
-        }
+    } // The lock on _mutex is now released.
+
+    // Now broadcast the PLAYER_LEFT message for each timed out endpoint.
+    for (const auto& ep : timedOutEndpoints) {
+        broadcastPlayerLeft(ep);
     }
 }
+
 
 void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint)
 {
@@ -489,25 +494,18 @@ void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEn
 
 std::vector<uint8_t> buildEntityPayload(Entity* entity) {
     std::vector<uint8_t> payload;
-    // 1 byte for entity_type, 4 for entity_id, 4 for posX, 4 for posY = 13 bytes total
-    payload.reserve(1 + sizeof(uint32_t) + sizeof(float) + sizeof(float));
+    payload.reserve(1 + sizeof(uint32_t) + 2 * sizeof(float));
 
-    // Entity type as uint8_t:
     uint8_t etype = static_cast<uint8_t>(entity->getType());
-    payload.push_back(etype);
+    uint32_t eid  = entity->getId();
+    float posX    = entity->getPosition().x;
+    float posY    = entity->getPosition().y;
 
-    // Entity id as uint32_t:
-    uint32_t eid = entity->getId();
+    payload.push_back(etype);
     uint8_t* idPtr = reinterpret_cast<uint8_t*>(&eid);
     payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
-
-    // posX as float:
-    float posX = entity->getPosition().x;
     uint8_t* posXPtr = reinterpret_cast<uint8_t*>(&posX);
     payload.insert(payload.end(), posXPtr, posXPtr + sizeof(float));
-
-    // posY as float:
-    float posY = entity->getPosition().y;
     uint8_t* posYPtr = reinterpret_cast<uint8_t*>(&posY);
     payload.insert(payload.end(), posYPtr, posYPtr + sizeof(float));
 
@@ -520,12 +518,11 @@ void NetworkManager::sendEntitySpawnMessage(Entity* entity, const asio::ip::udp:
     sendBinaryMessage(MessageType::SPAWN_ENTITY, payload, target);
 }
 
-void NetworkManager::sendEntityUpdateMessage(Entity* entity, const asio::ip::udp::endpoint& target) {
+void NetworkManager::broadcastEntityUpdate(Entity* entity) {
     if (!entity) return;
     std::vector<uint8_t> payload = buildEntityPayload(entity);
-    sendBinaryMessage(MessageType::UPDATE_ENTITY, payload, target);
+    sendBinaryMessage(MessageType::UPDATE_ENTITY, payload);
 }
-
 void NetworkManager::broadcastStateDelta()
 {
     // Lock _mutex to protect access to _clients and _lastBroadcastedEntityPositions.
@@ -600,4 +597,9 @@ void NetworkManager::broadcastStateDelta()
             }
         } // end if shouldUpdate
     } // end for each entity
+}
+
+bool NetworkManager::hasClients() const {
+    std::lock_guard<std::mutex> lock(_mutex);
+    return !_clients.empty();
 }

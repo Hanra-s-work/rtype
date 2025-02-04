@@ -4,26 +4,28 @@ GameWorld::GameWorld()
 {
 }
 
-void GameWorld::update(float dt)
+void GameWorld::update(float dt, bool spawnEnemies)
 {
-    bool shouldSpawn = false;
-    
-    // 1. Update the spawn timer under lock only
-    {
-        std::lock_guard<std::mutex> lock(_entitiesMutex);
-        _monsterSpawnTimer += dt;
-        if (_monsterSpawnTimer >= _monsterSpawnInterval) {
-            shouldSpawn = true;
-            _monsterSpawnTimer = 0.0;
+    if (spawnEnemies) {
+        bool shouldSpawn = false;
+        
+        // Update spawn timer under lock
+        {
+            std::lock_guard<std::mutex> lock(_entitiesMutex);
+            _monsterSpawnTimer += dt;
+            if (_monsterSpawnTimer >= _monsterSpawnInterval) {
+                shouldSpawn = true;
+                _monsterSpawnTimer = 0.0;
+            }
+        } // release lock
+
+        // Spawn monster outside the lock
+        if (shouldSpawn) {
+            spawnMonster();
         }
-    } // Release _entitiesMutex here
-
-    // Spawn monster (which may call addEntity(), acquiring _entitiesMutex)
-    if (shouldSpawn) {
-        spawnMonster();
     }
-
-    // 2. Create a snapshot of raw pointers to entities under lock
+    
+    // Create a snapshot of raw pointers for updating entities (outside the lock)
     std::vector<Entity*> snapshot;
     {
         std::lock_guard<std::mutex> lock(_entitiesMutex);
@@ -33,14 +35,14 @@ void GameWorld::update(float dt)
         }
     }
     
-    // 3. Update each entity outside the lock
+    // Update each entity outside the lock
     for (auto e : snapshot) {
-        if(e) {
+        if (e) {
             e->update(dt);
         }
     }
     
-    // 4. Reacquire the lock to do collision checking and cleanup
+    // Reacquire lock for collision checking and cleanup
     {
         std::lock_guard<std::mutex> lock(_entitiesMutex);
         
@@ -57,7 +59,7 @@ void GameWorld::update(float dt)
                 }
             }
         }
-
+    
         // Remove destroyed entities
         _entities.erase(
             std::remove_if(_entities.begin(), _entities.end(),
@@ -68,7 +70,6 @@ void GameWorld::update(float dt)
         );
     }
 }
-
 
 void GameWorld::spawnMonster()
 {
