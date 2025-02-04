@@ -15,6 +15,13 @@ Client::Client() : _background(_window)
         std::cerr << "Error loading font!\n";
     }
 
+    if (!_backgroundMusic.openFromFile("client/assets/audio/music.ogg")) {
+    std::cerr << "Erreur de chargement de la musique de fond!\n";
+    } else {
+        _backgroundMusic.setLoop(true);  // Pour que la musique se répète en boucle
+        _backgroundMusic.play();           // Démarrage de la musique
+    }
+
     _connectButton.setFont(_font);
     _connectButton.setString("Connect");
     _connectButton.setCharacterSize(24);
