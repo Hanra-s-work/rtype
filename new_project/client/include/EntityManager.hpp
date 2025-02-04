@@ -27,7 +27,7 @@ private:
         // Adapte les chemins et les classes si tu souhaites des comportements spécifiques.
         switch (type) {
             case EntityType::Player:
-                return std::make_unique<SpriteEntity>("client/assets/player.png", posX, posY);
+                return std::make_unique<SpriteEntity>("client/assets/vaisseau-spatial.png", posX, posY);
             case EntityType::Monster:
                 return std::make_unique<SpriteEntity>("client/assets/monster.png", posX, posY);
             case EntityType::PlayerMissile:
