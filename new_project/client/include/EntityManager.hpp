@@ -6,6 +6,7 @@
 #include "Entity.hpp"
 #include "HandleSprites.hpp"
 #include "../../common/NetworkProtocol.hpp" // Pour EntityType
+#include <unordered_set>
 
 class EntityManager {
 public:
@@ -27,7 +28,7 @@ private:
         // Adapte les chemins et les classes si tu souhaites des comportements spécifiques.
         switch (type) {
             case EntityType::Player:
-                return std::make_unique<SpriteEntity>("client/assets/vaisseau-spatial.png", posX, posY);
+                return std::make_unique<SpriteEntity>("client/assets/player.png", posX, posY);
             case EntityType::Monster:
                 return std::make_unique<SpriteEntity>("client/assets/monster.png", posX, posY);
             case EntityType::PlayerMissile:
@@ -38,10 +39,9 @@ private:
             default:
                 // En cas d'erreur, retourne un sprite par défaut
                 return std::make_unique<SpriteEntity>("client/assets/default.png", posX, posY);
-                std::unordered_map<uint32_t, std::unique_ptr<Entity>> _entities;
-
         }
     }
     
     std::unordered_map<uint32_t, std::unique_ptr<Entity>> _entities;
+    std::unordered_set<uint32_t> _destroyedEntities;
 };

@@ -42,4 +42,7 @@ private:
     EntityManager _entityManager;
     uint32_t _playerID = 0;
     sf::Music _backgroundMusic;
+    sf::Text _playerLeftText;
+    sf::Clock _playerLeftClock;
+    bool _displayPlayerLeft { false };
 };
