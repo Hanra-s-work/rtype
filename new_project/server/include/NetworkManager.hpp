@@ -42,6 +42,7 @@ public:
 
     void sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target);
     void broadcastEntityUpdate(Entity* entity);
+    void broadcastEntityDestroy(Entity* entity);
 
     // Check for heartbeat timeouts
     void checkHeartbeats();
@@ -87,3 +88,4 @@ private:
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);
 std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload);
 std::vector<uint8_t> buildEntityPayload(Entity* entity);
+std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity);
