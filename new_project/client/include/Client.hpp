@@ -1,51 +1,36 @@
-//Client.hpp
+#ifndef CLIENT_HPP
+    #define CLIENT_HPP
 
-#pragma once
+    #include <SFML/Graphics.hpp>
+    #include <SFML/Audio.hpp>
+    #include <memory>
+    #include "NetworkClient.hpp"
+    #include "HandleBackground.hpp"
+    #include "EntityManager.hpp"
+    #include "HUD.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
-#include <memory>
-#include "NetworkClient.hpp"
-#include "HandleBackground.hpp"
-#include "HandleSprites.hpp"
-#include "EntityManager.hpp"
-#include <SFML/Audio.hpp>
+    class Client {
+        public:
+            Client();
+            void run();
+            void initWindow();
+            void handleEvents();
+            void update(float dt);
+            void render();
+            bool isConnectButtonClicked(const sf::Vector2i& mousePos);
+            void connectToServer();
+        private:
+            sf::RenderWindow _window;
+            sf::Clock _clock;
+            bool _connected{ false };
+            sf::Font _font;
+            sf::Text _connectButton;
+            std::unique_ptr<NetworkClient> _networkClient;
+            HandleBackground _background;
+            EntityManager _entityManager;
+            HUD _hud;
+            uint32_t _playerID = 0;
+            sf::Music _backgroundMusic;
+    };
 
-class Client {
-public:
-    Client();
-    ~Client() = default;
-
-    void run();
-
-private:
-    void initWindow();
-    void handleEvents();
-    void update(float dt);
-    void render();
-    bool isConnectButtonClicked(const sf::Vector2i& mousePos);
-    void connectToServer();
-    void sendPlayerPosition(uint32_t playerID, float posX, float posY);
-
-private:
-    sf::RenderWindow _window;
-    sf::Clock _clock;
-    bool _connected { false };
-
-    sf::Font _font;
-    sf::Text _connectButton;
-
-    std::unique_ptr<NetworkClient> _networkClient;
-    HandleBackground _background;
-    // std::map<uint32_t, std::unique_ptr<SpriteEntity>> _monsters;
-    EntityManager _entityManager;
-    uint32_t _playerID = 0;
-    sf::Music _backgroundMusic;
-    sf::Text _playerLeftText;
-    sf::Clock _playerLeftClock;
-    bool _displayPlayerLeft { false };
-    sf::Text _endGameText;   // Pour afficher "Defeat" ou "Victory"
-    bool _displayEndGame { false };
-    sf::Text _scoreText;
-};
+#endif // MON_HEADER_HPP
