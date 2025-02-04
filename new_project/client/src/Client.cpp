@@ -317,6 +317,52 @@ void Client::update(float dt)
             
             break;
         }
+        case MessageType::DEFEAT:
+        {
+            // Aucun payload attendu
+            _endGameText.setFont(_font);
+            _endGameText.setString("Defeat");
+            _endGameText.setCharacterSize(48);
+            _endGameText.setFillColor(sf::Color::Red);
+            sf::FloatRect textBounds = _endGameText.getLocalBounds();
+            _endGameText.setOrigin(textBounds.left + textBounds.width/2.f, textBounds.top + textBounds.height/2.f);
+            _endGameText.setPosition(_window.getSize().x / 2.f, _window.getSize().y / 2.f);
+            _displayEndGame = true;
+            break;
+        }
+        case MessageType::WIN:
+        {
+            // Aucun payload attendu
+            _endGameText.setFont(_font);
+            _endGameText.setString("Victory");
+            _endGameText.setCharacterSize(48);
+            _endGameText.setFillColor(sf::Color::Green);
+            sf::FloatRect textBounds = _endGameText.getLocalBounds();
+            _endGameText.setOrigin(textBounds.left + textBounds.width/2.f, textBounds.top + textBounds.height/2.f);
+            _endGameText.setPosition(_window.getSize().x / 2.f, _window.getSize().y / 2.f);
+            _displayEndGame = true;
+            break;
+        }
+        case MessageType::SCORE:
+        {
+            // Payload attendu : [score (uint32_t)]
+            const size_t expectedSize = sizeof(uint32_t);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] SCORE payload trop petit!\n";
+                break;
+            }
+            uint32_t score;
+            std::memcpy(&score, msg.payload.data(), sizeof(score));
+            
+            _scoreText.setFont(_font);
+            _scoreText.setString("Score: " + std::to_string(score));
+            _scoreText.setCharacterSize(24);
+            _scoreText.setFillColor(sf::Color::White);
+            sf::FloatRect textBounds = _scoreText.getLocalBounds();
+            _scoreText.setOrigin(textBounds.left + textBounds.width/2.f, textBounds.top + textBounds.height/2.f);
+            _scoreText.setPosition(_window.getSize().x / 2.f, _window.getSize().y - textBounds.height - 10.f);
+            break;
+        }
         // Possibly handle other messages
         default:
             std::cout << "[Client] Unknown message type.\n";
@@ -383,5 +429,11 @@ void Client::render() {
     if (_displayPlayerLeft) {
         _window.draw(_playerLeftText);
     }
+    if (_displayEndGame) {
+        _window.draw(_endGameText);
+    }
+
+    _window.draw(_scoreText);
+    
     _window.display();
 }

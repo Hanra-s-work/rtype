@@ -27,6 +27,8 @@ enum class MessageType : uint32_t {
     LIFE = 19,
     DESTROY_ENTITY = 20,
     SCORE = 21,
+    DEFEAT = 22,
+    WIN = 23
 };
 
 enum class EntityType : uint8_t {
