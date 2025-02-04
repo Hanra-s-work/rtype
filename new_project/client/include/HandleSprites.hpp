@@ -37,6 +37,10 @@ public:
     void rotate(float angle);
 
     void draw(sf::RenderWindow &window);
+    sf::Vector2f getSize() const {
+        sf::FloatRect bounds = sprite.getGlobalBounds();
+        return sf::Vector2f(bounds.width, bounds.height);
+    }
 private:
     sf::Vector2f _targetPos;
     sf::Texture texture;
