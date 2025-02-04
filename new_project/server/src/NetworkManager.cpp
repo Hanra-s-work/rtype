@@ -1,11 +1,10 @@
 #include "NetworkManager.hpp"
 #include "GameWorld.hpp"
-#include <algorithm>   // for std::find
+#include <algorithm>
 
 static const unsigned short SERVER_PORT = 9000;
 static const float speed = 200.f; // base speed for movement
 
-// Constructor: store a reference to the game world
 NetworkManager::NetworkManager(GameWorld& world)
 : _gameWorld(world)
 {
@@ -21,15 +20,10 @@ void NetworkManager::start()
     if (_running) return;
     _running = true;
 
-    // Bind the UDP socket
-    _socket = std::make_unique<asio::ip::udp::socket>(
-                  _ioContext,
-                  asio::ip::udp::endpoint(asio::ip::udp::v4(), SERVER_PORT));
+    _socket = std::make_unique<asio::ip::udp::socket>(_ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), SERVER_PORT));
 
-    // Start receiving packets
     doReceive();
 
-    // Launch a couple of I/O threads
     const size_t THREAD_COUNT = 2;
     for (size_t i = 0; i < THREAD_COUNT; i++) {
         _ioThreads.emplace_back([this]() {
@@ -55,9 +49,8 @@ void NetworkManager::stop()
     _ioContext.stop();
 
     for (auto &t : _ioThreads) {
-        if (t.joinable()) {
+        if (t.joinable())
             t.join();
-        }
     }
     _ioThreads.clear();
 
@@ -66,64 +59,52 @@ void NetworkManager::stop()
 
 void NetworkManager::doReceive()
 {
-    auto buffer        = std::make_shared<std::array<char, 1024>>();
+    auto buffer = std::make_shared<std::array<char, 1024>>();
     auto senderEndpoint = std::make_shared<asio::ip::udp::endpoint>();
 
-    // Start an async receive
     _socket->async_receive_from(
         asio::buffer(*buffer), *senderEndpoint,
         [this, buffer, senderEndpoint](std::error_code ec, std::size_t bytes_recvd) {
             if (!ec && bytes_recvd > 0) {
-                // Convert raw data to std::string
                 std::string dataStr(buffer->data(), bytes_recvd);
 
                 onDataReceived(dataStr, *senderEndpoint);
             }
-            if (_running) {
+            if (_running)
                 doReceive();
-            }
         }
     );
 }
 
-void NetworkManager::onDataReceived(const std::string& dataStr,
-                                    const asio::ip::udp::endpoint& senderEndpoint)
+void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::udp::endpoint& senderEndpoint)
 {
-    // Convert to a byte vector
     std::vector<uint8_t> data(dataStr.begin(), dataStr.end());
 
-    // Parse the message
     auto msgOpt = parseMessage(data);
     if (!msgOpt.has_value()) {
-        std::cerr << "[Server] Invalid or incomplete message from "
-                  << senderEndpoint << "\n";
+        std::cerr << "[Server] Invalid or incomplete message from " << senderEndpoint << std::endl;
         return;
     }
 
     ParsedMessage msg = msgOpt.value();
     switch (msg.type) {
-
         case MessageType::CONNECT:
         {
             std::lock_guard<std::mutex> lock(_mutex);
             std::cout << "[Server] CONNECT received from " << senderEndpoint << "\n";
 
-            // 1) Generate a new player ID
             uint32_t newId = generateEntityId();
 
-            // 2) Create a PlayerInfo struct and new Player entity
             PlayerInfo info;
             info.playerId = newId;
             auto playerEntity = std::make_unique<Player>(newId);
-            playerEntity->setPosition({100.f, 300.f}); // example starting position
+            playerEntity->setPosition({100.f, 300.f});
             uint32_t entityId = playerEntity->getId();
             info.entityId = entityId;
             _gameWorld.addEntity(std::move(playerEntity));
 
-            // 3) Store info in the connected players map
             _connectedPlayers[senderEndpoint] = info;
 
-            // 4) If this endpoint isn't in _clients yet, add it.
             bool knownClient = false;
             for (auto& ep : _clients) {
                 if (ep == senderEndpoint) {
@@ -134,10 +115,8 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             if (!knownClient)
                 _clients.push_back(senderEndpoint);
 
-            // 5) Track heartbeat
             _clientHeartbeats[senderEndpoint] = std::chrono::steady_clock::now();
 
-            // 6) Send CONNECT_OK with the new player ID (existing behavior)
             std::vector<uint8_t> payload(sizeof(uint32_t));
             std::memcpy(payload.data(), &newId, sizeof(uint32_t));
             sendBinaryMessage(MessageType::CONNECT_OK, payload, senderEndpoint);
@@ -150,32 +129,29 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                 }
             }
 
-            // 7a) Send SPAWN_ENTITY for every existing entity to the new client.
-            auto entitiesSnapshot = _gameWorld.getEntitiesSnapshot(); // returns std::vector<Entity*>
+            auto entitiesSnapshot = _gameWorld.getEntitiesSnapshot();
             for (Entity* e : entitiesSnapshot) {
                 sendEntitySpawnMessage(e, senderEndpoint);
             }
-            // 7b) Broadcast SPAWN_ENTITY for the new player's entity to every other client.
             for (const auto &ep : _clients) {
-                if (ep != senderEndpoint) {
+                if (ep != senderEndpoint)
                     sendEntitySpawnMessage(newPlayerEntity, ep);
-                }
             }
-            std::cout << "Connected clients count: " << _clients.size() << "\n";
+            std::cout << "Connected clients count: " << _clients.size() << std::endl;
             for (const auto& ep : _clients) {
-                std::cout << ep << "\n";
+                std::cout << ep << std::endl;
+            }
+            if (onNewConnection) {
+                onNewConnection(senderEndpoint);
             }
             break;
         }
-
         case MessageType::DISCONNECT:
         {
-            std::cout << "[Server] DISCONNECT from " << senderEndpoint << "\n";
+            std::cout << "[Server] DISCONNECT from " << senderEndpoint << std::endl;
 
-            // We'll use a unique_lock so we can unlock before broadcasting.
             std::unique_lock<std::mutex> lock(_mutex);
 
-            // Retrieve the entity for this client (if any)
             Entity* entityToDestroy = nullptr;
             auto itInfo = _connectedPlayers.find(senderEndpoint);
             if (itInfo != _connectedPlayers.end()) {
@@ -183,29 +159,23 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                 entityToDestroy = _gameWorld.getEntityById(entityId);
             }
 
-            // Remove the endpoint from _clients
             auto itClient = std::find(_clients.begin(), _clients.end(), senderEndpoint);
             if (itClient != _clients.end()) {
                 _clients.erase(itClient);
-                std::cout << "[Server] Removed client " << senderEndpoint << "\n";
+                std::cout << "[Server] Removed client " << senderEndpoint << std::endl;
             }
 
-            // Remove from _connectedPlayers and _clientHeartbeats
             _connectedPlayers.erase(senderEndpoint);
             _clientHeartbeats.erase(senderEndpoint);
 
-            // Unlock _mutex before broadcasting
             lock.unlock();
 
-            // Now, if an entity exists for this client, broadcast its destruction.
-            if (entityToDestroy) {
+            if (entityToDestroy)
                 broadcastEntityDestroy(entityToDestroy);
-            }
             broadcastPlayerLeft(senderEndpoint);
 
             break;
         }
-
         case MessageType::HEARTBEAT:
         {
             _clientHeartbeats[senderEndpoint] = std::chrono::steady_clock::now();
@@ -223,16 +193,14 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.y = -speed;   // move up
+                        vel.y = -speed;
                         player->setVelocity(vel);
                     }
                 }
             }
-            std::cout << "[Server] MOVE_UP received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_UP received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_UP_STOP: reset upward velocity (if currently moving upward)
         case MessageType::MOVE_UP_STOP:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -244,18 +212,16 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        if (vel.y < 0) { // if moving upward
+                        if (vel.y < 0) {
                             vel.y = 0.f;
                             player->setVelocity(vel);
                         }
                     }
                 }
             }
-            std::cout << "[Server] MOVE_UP_STOP received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_UP_STOP received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_DOWN_START: set downward velocity (positive Y)
         case MessageType::MOVE_DOWN:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -267,16 +233,14 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.y = speed;   // move down
+                        vel.y = speed;
                         player->setVelocity(vel);
                     }
                 }
             }
-            std::cout << "[Server] MOVE_DOWN received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_DOWN received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_DOWN_STOP: reset downward velocity (if currently moving downward)
         case MessageType::MOVE_DOWN_STOP:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -288,18 +252,16 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        if (vel.y > 0) { // if moving down
+                        if (vel.y > 0) {
                             vel.y = 0.f;
                             player->setVelocity(vel);
                         }
                     }
                 }
             }
-            std::cout << "[Server] MOVE_DOWN_STOP received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_DOWN_STOP received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_LEFT_START: set leftward velocity (negative X)
         case MessageType::MOVE_LEFT:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -311,16 +273,14 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.x = -speed;  // move left
+                        vel.x = -speed;
                         player->setVelocity(vel);
                     }
                 }
             }
-            std::cout << "[Server] MOVE_LEFT received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_LEFT received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_LEFT_STOP: reset leftward velocity (if currently moving left)
         case MessageType::MOVE_LEFT_STOP:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -332,18 +292,16 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        if (vel.x < 0) { // if moving left
+                        if (vel.x < 0) {
                             vel.x = 0.f;
                             player->setVelocity(vel);
                         }
                     }
                 }
             }
-            std::cout << "[Server] MOVE_LEFT_STOP received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_LEFT_STOP received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_RIGHT_START: set rightward velocity (positive X)
         case MessageType::MOVE_RIGHT:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -355,16 +313,14 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        vel.x = speed;   // move right
+                        vel.x = speed;
                         player->setVelocity(vel);
                     }
                 }
             }
-            std::cout << "[Server] MOVE_RIGHT received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_RIGHT received from " << senderEndpoint << std::endl;
             break;
         }
-
-        // MOVE_RIGHT_STOP: reset rightward velocity (if currently moving right)
         case MessageType::MOVE_RIGHT_STOP:
         {
             std::lock_guard<std::mutex> lock(_mutex);
@@ -376,14 +332,14 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 vel = player->getVelocity();
-                        if (vel.x > 0) { // if moving right
+                        if (vel.x > 0) {
                             vel.x = 0.f;
                             player->setVelocity(vel);
                         }
                     }
                 }
             }
-            std::cout << "[Server] MOVE_RIGHT_STOP received from " << senderEndpoint << "\n";
+            std::cout << "[Server] MOVE_RIGHT_STOP received from " << senderEndpoint << std::endl;
             break;
         }
         case MessageType::PLAYER_FIRE:
@@ -392,58 +348,50 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
             uint32_t newId = generateEntityId();
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
-                uint32_t entityId = it->second.entityId; // player's entity
+                uint32_t entityId = it->second.entityId;
                 Entity* entity = _gameWorld.getEntityById(entityId);
                 if (entity) {
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
-                        // 1. Get player position
                         Vector2 pPos = player->getPosition();
 
-                        // 2. Create a new missile
                         auto missile = std::make_unique<Missile>(newId, EntityType::PlayerMissile);
 
-                        // Place it at player's position
                         missile->setPosition(pPos);
 
-                        // Give it velocity to go straight (e.g. to the right)
                         missile->setVelocity({300.f, 0.f});
 
-                        // 3. Add to the world
                         _gameWorld.addEntity(std::move(missile));
                     }
                 }
             }
-            std::cout << "[Server] PLAYER_FIRE received from " << senderEndpoint << "\n";
+            std::cout << "[Server] PLAYER_FIRE received from " << senderEndpoint << std::endl;
             break;
         }
         default:
-            // Unknown or unhandled type
             break;
     }
 }
 
 void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload, const asio::ip::udp::endpoint& target) {
-    if (!_running) return;
+    if (!_running) 
+        return;
     std::vector<uint8_t> msg = buildMessage(type, payload);
     auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
     _socket->async_send_to(
         asio::buffer(*buffer), target,
         [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
-            // done
         }
     );
 }
 
 void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload) {
-    // Overloaded version that broadcasts to all clients
     std::vector<uint8_t> msg = buildMessage(type, payload);
     for (const auto &target : _clients) {
         auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
         _socket->async_send_to(
             asio::buffer(*buffer), target,
             [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
-                // done
             }
         );
     }
@@ -465,27 +413,24 @@ void NetworkManager::checkHeartbeats()
             if (elapsed > TIMEOUT) {
                 timedOutEndpoints.push_back(it->first);
 
-                std::cout << "[Server] Client timed out: " << it->first << "\n";
+                std::cout << "[Server] Client timed out: " << it->first << std::endl;
 
                 auto itInfo = _connectedPlayers.find(it->first);
                 if (itInfo != _connectedPlayers.end()) {
                     uint32_t entityId = itInfo->second.entityId;
                     Entity* entity = _gameWorld.getEntityById(entityId);
-                    if (entity) {
+                    if (entity)
                         entitiesToDestroy.push_back(entity);
-                    }
                 }
                 it = _clientHeartbeats.erase(it);
-            } else {
+            } else
                 ++it;
-            }
         }
 
         for (const auto &ep : timedOutEndpoints) {
             auto itClient = std::find(_clients.begin(), _clients.end(), ep);
-            if (itClient != _clients.end()) {
+            if (itClient != _clients.end())
                 _clients.erase(itClient);
-            }
             _connectedPlayers.erase(ep);
         }
     }
@@ -502,8 +447,7 @@ void NetworkManager::checkHeartbeats()
 void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint)
 {
     std::lock_guard<std::mutex> lock(_mutex);
-    std::string leftInfo = clientEndpoint.address().to_string() + ":" +
-                           std::to_string(clientEndpoint.port());
+    std::string leftInfo = clientEndpoint.address().to_string() + ":" + std::to_string(clientEndpoint.port());
 
     std::vector<uint8_t> payload(leftInfo.begin(), leftInfo.end());
     auto msg = buildMessage(MessageType::PLAYER_LEFT, payload);
@@ -542,7 +486,7 @@ std::vector<uint8_t> buildEntityPayload(Entity* entity) {
 
 std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity) {
     std::vector<uint8_t> payload;
-    payload.reserve(1 + sizeof(uint32_t)); // 1 byte for type, 4 bytes for id
+    payload.reserve(1 + sizeof(uint32_t));
 
     uint8_t etype = static_cast<uint8_t>(entity->getType());
     payload.push_back(etype);
@@ -555,38 +499,37 @@ std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity) {
 }
 
 void NetworkManager::broadcastEntityDestroy(Entity* entity) {
-    if (!entity) return;
+    if (!entity)
+        return;
     std::vector<uint8_t> payload = buildDestroyEntityPayload(entity);
 
-    // For debugging, print what we're sending:
     uint8_t etype = payload[0];
     uint32_t eid = 0;
     std::memcpy(&eid, payload.data() + 1, sizeof(uint32_t));
-    std::cout << "Broadcasting DESTROY_ENTITY: type=" << static_cast<int>(etype)
-              << ", id=" << eid << std::endl;
+    std::cout << "Broadcasting DESTROY_ENTITY: type=" << static_cast<int>(etype) << ", id=" << eid << std::endl;
 
     std::vector<uint8_t> msg = buildMessage(MessageType::DESTROY_ENTITY, payload);
 
-    // Send the message to all clients
     for (const auto &ep : _clients) {
         auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
         _socket->async_send_to(
             asio::buffer(*buffer), ep,
             [buffer](std::error_code, std::size_t) {
-                // done
             }
         );
     }
 }
 
 void NetworkManager::sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target) {
-    if (!entity) return;
+    if (!entity)
+        return;
     std::vector<uint8_t> payload = buildEntityPayload(entity);
     sendBinaryMessage(MessageType::SPAWN_ENTITY, payload, target);
 }
 
 void NetworkManager::broadcastEntityUpdate(Entity* entity) {
-    if (!entity) return;
+    if (!entity)
+        return;
     std::vector<uint8_t> payload = buildEntityPayload(entity);
     sendBinaryMessage(MessageType::UPDATE_ENTITY, payload);
 }
@@ -598,19 +541,15 @@ bool NetworkManager::hasClients() const {
 
 std::vector<uint8_t> buildLifePayload(Player* player) {
     std::vector<uint8_t> payload;
-    // Reserve space for: 1 byte for entity_type + 4 bytes for entity_id + 4 bytes for life = 9 bytes
     payload.reserve(1 + sizeof(uint32_t) + sizeof(uint32_t));
 
-    // Get entity type as a uint8_t (for a Player, this might be defined as EntityType::Player)
     uint8_t etype = static_cast<uint8_t>(player->getType());
     payload.push_back(etype);
 
-    // Append entity_id (4 bytes)
     uint32_t eid = player->getId();
     uint8_t* idPtr = reinterpret_cast<uint8_t*>(&eid);
     payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
 
-    // Append life (4 bytes)
     uint32_t life = player->getLife();
     uint8_t* lifePtr = reinterpret_cast<uint8_t*>(&life);
     payload.insert(payload.end(), lifePtr, lifePtr + sizeof(uint32_t));
@@ -619,7 +558,8 @@ std::vector<uint8_t> buildLifePayload(Player* player) {
 }
 
 void NetworkManager::sendLifeMessage(Player* player, const asio::ip::udp::endpoint& target) {
-    if (!player) return;
+    if (!player)
+        return;
     std::vector<uint8_t> payload = buildLifePayload(player);
     sendBinaryMessage(MessageType::LIFE, payload, target);
 }
@@ -641,9 +581,30 @@ bool NetworkManager::shouldSendLifeUpdate(uint32_t entityId, uint32_t currentLif
 asio::ip::udp::endpoint NetworkManager::getEndpointForEntity(uint32_t entityId) const {
     std::lock_guard<std::mutex> lock(_mutex);
     for (const auto& pair : _connectedPlayers) {
-        if (pair.second.entityId == entityId) {
+        if (pair.second.entityId == entityId)
             return pair.first;
-        }
     }
     throw std::runtime_error("Endpoint not found for given entityId");
+}
+
+std::vector<uint8_t> buildScorePayload(uint32_t score) {
+    std::vector<uint8_t> payload;
+    payload.reserve(sizeof(uint32_t));
+    uint8_t* scorePtr = reinterpret_cast<uint8_t*>(&score);
+    payload.insert(payload.end(), scorePtr, scorePtr + sizeof(uint32_t));
+    return payload;
+}
+
+void NetworkManager::sendScoreMessage(uint32_t score, const asio::ip::udp::endpoint& target) {
+    std::vector<uint8_t> payload = buildScorePayload(score);
+    std::vector<uint8_t> msg = buildMessage(MessageType::SCORE, payload);
+    
+    std::cout << "[NetworkManager] Sending SCORE: " << score << " to " << target << "\n";
+    
+    auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
+    _socket->async_send_to(
+        asio::buffer(*buffer), target,
+        [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+        }
+    );
 }

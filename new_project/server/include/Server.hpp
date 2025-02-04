@@ -22,4 +22,5 @@ class Server {
 
         std::thread _gameLoopThread;
         std::atomic<bool> _running { false };
+        uint32_t _globalScore = 0;
 };
