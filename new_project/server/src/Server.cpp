@@ -10,9 +10,8 @@ Server::Server()
 
 Server::~Server()
 {
-    if (_running) {
+    if (_running)
         shutdown();
-    }
 }
 
 void Server::run()
@@ -24,9 +23,8 @@ void Server::run()
 
     _gameLoopThread = std::thread(&Server::gameLoop, this);
 
-    if (_gameLoopThread.joinable()) {
+    if (_gameLoopThread.joinable())
         _gameLoopThread.join();
-    }
 }
 
 void Server::gameLoop()
@@ -59,21 +57,19 @@ void Server::gameLoop()
                     try {
                         asio::ip::udp::endpoint ep = _networkManager->getEndpointForEntity(player->getId());
                         
-                        if (_networkManager->shouldSendLifeUpdate(player->getId(), currentLife)) {
+                        if (_networkManager->shouldSendLifeUpdate(player->getId(), currentLife))
                             _networkManager->sendLifeMessage(player, ep);
-                        }
                     } catch (const std::exception &ex) {
                     }
                 }
             }
         }
-        for (Entity* destroyed : destroyedEntities) {
+        for (Entity* destroyed : destroyedEntities)
             _networkManager->broadcastEntityDestroy(destroyed);
-        }
         _networkManager->checkHeartbeats();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-    std::cout << "Game loop ended.\n";
+    std::cout << "Game loop ended." << std::endl;
 }
 
 void Server::shutdown()
@@ -82,7 +78,6 @@ void Server::shutdown()
 
     _networkManager->stop();
 
-    if (_gameLoopThread.joinable()) {
+    if (_gameLoopThread.joinable())
         _gameLoopThread.join();
-    }
 }

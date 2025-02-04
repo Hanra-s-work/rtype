@@ -26,17 +26,9 @@ enum class MessageType : uint32_t {
     SPAWN_ENTITY = 18,
     LIFE = 19,
     DESTROY_ENTITY = 20,
-
-    // You could add MOVE, SHOOT, DISCONNECT, etc. later
+    SCORE = 21,
 };
 
-/// Distinguish teams (players, monsters, etc.)
-enum class EntityTeam : uint8_t {
-    Players   = 1,
-    Monsters  = 2,
-};
-
-/// Distinguish specific entity types (player, monster, missile, etc.)
 enum class EntityType : uint8_t {
     Player          = 1,
     Monster         = 2,
@@ -48,11 +40,9 @@ enum class EntityType : uint8_t {
 
 struct ParsedMessage {
     MessageType type;
-    std::vector<uint8_t> payload; // optional data for each message
+    std::vector<uint8_t> payload;
 };
 
-// Build a packet with an 8-byte header: [type(4 bytes), payloadSize(4 bytes)]
 std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload);
 
-// Parse a packet into {type, payload}; returns std::nullopt if data is invalid/incomplete
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);

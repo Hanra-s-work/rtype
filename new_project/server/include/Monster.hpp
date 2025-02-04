@@ -19,7 +19,7 @@ class Monster : public Entity {
         void onCollision(Entity& other) override;
 
     private:
-        float _shootTimer     = 0.f;
-        float _shootInterval  = 2.f;
+        float _shootTimer = 0.f;
+        float _shootInterval = 2.f;
         GameWorld& _world;
 };
