@@ -161,6 +161,10 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
                     sendEntitySpawnMessage(newPlayerEntity, ep);
                 }
             }
+            std::cout << "Connected clients count: " << _clients.size() << "\n";
+            for (const auto& ep : _clients) {
+                std::cout << ep << "\n";
+            }
             break;
         }
 
@@ -586,81 +590,6 @@ void NetworkManager::broadcastEntityUpdate(Entity* entity) {
     std::vector<uint8_t> payload = buildEntityPayload(entity);
     sendBinaryMessage(MessageType::UPDATE_ENTITY, payload);
 }
-void NetworkManager::broadcastStateDelta()
-{
-    // Lock _mutex to protect access to _clients and _lastBroadcastedEntityPositions.
-    std::lock_guard<std::mutex> lock(_mutex);
-
-    // Get a snapshot of entities (raw pointers)
-    auto entities = _gameWorld.getEntitiesSnapshot(); // returns std::vector<Entity*>
-
-    // Define a threshold (in world units) for considering an update significant.
-    const float threshold = 1.0f;
-
-    // For each entity, compare its current position to the last broadcasted position.
-    for (Entity* e : entities) {
-        if (!e) continue;
-        uint32_t id = e->getId();
-        Vector2 currentPos = e->getPosition();
-
-        bool shouldUpdate = false;
-        // Check if we have broadcasted this entity before.
-        auto it = _lastBroadcastedEntityPositions.find(id);
-        if (it == _lastBroadcastedEntityPositions.end()) {
-            // No previous broadcast—so consider this a new entity.
-            shouldUpdate = true;
-        } else {
-            Vector2 lastPos = it->second;
-            float dx = currentPos.x - lastPos.x;
-            float dy = currentPos.y - lastPos.y;
-            if (std::fabs(dx) >= threshold || std::fabs(dy) >= threshold) {
-                shouldUpdate = true;
-            }
-        }
-
-        if (shouldUpdate) {
-            // Update the stored position
-            _lastBroadcastedEntityPositions[id] = currentPos;
-            // Send an UPDATE_ENTITY message for this entity.
-            // (Alternatively, you could choose to send a SPAWN_ENTITY if this is the first time.)
-            // For now, we'll send UPDATE_ENTITY.
-            // Use your helper function that builds a payload in the desired format.
-            // Here is an inline version using the new format:
-            uint8_t etype = static_cast<uint8_t>(e->getType());
-            uint32_t eid  = id;
-            float posX    = currentPos.x;
-            float posY    = currentPos.y;
-
-            std::vector<uint8_t> payload;
-            payload.reserve(1 + sizeof(uint32_t) + sizeof(float) + sizeof(float));
-            // Append entity_type (1 byte)
-            payload.push_back(etype);
-            // Append entity_id (4 bytes)
-            uint8_t* idPtr = reinterpret_cast<uint8_t*>(&eid);
-            payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
-            // Append posX (4 bytes)
-            uint8_t* xPtr = reinterpret_cast<uint8_t*>(&posX);
-            payload.insert(payload.end(), xPtr, xPtr + sizeof(float));
-            // Append posY (4 bytes)
-            uint8_t* yPtr = reinterpret_cast<uint8_t*>(&posY);
-            payload.insert(payload.end(), yPtr, yPtr + sizeof(float));
-
-            // Build the final message using your helper function.
-            std::vector<uint8_t> msg = buildMessage(MessageType::UPDATE_ENTITY, payload);
-
-            // Send the message to all connected clients.
-            for (const auto &ep : _clients) {
-                auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
-                _socket->async_send_to(
-                    asio::buffer(*buffer), ep,
-                    [buffer](std::error_code, std::size_t) {
-                        // done
-                    }
-                );
-            }
-        } // end if shouldUpdate
-    } // end for each entity
-}
 
 bool NetworkManager::hasClients() const {
     std::lock_guard<std::mutex> lock(_mutex);
@@ -700,7 +629,7 @@ bool NetworkManager::shouldSendLifeUpdate(uint32_t entityId, uint32_t currentLif
         auto it = _lastBroadcastedLife.find(entityId);
         if (it == _lastBroadcastedLife.end()) {
             _lastBroadcastedLife[entityId] = currentLife;
-            return true; // No previous value, so we need to send
+            return true;
         }
         if (it->second != currentLife) {
             it->second = currentLife;

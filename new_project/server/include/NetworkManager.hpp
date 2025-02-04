@@ -53,7 +53,6 @@ public:
     bool shouldSendLifeUpdate(uint32_t entityId, uint32_t currentLife);
 
     std::unordered_map<uint32_t, Vector2> _lastBroadcastedEntityPositions;
-    void broadcastStateDelta();
 
     bool hasClients() const;
     asio::ip::udp::endpoint getEndpointForEntity(uint32_t entityId) const;
