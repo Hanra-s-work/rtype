@@ -45,4 +45,7 @@ private:
     sf::Text _playerLeftText;
     sf::Clock _playerLeftClock;
     bool _displayPlayerLeft { false };
+    sf::Text _endGameText;   // Pour afficher "Defeat" ou "Victory"
+    bool _displayEndGame { false };
+    sf::Text _scoreText;
 };
