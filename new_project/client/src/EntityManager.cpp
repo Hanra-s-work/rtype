@@ -62,3 +62,29 @@ SpriteEntity* EntityManager::getSpriteEntity(uint32_t entityId) {
     }
     return nullptr;
 }
+
+void EntityManager::printEntitiesSizes() const {
+    std::cout << "Taille des entités dans le jeu :" << std::endl;
+    for (const auto &pair : _entities) {
+        // On suppose ici que toutes les entités sont des SpriteEntity.
+        // On peut utiliser dynamic_cast pour vérifier.
+        const SpriteEntity* spriteEntity = dynamic_cast<const SpriteEntity*>(pair.second.get());
+        if (spriteEntity) {
+            sf::Vector2f size = spriteEntity->getSize();
+            std::cout << "Entity ID: " << pair.first 
+                      << " - Taille: (" << size.x << ", " << size.y << ")" 
+                      << std::endl;
+        } else {
+            std::cout << "Entity ID: " << pair.first << " n'est pas une SpriteEntity." << std::endl;
+        }
+    }
+}
+
+// void EntityManager::printEntitiesPositions() const {
+//     for (const auto &pair : _entities) {
+//         sf::Vector2f pos = pair.second->getPosition();
+//         std::cout << "Entity " << pair.first 
+//                   << " position: (" << pos.x << ", " << pos.y << ")" 
+//                   << std::endl;
+//     }
+// }

@@ -7,6 +7,7 @@
 #include "HandleSprites.hpp"
 #include "../../common/NetworkProtocol.hpp" // Pour EntityType
 #include <unordered_set>
+#include <iostream>
 
 class EntityManager {
 public:
@@ -21,6 +22,8 @@ public:
     void removeEntity(uint32_t entityId);
     void updateLife(uint32_t entityId, EntityType type, uint32_t life);
     SpriteEntity* getSpriteEntity(uint32_t entityId);
+    // void printEntitiesPositions() const;
+    void printEntitiesSizes() const;
 private:
     // Factory qui crée l'entité selon son type
     std::unique_ptr<Entity> createEntity(EntityType type, float posX, float posY) {

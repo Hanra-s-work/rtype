@@ -61,6 +61,7 @@ void Client::initWindow()
 
 void Client::run()
 {
+
     while (_window.isOpen())
     {
         float dt = _clock.restart().asSeconds();
@@ -178,22 +179,11 @@ void Client::update(float dt)
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
         switch (msg.type) {
-    case MessageType::CONNECT_OK:
-    {
-        _connected = true;
-        if (msg.payload.size() >= sizeof(uint32_t) + 2*sizeof(float)) {
-            // Exemple de payload : [playerID, posX, posY]
-            uint32_t playerID;
-            float posX, posY;
-            std::memcpy(&playerID, msg.payload.data(), sizeof(playerID));
-            std::memcpy(&posX, msg.payload.data() + sizeof(playerID), sizeof(posX));
-            std::memcpy(&posY, msg.payload.data() + sizeof(playerID) + sizeof(posX), sizeof(posY));
-            
-            _playerID = playerID;
-            _entityManager.updateEntity(_playerID, EntityType::Player, posX, posY);
-        }
-        break;
-    }
+case MessageType::CONNECT_OK:
+{
+    _connected = true;
+    break;
+}
     case MessageType::PLAYER_LEFT:
         {
             // Convertir le payload en chaîne de caractères (nom ou id du joueur)
@@ -238,8 +228,7 @@ void Client::update(float dt)
             float posY;
             std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
 
-            std::cout << "le player id : " << entityId << " de type :" << static_cast<int>(entityType) << "a spawn" << std::endl;
-
+            // std::cout << "le player id : " << entityId << " de type :" << static_cast<int>(entityType) << "a spawn" << std::endl;
             // Utiliser EntityManager pour créer/mettre à jour l'entité
             _entityManager.updateEntity(entityId, entityType, posX, posY);
             break;
