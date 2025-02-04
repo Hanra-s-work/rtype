@@ -39,24 +39,7 @@ void Client::initWindow()
 {
     // Query desktop video mode
     sf::VideoMode desktopMode = sf::VideoMode::getDesktopMode();
-
-    // Desired window size
-    unsigned int width = 800;
-    unsigned int height = 600;
-
-    // Calculate a position to center the window
-    unsigned int posX = (desktopMode.width / 2) - (width / 2);
-    unsigned int posY = (desktopMode.height / 2) - (height / 2);
-
-    // Create a resizable window
-    // NOTE: On some OSes, setPosition might need to be called after creation
-    _window.create(sf::VideoMode(width, height), "R-Type Client",
-                   sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close,
-                   sf::ContextSettings(0, 0, 0, 2, 1));
-    
-    _window.setVerticalSyncEnabled(true);
-
-    _window.setPosition(sf::Vector2<int>(posX, posY));
+    _window.create(desktopMode, "R-Type Client", sf::Style::Fullscreen | sf::Style::Titlebar | sf::Style::Close, sf::ContextSettings(0, 0, 0, 2, 1));
 }
 
 void Client::run()
@@ -434,6 +417,6 @@ void Client::render() {
     }
 
     _window.draw(_scoreText);
-    
+
     _window.display();
 }
