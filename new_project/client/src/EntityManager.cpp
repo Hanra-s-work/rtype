@@ -36,9 +36,15 @@ void EntityManager::updateEntity(uint32_t entityId, EntityType type, float posX,
 
 void EntityManager::removeEntity(uint32_t entityId) {
     _entities.erase(entityId);
+    _destroyedEntities.insert(entityId);
 }
 
+
 void EntityManager::updateLife(uint32_t entityId, EntityType type, uint32_t life) {
+    if (_destroyedEntities.find(entityId) != _destroyedEntities.end()) {
+    return;
+    }
+
     auto it = _entities.find(entityId);
     if (it != _entities.end()) {
         // On suppose que l'entité est un SpriteEntity (par exemple un joueur ou un monstre)

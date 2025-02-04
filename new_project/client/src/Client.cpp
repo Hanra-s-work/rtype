@@ -238,6 +238,8 @@ void Client::update(float dt)
             float posY;
             std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
 
+            std::cout << "le player id : " << entityId << " de type :" << static_cast<int>(entityType) << "a spawn" << std::endl;
+
             // Utiliser EntityManager pour créer/mettre à jour l'entité
             _entityManager.updateEntity(entityId, entityType, posX, posY);
             break;
