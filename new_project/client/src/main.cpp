@@ -1,5 +1,4 @@
-//main.cpp
-
+// main.cpp
 #include "Client.hpp"
 
 int main()
