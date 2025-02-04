@@ -384,6 +384,8 @@ void Client::render() {
             }
         }
     }
-
+    if (_displayPlayerLeft) {
+        _window.draw(_playerLeftText);
+    }
     _window.display();
 }
