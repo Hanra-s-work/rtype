@@ -33,34 +33,43 @@ void Server::gameLoop()
 {
     using clock = std::chrono::steady_clock;
     auto previous = clock::now();
-    double updateAccumulator = 0.0;
-    const double broadcastInterval = 0.1; // broadcast updates every 100ms
+    double broadcastTimer = 0.0;
+    const double broadcastInterval = 0.1; // broadcast delta updates every 100ms
 
     while (_running) {
         auto current = clock::now();
         double dt = std::chrono::duration<double>(current - previous).count();
         previous = current;
-        updateAccumulator += dt;
+        broadcastTimer += dt;
 
-        // Update the game world (spawning monsters, moving entities, collisions, etc.)
-        _gameWorld->update(dt, /*spawnEnemies=*/_networkManager->hasClients());
+        // Only spawn enemies if there is at least one client
+        bool spawnEnemies = _networkManager->hasClients();
+        // Prepare a container to collect destroyed entities
+        std::vector<Entity*> destroyedEntities;
+        
+        // Update the game world, passing in the container
+        _gameWorld->update(dt, spawnEnemies, destroyedEntities);
 
-        // Broadcast entity updates only every broadcastInterval seconds
-        if (updateAccumulator >= broadcastInterval) {
-            updateAccumulator = 0.0;
-            // Take a snapshot of entities (raw pointers) from GameWorld.
+        // Broadcast delta updates every broadcastInterval (if needed)
+        if (broadcastTimer >= broadcastInterval) {
+            broadcastTimer = 0.0;
             auto entitiesSnapshot = _gameWorld->getEntitiesSnapshot();
             for (Entity* entity : entitiesSnapshot) {
-                // For each entity, send an UPDATE_ENTITY message.
                 _networkManager->broadcastEntityUpdate(entity);
             }
         }
 
+        // Now, for each destroyed entity, broadcast a DESTROY_ENTITY message.
+        for (Entity* destroyed : destroyedEntities) {
+            _networkManager->broadcastEntityDestroy(destroyed);
+        }
+        
         _networkManager->checkHeartbeats();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "Game loop ended.\n";
 }
+
 
 void Server::shutdown()
 {

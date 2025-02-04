@@ -162,25 +162,36 @@ void NetworkManager::onDataReceived(const std::string& dataStr,
         {
             std::cout << "[Server] DISCONNECT from " << senderEndpoint << "\n";
 
-            {
-                std::unique_lock<std::mutex> lock(_mutex);
+            // We'll use a unique_lock so we can unlock before broadcasting.
+            std::unique_lock<std::mutex> lock(_mutex);
 
-                // Remove from _clients vector
-                auto it = std::find(_clients.begin(), _clients.end(), senderEndpoint);
-                if (it != _clients.end()) {
-                    _clients.erase(it);
-                    std::cout << "[Server] Removed client " << senderEndpoint << "\n";
-                }
-
-                // Remove from _connectedPlayers
-                _connectedPlayers.erase(senderEndpoint);
-
-                // At this point, we need to notify others,
-                // so release the lock before calling broadcastPlayerLeft:
-                lock.unlock();
+            // Retrieve the entity for this client (if any)
+            Entity* entityToDestroy = nullptr;
+            auto itInfo = _connectedPlayers.find(senderEndpoint);
+            if (itInfo != _connectedPlayers.end()) {
+                uint32_t entityId = itInfo->second.entityId;
+                entityToDestroy = _gameWorld.getEntityById(entityId);
             }
-            
-            broadcastPlayerLeft(senderEndpoint);
+
+            // Remove the endpoint from _clients
+            auto itClient = std::find(_clients.begin(), _clients.end(), senderEndpoint);
+            if (itClient != _clients.end()) {
+                _clients.erase(itClient);
+                std::cout << "[Server] Removed client " << senderEndpoint << "\n";
+            }
+
+            // Remove from _connectedPlayers and _clientHeartbeats
+            _connectedPlayers.erase(senderEndpoint);
+            _clientHeartbeats.erase(senderEndpoint);
+
+            // Unlock _mutex before broadcasting
+            lock.unlock();
+
+            // Now, if an entity exists for this client, broadcast its destruction.
+            if (entityToDestroy) {
+                broadcastEntityDestroy(entityToDestroy);
+            }
+
             break;
         }
 
@@ -429,9 +440,10 @@ void NetworkManager::sendBinaryMessage(MessageType type, const std::vector<uint8
 void NetworkManager::checkHeartbeats()
 {
     auto now = std::chrono::steady_clock::now();
-    const auto TIMEOUT = std::chrono::seconds(15); // 15s timeout
+    const auto TIMEOUT = std::chrono::seconds(15); // no heartbeat in 15s => timed out
 
     std::vector<asio::ip::udp::endpoint> timedOutEndpoints;
+    std::vector<Entity*> entitiesToDestroy;
 
     {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -439,34 +451,41 @@ void NetworkManager::checkHeartbeats()
         for (auto it = _clientHeartbeats.begin(); it != _clientHeartbeats.end(); ) {
             auto elapsed = now - it->second;
             if (elapsed > TIMEOUT) {
-                // Save the endpoint for later broadcasting
+                // Save endpoint and its entity
                 timedOutEndpoints.push_back(it->first);
-
-                std::cout << "[Server] Client timed out: " << it->first << "\n";
-
-                // Remove from _clients vector
-                auto vecIt = std::find(_clients.begin(), _clients.end(), it->first);
-                if (vecIt != _clients.end()) {
-                    _clients.erase(vecIt);
+                
+                // Retrieve the associated entity if available
+                auto itInfo = _connectedPlayers.find(it->first);
+                if (itInfo != _connectedPlayers.end()) {
+                    uint32_t entityId = itInfo->second.entityId;
+                    Entity* entity = _gameWorld.getEntityById(entityId);
+                    if (entity) {
+                        entitiesToDestroy.push_back(entity);
+                    }
                 }
-
-                // Remove from _connectedPlayers
-                _connectedPlayers.erase(it->first);
-
-                // Erase from _clientHeartbeats and continue the loop
+                
+                // Remove from _clientHeartbeats
                 it = _clientHeartbeats.erase(it);
             } else {
                 ++it;
             }
         }
-    } // The lock on _mutex is now released.
 
-    // Now broadcast the PLAYER_LEFT message for each timed out endpoint.
-    for (const auto& ep : timedOutEndpoints) {
-        broadcastPlayerLeft(ep);
+        // Remove timed-out endpoints from _clients and _connectedPlayers
+        for (const auto &ep : timedOutEndpoints) {
+            auto itClient = std::find(_clients.begin(), _clients.end(), ep);
+            if (itClient != _clients.end()) {
+                _clients.erase(itClient);
+            }
+            _connectedPlayers.erase(ep);
+        }
+    } // Lock is released here
+
+    // Now broadcast DESTROY_ENTITY for each timed-out client's entity
+    for (Entity* entity : entitiesToDestroy) {
+        broadcastEntityDestroy(entity);
     }
 }
-
 
 void NetworkManager::broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint)
 {
@@ -510,6 +529,45 @@ std::vector<uint8_t> buildEntityPayload(Entity* entity) {
     payload.insert(payload.end(), posYPtr, posYPtr + sizeof(float));
 
     return payload;
+}
+
+std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity) {
+    std::vector<uint8_t> payload;
+    payload.reserve(1 + sizeof(uint32_t)); // 1 byte for type, 4 bytes for id
+
+    uint8_t etype = static_cast<uint8_t>(entity->getType());
+    payload.push_back(etype);
+
+    uint32_t eid = entity->getId();
+    uint8_t* idPtr = reinterpret_cast<uint8_t*>(&eid);
+    payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
+
+    return payload;
+}
+
+void NetworkManager::broadcastEntityDestroy(Entity* entity) {
+    if (!entity) return;
+    std::vector<uint8_t> payload = buildDestroyEntityPayload(entity);
+
+    // For debugging, print what we're sending:
+    uint8_t etype = payload[0];
+    uint32_t eid = 0;
+    std::memcpy(&eid, payload.data() + 1, sizeof(uint32_t));
+    std::cout << "Broadcasting DESTROY_ENTITY: type=" << static_cast<int>(etype)
+              << ", id=" << eid << std::endl;
+
+    std::vector<uint8_t> msg = buildMessage(MessageType::DESTROY_ENTITY, payload);
+
+    // Send the message to all clients
+    for (const auto &ep : _clients) {
+        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+        _socket->async_send_to(
+            asio::buffer(*buffer), ep,
+            [buffer](std::error_code, std::size_t) {
+                // done
+            }
+        );
+    }
 }
 
 void NetworkManager::sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target) {

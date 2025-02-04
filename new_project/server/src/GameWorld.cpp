@@ -4,28 +4,26 @@ GameWorld::GameWorld()
 {
 }
 
-void GameWorld::update(float dt, bool spawnEnemies)
+void GameWorld::update(float dt, bool spawnEnemies, std::vector<Entity*>& destroyedEntities)
 {
-    if (spawnEnemies) {
-        bool shouldSpawn = false;
-        
-        // Update spawn timer under lock
-        {
-            std::lock_guard<std::mutex> lock(_entitiesMutex);
-            _monsterSpawnTimer += dt;
-            if (_monsterSpawnTimer >= _monsterSpawnInterval) {
-                shouldSpawn = true;
-                _monsterSpawnTimer = 0.0;
-            }
-        } // release lock
-
-        // Spawn monster outside the lock
-        if (shouldSpawn) {
-            spawnMonster();
-        }
-    }
+    bool shouldSpawn = false;
     
-    // Create a snapshot of raw pointers for updating entities (outside the lock)
+    // Update spawn timer under lock
+    {
+        std::lock_guard<std::mutex> lock(_entitiesMutex);
+        _monsterSpawnTimer += dt;
+        if (spawnEnemies && _monsterSpawnTimer >= _monsterSpawnInterval) {
+            shouldSpawn = true;
+            _monsterSpawnTimer = 0.0f;
+        }
+    } // Release lock
+
+    // Spawn monster outside of lock
+    if (shouldSpawn) {
+        spawnMonster();
+    }
+
+    // Create a snapshot of entities for updating
     std::vector<Entity*> snapshot;
     {
         std::lock_guard<std::mutex> lock(_entitiesMutex);
@@ -37,39 +35,46 @@ void GameWorld::update(float dt, bool spawnEnemies)
     
     // Update each entity outside the lock
     for (auto e : snapshot) {
-        if (e) {
+        if (e)
             e->update(dt);
-        }
     }
     
-    // Reacquire lock for collision checking and cleanup
-    {
-        std::lock_guard<std::mutex> lock(_entitiesMutex);
+    // // Reacquire lock to perform collision checks and remove destroyed entities
+    // {
+    //     std::lock_guard<std::mutex> lock(_entitiesMutex);
         
-        // Collision checks (naive double loop)
-        for (size_t i = 0; i < _entities.size(); ++i) {
-            for (size_t j = i + 1; j < _entities.size(); ++j) {
-                auto &e1 = _entities[i];
-                auto &e2 = _entities[j];
-                if (!e1->isDestroyed() && !e2->isDestroyed()) {
-                    if (e1->collidesWith(*e2) && e2->collidesWith(*e1)) {
-                        e1->onCollision(*e2);
-                        e2->onCollision(*e1);
-                    }
-                }
-            }
-        }
+    //     // Collision checks (naive double loop)
+    //     for (size_t i = 0; i < _entities.size(); ++i) {
+    //         for (size_t j = i + 1; j < _entities.size(); ++j) {
+    //             auto &e1 = _entities[i];
+    //             auto &e2 = _entities[j];
+    //             if (!e1->isDestroyed() && !e2->isDestroyed()) {
+    //                 if (e1->collidesWith(*e2) && e2->collidesWith(*e1)) {
+    //                     e1->onCollision(*e2);
+    //                     e2->onCollision(*e1);
+    //                 }
+    //             }
+    //         }
+    //     }
     
-        // Remove destroyed entities
-        _entities.erase(
-            std::remove_if(_entities.begin(), _entities.end(),
-                [](const std::unique_ptr<Entity>& e) {
-                    return e->isDestroyed();
-                }),
-            _entities.end()
-        );
-    }
+    //     // Collect pointers to destroyed entities before erasing them.
+    //     for (const auto &ent : _entities) {
+    //         if (ent->isDestroyed()) {
+    //             destroyedEntities.push_back(ent.get());
+    //         }
+    //     }
+    
+    //     // Remove destroyed entities from _entities
+    //     _entities.erase(
+    //         std::remove_if(_entities.begin(), _entities.end(),
+    //             [](const std::unique_ptr<Entity>& e) {
+    //                 return e->isDestroyed();
+    //             }),
+    //         _entities.end()
+    //     );
+    // }
 }
+
 
 void GameWorld::spawnMonster()
 {

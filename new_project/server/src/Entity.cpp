@@ -51,6 +51,6 @@ void Entity::setVelocity(const Vector2& vel)
 uint32_t generateEntityId()
 {
     // Start from 10,000 so it doesn't clash with players that start from 1
-    static std::atomic<uint32_t> nextEntity_Id{10000};
+    static std::atomic<uint32_t> nextEntity_Id{1};
     return nextEntity_Id.fetch_add(1, std::memory_order_relaxed);
 }
