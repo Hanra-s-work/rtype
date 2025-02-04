@@ -12,7 +12,7 @@ public:
     GameWorld();
 
     /// Update all entities, handle collisions, remove destroyed, spawn new
-    void update(float dt);
+    void update(float dt, bool spawnEnemies);
 
     /// Add a new entity to the world
     void addEntity(std::unique_ptr<Entity> entity);

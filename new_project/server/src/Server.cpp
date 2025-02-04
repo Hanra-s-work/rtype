@@ -33,27 +33,30 @@ void Server::gameLoop()
 {
     using clock = std::chrono::steady_clock;
     auto previous = clock::now();
-    double broadcastTimer = 0.0;
-    const double broadcastInterval = 0.1; // broadcast delta updates every 100ms
+    double updateAccumulator = 0.0;
+    const double broadcastInterval = 0.1; // broadcast updates every 100ms
 
     while (_running) {
         auto current = clock::now();
         double dt = std::chrono::duration<double>(current - previous).count();
         previous = current;
+        updateAccumulator += dt;
 
-        // Update the game world (spawning monsters, moving entities, collision detection, etc.)
-        _gameWorld->update(dt);
+        // Update the game world (spawning monsters, moving entities, collisions, etc.)
+        _gameWorld->update(dt, /*spawnEnemies=*/_networkManager->hasClients());
 
-        // Accumulate time for broadcasting updates.
-        broadcastTimer += dt;
-        if (broadcastTimer >= broadcastInterval) {
-            broadcastTimer = 0.0;
-            _networkManager->broadcastStateDelta(); // You can rename broadcastStateDelta to broadcastStateDelta() as implemented above.
+        // Broadcast entity updates only every broadcastInterval seconds
+        if (updateAccumulator >= broadcastInterval) {
+            updateAccumulator = 0.0;
+            // Take a snapshot of entities (raw pointers) from GameWorld.
+            auto entitiesSnapshot = _gameWorld->getEntitiesSnapshot();
+            for (Entity* entity : entitiesSnapshot) {
+                // For each entity, send an UPDATE_ENTITY message.
+                _networkManager->broadcastEntityUpdate(entity);
+            }
         }
 
-        // Check heartbeats
         _networkManager->checkHeartbeats();
-
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "Game loop ended.\n";
