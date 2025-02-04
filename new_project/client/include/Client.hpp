@@ -10,6 +10,7 @@
 #include "HandleBackground.hpp"
 #include "HandleSprites.hpp"
 #include "EntityManager.hpp"
+#include <SFML/Audio.hpp>
 
 class Client {
 public:
@@ -40,4 +41,5 @@ private:
     // std::map<uint32_t, std::unique_ptr<SpriteEntity>> _monsters;
     EntityManager _entityManager;
     uint32_t _playerID = 0;
+    sf::Music _backgroundMusic;
 };
