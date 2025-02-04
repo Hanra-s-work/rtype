@@ -179,11 +179,11 @@ void Client::update(float dt)
     auto messages = _networkClient->retrieveMessages();
     for (auto &msg : messages) {
         switch (msg.type) {
-case MessageType::CONNECT_OK:
-{
-    _connected = true;
-    break;
-}
+    case MessageType::CONNECT_OK:
+    {
+        _connected = true;
+        break;
+    }
     case MessageType::PLAYER_LEFT:
         {
             // Convertir le payload en chaîne de caractères (nom ou id du joueur)
@@ -231,6 +231,9 @@ case MessageType::CONNECT_OK:
             // std::cout << "le player id : " << entityId << " de type :" << static_cast<int>(entityType) << "a spawn" << std::endl;
             // Utiliser EntityManager pour créer/mettre à jour l'entité
             _entityManager.updateEntity(entityId, entityType, posX, posY);
+            if (entityType == EntityType::Player) {
+                _playerID = entityId;
+            }
             break;
         }
         case MessageType::UPDATE_ENTITY:
@@ -310,7 +313,7 @@ case MessageType::CONNECT_OK:
             // Mise à jour de la vie via l'EntityManager
             _entityManager.updateLife(entityId, entityType, life);
 
-            std::cout << life << std::endl;
+            std::cout <<  "Received from server : LIFE " << "[ " << entityId << " " << static_cast<int>(entityType) << " " << life << " ]" << std::endl;
             
             break;
         }
