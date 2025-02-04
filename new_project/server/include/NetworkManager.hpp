@@ -38,9 +38,10 @@ public:
     void sendBinaryMessage(MessageType type,
                            const std::vector<uint8_t>& payload,
                            const asio::ip::udp::endpoint& target);
+    void sendBinaryMessage(MessageType type, const std::vector<uint8_t>& payload);
 
     void sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target);
-    void sendEntityUpdateMessage(Entity* entity, const asio::ip::udp::endpoint& target);
+    void broadcastEntityUpdate(Entity* entity);
 
     // Check for heartbeat timeouts
     void checkHeartbeats();
@@ -51,6 +52,8 @@ public:
 
     std::unordered_map<uint32_t, Vector2> _lastBroadcastedEntityPositions;
     void broadcastStateDelta();
+
+    bool hasClients() const;
 
 private:
     // Start async receive
@@ -68,7 +71,7 @@ private:
     std::unique_ptr<asio::ip::udp::socket> _socket;
     std::vector<std::thread> _ioThreads;
     std::atomic<bool> _running { false };
-    std::mutex _mutex;
+    mutable std::mutex _mutex;
 
     // A list of all connected client endpoints for broadcasts
     std::vector<asio::ip::udp::endpoint> _clients;

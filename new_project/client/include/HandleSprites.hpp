@@ -13,6 +13,9 @@ public:
     // Constructeur qui charge l'image spécifiée et positionne le sprite
     SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving = false);
 
+    void setLife(uint32_t life);
+    uint32_t getLife() const;
+
     void setTargetPosition(float x, float y) { 
         _targetPos = sf::Vector2f(x, y); 
     }
@@ -40,4 +43,5 @@ private:
     sf::Sprite sprite;
     sf::Vector2f velocity;
     bool isMoving;
+    uint32_t _life {5};
 };

@@ -250,6 +250,56 @@ void Client::update(float dt)
             _entityManager.updateEntity(entityId, entityType, posX, posY);
             break;
         }
+        case MessageType::DESTROY_ENTITY:
+        {
+            // Payload attendu : [entity_type (uint8_t), entity_id (uint32_t)]
+            const size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] DESTROY_ENTITY payload trop petit!\n";
+                break;
+            }
+            
+            // Lecture du type (bien que pour la suppression seul l'ID soit nécessaire)
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
+            
+            // Lecture de l'ID de l'entité
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + sizeof(uint8_t), sizeof(entityId));
+            
+            // Suppression de l'entité via l'EntityManager
+            _entityManager.removeEntity(entityId);
+            
+            // Optionnel : afficher un message pour le debug
+            std::cout << "[Client] Entity " << entityId << " (type " 
+                        << static_cast<int>(entityType) << ") supprimée.\n";
+            break;
+        }
+        case MessageType::LIFE:
+        {
+            // Payload attendue : [entity_type (uint8_t), entity_id (uint32_t), number_remaining (uint32_t)]
+            const size_t expectedSize = 1 + sizeof(uint32_t) + sizeof(uint32_t);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] LIFE payload trop petit!\n";
+                break;
+            }
+            
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
+            size_t offset = 1;
+            
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + offset, sizeof(entityId));
+            offset += sizeof(entityId);
+            
+            uint32_t life;
+            std::memcpy(&life, msg.payload.data() + offset, sizeof(life));
+            
+            // Mise à jour de la vie via l'EntityManager
+            _entityManager.updateLife(entityId, entityType, life);
+            
+            break;
+        }
         // Possibly handle other messages
         default:
             std::cout << "[Client] Unknown message type.\n";
@@ -267,13 +317,52 @@ void Client::update(float dt)
 
 void Client::render() {
     _window.clear(sf::Color::Blue);
-    if (_connected){
+
+    if (_connected) {
         _background.render(_window);
-        _entityManager.render(_window); // Gère maintenant toutes les entités
+        _entityManager.render(_window); // Affichage de la scène de jeu
     }
-    // Supprimer la boucle de rendu des monstres
-    if (!_connected) {
+    else {
         _window.draw(_connectButton);
     }
+
+    // -----------------------------
+    // Dessiner le HUD en haut à gauche
+    // -----------------------------
+    if (_connected && _playerID != 0) {
+        // Récupération de l'entité du joueur
+        SpriteEntity* playerEntity = _entityManager.getSpriteEntity(_playerID);
+        if (playerEntity) {
+            // Récupérer le nombre de vies du joueur
+            uint32_t life = playerEntity->getLife();
+
+            // Créer un texte pour afficher "player : #<id>"
+            sf::Text hudText;
+            hudText.setFont(_font);
+            hudText.setCharacterSize(20);
+            hudText.setFillColor(sf::Color::White);
+            hudText.setString("player : #" + std::to_string(_playerID));
+            hudText.setPosition(10.f, 10.f);
+            _window.draw(hudText);
+
+            // Récupérer le sprite du cœur (à partir du TextureManager)
+            sf::Sprite heartSprite;
+            heartSprite.setTexture(TextureManager::getTexture("client/assets/heart.png"));
+            // Vous pouvez ajuster l'échelle du cœur si besoin (par exemple 0.5 pour réduire la taille)
+            heartSprite.setScale(0.5f, 0.5f);
+
+            // Position de départ pour les cœurs, juste après le texte (avec un petit espacement)
+            sf::FloatRect textBounds = hudText.getGlobalBounds();
+            float startX = textBounds.left + textBounds.width + 10.f;
+            float y = textBounds.top;
+
+            // Dessiner autant de cœurs que de vies restantes
+            for (uint32_t i = 0; i < life; i++) {
+                heartSprite.setPosition(startX + i * (heartSprite.getGlobalBounds().width + 5.f), y);
+                _window.draw(heartSprite);
+            }
+        }
+    }
+
     _window.display();
 }
