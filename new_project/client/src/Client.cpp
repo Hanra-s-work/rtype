@@ -194,13 +194,27 @@ void Client::update(float dt)
         }
         break;
     }
-        case MessageType::PLAYER_LEFT:
+    case MessageType::PLAYER_LEFT:
         {
-            // Convert payload back to string
+            // Convertir le payload en chaîne de caractères (nom ou id du joueur)
             std::string whoLeft(msg.payload.begin(), msg.payload.end());
             std::cout << "[Client] Player " << whoLeft << " left the game!\n";
 
-            // E.g. remove them from the local entity list, scoreboard, etc.
+            // Mise à jour du texte
+            _playerLeftText.setFont(_font);
+            _playerLeftText.setString("Player " + whoLeft + " left the game!");
+            _playerLeftText.setCharacterSize(24);
+            _playerLeftText.setFillColor(sf::Color::Red);
+
+            // Positionner le texte en haut à droite
+            float margin = 10.f;
+            sf::FloatRect textBounds = _playerLeftText.getLocalBounds();
+            _playerLeftText.setOrigin(textBounds.left, textBounds.top); // origine par défaut
+            _playerLeftText.setPosition(static_cast<float>(_window.getSize().x) - textBounds.width - margin, margin);
+
+            // Activer l'affichage (et réinitialiser le timer d'affichage si vous souhaitez un affichage temporaire)
+            _displayPlayerLeft = true;
+            _playerLeftClock.restart();
             break;
         }
         case MessageType::SPAWN_ENTITY: // Remplacez SPAWN_MONSTER par SPAWN_ENTITY
