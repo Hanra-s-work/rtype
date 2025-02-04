@@ -6,6 +6,9 @@ Server::Server()
 {
     _gameWorld = std::make_unique<GameWorld>();
     _networkManager = std::make_unique<NetworkManager>(*_gameWorld);
+    _networkManager->onNewConnection = [this](const asio::ip::udp::endpoint& ep) {
+        _networkManager->sendScoreMessage(_globalScore, ep);
+    };
 }
 
 Server::~Server()

@@ -124,8 +124,9 @@ void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::
             Entity* newPlayerEntity = _gameWorld.getEntityById(info.entityId);
             if (newPlayerEntity) {
                 Player* player = dynamic_cast<Player*>(newPlayerEntity);
-                if (player)
+                if (player) {
                     sendLifeMessage(player, senderEndpoint);
+                }
             }
 
             auto entitiesSnapshot = _gameWorld.getEntitiesSnapshot();
@@ -139,6 +140,9 @@ void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::
             std::cout << "Connected clients count: " << _clients.size() << std::endl;
             for (const auto& ep : _clients) {
                 std::cout << ep << std::endl;
+            }
+            if (onNewConnection) {
+                onNewConnection(senderEndpoint);
             }
             break;
         }
@@ -581,4 +585,26 @@ asio::ip::udp::endpoint NetworkManager::getEndpointForEntity(uint32_t entityId) 
             return pair.first;
     }
     throw std::runtime_error("Endpoint not found for given entityId");
+}
+
+std::vector<uint8_t> buildScorePayload(uint32_t score) {
+    std::vector<uint8_t> payload;
+    payload.reserve(sizeof(uint32_t));
+    uint8_t* scorePtr = reinterpret_cast<uint8_t*>(&score);
+    payload.insert(payload.end(), scorePtr, scorePtr + sizeof(uint32_t));
+    return payload;
+}
+
+void NetworkManager::sendScoreMessage(uint32_t score, const asio::ip::udp::endpoint& target) {
+    std::vector<uint8_t> payload = buildScorePayload(score);
+    std::vector<uint8_t> msg = buildMessage(MessageType::SCORE, payload);
+    
+    std::cout << "[NetworkManager] Sending SCORE: " << score << " to " << target << "\n";
+    
+    auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
+    _socket->async_send_to(
+        asio::buffer(*buffer), target,
+        [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+        }
+    );
 }

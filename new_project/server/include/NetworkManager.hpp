@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <cstring>
 #include <mutex>
+#include <functional>
 #include "../../common/NetworkProtocol.hpp"
 #include "Player.hpp"
 #include "Missile.hpp"
@@ -43,6 +44,8 @@ public:
     void broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint);
     void sendLifeMessage(Player* player, const asio::ip::udp::endpoint& target);
     bool shouldSendLifeUpdate(uint32_t entityId, uint32_t currentLife);
+    void sendScoreMessage(uint32_t score, const asio::ip::udp::endpoint& target);
+    std::function<void(const asio::ip::udp::endpoint&)> onNewConnection;
 
     std::unordered_map<uint32_t, Vector2> _lastBroadcastedEntityPositions;
 
@@ -76,3 +79,4 @@ std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& 
 std::vector<uint8_t> buildEntityPayload(Entity* entity);
 std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity);
 std::vector<uint8_t> buildLifePayload(Entity* entity, uint8_t life_remaining);
+std::vector<uint8_t> buildScorePayload(uint32_t score);
