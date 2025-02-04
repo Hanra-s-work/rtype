@@ -250,6 +250,31 @@ void Client::update(float dt)
             _entityManager.updateEntity(entityId, entityType, posX, posY);
             break;
         }
+        case MessageType::DESTROY_ENTITY:
+        {
+            // Payload attendu : [entity_type (uint8_t), entity_id (uint32_t)]
+            const size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t);
+            if (msg.payload.size() < expectedSize) {
+                std::cerr << "[Client] DESTROY_ENTITY payload trop petit!\n";
+                break;
+            }
+            
+            // Lecture du type (bien que pour la suppression seul l'ID soit nécessaire)
+            uint8_t rawType = msg.payload[0];
+            EntityType entityType = static_cast<EntityType>(rawType);
+            
+            // Lecture de l'ID de l'entité
+            uint32_t entityId;
+            std::memcpy(&entityId, msg.payload.data() + sizeof(uint8_t), sizeof(entityId));
+            
+            // Suppression de l'entité via l'EntityManager
+            _entityManager.removeEntity(entityId);
+            
+            // Optionnel : afficher un message pour le debug
+            std::cout << "[Client] Entity " << entityId << " (type " 
+                        << static_cast<int>(entityType) << ") supprimée.\n";
+            break;
+        }
         case MessageType::LIFE:
         {
             // Payload attendue : [entity_type (uint8_t), entity_id (uint32_t), number_remaining (uint32_t)]

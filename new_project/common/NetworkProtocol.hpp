@@ -25,6 +25,7 @@ enum class MessageType : uint32_t {
     UPDATE_ENTITY = 17,
     SPAWN_ENTITY = 18,
     LIFE = 19,
+    DESTROY_ENTITY = 20,
 
     // You could add MOVE, SHOOT, DISCONNECT, etc. later
 };
