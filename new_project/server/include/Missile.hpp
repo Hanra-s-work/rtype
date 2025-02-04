@@ -7,7 +7,7 @@
 class Missile : public Entity {
 public:
     // Pass the ID (unique) and optionally team/type
-    Missile(uint32_t id);
+    Missile(uint32_t id, EntityType missileType = EntityType::PlayerMissile);
     virtual ~Missile();
 
     void update(float dt) override;

@@ -16,19 +16,22 @@ void EntityManager::render(sf::RenderWindow &window) {
     }
 }
 
-// Met à jour une entité existante ou la crée si elle n'existe pas
 void EntityManager::updateEntity(uint32_t entityId, EntityType type, float posX, float posY) {
+    // If the entity was previously destroyed, do not re-create it.
+    if (_destroyedEntities.find(entityId) != _destroyedEntities.end()) {
+        return;
+    }
+    
     auto it = _entities.find(entityId);
     if (it == _entities.end()) {
-        // L'entité n'existe pas encore : on la crée.
+        // Entity does not exist: create it.
         _entities[entityId] = createEntity(type, posX, posY);
     } else {
-        // L'entité existe : on met à jour sa position cible pour l'interpolation (si applicable).
+        // Update the existing entity.
         auto* se = dynamic_cast<SpriteEntity*>(it->second.get());
         if (se) {
             se->setTargetPosition(posX, posY);
         } else {
-            // Pour les entités qui ne sont pas des SpriteEntity, on peut faire :
             it->second->setPosition(posX, posY);
         }
     }

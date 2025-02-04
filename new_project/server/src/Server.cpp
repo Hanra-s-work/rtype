@@ -34,7 +34,7 @@ void Server::gameLoop()
     using clock = std::chrono::steady_clock;
     auto previous = clock::now();
     double broadcastTimer = 0.0;
-    const double broadcastInterval = 0.1; // broadcast delta updates every 100ms
+    const double broadcastInterval = 0.1;
 
     while (_running) {
         auto current = clock::now();
@@ -42,34 +42,39 @@ void Server::gameLoop()
         previous = current;
         broadcastTimer += dt;
 
-        // Only spawn enemies if there is at least one client
         bool spawnEnemies = _networkManager->hasClients();
-        // Prepare a container to collect destroyed entities
-        std::vector<Entity*> destroyedEntities;
-        
-        // Update the game world, passing in the container
-        _gameWorld->update(dt, spawnEnemies, destroyedEntities);
 
-        // Broadcast delta updates every broadcastInterval (if needed)
+        std::vector<Entity*> destroyedEntities;
+        _gameWorld->update(static_cast<float>(dt), spawnEnemies, destroyedEntities);
+
         if (broadcastTimer >= broadcastInterval) {
             broadcastTimer = 0.0;
+
             auto entitiesSnapshot = _gameWorld->getEntitiesSnapshot();
+
             for (Entity* entity : entitiesSnapshot) {
                 _networkManager->broadcastEntityUpdate(entity);
+                if (Player* player = dynamic_cast<Player*>(entity)) {
+                    uint32_t currentLife = player->getLife();
+                    try {
+                        asio::ip::udp::endpoint ep = _networkManager->getEndpointForEntity(player->getId());
+                        
+                        if (_networkManager->shouldSendLifeUpdate(player->getId(), currentLife)) {
+                            _networkManager->sendLifeMessage(player, ep);
+                        }
+                    } catch (const std::exception &ex) {
+                    }
+                }
             }
         }
-
-        // Now, for each destroyed entity, broadcast a DESTROY_ENTITY message.
         for (Entity* destroyed : destroyedEntities) {
             _networkManager->broadcastEntityDestroy(destroyed);
         }
-        
         _networkManager->checkHeartbeats();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     std::cout << "Game loop ended.\n";
 }
-
 
 void Server::shutdown()
 {

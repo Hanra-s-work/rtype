@@ -11,9 +11,13 @@ public:
     bool collidesWith(const Entity& other) const override;
     void onCollision(Entity& other) override;
 
+    uint8_t getLife() const;
+    void decreaseLife();
+
     void addScore(int points);
     int  getScore() const;
 
 private:
     int _score;
+    uint8_t _life = 5;
 };
