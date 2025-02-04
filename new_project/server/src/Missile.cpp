@@ -1,8 +1,8 @@
 #include "Missile.hpp"
 #include <cmath> // if needed for collision checks
 
-Missile::Missile(uint32_t id)
-: Entity(EntityType::PlayerMissile, id)
+Missile::Missile(uint32_t id, EntityType missileType)
+: Entity(missileType, id)
 {
     // Optionally set a default velocity here, or do it after creation.
 }

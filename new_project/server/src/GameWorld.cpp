@@ -57,24 +57,23 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<Entity*>& destro
     //         }
     //     }
     
-    //     // Collect pointers to destroyed entities before erasing them.
-    //     for (const auto &ent : _entities) {
-    //         if (ent->isDestroyed()) {
-    //             destroyedEntities.push_back(ent.get());
-    //         }
-    //     }
+        // Collect pointers to destroyed entities before erasing them.
+        for (const auto &ent : _entities) {
+            if (ent->isDestroyed()) {
+                destroyedEntities.push_back(ent.get());
+            }
+        }
     
-    //     // Remove destroyed entities from _entities
-    //     _entities.erase(
-    //         std::remove_if(_entities.begin(), _entities.end(),
-    //             [](const std::unique_ptr<Entity>& e) {
-    //                 return e->isDestroyed();
-    //             }),
-    //         _entities.end()
-    //     );
+        // Remove destroyed entities from _entities
+        _entities.erase(
+            std::remove_if(_entities.begin(), _entities.end(),
+                [](const std::unique_ptr<Entity>& e) {
+                    return e->isDestroyed();
+                }),
+            _entities.end()
+        );
     // }
 }
-
 
 void GameWorld::spawnMonster()
 {
@@ -97,7 +96,6 @@ void GameWorld::spawnMonster()
     // Add the monster to the entity container (addEntity() will lock _entitiesMutex internally)
     addEntity(std::move(monster));
 }
-
 
 void GameWorld::addEntity(std::unique_ptr<Entity> entity)
 {

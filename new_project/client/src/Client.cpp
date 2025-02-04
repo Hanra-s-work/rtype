@@ -304,6 +304,8 @@ void Client::update(float dt)
             
             // Mise à jour de la vie via l'EntityManager
             _entityManager.updateLife(entityId, entityType, life);
+
+            std::cout << life << std::endl;
             
             break;
         }

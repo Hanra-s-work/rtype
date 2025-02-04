@@ -49,12 +49,17 @@ public:
 
     // Notify other clients that a particular endpoint left the game
     void broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint);
-
+    void sendLifeMessage(Player* player, const asio::ip::udp::endpoint& target);
+    bool shouldSendLifeUpdate(uint32_t entityId, uint32_t currentLife);
 
     std::unordered_map<uint32_t, Vector2> _lastBroadcastedEntityPositions;
     void broadcastStateDelta();
 
     bool hasClients() const;
+    asio::ip::udp::endpoint getEndpointForEntity(uint32_t entityId) const;
+    std::unordered_map<uint32_t, uint32_t> _lastBroadcastedLife;
+    mutable std::mutex _lifeMutex;
+    mutable std::mutex _mutex;
 
 private:
     // Start async receive
@@ -64,15 +69,12 @@ private:
     void onDataReceived(const std::string& dataStr,
                         const asio::ip::udp::endpoint& senderEndpoint);
 
-private:
-    // Reference (or pointer) to the game world for spawning/updating entities
     GameWorld& _gameWorld;
 
     asio::io_context _ioContext;
     std::unique_ptr<asio::ip::udp::socket> _socket;
     std::vector<std::thread> _ioThreads;
     std::atomic<bool> _running { false };
-    mutable std::mutex _mutex;
 
     // A list of all connected client endpoints for broadcasts
     std::vector<asio::ip::udp::endpoint> _clients;
@@ -89,3 +91,4 @@ std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);
 std::vector<uint8_t> buildMessage(MessageType type, const std::vector<uint8_t>& payload);
 std::vector<uint8_t> buildEntityPayload(Entity* entity);
 std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity);
+std::vector<uint8_t> buildLifePayload(Entity* entity, uint8_t life_remaining);

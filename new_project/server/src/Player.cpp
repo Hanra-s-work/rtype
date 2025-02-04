@@ -33,8 +33,7 @@ bool Player::collidesWith(const Entity& other) const
 
 void Player::onCollision(Entity& other)
 {
-    // If we collide with a monster or monster missile, maybe take damage
-    // If we collide with a powerup, maybe apply effect, etc.
+    decreaseLife();
 }
 
 void Player::addScore(int points)
@@ -45,4 +44,13 @@ void Player::addScore(int points)
 int Player::getScore() const
 {
     return _score;
+}
+
+uint8_t Player::getLife() const{
+    return _life;
+}
+
+void Player::decreaseLife() {
+    if (_life > 0)
+        --_life;
 }
