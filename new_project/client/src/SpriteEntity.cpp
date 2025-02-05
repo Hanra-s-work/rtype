@@ -27,7 +27,10 @@ void SpriteEntity::setTargetPosition(float x, float y)
 
 void SpriteEntity::update(float dt)
 {
-    sprite.setPosition(_targetPos);
+    sf::Vector2f currentPos = sprite.getPosition();
+    float smoothingFactor = 5.0f;
+    sf::Vector2f newPos = currentPos + (_targetPos - currentPos) * smoothingFactor * dt;
+    sprite.setPosition(newPos);
 }
 
 void SpriteEntity::render(sf::RenderWindow &window) 
