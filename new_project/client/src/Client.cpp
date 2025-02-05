@@ -108,7 +108,7 @@ void Client::update(float dt)
             _connected = true;
         else if (msg.type == MessageType::PLAYER_LEFT) {
             std::string whoLeft(msg.payload.begin(), msg.payload.end());
-            _hud.showNotification("Player " + whoLeft + " left", sf::Color::Red, {780.f, 10.f});
+            _hud.showNotification("Player " + whoLeft + " left", sf::Color::Red, {1720.f, 10.f});
         }
         // else if (msg.type == MessageType::SPAWN_ENTITY) {
         //     size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t) + 2 * sizeof(float);
@@ -169,19 +169,17 @@ void Client::update(float dt)
             if (entityId == _playerID)
                 if(auto player = _entityManager.getSpriteEntity(_playerID))
                     _hud.updatePlayer(_playerID, player->getLife());
-        }
-        else if (msg.type == MessageType::DEFEAT)
-            _hud.showNotification("Defeat", sf::Color::Red, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
-        else if (msg.type == MessageType::WIN)
-            _hud.showNotification("Victory", sf::Color::Green, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
-        else if (msg.type == MessageType::SCORE) {
+        } else if (msg.type == MessageType::SCORE) {
             size_t expectedSize = sizeof(uint32_t);
             if (msg.payload.size() < expectedSize)
                 continue;
-            uint32_t score;
-            std::memcpy(&score, msg.payload.data(), sizeof(score));
-            _hud.setScore(score);
-        }
+            std::memcpy(&_score, msg.payload.data(), sizeof(_score));
+            _hud.setScore(_score);
+        } else if (msg.type == MessageType::DEFEAT){
+            _hud.showNotification("Defeat", sf::Color::Red, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
+        } else if (msg.type == MessageType::WIN){
+            _hud.showNotification("Victory", sf::Color::Green, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
+        } 
     }
     static float heartbeatTimer = 0.f;
     heartbeatTimer += dt;
