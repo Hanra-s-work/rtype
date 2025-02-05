@@ -42,6 +42,7 @@ enum class EntityType : uint8_t {
     Boss            = 6,
     Monster2        = 7,
     Monster3        = 8,
+    Collision       = 9
 };
 
 struct ParsedMessage {

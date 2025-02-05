@@ -71,6 +71,8 @@ std::unique_ptr<Entity> EntityManager::createEntity(EntityType type, float posX,
             return std::make_unique<SpriteEntity>("client/assets/monster3.png", posX, posY);
         case EntityType::Boss:
             return std::make_unique<SpriteEntity>("client/assets/boss.png", posX, posY);
+        case EntityType::Collision:
+            return std::make_unique<SpriteEntity>("client/assets/collision.png", posX, posY);
         default:
             return std::make_unique<SpriteEntity>("client/assets/default.png", posX, posY);
     }
