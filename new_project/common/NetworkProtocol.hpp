@@ -29,7 +29,8 @@ enum class MessageType : uint32_t {
     SCORE = 21,
     DEFEAT = 22,
     WIN = 23,
-    HUB = 24 // Implementation in progress in gui side && To implement server side
+    HUB = 24, // Implementation in progress in gui side && To implement server side
+    COLLIDE = 25 // Implementation in progress in gui side && To implement server side
 };
 
 enum class EntityType : uint8_t {
