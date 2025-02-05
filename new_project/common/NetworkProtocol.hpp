@@ -40,6 +40,8 @@ enum class EntityType : uint8_t {
     MonsterMissile  = 4,
     Powerup         = 5,
     Boss            = 6,
+    Monster2        = 7,
+    Monster3        = 8,
 };
 
 struct ParsedMessage {
