@@ -3,7 +3,7 @@
 #include "SpriteEntity.hpp"
 
 SpriteEntity::SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving)
-    : velocity(0.f, 0.f), isMoving(moving)
+    : velocity(0.f, 0.f), isMoving(moving), _targetPos(sf::Vector2f(posX, posY))
 {
     texture = TextureManager::getTexture(imagePath);
     sprite.setTexture(texture);
@@ -27,7 +27,10 @@ void SpriteEntity::setTargetPosition(float x, float y)
 
 void SpriteEntity::update(float dt)
 {
-    sprite.setPosition(_targetPos);
+    sf::Vector2f currentPos = sprite.getPosition();
+    float smoothingFactor = 5.0f;
+    sf::Vector2f newPos = currentPos + (_targetPos - currentPos) * smoothingFactor * dt;
+    sprite.setPosition(newPos);
 }
 
 void SpriteEntity::render(sf::RenderWindow &window) 
