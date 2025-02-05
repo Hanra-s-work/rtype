@@ -33,4 +33,4 @@
             sf::Music _backgroundMusic;
     };
 
-#endif // MON_HEADER_HPP
+#endif // CLIENT_HPP
