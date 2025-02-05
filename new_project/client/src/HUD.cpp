@@ -34,7 +34,6 @@ void HUD::setScore(uint32_t score)
     _scoreText.setString("Score: " + std::to_string(score));
     sf::FloatRect bounds = _scoreText.getLocalBounds();
     _scoreText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    _scoreText.setPosition(400.f, 580.f);
 }
 
 void HUD::showNotification(const std::string& text, const sf::Color& color, const sf::Vector2f& position)
@@ -56,7 +55,17 @@ void HUD::draw(sf::RenderWindow& window)
         _heartSprite.setPosition(startX + i * (_heartSprite.getGlobalBounds().width + 5.f), y);
         window.draw(_heartSprite);
     }
-    window.draw(_scoreText);
-    if (_showNotification)
+     sf::Vector2u windowSize = window.getSize();
+    sf::Vector2f center(windowSize.x / 2.f, windowSize.y / 2.f);
+
+    if (_showNotification) {
         window.draw(_notificationText);
+
+        sf::FloatRect notifBounds = _notificationText.getGlobalBounds();
+        _scoreText.setPosition(center.x, notifBounds.top + notifBounds.height + 20.f);
+    } else {
+        _scoreText.setPosition(center);
+    }
+
+    window.draw(_scoreText);
 }
