@@ -1,3 +1,4 @@
+//NetworkManager.cpp
 #include "NetworkManager.hpp"
 #include "GameWorld.hpp"
 #include <algorithm>
@@ -348,19 +349,18 @@ void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::
             uint32_t newId = generateEntityId();
             auto it = _connectedPlayers.find(senderEndpoint);
             if (it != _connectedPlayers.end()) {
-                uint32_t entityId = it->second.entityId;
-                Entity* entity = _gameWorld.getEntityById(entityId);
+                uint32_t playerEntityId = it->second.entityId;
+                Entity* entity = _gameWorld.getEntityById(playerEntityId);
                 if (entity) {
                     Player* player = dynamic_cast<Player*>(entity);
                     if (player) {
                         Vector2 pPos = player->getPosition();
-
                         auto missile = std::make_unique<Missile>(newId, EntityType::PlayerMissile);
-
-                        missile->setPosition(pPos);
-
+                        // Spawn missile with an offset so it doesn't collide with the player immediately.
+                        Vector2 missileStartPos = { pPos.x + 50.f, pPos.y };
+                        missile->setPosition(missileStartPos);
                         missile->setVelocity({300.f, 0.f});
-
+                        missile->setOwnerId(playerEntityId);
                         _gameWorld.addEntity(std::move(missile));
                     }
                 }
@@ -607,4 +607,36 @@ void NetworkManager::sendScoreMessage(uint32_t score, const asio::ip::udp::endpo
         [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
         }
     );
+}
+
+bool NetworkManager::shouldSendScoreUpdate(uint32_t entityId, int currentScore) {
+    std::lock_guard<std::mutex> lock(_scoreMutex);
+    auto it = _lastBroadcastedScore.find(entityId);
+    if (it == _lastBroadcastedScore.end()) {
+        _lastBroadcastedScore[entityId] = currentScore;
+        return true;
+    }
+    if (it->second != currentScore) {
+        it->second = currentScore;
+        return true;
+    }
+    return false;
+}
+
+void NetworkManager::broadcastEntityDestroy(uint8_t type, uint32_t id) {
+    // Build the payload: [entity_type (1 byte), entity_id (4 bytes)]
+    std::vector<uint8_t> payload;
+    payload.reserve(1 + sizeof(uint32_t));
+    payload.push_back(type);
+    uint8_t* idPtr = reinterpret_cast<uint8_t*>(&id);
+    payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
+    
+    std::vector<uint8_t> msg = buildMessage(MessageType::DESTROY_ENTITY, payload);
+    std::cout << "Broadcasting DESTROY_ENTITY: type=" << static_cast<int>(type)
+              << ", id=" << id << std::endl;
+    for (const auto &ep : _clients) {
+        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+        _socket->async_send_to(asio::buffer(*buffer), ep,
+            [buffer](std::error_code, std::size_t) { });
+    }
 }

@@ -1,8 +1,9 @@
+//Missile.cpp
 #include "Missile.hpp"
 #include <cmath>
 
 Missile::Missile(uint32_t id, EntityType missileType)
-: Entity(missileType, id)
+    : Entity(missileType, id), _ownerId(0)
 {
 }
 
@@ -21,13 +22,22 @@ bool Missile::collidesWith(const Entity& other) const
     float distSq = dx*dx + dy*dy;
     float radius = 10.f;
     float otherRadius = 20.f;
-    return distSq <= std::pow(radius + otherRadius, 2);
+    return distSq <= (radius + otherRadius) * (radius + otherRadius);
 }
 
 void Missile::onCollision(Entity& other)
 {
-    if (other.getType() == EntityType::Monster || other.getType() == EntityType::MonsterMissile) {
-        destroy();
-        other.destroy();
-    }
+    // In our updated logic, collision resolution is handled in GameWorld::update.
+    destroy();
+    other.destroy();
+}
+
+void Missile::setOwnerId(uint32_t owner)
+{
+    _ownerId = owner;
+}
+
+uint32_t Missile::getOwnerId() const
+{
+    return _ownerId;
 }
