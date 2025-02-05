@@ -1,4 +1,5 @@
 // HandleSprites.cpp
+
 #include "SpriteEntity.hpp"
 
 SpriteEntity::SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving)
@@ -26,10 +27,7 @@ void SpriteEntity::setTargetPosition(float x, float y)
 
 void SpriteEntity::update(float dt)
 {
-    sf::Vector2f currentPos = sprite.getPosition();
-    float smoothingFactor = 5.0f;
-    sf::Vector2f newPos = currentPos + (_targetPos - currentPos) * smoothingFactor * dt;
-    sprite.setPosition(newPos);
+    sprite.setPosition(_targetPos);
 }
 
 void SpriteEntity::render(sf::RenderWindow &window) 

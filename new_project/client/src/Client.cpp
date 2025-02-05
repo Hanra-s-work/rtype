@@ -1,4 +1,5 @@
 // Client.cpp
+
 #include "Client.hpp"
 #include <cstring>
 #include "TextureManager.hpp"
@@ -109,22 +110,22 @@ void Client::update(float dt)
             std::string whoLeft(msg.payload.begin(), msg.payload.end());
             _hud.showNotification("Player " + whoLeft + " left", sf::Color::Red, {780.f, 10.f});
         }
-        else if (msg.type == MessageType::SPAWN_ENTITY) {
-            size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t) + 2 * sizeof(float);
-            if (msg.payload.size() < expectedSize)
-                continue;
-            uint8_t rawType = msg.payload[0];
-            EntityType entityType = static_cast<EntityType>(rawType);
-            uint32_t entityId;
-            std::memcpy(&entityId, msg.payload.data() + 1, sizeof(entityId));
-            float posX;
-            std::memcpy(&posX, msg.payload.data() + 1 + sizeof(entityId), sizeof(posX));
-            float posY;
-            std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
-            _entityManager.updateEntity(entityId, entityType, posX, posY);
-            if (entityType == EntityType::Player)
-                _playerID = entityId;
-        }
+        // else if (msg.type == MessageType::SPAWN_ENTITY) {
+        //     size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t) + 2 * sizeof(float);
+        //     if (msg.payload.size() < expectedSize)
+        //         continue;
+        //     uint8_t rawType = msg.payload[0];
+        //     EntityType entityType = static_cast<EntityType>(rawType);
+        //     uint32_t entityId;
+        //     std::memcpy(&entityId, msg.payload.data() + 1, sizeof(entityId));
+        //     float posX;
+        //     std::memcpy(&posX, msg.payload.data() + 1 + sizeof(entityId), sizeof(posX));
+        //     float posY;
+        //     std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
+        //     _entityManager.updateEntity(entityId, entityType, posX, posY);
+        //     if (entityType == EntityType::Player)
+        //         _playerID = entityId;
+        // }
         else if (msg.type == MessageType::UPDATE_ENTITY) {
             size_t expectedSize = 1 + sizeof(uint32_t) + 2 * sizeof(float);
             if (msg.payload.size() < expectedSize)
@@ -141,6 +142,8 @@ void Client::update(float dt)
             float posY;
             std::memcpy(&posY, msg.payload.data() + offset, sizeof(posY));
             _entityManager.updateEntity(entityId, entityType, posX, posY);
+            if (entityType == EntityType::Player)
+                _playerID = entityId;
         }
         else if (msg.type == MessageType::DESTROY_ENTITY) {
             size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t);
