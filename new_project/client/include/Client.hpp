@@ -33,6 +33,8 @@
             uint32_t _playerID = 0;
             sf::Music _backgroundMusic;
             uint32_t _score;
+            sf::Sprite _connectButtonSprite;
+            bool _isHoveringConnectButton = false;
     };
 
 #endif // CLIENT_HPP

@@ -8,16 +8,24 @@ Client::Client() : _background(_window), _hud()
 {
     initWindow();
     _background.loadAssets("client/assets/background.jpg", "client/assets/etoiles-lointaines.png");
-    _font.loadFromFile("client/assets/font/Arial.ttf");
+    _font.loadFromFile("client/assets/font/SuperMarioBros2.ttf");
     _backgroundMusic.openFromFile("client/assets/audio/music.ogg");
     _backgroundMusic.setLoop(true);
     _backgroundMusic.play();
-    _connectButton.setFont(_font);
-    _connectButton.setString("Connect");
-    _connectButton.setCharacterSize(24);
-    _connectButton.setFillColor(sf::Color::White);
+    sf::Texture& buttonTexture = TextureManager::getTexture("client/assets/button.png");
+    _connectButtonSprite.setTexture(buttonTexture);
+    _connectButtonSprite.setOrigin(buttonTexture.getSize().x / 2.f, buttonTexture.getSize().y / 2.f);
+
+    // Centrer les éléments
     sf::Vector2u winSize = _window.getSize();
-    _connectButton.setPosition(winSize.x / 2.f - 50.f, winSize.y / 2.f - 20.f);
+    _connectButtonSprite.setPosition(winSize.x / 2.0f, winSize.y / 2.f);
+    _connectButton.setFont(_font);
+    _connectButton.setString("CONNECT");
+    _connectButton.setCharacterSize(24);
+    sf::FloatRect textBounds = _connectButton.getLocalBounds();
+    _connectButton.setOrigin(textBounds.width / 2.f, textBounds.height / 2.f);
+    _connectButton.setFillColor(sf::Color::White);
+    _connectButton.setPosition(winSize.x / 2.f, (winSize.y / 2.f) - 2.f);
     _networkClient = std::make_unique<NetworkClient>();
     _hud.setFont(_font);
 }
@@ -46,7 +54,6 @@ void Client::handleEvents()
             _window.close();
         else if (event.type == sf::Event::Resized) {
             sf::Vector2u newSize = _window.getSize();
-            _connectButton.setPosition(newSize.x / 2.f - 50.f, newSize.y / 2.f - 20.f);
             _background.resize(newSize);
             sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
             _window.setView(sf::View(visibleArea));
@@ -83,13 +90,19 @@ void Client::handleEvents()
                 if (isConnectButtonClicked(mousePos))
                     connectToServer();
             }
+        } else if (event.type == sf::Event::MouseMoved) {
+            sf::Vector2i mousePos(event.mouseMove.x, event.mouseMove.y);
+            _isHoveringConnectButton = isConnectButtonClicked(mousePos);
         }
     }
 }
 
 bool Client::isConnectButtonClicked(const sf::Vector2i& mousePos)
 {
-    return _connectButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    return _connectButtonSprite.getGlobalBounds().contains(
+        static_cast<float>(mousePos.x), 
+        static_cast<float>(mousePos.y)
+    );
 }
 
 void Client::connectToServer()
@@ -108,25 +121,8 @@ void Client::update(float dt)
             _connected = true;
         else if (msg.type == MessageType::PLAYER_LEFT) {
             std::string whoLeft(msg.payload.begin(), msg.payload.end());
-            _hud.showNotification("Player " + whoLeft + " left", sf::Color::Red, {1720.f, 10.f});
-        }
-        // else if (msg.type == MessageType::SPAWN_ENTITY) {
-        //     size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t) + 2 * sizeof(float);
-        //     if (msg.payload.size() < expectedSize)
-        //         continue;
-        //     uint8_t rawType = msg.payload[0];
-        //     EntityType entityType = static_cast<EntityType>(rawType);
-        //     uint32_t entityId;
-        //     std::memcpy(&entityId, msg.payload.data() + 1, sizeof(entityId));
-        //     float posX;
-        //     std::memcpy(&posX, msg.payload.data() + 1 + sizeof(entityId), sizeof(posX));
-        //     float posY;
-        //     std::memcpy(&posY, msg.payload.data() + 1 + sizeof(entityId) + sizeof(posX), sizeof(posY));
-        //     _entityManager.updateEntity(entityId, entityType, posX, posY);
-        //     if (entityType == EntityType::Player)
-        //         _playerID = entityId;
-        // }
-        else if (msg.type == MessageType::UPDATE_ENTITY) {
+            _hud.showNotification("Player " + whoLeft + " left", sf::Color::Red, {1710.f, 10.f});
+        } else if (msg.type == MessageType::UPDATE_ENTITY) {
             size_t expectedSize = 1 + sizeof(uint32_t) + 2 * sizeof(float);
             if (msg.payload.size() < expectedSize)
                 continue;
@@ -181,6 +177,15 @@ void Client::update(float dt)
             _hud.showNotification("Victory", sf::Color::Green, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
         } 
     }
+    if (!_connected) {
+        if (_isHoveringConnectButton) {
+            _connectButtonSprite.setColor(sf::Color(200, 200, 200));
+            _connectButton.setFillColor(sf::Color::Yellow);
+        } else {
+            _connectButtonSprite.setColor(sf::Color::White);
+            _connectButton.setFillColor(sf::Color::White);
+        }
+    }
     static float heartbeatTimer = 0.f;
     heartbeatTimer += dt;
     if (heartbeatTimer >= 5.f) {
@@ -202,6 +207,7 @@ void Client::render()
         }
     }
     else {
+        _window.draw(_connectButtonSprite);
         _window.draw(_connectButton);
     }
     _window.display();
