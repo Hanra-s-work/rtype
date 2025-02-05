@@ -1,4 +1,5 @@
 // HandleBackground.cpp
+
 #include "HandleBackground.hpp"
 
 HandleBackground::HandleBackground(sf::RenderWindow& window) : _starsSpeed(70.0f)

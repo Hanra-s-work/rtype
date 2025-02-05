@@ -1,4 +1,5 @@
 // EntityManager.cpp
+
 #include "EntityManager.hpp"
 
 void EntityManager::update(float dt)

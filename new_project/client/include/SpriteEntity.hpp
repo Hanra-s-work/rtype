@@ -4,6 +4,8 @@
     #include "Entity.hpp"
     #include <SFML/Graphics.hpp>
     #include <string>
+    #include <algorithm> // pour std::max
+    #include <cmath>
     #include "TextureManager.hpp"
 
     class SpriteEntity : public Entity {
