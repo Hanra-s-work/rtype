@@ -8,6 +8,7 @@
     #include "HandleBackground.hpp"
     #include "EntityManager.hpp"
     #include "HUD.hpp"
+    #include "iostream"
 
     class Client {
         public:
