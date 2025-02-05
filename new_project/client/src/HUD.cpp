@@ -34,7 +34,7 @@ void HUD::setScore(uint32_t score)
     _scoreText.setString("Score: " + std::to_string(score));
     sf::FloatRect bounds = _scoreText.getLocalBounds();
     _scoreText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    _scoreText.setPosition(400.f, 580.f);
+    _scoreText.setPosition(55.f, 45.f);
 }
 
 void HUD::showNotification(const std::string& text, const sf::Color& color, const sf::Vector2f& position)
