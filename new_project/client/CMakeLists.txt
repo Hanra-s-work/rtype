@@ -17,8 +17,10 @@ set(SOURCES
     src/main.cpp
     src/NetworkClient.cpp
     src/HandleBackground.cpp
-    src/HandleSprites.cpp
+    src/SpriteEntity.cpp
     src/EntityManager.cpp
+    src/HUD.cpp
+    src/TextureManager.cpp
 )
 
 # Check for threads
