@@ -8,6 +8,7 @@
     #include "HandleBackground.hpp"
     #include "EntityManager.hpp"
     #include "HUD.hpp"
+    #include "MusicHandler.hpp"
     #include "iostream"
 
     class Client {
@@ -30,8 +31,9 @@
             HandleBackground _background;
             EntityManager _entityManager;
             HUD _hud;
+            MusicHandler _music;
             uint32_t _playerID = 0;
-            sf::Music _backgroundMusic;
+            // sf::Music _backgroundMusic;
             uint32_t _score;
     };
 
