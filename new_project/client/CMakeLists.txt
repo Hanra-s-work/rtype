@@ -21,6 +21,7 @@ set(SOURCES
     src/EntityManager.cpp
     src/HUD.cpp
     src/TextureManager.cpp
+    src/MusicHandler.cpp
 )
 
 # Check for threads

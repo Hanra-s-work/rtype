@@ -1,5 +1,3 @@
-// HUD.cpp
-
 #include "HUD.hpp"
 #include "TextureManager.hpp"
 
@@ -22,9 +20,9 @@ void HUD::setFont(const sf::Font& font)
     _notificationText.setCharacterSize(24);
 }
 
-void HUD::updatePlayer(uint32_t playerID, uint32_t life)
+void HUD::updatePlayer(uint32_t id, uint32_t life)
 {
-    _playerInfo.setString("Player: #" + std::to_string(playerID));
+    _playerInfo.setString("Player: #" + std::to_string(id));
     _playerInfo.setPosition(10.f, 10.f);
     _life = life;
 }
@@ -32,19 +30,15 @@ void HUD::updatePlayer(uint32_t playerID, uint32_t life)
 void HUD::setScore(uint32_t score)
 {
     _scoreText.setString("Score: " + std::to_string(score));
-    sf::FloatRect bounds = _scoreText.getLocalBounds();
-    _scoreText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    _scoreText.setPosition(55.f, 45.f);
+    _scoreText.setPosition(10.f, 45.f);
 }
 
-void HUD::showNotification(const std::string& text, const sf::Color& color, const sf::Vector2f& position)
+void HUD::showNotification(const std::string& text, const sf::Color& color, const sf::Vector2f& pos)
 {
     _notificationText.setString(text);
     _notificationText.setFillColor(color);
-    sf::FloatRect bounds = _notificationText.getLocalBounds();
-    _notificationText.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-    _notificationText.setPosition(position);
-    _showNotification = true;
+    _notificationText.setPosition(pos);
+    _displayNotif = true;
 }
 
 void HUD::draw(sf::RenderWindow& window)
@@ -57,6 +51,6 @@ void HUD::draw(sf::RenderWindow& window)
         window.draw(_heartSprite);
     }
     window.draw(_scoreText);
-    if (_showNotification)
+    if (_displayNotif)
         window.draw(_notificationText);
 }

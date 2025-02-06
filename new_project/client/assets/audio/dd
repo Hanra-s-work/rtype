@@ -1,0 +1,8 @@
+onclick.ogg -> sound effect -> when the user click on a button
+game_music.ogg -> music in is connected
+game_start.ogg -> sound effect -> 1 second after clicking connect button
+loose_music.ogg -> sound effect -> when loose
+win_music.ogg -> sound effect -> when win
+monster_fire.ogg -> sound effect -> when the player fire
+player_fire.ogg -> sound effect -> when a player fire
+spawn_boss.ogg -> sound effect -> when update entity ( entitytype == boss )
