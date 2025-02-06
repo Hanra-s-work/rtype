@@ -7,25 +7,39 @@
 Client::Client() : _background(_window), _hud()
 {
     initWindow();
+    sf::Vector2u winSize = _window.getSize();
     _background.loadAssets("client/assets/background.jpg", "client/assets/etoiles-lointaines.png");
     _font.loadFromFile("client/assets/font/SuperMarioBros2.ttf");
     _backgroundMusic.openFromFile("client/assets/audio/music.ogg");
     _backgroundMusic.setLoop(true);
     _backgroundMusic.play();
+
+    _menuWallpaperTexture = TextureManager::getTexture("client/assets/menu_wallpaper.jpg");
+    _menuWallpaperSprite.setTexture(_menuWallpaperTexture);
+
+    sf::Vector2u textureSize = _menuWallpaperTexture.getSize();
+    sf::Vector2u windowSize = _window.getSize();
+
+    _menuWallpaperSprite.setScale(
+        windowSize.x / static_cast<float>(textureSize.x),
+        windowSize.y / static_cast<float>(textureSize.y)
+    );
+
     sf::Texture& buttonTexture = TextureManager::getTexture("client/assets/button.png");
+
     _connectButtonSprite.setTexture(buttonTexture);
     _connectButtonSprite.setOrigin(buttonTexture.getSize().x / 2.f, buttonTexture.getSize().y / 2.f);
-
-    // Centrer les éléments
-    sf::Vector2u winSize = _window.getSize();
     _connectButtonSprite.setPosition(winSize.x / 2.0f, winSize.y / 2.f);
+    
     _connectButton.setFont(_font);
     _connectButton.setString("CONNECT");
     _connectButton.setCharacterSize(24);
+
     sf::FloatRect textBounds = _connectButton.getLocalBounds();
+    
     _connectButton.setOrigin(textBounds.width / 2.f, textBounds.height / 2.f);
     _connectButton.setFillColor(sf::Color::White);
-    _connectButton.setPosition(winSize.x / 2.f, (winSize.y / 2.f) - 2.f);
+    _connectButton.setPosition(winSize.x / 2.f, (winSize.y / 2.f) - 5.f);
     _networkClient = std::make_unique<NetworkClient>();
     _hud.setFont(_font);
 }
@@ -196,7 +210,7 @@ void Client::update(float dt)
 
 void Client::render()
 {
-    _window.clear(sf::Color::Blue);
+    _window.clear(sf::Color::Black);
     if (_connected) {
         _background.render(_window);
         _entityManager.render(_window);
@@ -207,6 +221,7 @@ void Client::render()
         }
     }
     else {
+        _window.draw(_menuWallpaperSprite);
         _window.draw(_connectButtonSprite);
         _window.draw(_connectButton);
     }

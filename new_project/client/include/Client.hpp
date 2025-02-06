@@ -35,6 +35,8 @@
             uint32_t _score;
             sf::Sprite _connectButtonSprite;
             bool _isHoveringConnectButton = false;
+            sf::Texture _menuWallpaperTexture;
+            sf::Sprite _menuWallpaperSprite;
     };
 
 #endif // CLIENT_HPP
