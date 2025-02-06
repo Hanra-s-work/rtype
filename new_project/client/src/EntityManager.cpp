@@ -1,56 +1,55 @@
-// EntityManager.cpp
-
 #include "EntityManager.hpp"
+#include "SpriteEntity.hpp"
+#include "TextureManager.hpp"
+#include <cstring>
 
 void EntityManager::update(float dt)
 {
-    for (auto &pair : _entities)
-        pair.second->update(dt);
+    for (auto &e : _entities)
+        e.second->update(dt);
 }
 
 void EntityManager::render(sf::RenderWindow &window)
 {
-    for (auto &pair : _entities)
-        pair.second->render(window);
+    for (auto &e : _entities)
+        e.second->render(window);
 }
 
-void EntityManager::updateEntity(uint32_t entityId, EntityType type, float posX, float posY)
+void EntityManager::updateEntity(uint32_t id, EntityType type, float posX, float posY)
 {
-    if (_destroyedEntities.find(entityId) != _destroyedEntities.end())
+    if (_destroyed.find(id) != _destroyed.end())
         return;
-    auto it = _entities.find(entityId);
+    auto it = _entities.find(id);
     if (it == _entities.end())
-        _entities[entityId] = createEntity(type, posX, posY);
+        _entities[id] = createEntity(type, posX, posY);
     else {
-        auto* se = dynamic_cast<SpriteEntity*>(it->second.get());
-        if (se)
+        if (auto se = dynamic_cast<SpriteEntity*>(it->second.get()))
             se->setTargetPosition(posX, posY);
         else
             it->second->setPosition(posX, posY);
     }
 }
 
-void EntityManager::removeEntity(uint32_t entityId)
+void EntityManager::removeEntity(uint32_t id)
 {
-    _entities.erase(entityId);
-    _destroyedEntities.insert(entityId);
+    _entities.erase(id);
+    _destroyed.insert(id);
 }
 
-void EntityManager::updateLife(uint32_t entityId, EntityType type, uint32_t life)
+void EntityManager::updateLife(uint32_t id, EntityType type, uint32_t life)
 {
-    if (_destroyedEntities.find(entityId) != _destroyedEntities.end())
+    if (_destroyed.find(id) != _destroyed.end())
         return;
-    auto it = _entities.find(entityId);
+    auto it = _entities.find(id);
     if (it != _entities.end()) {
-        auto* spriteEntity = dynamic_cast<SpriteEntity*>(it->second.get());
-        if (spriteEntity)
-            spriteEntity->setLife(life);
+        if (auto se = dynamic_cast<SpriteEntity*>(it->second.get()))
+            se->setLife(life);
     }
 }
 
-SpriteEntity* EntityManager::getSpriteEntity(uint32_t entityId)
+SpriteEntity* EntityManager::getSpriteEntity(uint32_t id)
 {
-    auto it = _entities.find(entityId);
+    auto it = _entities.find(id);
     if (it != _entities.end())
         return dynamic_cast<SpriteEntity*>(it->second.get());
     return nullptr;

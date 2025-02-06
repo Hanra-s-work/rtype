@@ -1,9 +1,8 @@
-// HandleSprites.cpp
-
 #include "SpriteEntity.hpp"
+#include "TextureManager.hpp"
 
 SpriteEntity::SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving)
-    : velocity(0.f, 0.f), isMoving(moving), _targetPos(sf::Vector2f(posX, posY))
+    : velocity(0.f, 0.f), isMoving(moving), _targetPos({posX, posY})
 {
     texture = TextureManager::getTexture(imagePath);
     sprite.setTexture(texture);
@@ -22,18 +21,17 @@ uint32_t SpriteEntity::getLife() const
 
 void SpriteEntity::setTargetPosition(float x, float y)
 {
-    _targetPos = sf::Vector2f(x, y);
+    _targetPos = {x, y};
 }
 
 void SpriteEntity::update(float dt)
 {
-    sf::Vector2f currentPos = sprite.getPosition();
-    float smoothingFactor = 5.0f;
-    sf::Vector2f newPos = currentPos + (_targetPos - currentPos) * smoothingFactor * dt;
-    sprite.setPosition(newPos);
+    sf::Vector2f current = sprite.getPosition();
+    float factor = 5.f;
+    sprite.setPosition(current + (_targetPos - current) * factor * dt);
 }
 
-void SpriteEntity::render(sf::RenderWindow &window) 
+void SpriteEntity::render(sf::RenderWindow &window)
 {
     window.draw(sprite);
 }
@@ -50,8 +48,7 @@ sf::Vector2f SpriteEntity::getPosition() const
 
 void SpriteEntity::setVelocity(float vx, float vy)
 {
-    velocity.x = vx;
-    velocity.y = vy;
+    velocity = {vx, vy};
 }
 
 void SpriteEntity::setMoving(bool moving)
@@ -72,5 +69,5 @@ void SpriteEntity::rotate(float angle)
 sf::Vector2f SpriteEntity::getSize() const
 {
     sf::FloatRect bounds = sprite.getGlobalBounds();
-    return sf::Vector2f(bounds.width, bounds.height);
+    return {bounds.width, bounds.height};
 }
