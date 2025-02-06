@@ -38,12 +38,14 @@ public:
     void sendEntitySpawnMessage(Entity* entity, const asio::ip::udp::endpoint& target);
     void broadcastEntityUpdate(Entity* entity);
     void broadcastEntityDestroy(Entity* entity);
+    void broadcastEntityDestroy(uint8_t type, uint32_t id);
 
     void checkHeartbeats();
 
     void broadcastPlayerLeft(const asio::ip::udp::endpoint& clientEndpoint);
     void sendLifeMessage(Player* player, const asio::ip::udp::endpoint& target);
     bool shouldSendLifeUpdate(uint32_t entityId, uint32_t currentLife);
+    bool shouldSendScoreUpdate(uint32_t entityId, int currentScore);
     void sendScoreMessage(uint32_t score, const asio::ip::udp::endpoint& target);
     std::function<void(const asio::ip::udp::endpoint&)> onNewConnection;
 
@@ -54,6 +56,7 @@ public:
     std::unordered_map<uint32_t, uint32_t> _lastBroadcastedLife;
     mutable std::mutex _lifeMutex;
     mutable std::mutex _mutex;
+
 
 private:
     void doReceive();
@@ -72,6 +75,8 @@ private:
     std::unordered_map<asio::ip::udp::endpoint, PlayerInfo> _connectedPlayers;
 
     std::unordered_map<asio::ip::udp::endpoint, std::chrono::steady_clock::time_point> _clientHeartbeats;
+    std::unordered_map<uint32_t, int> _lastBroadcastedScore;
+    mutable std::mutex _scoreMutex;
 };
 
 std::optional<ParsedMessage> parseMessage(const std::vector<uint8_t>& data);

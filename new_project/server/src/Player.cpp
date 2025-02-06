@@ -1,9 +1,9 @@
+//Player.cpp
 #include "Player.hpp"
-#include <cmath>
+#include <iostream>
 
 Player::Player(uint32_t id)
-: Entity(EntityType::Player, id)
-, _score(0)
+    : Entity(EntityType::Player, id), _score(0), _life(5)
 {
 }
 
@@ -17,13 +17,8 @@ void Player::update(float dt)
 
 bool Player::collidesWith(const Entity& other) const
 {
-    float dx = _position.x - other.getPosition().x;
-    float dy = _position.y - other.getPosition().y;
-    float distSq = dx*dx + dy*dy;
-    float radius = 20.f;
-    float otherRadius = 20.f;
-    float sumR = radius + otherRadius;
-    return distSq <= (sumR * sumR);
+    // We rely on GameWorld's AABB collision using defined hitbox dimensions.
+    return false;
 }
 
 void Player::onCollision(Entity& other)
@@ -34,6 +29,7 @@ void Player::onCollision(Entity& other)
 void Player::addScore(int points)
 {
     _score += points;
+    std::cout << "Player " << getId() << " score is now " << _score << std::endl;
 }
 
 int Player::getScore() const
@@ -50,4 +46,9 @@ void Player::decreaseLife()
 {
     if (_life > 0)
         --_life;
+    std::cout << "Player " << getId() << " life decreased to " << _life << std::endl;
+    if (_life == 0) {
+        std::cout << "Player " << getId() << " has died." << std::endl;
+        destroy();
+    }
 }
