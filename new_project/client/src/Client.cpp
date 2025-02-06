@@ -10,9 +10,6 @@ Client::Client() : _background(_window), _hud(), _music()
     sf::Vector2u winSize = _window.getSize();
     _background.loadAssets("client/assets/background.jpg", "client/assets/etoiles-lointaines.png");
     _font.loadFromFile("client/assets/font/SuperMarioBros2.ttf");
-    _backgroundMusic.openFromFile("client/assets/audio/music.ogg");
-    _backgroundMusic.setLoop(true);
-    _backgroundMusic.play();
 
     _menuWallpaperTexture = TextureManager::getTexture("client/assets/menu_wallpaper.jpg");
     _menuWallpaperSprite.setTexture(_menuWallpaperTexture);
