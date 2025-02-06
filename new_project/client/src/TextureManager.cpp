@@ -1,5 +1,3 @@
-//TextureManager.cpp
-
 #include "TextureManager.hpp"
 
 sf::Texture& TextureManager::getTexture(const std::string& path)
@@ -16,7 +14,7 @@ sf::Texture& TextureManager::getTexture(const std::string& path)
     return it->second;
 }
 
-TextureManager& TextureManager::getInstance() 
+TextureManager& TextureManager::getInstance()
 {
     static TextureManager instance;
     return instance;
