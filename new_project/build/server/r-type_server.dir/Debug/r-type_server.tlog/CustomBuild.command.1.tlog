@@ -1,0 +1,10 @@
+^C:\USERS\ALEXANDRE\DEV\EPITECH\PROJECTS\RTYPE\NEW_PROJECT\SERVER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Alexandre/dev/epitech/projects/rtype/new_project -BC:/Users/Alexandre/dev/epitech/projects/rtype/new_project/build --check-stamp-file C:/Users/Alexandre/dev/epitech/projects/rtype/new_project/build/server/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
