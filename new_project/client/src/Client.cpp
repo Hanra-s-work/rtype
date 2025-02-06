@@ -4,7 +4,7 @@
 #include <cstring>
 #include "TextureManager.hpp"
 
-Client::Client() : _background(_window), _hud()
+Client::Client() : _background(_window), _hud(), _music()
 {
     initWindow();
     sf::Vector2u winSize = _window.getSize();
@@ -82,8 +82,10 @@ void Client::handleEvents()
                     _networkClient->sendBinaryMessage(MessageType::MOVE_RIGHT, {});
                 if (event.key.code == sf::Keyboard::Q || event.key.code == sf::Keyboard::Left)
                     _networkClient->sendBinaryMessage(MessageType::MOVE_LEFT, {});
-                if (event.key.code == sf::Keyboard::Space)
+                if (event.key.code == sf::Keyboard::Space){
                     _networkClient->sendBinaryMessage(MessageType::PLAYER_FIRE, {});
+                    _music.playPlayerFire();
+                }
             }
         }
         else if (event.type == sf::Event::KeyReleased) {
@@ -154,6 +156,10 @@ void Client::update(float dt)
             _entityManager.updateEntity(entityId, entityType, posX, posY);
             if (entityType == EntityType::Player)
                 _playerID = entityId;
+            if(entityType == EntityType::Collision)
+                _music.playCollision();
+            if (entityType == EntityType::Boss)
+                _music.playSpawnBoss();
         }
         else if (msg.type == MessageType::DESTROY_ENTITY) {
             size_t expectedSize = sizeof(uint8_t) + sizeof(uint32_t);
@@ -187,8 +193,10 @@ void Client::update(float dt)
             _hud.setScore(_score);
         } else if (msg.type == MessageType::DEFEAT){
             _hud.showNotification("Defeat", sf::Color::Red, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
+            _music.playLoose();
         } else if (msg.type == MessageType::WIN){
             _hud.showNotification("Victory", sf::Color::Green, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
+            _music.playWin();
         } 
     }
     if (!_connected) {
@@ -214,6 +222,7 @@ void Client::render()
     if (_connected) {
         _background.render(_window);
         _entityManager.render(_window);
+        _music.playBackgroundMusic();
         if (_playerID != 0) {
             if (auto player = _entityManager.getSpriteEntity(_playerID))
                 _hud.updatePlayer(_playerID, player->getLife());
