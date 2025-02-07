@@ -148,7 +148,7 @@ void Server::gameLoop() {
             }
             
             // Boss spawn and win condition.
-            if (_globalScore >= 10000 && !_bossSpawned) {
+            if (_globalScore >= 1000 && !_bossSpawned) {
                 _bossSpawned = true;
                 _gameWorld->spawnBoss();
             }
