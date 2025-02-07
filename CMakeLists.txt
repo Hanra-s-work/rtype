@@ -1,7 +1,6 @@
-cmake_minimum_required(VERSION 3.28)
-project(RType VERSION 1.0.0)
+cmake_minimum_required(VERSION 3.11)
+project(RType VERSION 1.0 LANGUAGES CXX)
 
-# Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -17,51 +16,18 @@ file(DOWNLOAD
 
 include(${CPM_PATH})
 
-if(WIN32)
-    add_definitions(-DWINDOWS)
-    add_definitions(-DWINVER=0x0A00)
-    add_definitions(-D_WIN32_WINNT=0x0A00)
-endif()
-
-# Adding sfml and asio libraries
-CPMAddPackage(NAME asio
-    GITHUB_REPOSITORY chriskohlhoff/asio
-    GIT_TAG asio-1-32-0
-)
-
-set(ASIO_INCLUDE_DIR ${asio_SOURCE_DIR}/asio/include)
-
-# Installing sfml 3.0.0
+# Installing sfml 2.6.0
 CPMAddPackage(NAME SFML
     GITHUB_REPOSITORY SFML/SFML
-    VERSION 3.0.0
-    GIT_TAG 3.0.0
+    VERSION 2.6.0
+    GIT_TAG 2.6.0
     OPTIONS
     "SFML_GENERATE_PACKAGE=FALSE"
     "SFML_STATIC_LIBRARIES=TRUE")
 
-# Create the Build and Bin directories if they do not exist
-file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
-file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
-# Output directory for binaries (primary: bin folder)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-
-# Include first-level subdirectories (project binaries)
-add_subdirectory(gui)
+# Add Server and Client subdirs (each with its own CMakeLists)
+add_subdirectory(common)
 add_subdirectory(server)
-add_subdirectory(game_source)
-
-# Secondary output directory: source folder
-set(SECONDARY_OUTPUT_DIR ${CMAKE_SOURCE_DIR})
-
-# Add a post-build step to copy binaries to the secondary location
-add_custom_target(copy_binaries ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${SECONDARY_OUTPUT_DIR}
-    DEPENDS gui server
-)
-
-# Ensure the custom target depends on all subdirectories
-# This is now safe to do after defining the targets.
-add_dependencies(copy_binaries r-type_client r-type_server)
+add_subdirectory(client)
