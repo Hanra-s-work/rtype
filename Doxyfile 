@@ -1,6 +1,6 @@
 PROJECT_NAME           = "Rtype Engine"
 OUTPUT_DIRECTORY       = "docs/doxygen"
-INPUT                  = "new_project/client/"
+INPUT                  = "client/"
 FILE_PATTERNS          = *.hpp *.cpp
 RECURSIVE              = YES
 EXTRACT_ALL            = YES

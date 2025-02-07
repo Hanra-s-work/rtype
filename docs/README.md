@@ -23,5 +23,5 @@ but designed to be used with different types of games.
 API documentation is generated with Doxygen.
 
 1. Install Doxygen.
-2. Run the following command in the project directory:
+2. Run the following command in the project directory: ``Doxygen Doxyfile`` at the root 
 3. The HTML documentation will be generated in the docs/doxygen folder.
