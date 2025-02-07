@@ -1,2 +1,0 @@
-/usr/bin/ar qc /home/floks/refactored/rtype/common/Debug/librtype_protocol.a CMakeFiles/rtype_protocol.dir/NetworkProtocol.cpp.o
-/usr/bin/ranlib /home/floks/refactored/rtype/common/Debug/librtype_protocol.a
