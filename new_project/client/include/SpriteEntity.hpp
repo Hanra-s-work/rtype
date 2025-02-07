@@ -6,8 +6,18 @@
 #include <string>
 #include "TextureManager.hpp"
 
+/**
+ * @brief Represents a graphical entity using a sprite.
+*/
 class SpriteEntity : public Entity {
     public:
+        /**
+         * @brief Constructs a new SpriteEntity object.
+         * @param imagePath Path to the image file.
+         * @param posX Initial X position.
+         * @param posY Initial Y position.
+         * @param moving Indicates whether the entity is moving.
+        */
         SpriteEntity(const std::string &imagePath, float posX, float posY, bool moving = false);
         void setLife(uint32_t life);
         uint32_t getLife() const;
@@ -22,12 +32,12 @@ class SpriteEntity : public Entity {
         void rotate(float angle);
         sf::Vector2f getSize() const;
     private:
-        sf::Vector2f _targetPos;
-        sf::Texture texture;
-        sf::Sprite sprite;
-        sf::Vector2f velocity;
-        bool isMoving;
-        uint32_t _life{ 5 };
+        sf::Vector2f _targetPos;    ///< Target position for interpolation
+        sf::Texture texture;        ///< Entity texture
+        sf::Sprite sprite;          ///< Entity sprite
+        sf::Vector2f velocity;      ///< Movement velocity
+        bool isMoving;              ///< Movement flag
+        uint32_t _life{ 5 };        ///< Entity life value
 };
 
 #endif // SPRITEENTITY_HPP

@@ -8,6 +8,11 @@
 #include "../../common/NetworkProtocol.hpp"
 #include <unordered_set>
 
+/**
+ * @brief Manages game entities.
+ *
+ * This class handles creation, updating, rendering, and removal of game entities.
+*/
 class EntityManager {
     public:
         void update(float dt);
@@ -18,8 +23,8 @@ class EntityManager {
         SpriteEntity* getSpriteEntity(uint32_t id);
     private:
         std::unique_ptr<Entity> createEntity(EntityType type, float posX, float posY);
-        std::unordered_map<uint32_t, std::unique_ptr<Entity>> _entities;
-        std::unordered_set<uint32_t> _destroyed;
+        std::unordered_map<uint32_t, std::unique_ptr<Entity>> _entities; ///< Container for entities
+        std::unordered_set<uint32_t> _destroyed; ///< Set of destroyed entity IDs
 };
 
 #endif // ENTITYMANAGER_HPP
