@@ -8,9 +8,8 @@ This repository does not use the conventional commit down to the letter.
 
 ## Commit Message Convention
 
-Each commit message must follow one of the two formats below:
+Each commit message must follow one of the format below:
 
-- `lowecase infinitive verb: <concise description>`
 - `[uppercase infinitive verb] <concise description>`
 
 Additional details about the commit sections:
@@ -21,25 +20,13 @@ Additional details about the commit sections:
 
 ### Examples
 
-- `add: a new service endpoint for user management`
-- `fix: login endpoint handling edge cases`
-- `update: documentation with new examples`
+- `[ADD] a new service endpoint for user management`
+- `[FIX] login endpoint handling edge cases`
+- `[UPDATE] documentation with new examples`
+- `[REFACTOR] client code part`
 - `[REMOVE] redundant code from the user service`
 - `[EDIT] UI to match updated mockups`
 - `[RENAME] Readme.md -> README.md`
-
-### Common Commit Verbs
-
-| Verb         | Description                                          | Example                                 |
-|--------------|------------------------------------------------------|-----------------------------------------|
-| **ADD**      | Introduces new functionality, features, or files     | `add: cron jobs to clean expired tokens` |
-| **FIX**      | Corrects bugs or issues in the codebase              | `fix: the database connection timeout` |
-| **UPDATE**   | Improves or modifies existing functionality          | `update: the login flow for better UX` |
-| **REMOVE**   | Deletes or removes code, files, or dependencies      | `remove: outdated npm packages`        |
-| **EDIT**     | Adjusts or alters existing code without major change | `edit: the README for better clarity`  |
-| **REFACTOR** | Refactors code without changing its behavior         | `refactor: server-side validation logic`|
-| **RENAME**   | Renames files or variables                           | `rename: variables to follow naming convention` |
-| **MERGE**    | Merges branches or pull requests                     | `merge: branch 'feature-auth' into dev`|
 
 ### Additional Notes
 
@@ -49,12 +36,6 @@ Additional details about the commit sections:
 
 ### Examples from this Repository
 
-- `add: Player constructor`
-- `fix: redundance on constructor arguments`
-- `add: AllyMissile and EnemyMissile constructors`
-- `add: calling OnCreate() function on constructors`
-- `add: Monster and DroppableMonster constructors, Monster TakeDamage`
-- `[FIX] the path to the import of the EntityNode.hpp file`
 - `[ADD] a window utility management class`
 - `[ADD] a window that can open`
 - `[FIX] exception handling issues`

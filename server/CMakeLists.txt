@@ -1,39 +1,34 @@
 cmake_minimum_required(VERSION 3.28)
-project(r-type_server CXX)
+project(RTypeServer)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Fetch Asio using FetchContent
+include(FetchContent)
+FetchContent_Declare(
+  asio
+  GIT_REPOSITORY https://github.com/chriskohlhoff/asio.git
+  GIT_TAG asio-1-32-0
+)
+FetchContent_MakeAvailable(asio)
 
-# find_package(Threads REQUIRED) if needed
-
-# Include the CMakeLists.txt from the Lib folder
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib)
-
-# Collect your .cpp files that make up the server
-set(SERVER_SOURCES
-    main.cpp
-    src/server.cpp
-    src/client_manager.cpp
-    src/game_manager.cpp
-
-    # ...
+# Gather source files for the server target
+file(GLOB_RECURSE SERVER_SOURCES
+    "src/*.cpp"
+    "include/*.hpp"
 )
 
-add_executable(r-type_server
-    ${SERVER_SOURCES}
+add_executable(r-type_server ${SERVER_SOURCES})
+
+# Include the server's headers
+target_include_directories(r-type_server
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# If your server needs includes from "server/src", do:
-target_include_directories(r-type_server PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+# Add Asio's include directory (from FetchContent)
+target_include_directories(r-type_server PRIVATE ${asio_SOURCE_DIR}/asio/include)
 
-# Link the server to the library from game_source
+# Link the common protocol library
 target_link_libraries(r-type_server
     PRIVATE
-    RTypeSource # from game_source/CMakeLists
-
-    # Threads::Threads # if needed
-
-    # other libs (asio, etc.) if needed
+        rtype_protocol
 )
