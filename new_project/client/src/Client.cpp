@@ -229,11 +229,15 @@ void Client::processMessages()
             _hud.setScore(_score);
         }
         else if (msg.type == MessageType::DEFEAT) {
+            _networkClient.disconnect();
             _hud.showNotification("Defeat", sf::Color::Red, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
+            _music.pauseBackgroundMusic();
             _music.playLoose();
         }
         else if (msg.type == MessageType::WIN) {
+            _networkClient.disconnect();
             _hud.showNotification("Victory", sf::Color::Green, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
+            _music.pauseBackgroundMusic();
             _music.playWin();
         }
     }
