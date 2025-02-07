@@ -1,3 +1,4 @@
+//NetworkManager.hpp
 #pragma once
 
 #include <asio.hpp>
@@ -16,6 +17,7 @@
 #include "../../common/NetworkProtocol.hpp"
 #include "Player.hpp"
 #include "Missile.hpp"
+#include "GameWorld.hpp"
 
 struct PlayerInfo {
     uint32_t playerId;
@@ -56,7 +58,9 @@ public:
     std::unordered_map<uint32_t, uint32_t> _lastBroadcastedLife;
     mutable std::mutex _lifeMutex;
     mutable std::mutex _mutex;
-
+    std::vector<asio::ip::udp::endpoint> getClients();
+    void sendCollisionUpdate(float posX, float posY);
+    void removeClient(const asio::ip::udp::endpoint& ep);
 
 private:
     void doReceive();

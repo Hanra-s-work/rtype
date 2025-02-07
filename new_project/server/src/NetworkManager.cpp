@@ -1,6 +1,5 @@
 //NetworkManager.cpp
 #include "NetworkManager.hpp"
-#include "GameWorld.hpp"
 #include <algorithm>
 
 static const unsigned short SERVER_PORT = 9000;
@@ -141,6 +140,9 @@ void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::
             std::cout << "Connected clients count: " << _clients.size() << std::endl;
             for (const auto& ep : _clients) {
                 std::cout << ep << std::endl;
+            }
+            if (onNewConnection) {
+                onNewConnection(senderEndpoint);
             }
             if (onNewConnection) {
                 onNewConnection(senderEndpoint);
@@ -639,4 +641,41 @@ void NetworkManager::broadcastEntityDestroy(uint8_t type, uint32_t id) {
         _socket->async_send_to(asio::buffer(*buffer), ep,
             [buffer](std::error_code, std::size_t) { });
     }
+}
+
+std::vector<asio::ip::udp::endpoint> NetworkManager::getClients()
+{
+    return this->_clients;
+}
+
+void NetworkManager::sendCollisionUpdate(float posX, float posY) {
+    std::vector<uint8_t> payload;
+    payload.reserve(1 + sizeof(uint32_t) + 2 * sizeof(float));
+    uint8_t collisionType = static_cast<uint8_t>(EntityType::Collision); // 99
+    payload.push_back(collisionType);
+    uint32_t dummyId = 0;
+    uint8_t* idPtr = reinterpret_cast<uint8_t*>(&dummyId);
+    payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
+    uint8_t* posXPtr = reinterpret_cast<uint8_t*>(&posX);
+    payload.insert(payload.end(), posXPtr, posXPtr + sizeof(float));
+    uint8_t* posYPtr = reinterpret_cast<uint8_t*>(&posY);
+    payload.insert(payload.end(), posYPtr, posYPtr + sizeof(float));
+    
+    std::vector<uint8_t> msg = buildMessage(MessageType::COLLIDE, payload);
+    std::cout << "Broadcasting COLLIDE: posX=" << posX << ", posY=" << posY << std::endl;
+    for (const auto &ep : _clients) {
+        auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
+        _socket->async_send_to(asio::buffer(*buffer), ep,
+            [buffer](std::error_code, std::size_t) { }
+        );
+    }
+}
+
+void NetworkManager::removeClient(const asio::ip::udp::endpoint& ep) {
+    std::lock_guard<std::mutex> lock(_mutex);
+    auto it = std::find(_clients.begin(), _clients.end(), ep);
+    if (it != _clients.end()) {
+        _clients.erase(it);
+    }
+    _connectedPlayers.erase(ep);
 }

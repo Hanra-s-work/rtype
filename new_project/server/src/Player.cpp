@@ -3,7 +3,7 @@
 #include <iostream>
 
 Player::Player(uint32_t id)
-    : Entity(EntityType::Player, id), _score(0), _life(5)
+    : Entity(EntityType::Player, id), _score(0), _life(5), _invulnTimer(0.f)
 {
 }
 
@@ -13,16 +13,19 @@ void Player::update(float dt)
 {
     _position.x += _velocity.x * dt;
     _position.y += _velocity.y * dt;
+    if (_invulnTimer > 0.f)
+        _invulnTimer -= dt;
 }
 
 bool Player::collidesWith(const Entity& other) const
 {
-    // We rely on GameWorld's AABB collision using defined hitbox dimensions.
+    // Not used because collisions are handled by GameWorld's AABB logic.
     return false;
 }
 
 void Player::onCollision(Entity& other)
 {
+    // When colliding, attempt to decrease life.
     decreaseLife();
 }
 
@@ -44,11 +47,15 @@ uint8_t Player::getLife() const
 
 void Player::decreaseLife()
 {
+    if (_invulnTimer > 0.f)
+        return;
+
     if (_life > 0)
         --_life;
-    std::cout << "Player " << getId() << " life decreased to " << _life << std::endl;
+    std::cout << "Player " << getId() << " life decreased to " << static_cast<int>(_life) << std::endl;
+    _invulnTimer = 1.0f;
     if (_life == 0) {
         std::cout << "Player " << getId() << " has died." << std::endl;
-        destroy();
+        // Do not call destroy() so that the player's entity remains in the game world.
     }
 }

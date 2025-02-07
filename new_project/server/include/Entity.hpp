@@ -1,3 +1,4 @@
+//Entity.hpp
 #pragma once
 
 #include <cstdint>
@@ -31,9 +32,9 @@ public:
 
     Vector2      getVelocity() const;
     void         setVelocity(const Vector2& vel);
+    EntityType   _type;
 
 protected:
-    EntityType   _type;
     uint32_t     _id;
 
     Vector2      _position {0.f, 0.f};

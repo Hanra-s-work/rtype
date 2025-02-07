@@ -1,3 +1,4 @@
+//Player.hpp
 #pragma once
 
 #include "Entity.hpp"
@@ -20,4 +21,5 @@ public:
 private:
     int _score;
     uint8_t _life = 5;
+    float _invulnTimer = 0.f; // time (in seconds) during which the player is invulnerable after being hit
 };

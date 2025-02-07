@@ -15,18 +15,35 @@ Monster::~Monster() = default;
 
 void Monster::update(float dt)
 {
+    // Move the monster.
     _position.x += _velocity.x * dt;
     _position.y += _velocity.y * dt;
 
     _shootTimer += dt;
     if (_shootTimer >= _shootInterval) {
         _shootTimer = 0.f;
-        float angleDeg = static_cast<float>(std::rand() % 360);
-        float angle = degToRad(angleDeg);
         float bulletSpeed = 200.f;
-        float vx = std::cos(angle) * bulletSpeed;
-        float vy = std::sin(angle) * bulletSpeed;
-
+        float vx = 0.f, vy = 0.f;
+        // Different shooting behavior based on monster type.
+        if (_type == EntityType::Monster) {
+            // Moves forward and shoots forward.
+            vx = -bulletSpeed;
+            vy = 0.f;
+        } else if (_type == EntityType::Monster2) {
+            // Moves diagonally left-down but shoots forward.
+            vx = -bulletSpeed;
+            vy = 0.f;
+        } else if (_type == EntityType::Monster3) {
+            // Moves forward, shoots diagonally upward left.
+            float angle = -45.f * 3.14159f / 180.f;
+            vx = std::cos(angle) * bulletSpeed;
+            vy = std::sin(angle) * bulletSpeed;
+        } else if (_type == EntityType::Boss) {
+            // Boss behavior: slower movement and a different shooting pattern.
+            vx = -bulletSpeed * 0.7f;
+            vy = 0.f;
+            // Optionally, adjust the shooting interval.
+        }
         uint32_t bulletId = generateEntityId();
         auto bullet = std::make_unique<Missile>(bulletId, EntityType::MonsterMissile);
         bullet->setPosition(_position);
@@ -39,13 +56,19 @@ bool Monster::collidesWith(const Entity& other) const
 {
     float dx = _position.x - other.getPosition().x;
     float dy = _position.y - other.getPosition().y;
-    float distSq = dx*dx + dy*dy;
-    float radius = 20.f; // approximate collision radius for monster
-    float otherRadius = 20.f;
+    float distSq = dx * dx + dy * dy;
+    float radius = 20.f;
+    if (_type == EntityType::Monster2)
+        radius = 30.f;
+    else if (_type == EntityType::Monster3)
+        radius = 25.f;
+    else if (_type == EntityType::Boss)
+        radius = 60.f;
+    float otherRadius = 20.f; // default for other entities
     return distSq <= (radius + otherRadius) * (radius + otherRadius);
 }
 
 void Monster::onCollision(Entity& other)
 {
-    // In our collision loop, we may call this for additional logic if needed.
+    // Additional logic can be added here if desired.
 }
