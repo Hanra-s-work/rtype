@@ -56,6 +56,7 @@ static bool rectIntersect(const Rect& a, const Rect& b) {
 GameWorld::GameWorld() 
     : _monsterSpawnTimer(0.0), _monsterSpawnInterval(5.0)
 {
+    srand (time(NULL));
 }
 
 void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& destroyEvents, std::vector<CollisionEvent>& collisionEvents)
