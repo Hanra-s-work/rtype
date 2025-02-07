@@ -1,0 +1,10 @@
+^C:\USERS\ALEXANDRE\DEV\EPITECH\PROJECTS\RTYPE\NEW_PROJECT\CLIENT\BUILD\CMAKEFILES\8EDD26CE2F34598CFC2456D3B2C063F7\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Alexandre/dev/epitech/projects/rtype/new_project/client -BC:/Users/Alexandre/dev/epitech/projects/rtype/new_project/client/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Alexandre/dev/epitech/projects/rtype/new_project/client/build/RTypeClient.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
