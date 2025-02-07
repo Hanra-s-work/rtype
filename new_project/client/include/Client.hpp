@@ -9,9 +9,25 @@
 #include "HUD.hpp"
 #include "MusicHandler.hpp"
 
+/**
+ * @brief The Client class manages the main application lifecycle.
+ *
+ * It encapsulates window creation, event handling, game updating, rendering, and server communication.
+*/
+
 class Client {
     public:
+
+        /**
+         * @brief Constructs a new Client object.
+         *
+         * Initializes the window, loads resources, and sets up the initial game state.
+        */
         Client();
+
+        /**
+         * @brief Starts the main game loop.
+        */
         void run();
     private:
         void initWindow();
@@ -30,26 +46,26 @@ class Client {
         void processSettingsClick(const sf::Vector2i& pos);
         void drawSettings();
         
-        sf::RenderWindow _window;
-        sf::Clock _clock;
-        bool _connected{ false };
-        sf::Font _font;
-        sf::Text _connectText;
-        std::unique_ptr<NetworkClient> _networkClient;
-        HandleBackground _background;
-        EntityManager _entityManager;
-        HUD _hud;
-        MusicHandler _music;
-        uint32_t _playerID = 0;
-        uint32_t _score = 0;
-        sf::Sprite _connectSprite;
-        bool _hoverConnect{ false };
-        sf::Texture _menuTexture;
-        sf::Sprite _menuSprite;
-        bool _inSettings{ false };
-        sf::Sprite _settingsSprite;
-        sf::Text _settingsText;
-        bool _hoverSettings{ false};
+        sf::RenderWindow _window;         ///< The game window
+        sf::Clock _clock;                 ///< Clock to measure frame time
+        bool _connected{ false };         ///< Indicates if the client is connected to the server
+        sf::Font _font;                   ///< Font used for displaying text
+        sf::Text _connectText;            ///< Text for the connect button
+        std::unique_ptr<NetworkClient> _networkClient; ///< Network communication handler
+        HandleBackground _background;     ///< Background and star field manager
+        EntityManager _entityManager;     ///< Manager for game entities (players, monsters, etc.)
+        HUD _hud;                         ///< Heads-up display for game info
+        MusicHandler _music;              ///< Music and sound effects handler
+        uint32_t _playerID = 0;           ///< Local player identifier
+        uint32_t _score = 0;              ///< Player score
+        sf::Sprite _connectSprite;        ///< Sprite for the connect button
+        bool _hoverConnect{ false };      ///< Indicates if the connect button is hovered
+        sf::Texture _menuTexture;         ///< Texture for the menu background
+        sf::Sprite _menuSprite;           ///< Sprite for the menu background
+        bool _inSettings{ false };        ///< Indicates if the settings menu is displayed
+        sf::Sprite _settingsSprite;       ///< Sprite for the settings button
+        sf::Text _settingsText;           ///< Text for the settings button
+        bool _hoverSettings{ false };     ///< Indicates if the settings button is hovered
 };
 
 #endif // CLIENT_HPP

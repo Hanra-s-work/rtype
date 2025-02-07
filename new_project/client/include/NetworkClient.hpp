@@ -9,6 +9,11 @@
 #include <string>
 #include "../../common/NetworkProtocol.hpp"
 
+/**
+ * @brief Handles UDP network communication.
+ *
+ * This class uses Asio for asynchronous networking.
+ */
 class NetworkClient {
     public:
         NetworkClient();
