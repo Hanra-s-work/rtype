@@ -19,6 +19,8 @@ class Monster : public Entity {
         bool collidesWith(const Entity& other) const override;
         void onCollision(Entity& other) override;
 
+        int _health = 1;
+
     private:
         float _shootTimer = 0.f;
         float _shootInterval = 2.f;

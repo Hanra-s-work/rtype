@@ -75,7 +75,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
         spawnMonster();
     }
 
-    // 2. Take a snapshot of entities for updating.
+    // 2. Take a snapshot of entities.
     std::vector<Entity*> snapshot;
     {
         std::lock_guard<std::mutex> lock(_entitiesMutex);
@@ -115,7 +115,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                 Rect r1 = getHitbox(e1);
                 Rect r2 = getHitbox(e2);
                 if (rectIntersect(r1, r2)) {
-                    // Record collision event at the midpoint.
+                    // Record collision event.
                     float midX = (r1.x + r1.w/2 + r2.x + r2.w/2) / 2;
                     float midY = (r1.y + r1.h/2 + r2.y + r2.h/2) / 2;
                     CollisionEvent colEv;
@@ -124,16 +124,42 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                     localCollisionEvents.push_back(colEv);
                     
                     // Collision resolution:
-                    // Case A: PlayerMissile vs (Monster, Monster2, Monster3)
+                    // Case A: PlayerMissile vs (Monster, Monster2, Monster3, or Boss)
                     if ((e1->getType() == EntityType::PlayerMissile &&
-                        (e2->getType() == EntityType::Monster || e2->getType() == EntityType::Monster2 || e2->getType() == EntityType::Monster3)) ||
-                        ((e1->getType() == EntityType::Monster || e1->getType() == EntityType::Monster2 || e1->getType() == EntityType::Monster3) &&
+                        (e2->getType() == EntityType::Monster ||
+                         e2->getType() == EntityType::Monster2 ||
+                         e2->getType() == EntityType::Monster3 ||
+                         e2->getType() == EntityType::Boss)) ||
+                        ((e1->getType() == EntityType::Monster ||
+                          e1->getType() == EntityType::Monster2 ||
+                          e1->getType() == EntityType::Monster3 ||
+                          e1->getType() == EntityType::Boss) &&
                          e2->getType() == EntityType::PlayerMissile))
                     {
-                        e1->destroy();
-                        e2->destroy();
-                        if (onScoreUpdate)
-                            onScoreUpdate(100);
+                        Entity* missileEntity = nullptr;
+                        Entity* targetEntity = nullptr;
+                        if (e1->getType() == EntityType::PlayerMissile) {
+                            missileEntity = e1;
+                            targetEntity = e2;
+                        } else {
+                            missileEntity = e2;
+                            targetEntity = e1;
+                        }
+                        missileEntity->destroy();
+                        if (targetEntity->getType() == EntityType::Boss) {
+                            // For boss, decrement health instead of destroying immediately.
+                            Monster* boss = dynamic_cast<Monster*>(targetEntity);
+                            if (boss) {
+                                boss->_health -= 1;
+                                std::cout << "Boss hit! Remaining health: " << boss->_health << std::endl;
+                                if (boss->_health <= 0)
+                                    boss->destroy();
+                            }
+                        } else {
+                            targetEntity->destroy();
+                            if (onScoreUpdate)
+                                onScoreUpdate(100);
+                        }
                     }
                     // Case B: MonsterMissile vs Player
                     else if ((e1->getType() == EntityType::MonsterMissile && e2->getType() == EntityType::Player) ||
@@ -165,7 +191,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
             }
         }
         
-        // Record destroy events.
+        // Record destruction events.
         for (const auto &ent : _entities) {
             if (ent->isDestroyed()) {
                 DestroyEvent ev;
@@ -237,6 +263,7 @@ void GameWorld::spawnBoss()
     uint32_t bossId = generateEntityId();
     auto boss = std::make_unique<Monster>(bossId, *this);
     boss->_type = EntityType::Boss;
+    boss->_health = 10;
     float x = 1920.f;
     float y = static_cast<float>(std::rand() % static_cast<int>(1080 - 120));
     boss->setPosition({x, y});

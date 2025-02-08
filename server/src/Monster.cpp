@@ -39,10 +39,19 @@ void Monster::update(float dt)
             vx = std::cos(angle) * bulletSpeed;
             vy = std::sin(angle) * bulletSpeed;
         } else if (_type == EntityType::Boss) {
-            // Boss behavior: slower movement and a different shooting pattern.
-            vx = -bulletSpeed * 0.7f;
-            vy = 0.f;
-            // Optionally, adjust the shooting interval.
+            bulletSpeed = 300.f;
+            // Choose randomly: 0=forward (left), 1=diagonally up-left, 2=diagonally down-left.
+            int choice = std::rand() % 3;
+            if (choice == 0) {
+                vx = -bulletSpeed;
+                vy = 0.f;
+            } else if (choice == 1) {
+                vx = -bulletSpeed;
+                vy = -bulletSpeed * 0.5f; // adjust factor as needed
+            } else {
+                vx = -bulletSpeed;
+                vy = bulletSpeed * 0.5f;
+            }
         }
         uint32_t bulletId = generateEntityId();
         auto bullet = std::make_unique<Missile>(bulletId, EntityType::MonsterMissile);
