@@ -35,6 +35,10 @@ Server::Server() {
         std::cout << "Global score updated to " << _globalScore << std::endl;
         // (You could broadcast the new score here if desired.)
     };
+
+    _gameWorld->onCollisionEvent = [this](float posX, float posY) {
+        _networkManager->sendCollisionUpdate(posX, posY);
+    };
 }
 
 Server::~Server() {

@@ -657,24 +657,41 @@ std::vector<asio::ip::udp::endpoint> NetworkManager::getClients()
 }
 
 void NetworkManager::sendCollisionUpdate(float posX, float posY) {
+    // Build a payload in the format:
+    // [entity_type (1 byte), entity_id (4 bytes), posX (float), posY (float)]
     std::vector<uint8_t> payload;
     payload.reserve(1 + sizeof(uint32_t) + 2 * sizeof(float));
-    uint8_t collisionType = static_cast<uint8_t>(EntityType::Collision); // 99
+    
+    // Use a special value (e.g., 99) to denote a collision update.
+    uint8_t collisionType = 99; // You can also define a constant for this.
     payload.push_back(collisionType);
+    
+    // For the entity id, we send 0 (dummy value) because there is no real entity.
     uint32_t dummyId = 0;
     uint8_t* idPtr = reinterpret_cast<uint8_t*>(&dummyId);
     payload.insert(payload.end(), idPtr, idPtr + sizeof(uint32_t));
+    
+    // Append posX.
     uint8_t* posXPtr = reinterpret_cast<uint8_t*>(&posX);
     payload.insert(payload.end(), posXPtr, posXPtr + sizeof(float));
+    
+    // Append posY.
     uint8_t* posYPtr = reinterpret_cast<uint8_t*>(&posY);
     payload.insert(payload.end(), posYPtr, posYPtr + sizeof(float));
     
-    std::vector<uint8_t> msg = buildMessage(MessageType::COLLIDE, payload);
-    std::cout << "Broadcasting COLLIDE: posX=" << posX << ", posY=" << posY << std::endl;
+    // Build the final message as an UPDATE_ENTITY message.
+    std::vector<uint8_t> msg = buildMessage(MessageType::UPDATE_ENTITY, payload);
+    
+    std::cout << "Sending collision update: type=" << static_cast<int>(collisionType)
+              << ", posX=" << posX << ", posY=" << posY << std::endl;
+    
+    // Send the message to all connected clients.
     for (const auto &ep : _clients) {
         auto buffer = std::make_shared<std::vector<uint8_t>>(msg);
         _socket->async_send_to(asio::buffer(*buffer), ep,
-            [buffer](std::error_code, std::size_t) { }
+            [buffer](std::error_code /*ec*/, std::size_t /*bytes_sent*/) {
+                // Done.
+            }
         );
     }
 }

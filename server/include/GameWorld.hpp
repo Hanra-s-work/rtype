@@ -22,7 +22,6 @@ public:
 
     // Callback for score updates.
     std::function<void(int)> onScoreUpdate;
-    // Callback for collision events (if you want to broadcast a collision effect)
     std::function<void(float, float)> onCollisionEvent;
 
     GameWorld();

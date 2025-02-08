@@ -1,4 +1,4 @@
-//GameWorld.hpp
+//GameWorld.cpp
 #include "GameWorld.hpp"
 #include "Monster.hpp"
 #include "Player.hpp"
@@ -213,8 +213,9 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
     destroyEvents = std::move(localDestroyEvents);
     
     if (onCollisionEvent) {
-        for (const auto &colEv : localCollisionEvents)
+        for (const auto &colEv : localCollisionEvents){
             onCollisionEvent(colEv.posX, colEv.posY);
+        }
     }
 }
 
