@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <atomic>
+
 #include "../../common/NetworkProtocol.hpp"
 
 struct Vector2 {

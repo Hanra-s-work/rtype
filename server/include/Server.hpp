@@ -1,12 +1,13 @@
 //Server.hpp
 #pragma once
 
-#include "memory"
-#include "thread"
-#include "atomic"
+#include <memory>
+#include <thread>
+#include <atomic>
+#include "asio.hpp"
+
 #include "NetworkManager.hpp"
 #include "GameWorld.hpp"
-#include "asio.hpp"
 
 class Server {
 public:
@@ -17,7 +18,7 @@ public:
 private:
     void gameLoop();
     void shutdown();
-    void resetGameSession(); // reinitialize the game state
+    void resetGameSession();
 
     std::unique_ptr<NetworkManager> _networkManager;
     std::unique_ptr<GameWorld> _gameWorld;

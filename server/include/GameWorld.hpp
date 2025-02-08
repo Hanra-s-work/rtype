@@ -5,14 +5,21 @@
 #include <memory>
 #include <mutex>
 #include <functional>
+#include <algorithm>
+#include <cstdlib>
+#include <iostream>
+#include <cmath>
+
 #include "Entity.hpp"
 #include "Monster.hpp"
+#include "Player.hpp"
+#include "Missile.hpp"
 
 class GameWorld {
 public:
     struct DestroyEvent {
-        uint8_t type;  // entity type (as uint8_t)
-        uint32_t id;   // entity id
+        uint8_t type;
+        uint32_t id;
     };
 
     struct CollisionEvent {
@@ -20,24 +27,19 @@ public:
         float posY;
     };
 
-    // Callback for score updates.
     std::function<void(int)> onScoreUpdate;
-    // Callback for collision events (if you want to broadcast a collision effect)
     std::function<void(float, float)> onCollisionEvent;
 
     GameWorld();
 
-    // Update function that outputs destruction and collision events.
     void update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& destroyEvents, std::vector<CollisionEvent>& collisionEvents);
 
     void addEntity(std::unique_ptr<Entity> entity);
 
     std::vector<Entity*> getEntitiesSnapshot() const;
-    // Returns only Player entities.
     std::vector<Entity*> getPlayersSnapshot() const;
     Entity* getEntityById(uint32_t id);
 
-    // New functions for boss spawning.
     void spawnMonster();
     void spawnBoss();
     void reset();

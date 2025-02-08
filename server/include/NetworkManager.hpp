@@ -14,6 +14,7 @@
 #include <cstring>
 #include <mutex>
 #include <functional>
+
 #include "../../common/NetworkProtocol.hpp"
 #include "Player.hpp"
 #include "Missile.hpp"

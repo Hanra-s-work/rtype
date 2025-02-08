@@ -232,7 +232,6 @@ void Client::processMessages()
             if (msg.payload.size() < sizeof(uint32_t))
                 continue;
             std::memcpy(&_score, msg.payload.data(), sizeof(_score));
-            std::cout << _score << std::endl;
             _hud.setScore(_score);
         }
         else if (msg.type == MessageType::DEFEAT) {
