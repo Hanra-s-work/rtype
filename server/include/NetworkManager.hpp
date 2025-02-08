@@ -89,3 +89,6 @@ std::vector<uint8_t> buildEntityPayload(Entity* entity);
 std::vector<uint8_t> buildDestroyEntityPayload(Entity* entity);
 std::vector<uint8_t> buildLifePayload(Entity* entity, uint8_t life_remaining);
 std::vector<uint8_t> buildScorePayload(uint32_t score);
+void broadcastServerAdvertisement(asio::io_context& io_context,
+                                  unsigned short advertisementPort,
+                                  unsigned short serverPort);

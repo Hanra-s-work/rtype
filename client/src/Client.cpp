@@ -146,7 +146,14 @@ bool Client::isButtonHovered(const sf::Sprite& sprite, const sf::Vector2i& pos)
 
 void Client::connectToServer()
 {
-    _networkClient->connect("127.0.0.1", 9000);
+    unsigned short advertisementPort = 9001;
+    std::string serverIp = discoverServer(advertisementPort);
+    if (serverIp.empty()) {
+        std::cerr << "Could not find a server on the LAN." << std::endl;
+        return;
+    }
+    std::cout << "Discovered server IP: " << serverIp << std::endl;
+    _networkClient->connect(serverIp, 9000);
     _networkClient->sendConnectRequest();
 }
 

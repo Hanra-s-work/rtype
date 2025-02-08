@@ -104,3 +104,30 @@ void NetworkClient::sendConnectRequest()
     auto buffer = std::make_shared<std::vector<uint8_t>>(std::move(msg));
     _socket->async_send_to(asio::buffer(*buffer), _serverEndpoint, [buffer](std::error_code, std::size_t){});
 }
+
+std::string discoverServer(unsigned short advertisementPort, unsigned int timeoutMs)
+{
+    try {
+        asio::io_context ioContext;
+        // Bind to the advertisement port on all interfaces.
+        asio::ip::udp::socket socket(ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), advertisementPort));
+        
+        // Optionally, set a timeout on the socket (platform-dependent; here we simply use a blocking receive with a timeout in a separate thread)
+        std::array<char, 1024> recvBuffer;
+        asio::ip::udp::endpoint senderEndpoint;
+        
+        // Here we use a simple blocking receive.
+        socket.non_blocking(false);
+        socket.receive_from(asio::buffer(recvBuffer), senderEndpoint);
+        
+        // For debugging: print the received message.
+        std::string receivedMessage(recvBuffer.data());
+        std::cout << "Received advertisement: " << receivedMessage << std::endl;
+        
+        // Return the sender's IP address.
+        return senderEndpoint.address().to_string();
+    } catch (std::exception& e) {
+        std::cerr << "Error discovering server: " << e.what() << std::endl;
+        return "";
+    }
+}

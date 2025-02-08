@@ -7,6 +7,7 @@
 #include <vector>
 #include <mutex>
 #include <string>
+#include <iostream>
 #include "../../common/NetworkProtocol.hpp"
 
 /**
@@ -34,5 +35,7 @@ class NetworkClient {
         std::mutex _messageMutex;
         std::vector<ParsedMessage> _incomingMessages;
 };
+
+std::string discoverServer(unsigned short advertisementPort, unsigned int timeoutMs = 3000);
 
 #endif // NETWORKCLIENT_HPP
