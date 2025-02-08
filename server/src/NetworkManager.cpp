@@ -20,7 +20,15 @@ void NetworkManager::start()
     if (_running) return;
     _running = true;
 
-    _socket = std::make_unique<asio::ip::udp::socket>(_ioContext, asio::ip::udp::endpoint(asio::ip::udp::v4(), SERVER_PORT));
+    _socket = std::make_unique<asio::ip::udp::socket>(
+        _ioContext,
+        asio::ip::udp::endpoint(asio::ip::address_v4::any(), SERVER_PORT)
+    );
+
+    unsigned short advertisementPort = 9001; // well-known port for discovery
+    unsigned short serverPort = 9000;        // the port your server listens on
+    std::thread advertThread(broadcastServerAdvertisement, std::ref(_ioContext), advertisementPort, serverPort);
+    advertThread.detach(); // Detach if you want it running in background.
 
     doReceive();
 
@@ -678,4 +686,28 @@ void NetworkManager::removeClient(const asio::ip::udp::endpoint& ep) {
         _clients.erase(it);
     }
     _connectedPlayers.erase(ep);
+}
+
+void broadcastServerAdvertisement(asio::io_context& io_context,
+                                  unsigned short advertisementPort,
+                                  unsigned short serverPort)
+{
+    try {
+        asio::ip::udp::socket broadcastSocket(io_context);
+        broadcastSocket.open(asio::ip::udp::v4());
+        broadcastSocket.set_option(asio::socket_base::broadcast(true));
+        
+        // Use the special broadcast address (0.0.0.0 is not broadcast; use 255.255.255.255 or the network-specific broadcast)
+        asio::ip::udp::endpoint broadcastEndpoint(asio::ip::address_v4::broadcast(), advertisementPort);
+        
+        std::string message = "RType Server Advertisement:" + std::to_string(serverPort);
+        while (true) {
+            broadcastSocket.send_to(asio::buffer(message), broadcastEndpoint);
+            // For debugging:
+            std::cout << "Broadcasted advertisement: " << message << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Error broadcasting advertisement: " << e.what() << std::endl;
+    }
 }

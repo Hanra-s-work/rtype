@@ -6,6 +6,7 @@
 #include "atomic"
 #include "NetworkManager.hpp"
 #include "GameWorld.hpp"
+#include "asio.hpp"
 
 class Server {
 public:
