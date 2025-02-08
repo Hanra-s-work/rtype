@@ -5,6 +5,10 @@ project(RTypeClient)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}")
+
 # Include directories for headers
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 
@@ -44,6 +48,7 @@ if(WIN32)
     # Set a variable to point to your SFML DLL directory.
     # Adjust this path to match where your SFML DLLs are built or installed.
     set(SFML_DLL_DIR "${CMAKE_SOURCE_DIR}/build/_deps/sfml-build/lib/Debug")
+    set(OPEN_AL_DIR "${CMAKE_SOURCE_DIR}/build/_deps/sfml-src/extlibs/bin/x64")
 
     # Copy SFML graphics DLL.
     add_custom_command(TARGET r-type_client POST_BUILD
@@ -83,6 +88,14 @@ if(WIN32)
             "${SFML_DLL_DIR}/sfml-system-d-2.dll"
             $<TARGET_FILE_DIR:r-type_client>
         COMMENT "Copying sfml-system-d-2.dll to output directory"
+    )
+
+    # Copy OpenAL32.dll.
+    add_custom_command(TARGET r-type_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${OPEN_AL_DIR}/openal32.dll"
+            $<TARGET_FILE_DIR:r-type_client>
+        COMMENT "Copying OpenAL32.dll to output directory"
     )
 endif()
 
