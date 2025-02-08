@@ -3,6 +3,8 @@
 
 #include "Entity.hpp"
 
+#include <iostream>
+
 class Player : public Entity {
 public:
     Player(uint32_t id);
@@ -21,5 +23,5 @@ public:
 private:
     int _score;
     uint8_t _life = 5;
-    float _invulnTimer = 0.f; // time (in seconds) during which the player is invulnerable after being hit
+    float _invulnTimer = 0.f;
 };

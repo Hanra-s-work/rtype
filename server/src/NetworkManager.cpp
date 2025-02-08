@@ -1,12 +1,10 @@
 //NetworkManager.cpp
 #include "NetworkManager.hpp"
-#include <algorithm>
 
 static const unsigned short SERVER_PORT = 9000;
-static const float speed = 200.f; // base speed for movement
+static const float speed = 200.f;
 
-NetworkManager::NetworkManager(GameWorld& world)
-: _gameWorld(world)
+NetworkManager::NetworkManager(GameWorld& world): _gameWorld(world)
 {
 }
 
@@ -25,10 +23,10 @@ void NetworkManager::start()
         asio::ip::udp::endpoint(asio::ip::address_v4::any(), SERVER_PORT)
     );
 
-    unsigned short advertisementPort = 9001; // well-known port for discovery
-    unsigned short serverPort = 9000;        // the port your server listens on
+    unsigned short advertisementPort = 9001;
+    unsigned short serverPort = 9000;
     std::thread advertThread(broadcastServerAdvertisement, std::ref(_ioContext), advertisementPort, serverPort);
-    advertThread.detach(); // Detach if you want it running in background.
+    advertThread.detach();
 
     doReceive();
 
@@ -366,7 +364,6 @@ void NetworkManager::onDataReceived(const std::string& dataStr, const asio::ip::
                     if (player) {
                         Vector2 pPos = player->getPosition();
                         auto missile = std::make_unique<Missile>(newId, EntityType::PlayerMissile);
-                        // Spawn missile with an offset so it doesn't collide with the player immediately.
                         Vector2 missileStartPos = { pPos.x + 50.f, pPos.y };
                         missile->setPosition(missileStartPos);
                         missile->setVelocity({300.f, 0.f});
@@ -634,7 +631,6 @@ bool NetworkManager::shouldSendScoreUpdate(uint32_t entityId, int currentScore) 
 }
 
 void NetworkManager::broadcastEntityDestroy(uint8_t type, uint32_t id) {
-    // Build the payload: [entity_type (1 byte), entity_id (4 bytes)]
     std::vector<uint8_t> payload;
     payload.reserve(1 + sizeof(uint32_t));
     payload.push_back(type);
@@ -697,14 +693,11 @@ void broadcastServerAdvertisement(asio::io_context& io_context,
         broadcastSocket.open(asio::ip::udp::v4());
         broadcastSocket.set_option(asio::socket_base::broadcast(true));
         
-        // Use the special broadcast address (0.0.0.0 is not broadcast; use 255.255.255.255 or the network-specific broadcast)
         asio::ip::udp::endpoint broadcastEndpoint(asio::ip::address_v4::broadcast(), advertisementPort);
         
         std::string message = "RType Server Advertisement:" + std::to_string(serverPort);
         while (true) {
             broadcastSocket.send_to(asio::buffer(message), broadcastEndpoint);
-            // For debugging:
-            std::cout << "Broadcasted advertisement: " << message << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(2));
         }
     } catch (std::exception& e) {

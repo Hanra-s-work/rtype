@@ -1,6 +1,5 @@
 //Entity.cpp
 #include "Entity.hpp"
-#include <atomic>
 
 Entity::Entity(EntityType type, uint32_t id)
     : _type(type), _id(id), _destroyed(false)

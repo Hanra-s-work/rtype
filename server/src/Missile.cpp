@@ -1,6 +1,5 @@
 //Missile.cpp
 #include "Missile.hpp"
-#include <cmath>
 
 Missile::Missile(uint32_t id, EntityType missileType)
     : Entity(missileType, id), _ownerId(0)

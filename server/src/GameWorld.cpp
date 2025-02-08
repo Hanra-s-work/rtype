@@ -1,15 +1,6 @@
 //GameWorld.hpp
 #include "GameWorld.hpp"
-#include "Monster.hpp"
-#include "Player.hpp"
-#include "Missile.hpp"
-#include <algorithm>
-#include <cstdlib>
-#include <iostream>
-#include <mutex>
-#include <cmath>
 
-// Define a simple rectangle structure for hitbox detection.
 struct Rect {
     float x, y, w, h;
 };

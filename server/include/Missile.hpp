@@ -3,6 +3,8 @@
 
 #include "Entity.hpp"
 
+#include <cmath>
+
 class Missile : public Entity {
 public:
     Missile(uint32_t id, EntityType missileType = EntityType::PlayerMissile);
