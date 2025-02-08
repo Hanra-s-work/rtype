@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 project(RTypeServer)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}")
+
 # Fetch Asio using FetchContent
 include(FetchContent)
 FetchContent_Declare(
