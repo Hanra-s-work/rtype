@@ -40,4 +40,50 @@ target_link_libraries(r-type_client
     sfml-graphics sfml-window sfml-audio sfml-network sfml-system
 )
 
+if(WIN32)
+    # Set a variable to point to your SFML DLL directory.
+    # Adjust this path to match where your SFML DLLs are built or installed.
+    set(SFML_DLL_DIR "${CMAKE_SOURCE_DIR}/build/_deps/sfml-build/lib/Debug")
+
+    # Copy SFML graphics DLL.
+    add_custom_command(TARGET r-type_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SFML_DLL_DIR}/sfml-graphics-d-2.dll"
+            $<TARGET_FILE_DIR:r-type_client>
+        COMMENT "Copying sfml-graphics-d-2.dll to output directory"
+    )
+
+    # Copy SFML window DLL.
+    add_custom_command(TARGET r-type_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SFML_DLL_DIR}/sfml-window-d-2.dll"
+            $<TARGET_FILE_DIR:r-type_client>
+        COMMENT "Copying sfml-window-d-2.dll to output directory"
+    )
+
+    # Copy SFML audio DLL.
+    add_custom_command(TARGET r-type_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SFML_DLL_DIR}/sfml-audio-d-2.dll"
+            $<TARGET_FILE_DIR:r-type_client>
+        COMMENT "Copying sfml-audio-d-2.dll to output directory"
+    )
+
+    # Copy SFML network DLL.
+    add_custom_command(TARGET r-type_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SFML_DLL_DIR}/sfml-network-d-2.dll"
+            $<TARGET_FILE_DIR:r-type_client>
+        COMMENT "Copying sfml-network-d-2.dll to output directory"
+    )
+
+    # Copy SFML system DLL.
+    add_custom_command(TARGET r-type_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${SFML_DLL_DIR}/sfml-system-d-2.dll"
+            $<TARGET_FILE_DIR:r-type_client>
+        COMMENT "Copying sfml-system-d-2.dll to output directory"
+    )
+endif()
+
 target_include_directories(r-type_client PUBLIC ${ASIO_INCLUDE_DIR})
