@@ -1,0 +1,9 @@
+<map id="NetworkClient::~NetworkClient" name="NetworkClient::~NetworkClient">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,13,232,38"/>
+<area shape="rect" id="Node000002" href="$classNetworkClient.html#a7f69f5c30fd349d670fae18598737b86" title=" " alt="" coords="280,13,473,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="232,23,266,23,266,28,232,28"/>
+<area shape="rect" id="Node000003" href="$classNetworkClient.html#ab8ea81a8da20742e3f2a5d5f5921e6a0" title=" " alt="" coords="521,5,717,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="474,23,508,23,508,28,474,28"/>
+<area shape="rect" id="Node000004" href="$NetworkManager_8hpp.html#a29a7b4409c813acfea4a9cc13da92a7f" title="Builds a message from a type and payload." alt="" coords="765,13,877,38"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="717,23,752,23,752,28,717,28"/>
+</map>

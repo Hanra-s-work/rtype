@@ -1,11 +1,24 @@
 var searchData=
 [
-  ['h_0',['h',['../structRect.html#aa10c9b8950c6b23a0b2bf0d39f2be904',1,'Rect']]],
-  ['handlebackground_1',['HandleBackground',['../classHandleBackground.html',1,'HandleBackground'],['../classHandleBackground.html#a08bca9284e553e2b4cc88e695c8abfb3',1,'HandleBackground::HandleBackground()']]],
-  ['handlebackground_2ecpp_2',['HandleBackground.cpp',['../HandleBackground_8cpp.html',1,'']]],
-  ['handlebackground_2ehpp_3',['HandleBackground.hpp',['../HandleBackground_8hpp.html',1,'']]],
-  ['hasclients_4',['hasClients',['../classNetworkManager.html#a957290f9730126b1c34f8fa6254c8375',1,'NetworkManager']]],
-  ['hud_5',['HUD',['../classHUD.html',1,'HUD'],['../classHUD.html#a568b8ee1591f9ba3ed36ae05966f6b56',1,'HUD::HUD()']]],
-  ['hud_2ecpp_6',['HUD.cpp',['../HUD_8cpp.html',1,'']]],
-  ['hud_2ehpp_7',['HUD.hpp',['../HUD_8hpp.html',1,'']]]
+  ['gameworld_0',['GameWorld',['../classGameWorld.html',1,'GameWorld'],['../classGameWorld.html#a681994123c12833d43c957d6cfb33765',1,'GameWorld::GameWorld()']]],
+  ['gameworld_2ecpp_1',['GameWorld.cpp',['../GameWorld_8cpp.html',1,'']]],
+  ['gameworld_2ehpp_2',['GameWorld.hpp',['../GameWorld_8hpp.html',1,'']]],
+  ['generateentityid_3',['generateEntityId',['../server_2include_2Entity_8hpp.html#a8c9785fba545f4b4872dd587e33ef1d8',1,'generateEntityId():&#160;Entity.cpp'],['../Entity_8cpp.html#a8c9785fba545f4b4872dd587e33ef1d8',1,'generateEntityId():&#160;Entity.cpp']]],
+  ['getclients_4',['getClients',['../classNetworkManager.html#a1ccd02fd7a65c3789fa79c85ac3e42c5',1,'NetworkManager']]],
+  ['geteffectsvolume_5',['getEffectsVolume',['../classMusicHandler.html#a99f252c5144894323127cab5e8f0cf40',1,'MusicHandler']]],
+  ['getendpointforentity_6',['getEndpointForEntity',['../classNetworkManager.html#a9820c41ec733cf7b823afa8483053f2f',1,'NetworkManager']]],
+  ['getentitiessnapshot_7',['getEntitiesSnapshot',['../classGameWorld.html#a347b09fbed09190e292441017eca941f',1,'GameWorld']]],
+  ['getentitybyid_8',['getEntityById',['../classGameWorld.html#a43da8f6a5c5f0e1f3159240e0ff1ba21',1,'GameWorld']]],
+  ['getid_9',['getId',['../classEntity.html#a93c54f49ef525fb5461ef456593abcbb',1,'Entity']]],
+  ['getlife_10',['getLife',['../classSpriteEntity.html#a5316b484a8f4607c7766b7c49c852796',1,'SpriteEntity::getLife()'],['../classPlayer.html#aa1c97a023aae70f2c1c970743229fdb3',1,'Player::getLife()']]],
+  ['getmusicvolume_11',['getMusicVolume',['../classMusicHandler.html#a7d0dd2e23ae1030f5cb8a5c690dfcf55',1,'MusicHandler']]],
+  ['getownerid_12',['getOwnerId',['../classMissile.html#a318dad5caa8af524569da4c3567550ab',1,'Missile']]],
+  ['getplayerssnapshot_13',['getPlayersSnapshot',['../classGameWorld.html#a21c1929e3c38584f5749a233f3b4ae8c',1,'GameWorld']]],
+  ['getposition_14',['getPosition',['../classEntity.html#a47d465aee2ac4dc6e8a0c0843e324764',1,'Entity::getPosition()'],['../classSpriteEntity.html#a493c3852e93cc05e0013a0d5f14e9367',1,'SpriteEntity::getPosition()'],['../classEntity.html#a7c602a08a0e0a794a8484d50a0ef8ece',1,'Entity::getPosition()']]],
+  ['getscore_15',['getScore',['../classGameWorld.html#ae19054053e604bdf9290367b744fa9bd',1,'GameWorld::getScore()'],['../classPlayer.html#acbdb2bae8d732157af0ca5f5438a2b63',1,'Player::getScore()']]],
+  ['getsize_16',['getSize',['../classSpriteEntity.html#a8c8a729e4ae5d792a9e4661cc8ddceb8',1,'SpriteEntity']]],
+  ['getspriteentity_17',['getSpriteEntity',['../classEntityManager.html#a0928701907062c3603b3ebd0b3014f26',1,'EntityManager']]],
+  ['gettexture_18',['getTexture',['../classTextureManager.html#aac348d51c9224c27f729c9317db5db04',1,'TextureManager']]],
+  ['gettype_19',['getType',['../classEntity.html#a71b3d5377689dc9ea99de6974481cc2b',1,'Entity']]],
+  ['getvelocity_20',['getVelocity',['../classEntity.html#a14f910e006ec2f2fcf964b1fe2a0128a',1,'Entity']]]
 ];

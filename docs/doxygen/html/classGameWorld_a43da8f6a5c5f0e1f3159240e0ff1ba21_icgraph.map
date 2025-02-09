@@ -1,0 +1,5 @@
+<map id="GameWorld::getEntityById" name="GameWorld::getEntityById">
+<area shape="rect" id="Node000001" title="Retrieves an entity by its unique ID." alt="" coords="305,5,500,31"/>
+<area shape="rect" id="Node000002" href="$classNetworkManager.html#afd4ea8a9da6b609f00abace2e40767f9" title="Checks the heartbeat of each client and removes timed&#45;out clients." alt="" coords="5,5,257,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="292,21,258,21,258,15,292,15"/>
+</map>

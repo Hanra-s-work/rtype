@@ -1,0 +1,7 @@
+<map id="buildEntityPayload" name="buildEntityPayload">
+<area shape="rect" id="Node000001" title="Builds the payload for an entity update/spawn message." alt="" coords="264,45,407,70"/>
+<area shape="rect" id="Node000002" href="$classNetworkManager.html#a2ba6bcca6d225ecdc77f74a05fa982a8" title="Broadcasts an update entity message to all clients." alt="" coords="7,5,214,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,48,214,43,215,37,251,43"/>
+<area shape="rect" id="Node000003" href="$classNetworkManager.html#a6d3e19299642124b48149a448773bd3e" title="Sends a spawn entity message to a target." alt="" coords="5,69,216,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="251,72,217,77,216,72,250,67"/>
+</map>

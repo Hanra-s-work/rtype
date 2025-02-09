@@ -1,0 +1,7 @@
+<map id="Player::decreaseLife" name="Player::decreaseLife">
+<area shape="rect" id="Node000001" title="Decreases the player&#39;s life by one." alt="" coords="5,31,160,56"/>
+<area shape="rect" id="Node000002" href="$classEntity.html#a691dbe5f9ec930c27af2af0b97907a9e" title="Marks the entity as destroyed." alt="" coords="208,5,324,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,30,194,25,195,30,160,35"/>
+<area shape="rect" id="Node000003" href="$classEntity.html#a93c54f49ef525fb5461ef456593abcbb" title="Gets the unique identifier of the entity." alt="" coords="216,55,316,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="160,51,203,56,202,62,160,56"/>
+</map>

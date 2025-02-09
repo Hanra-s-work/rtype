@@ -1,0 +1,123 @@
+/**
+ * @mainpage RType - Multiplayer Side-Scrolling Shooter
+ *
+ * @section intro Introduction
+ * RType is a multiplayer side-scrolling shooter inspired by the classic R-Type game. 
+ * This project consists of a server and a client application.
+ * - The **server** manages the game world, game logic (entity updates, collision detection, score/life management, session control) and communicates with clients using UDP via ASIO.
+ * - The **client** renders the game using SFML, displaying the game state received from the server.
+ *
+ * @section features Features
+ * - **Multiplayer Gameplay:** 
+ *   - Supports multiple players, enemy spawns, collision handling, score/life updates, and win/lose conditions.
+ * - **Real-Time Networking:** 
+ *   - The server and client communicate over UDP using ASIO for low-latency message exchange.
+ * - **Graphics & Audio:** 
+ *   - Uses SFML for rendering and playing background music and sound effects.
+ * - **Dynamic Entities:** 
+ *   - Various types of game entities:
+ *     - Players
+ *     - Monsters (Monster, Monster2, Monster3) with different movement and shooting patterns
+ *     - Missiles (PlayerMissile, MonsterMissile)
+ *     - Boss (high-health enemy that spawns after a score threshold is reached)
+ * - **Custom Communication Protocol:**
+ *   - Binary protocol for handling messages such as connection/disconnection, heartbeats, entity spawn/update/destroy, score/life updates, collisions, and win/lose conditions.
+ *
+ * @section project_structure Project Structure
+ * - **common:** Shared components, including the communication protocol (message formats, parsing, etc.).
+ * - **server:**
+ *   - `GameWorld`: Manages entities, collisions, score/life, and spawning.
+ *   - `NetworkManager`: Uses ASIO to handle UDP communication.
+ *   - `Server`: Contains the main game loop and session management.
+ * - **client:**
+ *   - `Client`: Manages the game loop, rendering, and event handling.
+ *   - `NetworkClient`: Receives and sends game state updates.
+ *   - `EntityManager`: Handles the creation and management of game entities.
+ *   - `HUD`: Displays player information.
+ *   - `MusicHandler`: Manages background music and sound effects.
+ *
+ * @section class_diagram Class Diagram
+ * @dot
+ * digraph ClassDiagram {
+ *   rankdir=LR;
+ *   Client -> NetworkClient;
+ *   Client -> EntityManager;
+ *   Client -> HUD;
+ *   Client -> MusicHandler;
+ *   Client -> MessageType;
+ *   Client -> EntityType;
+ *   EntityManager -> Entity;
+ *   Entity -> SpriteEntity;
+ *   Server -> GameWorld;
+ *   Server -> NetworkManager;
+ *   Server -> MessageType;
+ *   Server -> EntityType;
+ *   GameWorld -> Entity²;
+ *   GameWorld -> Player;
+ *   GameWorld -> Monster;
+ *   GameWorld -> Missile;
+ * }
+ * @enddot
+ *
+ * @section build_instructions Build Instructions
+ * This project uses **CMake** with CPM/FetchContent to manage dependencies.
+ * 
+ * **Prerequisites:**
+ * - A C++ compiler with C++17 support.
+ * - CMake (version 3.11 or higher recommended).
+ * - Git (to fetch dependencies).
+ *
+ * **Building on Linux/Mac:**
+ * ```sh
+ * mkdir build
+ * cd build
+ * cmake ..
+ * cmake --build .
+ * ```
+ *
+ * **Building on Windows:**
+ * ```sh
+ * mkdir build
+ * cd build
+ * cmake ..
+ * cmake --build .
+ * ```
+ *
+ * @section running Running the Project
+ * **Start the Server:**
+ * - Run the server executable (e.g., `r-type_server.exe` on Windows or `./r-type_server` on Linux/Mac).
+ * - By default, the server listens on **UDP port 9000**.
+ *
+ * **Start the Client(s):**
+ * - Run the client executable (e.g., `r-type_client.exe` on Windows or `./r-type_client` on Linux/Mac).
+ * - The client connects to the server (using `localhost` or an automatically detected LAN IP).
+ *
+ * **Gameplay:**
+ * - When a client connects, the server starts a game session and sends real-time updates about entities, scores, life, and collisions via a custom binary protocol.
+ *
+ * @section protocol Communication Protocol
+ * The communication between the server and the client is handled via a **custom binary protocol over UDP**.
+ *
+ * **Message Format:**
+ * - **Header:**
+ *   - Type (4 bytes): A 32-bit integer representing the message type.
+ *   - Payload Size (4 bytes): A 32-bit integer indicating the number of payload bytes.
+ * - **Payload:**
+ *   - The format depends on the message type.
+ *
+ * **Common Message Types:**
+ * - `CONNECT (1)`: Sent by the client to request a connection.
+ * - `CONNECT_OK (2)`: Sent by the server to confirm the connection (with a unique player ID).
+ * - `DISCONNECT (3)`: Sent by the client upon disconnecting.
+ * - `HEARTBEAT (4)`: Periodic messages to ensure the connection is alive.
+ * - `PLAYER_LEFT (5)`: Sent by the server to notify clients of a player's disconnection.
+ * - `SPAWN_ENTITY (18)`, `UPDATE_ENTITY (17)`, `DESTROY_ENTITY (20)`: Handle entity lifecycle.
+ * - `LIFE (19)`: Updates a player's remaining life.
+ * - `SCORE (21)`: Updates the global score.
+ * - `WIN (23) / DEFEAT (22)`: Sent when the game is won or lost.
+ * - `HUB (24)`: Indicates that the game session is over and clients should return to the main menu.
+ * - `COLLIDE (25)`: Used for collision visual effects.
+ *
+ * @section license License
+ * This project is released under the **MIT License**.
+ */

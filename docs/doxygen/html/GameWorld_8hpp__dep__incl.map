@@ -1,0 +1,21 @@
+<map id="server/include/GameWorld.hpp" name="server/include/GameWorld.hpp">
+<area shape="rect" id="Node000001" title="Declaration of the GameWorld class." alt="" coords="148,5,371,31"/>
+<area shape="rect" id="Node000002" href="$Monster_8hpp.html" title="Declaration of the Monster class." alt="" coords="24,79,223,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,39,140,81,137,76,217,34"/>
+<area shape="rect" id="Node000004" href="$NetworkManager_8hpp.html" title="Declaration of the NetworkManager class." alt="" coords="297,79,555,104"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="300,34,400,76,398,81,298,38"/>
+<area shape="rect" id="Node000005" href="$Server_8hpp.html" title="Declaration of the Server class." alt="" coords="199,152,386,177"/>
+<area shape="poly" id="edge9_Node000001_Node000005" title=" " alt="" coords="268,44,293,151,287,152,263,45"/>
+<area shape="rect" id="Node000009" href="$GameWorld_8cpp.html" title=" " alt="" coords="579,79,772,104"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="340,30,609,76,608,81,339,36"/>
+<area shape="poly" id="edge2_Node000002_Node000001" title=" " alt="" coords="163,70,243,28,246,33,166,75"/>
+<area shape="rect" id="Node000003" href="$Monster_8cpp.html" title=" " alt="" coords="5,152,175,177"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="114,118,98,153,93,151,110,115"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="394,113,316,154,313,149,391,108"/>
+<area shape="rect" id="Node000008" href="$NetworkManager_8cpp.html" title=" " alt="" coords="411,152,639,177"/>
+<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="454,110,510,150,507,154,451,114"/>
+<area shape="rect" id="Node000006" href="$Server_8cpp.html" title=" " alt="" coords="124,225,283,251"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="269,188,220,227,216,223,266,184"/>
+<area shape="rect" id="Node000007" href="$server_2src_2main_8cpp.html" title=" " alt="" coords="307,225,457,251"/>
+<area shape="poly" id="edge7_Node000005_Node000007" title=" " alt="" coords="319,184,369,223,366,227,316,188"/>
+</map>

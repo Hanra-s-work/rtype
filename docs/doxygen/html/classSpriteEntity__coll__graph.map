@@ -1,0 +1,7 @@
+<map id="SpriteEntity" name="SpriteEntity">
+<area shape="rect" id="Node000001" title="Represents a graphical entity using a sprite." alt="" coords="5,183,104,208"/>
+<area shape="rect" id="Node000002" href="$classEntity.html" title="Base interface for all game entities." alt="" coords="25,108,85,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="57,148,57,182,52,182,52,148"/>
+<area shape="rect" id="Node000003" href="$structVector2.html" title="Simple structure representing a 2D vector." alt="" coords="19,5,90,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="57,45,57,108,52,108,52,45"/>
+</map>

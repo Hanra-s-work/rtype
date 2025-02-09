@@ -1,12 +1,23 @@
 var searchData=
 [
-  ['rect_0',['Rect',['../structRect.html',1,'']]],
-  ['removeclient_1',['removeClient',['../classNetworkManager.html#a1ab71c21d289a0b63f5d268b12a2f6c9',1,'NetworkManager']]],
-  ['removeentity_2',['removeEntity',['../classEntityManager.html#a5b80e7ba51dc110466736fdd21fba6f8',1,'EntityManager']]],
-  ['render_3',['render',['../classEntity.html#a72987d370ecd59d57972060aa8f37c4c',1,'Entity::render()'],['../classEntityManager.html#a45ae5a7308998e096a6ba4d0cefd12be',1,'EntityManager::render()'],['../classHandleBackground.html#afcf144fc90823c9f892b025dd8e6acfb',1,'HandleBackground::render()'],['../classSpriteEntity.html#ab08f6dfb33286c75e56623d666ca41ea',1,'SpriteEntity::render()']]],
-  ['reset_4',['reset',['../classGameWorld.html#a7245bcf0dc9053d69c883eb6d3892fae',1,'GameWorld']]],
-  ['resize_5',['resize',['../classHandleBackground.html#a66f63a3e1817d1a1dc12db44ec068e66',1,'HandleBackground']]],
-  ['retrievemessages_6',['retrieveMessages',['../classNetworkClient.html#afe638e5de770b863f0d22b787a0daae3',1,'NetworkClient']]],
-  ['rotate_7',['rotate',['../classSpriteEntity.html#a5b463177c2228d9d7ac9027ab44c22ee',1,'SpriteEntity']]],
-  ['run_8',['run',['../classClient.html#ae0bc335d720265d4d6e8a72cf7a2a9aa',1,'Client::run()'],['../classServer.html#abb27d30b40a94326e3fd629d3b30b7d5',1,'Server::run()']]]
+  ['parsemessage_0',['parseMessage',['../NetworkManager_8hpp.html#af762b07f293b16fe5da4d22c9e70ab27',1,'NetworkManager.hpp']]],
+  ['pausebackgroundmusic_1',['pauseBackgroundMusic',['../classMusicHandler.html#acd36685a6c0684376981ed860ce70d3f',1,'MusicHandler']]],
+  ['playbackgroundmusic_2',['playBackgroundMusic',['../classMusicHandler.html#a879861d4f4bcd011de9992c1ccb566ec',1,'MusicHandler']]],
+  ['playclick_3',['playClick',['../classMusicHandler.html#a17ad65fe65a4da7b37d3666afc9c0a45',1,'MusicHandler']]],
+  ['playcollision_4',['playCollision',['../classMusicHandler.html#aa0ea9b8926f96f79e150d8ed88d237a9',1,'MusicHandler']]],
+  ['player_5',['Player',['../classPlayer.html',1,'Player'],['../classPlayer.html#a2c4ef652e648242d53ea5607f65ce064',1,'Player::Player()']]],
+  ['player_2ecpp_6',['Player.cpp',['../Player_8cpp.html',1,'']]],
+  ['player_2ehpp_7',['Player.hpp',['../Player_8hpp.html',1,'']]],
+  ['playerid_8',['playerId',['../structPlayerInfo.html#aa204c742efab0c7ea61b90840bc6d3dd',1,'PlayerInfo']]],
+  ['playerinfo_9',['PlayerInfo',['../structPlayerInfo.html',1,'']]],
+  ['playgamestart_10',['playGameStart',['../classMusicHandler.html#afae0d60a2966b12ba17cf31508073649',1,'MusicHandler']]],
+  ['playloose_11',['playLoose',['../classMusicHandler.html#ab4d07c3fad9a8ecda73c36fd433ddda3',1,'MusicHandler']]],
+  ['playplayerfire_12',['playPlayerFire',['../classMusicHandler.html#a61e92ae68986b2eeb92c3eb59bc9ae6e',1,'MusicHandler']]],
+  ['playspawnboss_13',['playSpawnBoss',['../classMusicHandler.html#af944e2c80b547474ec6f850564e8fbe1',1,'MusicHandler']]],
+  ['playwin_14',['playWin',['../classMusicHandler.html#a9cab058659a505abd76f6243c0377f22',1,'MusicHandler']]],
+  ['posx_15',['posX',['../structGameWorld_1_1CollisionEvent.html#ab96a68fd13ae236eb270b9f77bf67b15',1,'GameWorld::CollisionEvent']]],
+  ['posy_16',['posY',['../structGameWorld_1_1CollisionEvent.html#aa48428c45567948f1c43625ba2a993e3',1,'GameWorld::CollisionEvent']]],
+  ['project_17',['Running the Project',['../index.html#running',1,'']]],
+  ['project_20structure_18',['Project Structure',['../index.html#project_structure',1,'']]],
+  ['protocol_19',['Communication Protocol',['../index.html#protocol',1,'']]]
 ];

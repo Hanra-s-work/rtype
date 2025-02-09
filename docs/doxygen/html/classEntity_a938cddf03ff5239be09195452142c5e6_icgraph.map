@@ -1,0 +1,5 @@
+<map id="Entity::isDestroyed" name="Entity::isDestroyed">
+<area shape="rect" id="Node000001" title="Checks if the entity has been destroyed." alt="" coords="204,5,349,31"/>
+<area shape="rect" id="Node000002" href="$classGameWorld.html#ae4ee7df3aa3ea4d7b35de20617cda477" title="Updates the game world." alt="" coords="5,5,156,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="190,21,156,21,156,15,190,15"/>
+</map>
