@@ -1,0 +1,7 @@
+<map id="NetworkClient::sendBinaryMessage" name="NetworkClient::sendBinaryMessage">
+<area shape="rect" id="Node000001" title=" " alt="" coords="521,5,717,45"/>
+<area shape="rect" id="Node000002" href="$classNetworkClient.html#a7f69f5c30fd349d670fae18598737b86" title=" " alt="" coords="280,13,473,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="508,28,473,28,473,23,508,23"/>
+<area shape="rect" id="Node000003" href="$classNetworkClient.html#ab82fb597494c89b4a7ba9fd0d4b659c4" title=" " alt="" coords="5,13,232,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="266,28,232,28,232,23,266,23"/>
+</map>

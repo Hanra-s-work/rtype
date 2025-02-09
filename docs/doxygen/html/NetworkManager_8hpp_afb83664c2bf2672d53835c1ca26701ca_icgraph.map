@@ -1,0 +1,5 @@
+<map id="buildScorePayload" name="buildScorePayload">
+<area shape="rect" id="Node000001" title="Builds the payload for a score update message." alt="" coords="263,13,404,38"/>
+<area shape="rect" id="Node000002" href="$classNetworkManager.html#a2db9ed00e91e773b6bfa07ca37562df0" title="Sends a score update message to a target." alt="" coords="5,5,215,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="249,28,215,28,215,23,249,23"/>
+</map>

@@ -76,7 +76,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">NetworkClient.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -86,7 +87,48 @@ $(function() {
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
 <code>#include &quot;../../common/NetworkProtocol.hpp&quot;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for NetworkClient.hpp:</div>
+<div class="dyncontent">
+<div class="center"><img src="NetworkClient_8hpp__incl.png" border="0" usemap="#aclient_2include_2NetworkClient_8hpp" alt=""/></div>
+<map name="aclient_2include_2NetworkClient_8hpp" id="aclient_2include_2NetworkClient_8hpp">
+<area shape="rect" title=" " alt="" coords="244,5,479,31"/>
+<area shape="rect" title=" " alt="" coords="5,79,83,104"/>
+<area shape="poly" title=" " alt="" coords="311,33,97,81,95,76,310,28"/>
+<area shape="rect" title=" " alt="" coords="107,79,171,104"/>
+<area shape="poly" title=" " alt="" coords="326,33,184,78,183,73,325,28"/>
+<area shape="rect" title=" " alt="" coords="195,79,261,104"/>
+<area shape="poly" title=" " alt="" coords="341,33,263,74,261,70,339,28"/>
+<area shape="rect" title=" " alt="" coords="286,79,349,104"/>
+<area shape="poly" title=" " alt="" coords="356,32,334,68,329,66,352,30"/>
+<area shape="rect" title=" " alt="" coords="373,79,437,104"/>
+<area shape="poly" title=" " alt="" coords="371,30,393,66,389,68,366,32"/>
+<area shape="rect" title=" " alt="" coords="461,79,520,104"/>
+<area shape="poly" title=" " alt="" coords="383,28,458,69,456,74,381,33"/>
+<area shape="rect" title=" " alt="" coords="544,79,624,104"/>
+<area shape="poly" title=" " alt="" coords="398,28,536,72,534,77,396,33"/>
+<area shape="rect" title=" " alt="" coords="648,79,891,104"/>
+<area shape="poly" title=" " alt="" coords="427,28,691,74,690,79,426,33"/>
+</map>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><img src="NetworkClient_8hpp__dep__incl.png" border="0" usemap="#aclient_2include_2NetworkClient_8hppdep" alt=""/></div>
+<map name="aclient_2include_2NetworkClient_8hppdep" id="aclient_2include_2NetworkClient_8hppdep">
+<area shape="rect" title=" " alt="" coords="157,5,391,31"/>
+<area shape="rect" href="Client_8hpp.html" title=" " alt="" coords="77,79,255,104"/>
+<area shape="poly" title=" " alt="" coords="247,40,185,81,182,76,244,36"/>
+<area shape="rect" href="NetworkClient_8cpp.html" title=" " alt="" coords="279,79,485,104"/>
+<area shape="poly" title=" " alt="" coords="304,36,366,76,363,81,301,40"/>
+<area shape="rect" href="Client_8cpp.html" title=" " alt="" coords="5,152,156,177"/>
+<area shape="poly" title=" " alt="" coords="144,115,96,154,93,150,140,110"/>
+<area shape="rect" href="client_2src_2main_8cpp.html" title=" " alt="" coords="180,152,325,177"/>
+<area shape="poly" title=" " alt="" coords="192,110,240,150,237,154,189,115"/>
+</map>
+</div>
 </div>
 <p><a href="NetworkClient_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -95,7 +137,34 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNetworkClient.html">NetworkClient</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles UDP network communication.  <a href="classNetworkClient.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a94a31a6f9695563785116c508e8fb2c4" id="r_a94a31a6f9695563785116c508e8fb2c4"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94a31a6f9695563785116c508e8fb2c4">discoverServer</a> (unsigned short advertisementPort, unsigned int timeoutMs=3000)</td></tr>
+<tr class="separator:a94a31a6f9695563785116c508e8fb2c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a94a31a6f9695563785116c508e8fb2c4" name="a94a31a6f9695563785116c508e8fb2c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94a31a6f9695563785116c508e8fb2c4">&#9670;&#160;</a></span>discoverServer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string discoverServer </td>
+          <td>(</td>
+          <td class="paramtype">unsigned short</td>          <td class="paramname"><span class="paramname"><em>advertisementPort</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int</td>          <td class="paramname"><span class="paramname"><em>timeoutMs</em><span class="paramdefsep"> = </span><span class="paramdefval">3000</span></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

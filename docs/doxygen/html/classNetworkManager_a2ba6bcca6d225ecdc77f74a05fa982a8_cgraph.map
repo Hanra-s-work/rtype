@@ -1,0 +1,15 @@
+<map id="NetworkManager::broadcastEntityUpdate" name="NetworkManager::broadcastEntityUpdate">
+<area shape="rect" id="Node000001" title="Broadcasts an update entity message to all clients." alt="" coords="5,98,212,138"/>
+<area shape="rect" id="Node000002" href="$NetworkManager_8cpp.html#a604ec93afc6aff97fa3cc5b7c232b784" title="Builds the payload for an entity update/spawn message." alt="" coords="296,65,439,91"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,99,282,88,283,94,213,105"/>
+<area shape="rect" id="Node000006" href="$classNetworkManager.html#a99341469311e4530c2aa0385f17307b3" title="Sends a binary message to a specific target." alt="" coords="260,126,475,166"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="213,127,247,130,246,136,212,132"/>
+<area shape="rect" id="Node000003" href="$classEntity.html#a93c54f49ef525fb5461ef456593abcbb" title="Gets the unique identifier of the entity." alt="" coords="543,5,643,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="415,63,531,32,532,37,417,68"/>
+<area shape="rect" id="Node000004" href="$classEntity.html#a47d465aee2ac4dc6e8a0c0843e324764" title="Gets the current position of the entity." alt="" coords="523,55,663,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="439,72,508,69,509,74,439,77"/>
+<area shape="rect" id="Node000005" href="$classEntity.html#a71b3d5377689dc9ea99de6974481cc2b" title="Gets the entity type." alt="" coords="533,104,652,129"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="440,88,521,102,520,107,439,93"/>
+<area shape="rect" id="Node000007" href="$NetworkManager_8hpp.html#a29a7b4409c813acfea4a9cc13da92a7f" title="Builds a message from a type and payload." alt="" coords="537,153,649,179"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="475,153,523,157,522,162,475,158"/>
+</map>

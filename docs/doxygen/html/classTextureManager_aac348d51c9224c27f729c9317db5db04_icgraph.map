@@ -1,0 +1,7 @@
+<map id="TextureManager::getTexture" name="TextureManager::getTexture">
+<area shape="rect" id="Node000001" title="Retrieves the texture associated with a given path." alt="" coords="160,31,364,56"/>
+<area shape="rect" id="Node000002" href="$classClient.html#ae51af7aa6b8f591496a8f6a4a87a14bf" title="Constructs a new Client object." alt="" coords="5,5,112,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,32,112,27,113,22,147,26"/>
+<area shape="rect" id="Node000003" href="$classHUD.html#a568b8ee1591f9ba3ed36ae05966f6b56" title="Constructs a new HUD object." alt="" coords="13,55,104,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="146,60,105,65,104,59,146,54"/>
+</map>

@@ -1,0 +1,25 @@
+<map id="Entity::getId" name="Entity::getId">
+<area shape="rect" id="Node000001" title="Gets the unique identifier of the entity." alt="" coords="807,129,907,155"/>
+<area shape="rect" id="Node000002" href="$classPlayer.html#aa4f77ba51081e8e66bf465421cab1694" title="Adds points to the player&#39;s score." alt="" coords="596,5,727,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="837,120,803,81,781,61,757,44,726,31,728,26,760,40,784,57,807,77,841,116"/>
+<area shape="rect" id="Node000003" href="$NetworkManager_8cpp.html#a55ff5973d68a185ec168d3ffe5e6fe72" title="Builds the payload for a destroy entity message." alt="" coords="564,55,759,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="822,125,758,94,722,83,724,77,760,89,824,120"/>
+<area shape="rect" id="Node000006" href="$NetworkManager_8cpp.html#a604ec93afc6aff97fa3cc5b7c232b784" title="Builds the payload for an entity update/spawn message." alt="" coords="590,104,733,129"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="792,136,732,129,733,123,793,131"/>
+<area shape="rect" id="Node000009" href="$NetworkManager_8cpp.html#a20d16e48cb291f7dede19b117d367e08" title=" " alt="" coords="597,153,726,179"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="793,152,727,161,726,155,792,147"/>
+<area shape="rect" id="Node000010" href="$classPlayer.html#a4c9facfb2b8053f7ad4e99bdcbae8028" title="Decreases the player&#39;s life by one." alt="" coords="584,203,739,228"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="823,164,760,194,724,205,722,200,758,189,821,159"/>
+<area shape="rect" id="Node000012" href="$classGameWorld.html#ae4ee7df3aa3ea4d7b35de20617cda477" title="Updates the game world." alt="" coords="586,252,737,277"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="841,167,806,206,784,226,760,243,734,254,732,249,757,238,781,222,803,203,837,164"/>
+<area shape="rect" id="Node000004" href="$classNetworkManager.html#af230711df1b288f56d28d47b7ace5a04" title="Broadcasts a destroy entity message to all clients for a given entity." alt="" coords="307,21,514,61"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="550,58,514,54,515,49,551,53"/>
+<area shape="rect" id="Node000005" href="$classNetworkManager.html#afd4ea8a9da6b609f00abace2e40767f9" title="Checks the heartbeat of each client and removes timed&#45;out clients." alt="" coords="5,28,257,53"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="294,43,257,43,257,38,294,38"/>
+<area shape="rect" id="Node000007" href="$classNetworkManager.html#a2ba6bcca6d225ecdc77f74a05fa982a8" title="Broadcasts an update entity message to all clients." alt="" coords="307,85,514,125"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="576,115,514,112,514,107,576,110"/>
+<area shape="rect" id="Node000008" href="$classNetworkManager.html#a6d3e19299642124b48149a448773bd3e" title="Sends a spawn entity message to a target." alt="" coords="305,149,516,189"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="587,135,508,151,507,146,585,130"/>
+<area shape="rect" id="Node000011" href="$classPlayer.html#a85b6cce0b30a833fee9bd6dc1f1ba0fe" title="Handles collision with another entity." alt="" coords="339,213,482,239"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="570,222,482,226,482,220,570,217"/>
+</map>

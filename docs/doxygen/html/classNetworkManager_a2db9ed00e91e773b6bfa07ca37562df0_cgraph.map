@@ -1,0 +1,7 @@
+<map id="NetworkManager::sendScoreMessage" name="NetworkManager::sendScoreMessage">
+<area shape="rect" id="Node000001" title="Sends a score update message to a target." alt="" coords="5,23,215,63"/>
+<area shape="rect" id="Node000002" href="$NetworkManager_8hpp.html#a29a7b4409c813acfea4a9cc13da92a7f" title="Builds a message from a type and payload." alt="" coords="277,5,389,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="215,29,263,23,264,29,216,34"/>
+<area shape="rect" id="Node000003" href="$NetworkManager_8cpp.html#afb83664c2bf2672d53835c1ca26701ca" title="Builds the payload for a score update message." alt="" coords="263,55,404,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="215,52,249,56,248,61,215,57"/>
+</map>

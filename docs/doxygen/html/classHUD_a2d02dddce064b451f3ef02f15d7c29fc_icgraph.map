@@ -1,0 +1,5 @@
+<map id="HUD::setFont" name="HUD::setFont">
+<area shape="rect" id="Node000001" title="Sets the font used by the HUD." alt="" coords="160,5,268,31"/>
+<area shape="rect" id="Node000002" href="$classClient.html#ae51af7aa6b8f591496a8f6a4a87a14bf" title="Constructs a new Client object." alt="" coords="5,5,112,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,21,112,21,112,15,146,15"/>
+</map>

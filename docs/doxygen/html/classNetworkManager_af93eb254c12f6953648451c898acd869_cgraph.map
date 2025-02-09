@@ -1,0 +1,9 @@
+<map id="NetworkManager::sendLifeMessage" name="NetworkManager::sendLifeMessage">
+<area shape="rect" id="Node000001" title="Sends a life update message for a player." alt="" coords="5,27,203,67"/>
+<area shape="rect" id="Node000002" href="$NetworkManager_8hpp.html#a2133f1091fd7c44da476c5a4f39696a2" title="Builds the payload for a life update message." alt="" coords="293,5,423,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="203,33,279,24,280,30,203,39"/>
+<area shape="rect" id="Node000003" href="$classNetworkManager.html#a99341469311e4530c2aa0385f17307b3" title="Sends a binary message to a specific target." alt="" coords="251,55,465,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="203,56,237,59,237,65,203,61"/>
+<area shape="rect" id="Node000004" href="$NetworkManager_8hpp.html#a29a7b4409c813acfea4a9cc13da92a7f" title="Builds a message from a type and payload." alt="" coords="513,63,625,88"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="466,73,500,73,500,78,466,78"/>
+</map>

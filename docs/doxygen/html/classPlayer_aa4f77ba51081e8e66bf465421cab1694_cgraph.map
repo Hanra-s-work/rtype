@@ -1,0 +1,5 @@
+<map id="Player::addScore" name="Player::addScore">
+<area shape="rect" id="Node000001" title="Adds points to the player&#39;s score." alt="" coords="5,5,136,31"/>
+<area shape="rect" id="Node000002" href="$classEntity.html#a93c54f49ef525fb5461ef456593abcbb" title="Gets the unique identifier of the entity." alt="" coords="184,5,284,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,15,170,15,170,21,136,21"/>
+</map>

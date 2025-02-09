@@ -1,0 +1,5 @@
+<map id="NetworkManager::broadcastPlayerLeft" name="NetworkManager::broadcastPlayerLeft">
+<area shape="rect" id="Node000001" title="Broadcasts a player left message to all clients." alt="" coords="305,5,512,45"/>
+<area shape="rect" id="Node000002" href="$classNetworkManager.html#afd4ea8a9da6b609f00abace2e40767f9" title="Checks the heartbeat of each client and removes timed&#45;out clients." alt="" coords="5,13,257,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="292,28,258,28,258,23,292,23"/>
+</map>

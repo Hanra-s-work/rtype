@@ -1,0 +1,9 @@
+<map id="buildEntityPayload" name="buildEntityPayload">
+<area shape="rect" id="Node000001" title="Builds the payload for an entity update/spawn message." alt="" coords="5,55,148,80"/>
+<area shape="rect" id="Node000002" href="$classEntity.html#a93c54f49ef525fb5461ef456593abcbb" title="Gets the unique identifier of the entity." alt="" coords="216,5,316,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,52,202,32,204,37,127,57"/>
+<area shape="rect" id="Node000003" href="$classEntity.html#a47d465aee2ac4dc6e8a0c0843e324764" title="Gets the current position of the entity." alt="" coords="196,55,336,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="148,65,182,65,182,70,148,70"/>
+<area shape="rect" id="Node000004" href="$classEntity.html#a71b3d5377689dc9ea99de6974481cc2b" title="Gets the entity type." alt="" coords="207,104,325,129"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="127,77,204,98,202,103,125,83"/>
+</map>

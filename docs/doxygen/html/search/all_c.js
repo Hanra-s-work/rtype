@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['update_0',['update',['../classEntity.html#a20563d72d08ac8bdf84bfe1944530a20',1,'Entity::update()'],['../classEntityManager.html#a6224a3ad56cfcae1770c03ed5731ff23',1,'EntityManager::update()'],['../classHandleBackground.html#a59591beda4056771cae4f22015de3840',1,'HandleBackground::update()'],['../classSpriteEntity.html#a08890b6680df981b31d9bc72d9b74326',1,'SpriteEntity::update()']]],
-  ['updateentity_1',['updateEntity',['../classEntityManager.html#ab31c7ada4c8b4775374cddf8739879bb',1,'EntityManager']]],
-  ['updatelife_2',['updateLife',['../classEntityManager.html#aebbee8bf437929515a3ffd8883fd40ef',1,'EntityManager']]],
-  ['updateplayer_3',['updatePlayer',['../classHUD.html#ad05f3184c3426e150b18dcf9ca00b305',1,'HUD']]]
+  ['networkclient_0',['NetworkClient',['../classNetworkClient.html',1,'NetworkClient'],['../classNetworkClient.html#ac3e6334ffae912c14087fb58072c03d1',1,'NetworkClient::NetworkClient()']]],
+  ['networkclient_2ecpp_1',['NetworkClient.cpp',['../NetworkClient_8cpp.html',1,'']]],
+  ['networkclient_2ehpp_2',['NetworkClient.hpp',['../NetworkClient_8hpp.html',1,'']]],
+  ['networkmanager_3',['NetworkManager',['../classNetworkManager.html',1,'NetworkManager'],['../classNetworkManager.html#a9b2052fe51395518a1c7b4d5dab1823b',1,'NetworkManager::NetworkManager()']]],
+  ['networkmanager_2ecpp_4',['NetworkManager.cpp',['../NetworkManager_8cpp.html',1,'']]],
+  ['networkmanager_2ehpp_5',['NetworkManager.hpp',['../NetworkManager_8hpp.html',1,'']]]
 ];

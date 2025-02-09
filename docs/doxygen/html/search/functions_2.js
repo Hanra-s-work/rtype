@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['geteffectsvolume_0',['getEffectsVolume',['../classMusicHandler.html#a99f252c5144894323127cab5e8f0cf40',1,'MusicHandler']]],
-  ['getlife_1',['getLife',['../classSpriteEntity.html#a5316b484a8f4607c7766b7c49c852796',1,'SpriteEntity']]],
-  ['getmusicvolume_2',['getMusicVolume',['../classMusicHandler.html#a7d0dd2e23ae1030f5cb8a5c690dfcf55',1,'MusicHandler']]],
-  ['getposition_3',['getPosition',['../classEntity.html#a76f3fcc43203852eef7ec35d48a46bf4',1,'Entity::getPosition()'],['../classSpriteEntity.html#a493c3852e93cc05e0013a0d5f14e9367',1,'SpriteEntity::getPosition() const override']]],
-  ['getsize_4',['getSize',['../classSpriteEntity.html#a8c8a729e4ae5d792a9e4661cc8ddceb8',1,'SpriteEntity']]],
-  ['getspriteentity_5',['getSpriteEntity',['../classEntityManager.html#a0928701907062c3603b3ebd0b3014f26',1,'EntityManager']]],
-  ['gettexture_6',['getTexture',['../classTextureManager.html#aac348d51c9224c27f729c9317db5db04',1,'TextureManager']]]
+  ['checkheartbeats_0',['checkHeartbeats',['../classNetworkManager.html#afd4ea8a9da6b609f00abace2e40767f9',1,'NetworkManager']]],
+  ['clear_1',['clear',['../classEntityManager.html#a322d6323d3d2b22581ca50efd1e253f5',1,'EntityManager']]],
+  ['client_2',['Client',['../classClient.html#ae51af7aa6b8f591496a8f6a4a87a14bf',1,'Client']]],
+  ['collideswith_3',['collidesWith',['../classEntity.html#a27f44cef02de22382f78ab1363ae6012',1,'Entity::collidesWith()'],['../classMissile.html#a487eb379666a97d6481616934b663414',1,'Missile::collidesWith()'],['../classMonster.html#adb698ac81f5b3854cfb0c0c336f4fbac',1,'Monster::collidesWith()'],['../classPlayer.html#a708c17cbf34db586ad07888d3af4a826',1,'Player::collidesWith()']]],
+  ['connect_4',['connect',['../classNetworkClient.html#a57d8a26e161d7351b05acc434c724157',1,'NetworkClient']]]
 ];

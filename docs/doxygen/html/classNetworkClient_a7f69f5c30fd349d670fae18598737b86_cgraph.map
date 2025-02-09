@@ -1,0 +1,7 @@
+<map id="NetworkClient::disconnect" name="NetworkClient::disconnect">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,13,199,38"/>
+<area shape="rect" id="Node000002" href="$classNetworkClient.html#ab8ea81a8da20742e3f2a5d5f5921e6a0" title=" " alt="" coords="247,5,443,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,23,233,23,233,28,199,28"/>
+<area shape="rect" id="Node000003" href="$NetworkManager_8hpp.html#a29a7b4409c813acfea4a9cc13da92a7f" title="Builds a message from a type and payload." alt="" coords="491,13,603,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="443,23,477,23,477,28,443,28"/>
+</map>

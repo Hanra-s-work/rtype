@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['r_0',['R',['../classsf_1_1Joystick.html#a48db337092c2e263774f94de6d50baa7aeebbcdb0828850f4d69e6a084801fab8',1,'sf::Joystick::R'],['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875af04c2611e3ee0855a044927d5bd0e194',1,'sf::Keyboard::Scan::R'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142add852cadaa6fff2d982bbab3551c31d0',1,'sf::Keyboard::R']]],
+  ['ralt_1',['RAlt',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875a2d6f466aef0f34d0d794d79362002ae3',1,'sf::Keyboard::Scan::RAlt'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142a21dcf098233296462bc7c632b93369cc',1,'sf::Keyboard::RAlt']]],
+  ['rangenotsatisfiable_2',['RangeNotSatisfiable',['../classsf_1_1Http_1_1Response.html#a663e071978e30fbbeb20ed045be874d8a12533d00093b190e6d4c0076577e2239',1,'sf::Http::Response']]],
+  ['rbracket_3',['RBracket',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875a5b278a8f7b97c3972ec572412d855660',1,'sf::Keyboard::Scan::RBracket'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142a578253a70b48e61830aa08292d44680f',1,'sf::Keyboard::RBracket']]],
+  ['rcontrol_4',['RControl',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875ab80b18e7c688d4cd1bbb52b40b9699fe',1,'sf::Keyboard::Scan::RControl'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142a275d3fd207a9c0b22ce404012c71dc17',1,'sf::Keyboard::RControl']]],
+  ['read_5fop_5',['read_op',['../classasio_1_1detail_1_1select__reactor.html#aa68ba3d214f9f046a27ad6b4ad743b37ab22de8bbf84e6d43de4e6f6a8bf70da5',1,'asio::detail::select_reactor']]],
+  ['redirect_6',['redirect',['../classicmp__header.html#ad6e53cc05bf061746589dd5c5a175558a79484ba871e5efba55d67a442f405642',1,'icmp_header']]],
+  ['redo_7',['Redo',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875ad7b33839e3d1dc8048ed4e32297113ad',1,'sf::Keyboard::Scan']]],
+  ['refresh_8',['Refresh',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875a21a543fae6b497b61df6e58d315f9e12',1,'sf::Keyboard::Scan']]],
+  ['regular_9',['Regular',['../classsf_1_1Text.html#aa8add4aef484c6e6b20faff07452bd82a2af9ae5e1cda126570f744448e0caa32',1,'sf::Text']]],
+  ['request_5ffailed_10',['request_failed',['../classsocks4_1_1reply.html#a19dcc77721e693067f2abef5dfa78552adbebf19f2832acec0c41ef42c56897e4',1,'socks4::reply']]],
+  ['request_5ffailed_5fbad_5fuser_5fid_11',['request_failed_bad_user_id',['../classsocks4_1_1reply.html#a19dcc77721e693067f2abef5dfa78552a23d2bed0686ea110d7aaa2f5f04d8e1e',1,'socks4::reply']]],
+  ['request_5ffailed_5fno_5fidentd_12',['request_failed_no_identd',['../classsocks4_1_1reply.html#a19dcc77721e693067f2abef5dfa78552ab615a86716e8758d12df896f594cc39f',1,'socks4::reply']]],
+  ['request_5fgranted_13',['request_granted',['../classsocks4_1_1reply.html#a19dcc77721e693067f2abef5dfa78552aa3dbd17be48ef60c2873cd2477d8b6e1',1,'socks4::reply']]],
+  ['resetcontent_14',['ResetContent',['../classsf_1_1Http_1_1Response.html#a663e071978e30fbbeb20ed045be874d8a77327cc2a5e34cc64030b322e61d12a8',1,'sf::Http::Response']]],
+  ['resize_15',['Resize',['../group__window.html#gga18724fd58b2fc42e60281d9915f59c84accff967648ebcd5db2007eff7352b50f',1,'sf::Style']]],
+  ['resized_16',['Resized',['../classsf_1_1Event.html#af41fa9ed45c02449030699f671331d4aa67fd26d7e520bc6722db3ff47ef24941',1,'sf::Event']]],
+  ['restart_17',['restart',['../classasio_1_1signal__set__base.html#a2698415f9bdc705474a292f15b11625ea8a7ef1c3e82395341b7000b79c239eb4',1,'asio::signal_set_base']]],
+  ['restartmarkerreply_18',['RestartMarkerReply',['../classsf_1_1Ftp_1_1Response.html#af81738f06b6f571761696291276acb3ba07e06d3326ba2d078583bef93930d909',1,'sf::Ftp::Response']]],
+  ['return_19',['Return',['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142ac291de81bdee518d636bc359f2ca77de',1,'sf::Keyboard']]],
+  ['reversesubtract_20',['ReverseSubtract',['../structsf_1_1BlendMode.html#a7bce470e2e384c4f9c8d9595faef7c32a2d04acf59e91811128e7d0ef076f65f0',1,'sf::BlendMode']]],
+  ['right_21',['Right',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875a03d293668313031e7ff7eb9b7894e5c7',1,'sf::Keyboard::Scan::Right'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142a2aeb083dea103a8e36b6850b51ef3632',1,'sf::Keyboard::Right'],['../classsf_1_1Mouse.html#a4fb128be433f9aafe66bc0c605daaa90af2cff24ab6c26daf079b11189f982fc4',1,'sf::Mouse::Right']]],
+  ['rshift_22',['RShift',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875a81b7e74173912d98493b62b13a7ed648',1,'sf::Keyboard::Scan::RShift'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142a5be69e3b2f25bd5f4eed75d063f42b90',1,'sf::Keyboard::RShift']]],
+  ['rsystem_23',['RSystem',['../structsf_1_1Keyboard_1_1Scan.html#aa42fbf6954d6f81f7606e566c7abe875a62f3504c695ca7968e710cfdc1d8c61b',1,'sf::Keyboard::Scan::RSystem'],['../classsf_1_1Keyboard.html#acb4cacd7cc5802dec45724cf3314a142ac1b3fd7424feeda242cedbb64f3f5a7f',1,'sf::Keyboard::RSystem']]]
+];

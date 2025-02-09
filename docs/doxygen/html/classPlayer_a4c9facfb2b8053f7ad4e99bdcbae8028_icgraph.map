@@ -1,0 +1,5 @@
+<map id="Player::decreaseLife" name="Player::decreaseLife">
+<area shape="rect" id="Node000001" title="Decreases the player&#39;s life by one." alt="" coords="196,5,351,31"/>
+<area shape="rect" id="Node000002" href="$classPlayer.html#a85b6cce0b30a833fee9bd6dc1f1ba0fe" title="Handles collision with another entity." alt="" coords="5,5,148,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,21,148,21,148,15,182,15"/>
+</map>

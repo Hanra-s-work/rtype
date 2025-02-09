@@ -138,18 +138,20 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        sf::Sprite _settingsSprite;       </div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        sf::Text _settingsText;           </div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordtype">bool</span> _hoverSettings{ <span class="keyword">false</span> };     </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>};</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordtype">bool</span> _gameOver = <span class="keyword">false</span>;           </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        sf::Clock _gameOverClock;         </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>};</div>
 </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">#endif </span><span class="comment">// CLIENT_HPP</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="preprocessor">#endif </span><span class="comment">// CLIENT_HPP</span></div>
 <div class="ttc" id="aEntityManager_8hpp_html"><div class="ttname"><a href="EntityManager_8hpp.html">EntityManager.hpp</a></div></div>
 <div class="ttc" id="aHUD_8hpp_html"><div class="ttname"><a href="HUD_8hpp.html">HUD.hpp</a></div></div>
 <div class="ttc" id="aHandleBackground_8hpp_html"><div class="ttname"><a href="HandleBackground_8hpp.html">HandleBackground.hpp</a></div></div>
 <div class="ttc" id="aMusicHandler_8hpp_html"><div class="ttname"><a href="MusicHandler_8hpp.html">MusicHandler.hpp</a></div></div>
 <div class="ttc" id="aNetworkClient_8hpp_html"><div class="ttname"><a href="NetworkClient_8hpp.html">NetworkClient.hpp</a></div></div>
 <div class="ttc" id="aclassClient_html"><div class="ttname"><a href="classClient.html">Client</a></div><div class="ttdoc">The Client class manages the main application lifecycle.</div><div class="ttdef"><b>Definition</b> Client.hpp:18</div></div>
-<div class="ttc" id="aclassClient_html_ae0bc335d720265d4d6e8a72cf7a2a9aa"><div class="ttname"><a href="classClient.html#ae0bc335d720265d4d6e8a72cf7a2a9aa">Client::run</a></div><div class="ttdeci">void run()</div><div class="ttdoc">Starts the main game loop.</div><div class="ttdef"><b>Definition</b> Client.cpp:48</div></div>
-<div class="ttc" id="aclassClient_html_ae51af7aa6b8f591496a8f6a4a87a14bf"><div class="ttname"><a href="classClient.html#ae51af7aa6b8f591496a8f6a4a87a14bf">Client::Client</a></div><div class="ttdeci">Client()</div><div class="ttdoc">Constructs a new Client object.</div><div class="ttdef"><b>Definition</b> Client.cpp:6</div></div>
+<div class="ttc" id="aclassClient_html_ae0bc335d720265d4d6e8a72cf7a2a9aa"><div class="ttname"><a href="classClient.html#ae0bc335d720265d4d6e8a72cf7a2a9aa">Client::run</a></div><div class="ttdeci">void run()</div><div class="ttdoc">Starts the main game loop.</div><div class="ttdef"><b>Definition</b> Client.cpp:49</div></div>
+<div class="ttc" id="aclassClient_html_ae51af7aa6b8f591496a8f6a4a87a14bf"><div class="ttname"><a href="classClient.html#ae51af7aa6b8f591496a8f6a4a87a14bf">Client::Client</a></div><div class="ttdeci">Client()</div><div class="ttdoc">Constructs a new Client object.</div><div class="ttdef"><b>Definition</b> Client.cpp:7</div></div>
 <div class="ttc" id="aclassEntityManager_html"><div class="ttname"><a href="classEntityManager.html">EntityManager</a></div><div class="ttdoc">Manages game entities.</div><div class="ttdef"><b>Definition</b> EntityManager.hpp:16</div></div>
 <div class="ttc" id="aclassHUD_html"><div class="ttname"><a href="classHUD.html">HUD</a></div><div class="ttdoc">Displays the game Heads-Up Display (HUD).</div><div class="ttdef"><b>Definition</b> HUD.hpp:10</div></div>
 <div class="ttc" id="aclassHandleBackground_html"><div class="ttname"><a href="classHandleBackground.html">HandleBackground</a></div><div class="ttdoc">Handles background rendering and animated star field.</div><div class="ttdef"><b>Definition</b> HandleBackground.hpp:10</div></div>

@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['spriteentity_2ecpp_0',['SpriteEntity.cpp',['../SpriteEntity_8cpp.html',1,'']]],
-  ['spriteentity_2ehpp_1',['SpriteEntity.hpp',['../SpriteEntity_8hpp.html',1,'']]]
+  ['networkclient_2ecpp_0',['NetworkClient.cpp',['../NetworkClient_8cpp.html',1,'']]],
+  ['networkclient_2ehpp_1',['NetworkClient.hpp',['../NetworkClient_8hpp.html',1,'']]],
+  ['networkmanager_2ecpp_2',['NetworkManager.cpp',['../NetworkManager_8cpp.html',1,'']]],
+  ['networkmanager_2ehpp_3',['NetworkManager.hpp',['../NetworkManager_8hpp.html',1,'']]]
 ];

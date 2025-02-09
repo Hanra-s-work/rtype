@@ -1,0 +1,5 @@
+<map id="GameWorld::getEntitiesSnapshot" name="GameWorld::getEntitiesSnapshot">
+<area shape="rect" id="Node000001" title="Gets a snapshot of all entities in the world." alt="" coords="288,5,524,31"/>
+<area shape="rect" id="Node000002" href="$classGameWorld.html#a21c1929e3c38584f5749a233f3b4ae8c" title="Gets a snapshot of only player entities." alt="" coords="5,5,240,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="274,21,240,21,240,15,274,15"/>
+</map>
