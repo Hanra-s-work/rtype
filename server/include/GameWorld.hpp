@@ -43,10 +43,14 @@ public:
     void spawnMonster();
     void spawnBoss();
     void reset();
+    uint32_t getScore();
+    void setScore(uint32_t score);
+    bool _bossSpawned = false;
 
 private:
     std::vector<std::unique_ptr<Entity>> _entities;
     mutable std::mutex _entitiesMutex;
     double _monsterSpawnTimer = 0.0;
     double _monsterSpawnInterval = 5.0;
+    uint32_t _globalScore = 0;
 };

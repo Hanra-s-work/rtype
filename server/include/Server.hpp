@@ -26,8 +26,5 @@ private:
     std::thread _gameLoopThread;
     std::atomic<bool> _running { false };
 
-    uint32_t _globalScore = 0;
-    bool _bossSpawned = false;
-
     bool _sessionActive = false;
 };

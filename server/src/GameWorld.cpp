@@ -44,15 +44,13 @@ static bool rectIntersect(const Rect& a, const Rect& b) {
             a.y < b.y + b.h && a.y + a.h > b.y);
 }
 
-GameWorld::GameWorld() 
-    : _monsterSpawnTimer(0.0), _monsterSpawnInterval(5.0)
+GameWorld::GameWorld(): _monsterSpawnTimer(0.0), _monsterSpawnInterval(5.0)
 {
     srand (time(NULL));
 }
 
 void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& destroyEvents, std::vector<CollisionEvent>& collisionEvents)
 {
-    // 1. Update monster spawn timer.
     bool shouldSpawn = false;
     {
         std::lock_guard<std::mutex> lock(_entitiesMutex);
@@ -62,11 +60,9 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
             _monsterSpawnTimer = 0.0;
         }
     }
-    if (shouldSpawn) {
+    if (shouldSpawn)
         spawnMonster();
-    }
 
-    // 2. Take a snapshot of entities.
     std::vector<Entity*> snapshot;
     {
         std::lock_guard<std::mutex> lock(_entitiesMutex);
@@ -78,8 +74,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
         if (e)
             e->update(dt);
     }
-    
-    // 3. Collision detection & resolution.
+
     std::vector<DestroyEvent> localDestroyEvents;
     std::vector<CollisionEvent> localCollisionEvents;
     {
@@ -88,13 +83,12 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
             for (size_t j = i + 1; j < _entities.size(); ++j) {
                 Entity* e1 = _entities[i].get();
                 Entity* e2 = _entities[j].get();
-                if (!e1 || !e2) continue;
+                if (!e1 || !e2)
+                    continue;
                 if (e1->isDestroyed() || e2->isDestroyed())
                     continue;
-                
-                // Skip collision between a player and its own missile.
                 if ((e1->getType() == EntityType::PlayerMissile && e2->getType() == EntityType::Player) ||
-                    (e1->getType() == EntityType::Player && e2->getType() == EntityType::PlayerMissile)) {
+                (e1->getType() == EntityType::Player && e2->getType() == EntityType::PlayerMissile)) {
                     Missile* m = (e1->getType() == EntityType::PlayerMissile) ? dynamic_cast<Missile*>(e1) 
                                                                                : dynamic_cast<Missile*>(e2);
                     Player* p = (e1->getType() == EntityType::Player) ? dynamic_cast<Player*>(e1)
@@ -106,16 +100,13 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                 Rect r1 = getHitbox(e1);
                 Rect r2 = getHitbox(e2);
                 if (rectIntersect(r1, r2)) {
-                    // Record collision event.
                     float midX = (r1.x + r1.w/2 + r2.x + r2.w/2) / 2;
                     float midY = (r1.y + r1.h/2 + r2.y + r2.h/2) / 2;
                     CollisionEvent colEv;
                     colEv.posX = midX;
                     colEv.posY = midY;
                     localCollisionEvents.push_back(colEv);
-                    
-                    // Collision resolution:
-                    // Case A: PlayerMissile vs (Monster, Monster2, Monster3, or Boss)
+
                     if ((e1->getType() == EntityType::PlayerMissile &&
                         (e2->getType() == EntityType::Monster ||
                          e2->getType() == EntityType::Monster2 ||
@@ -138,7 +129,6 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                         }
                         missileEntity->destroy();
                         if (targetEntity->getType() == EntityType::Boss) {
-                            // For boss, decrement health instead of destroying immediately.
                             Monster* boss = dynamic_cast<Monster*>(targetEntity);
                             if (boss) {
                                 boss->_health -= 1;
@@ -152,7 +142,6 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                                 onScoreUpdate(100);
                         }
                     }
-                    // Case B: MonsterMissile vs Player
                     else if ((e1->getType() == EntityType::MonsterMissile && e2->getType() == EntityType::Player) ||
                              (e1->getType() == EntityType::Player && e2->getType() == EntityType::MonsterMissile))
                     {
@@ -166,7 +155,6 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                                 p->decreaseLife();
                         }
                     }
-                    // Case C: Monster vs Player
                     else if (((e1->getType() == EntityType::Monster || e1->getType() == EntityType::Monster2 || e1->getType() == EntityType::Monster3) && e2->getType() == EntityType::Player) ||
                              ((e2->getType() == EntityType::Monster || e2->getType() == EntityType::Monster2 || e2->getType() == EntityType::Monster3) && e1->getType() == EntityType::Player))
                     {
@@ -181,8 +169,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                 }
             }
         }
-        
-        // Record destruction events.
+
         for (const auto &ent : _entities) {
             if (ent->isDestroyed()) {
                 DestroyEvent ev;
@@ -191,8 +178,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                 localDestroyEvents.push_back(ev);
             }
         }
-        
-        // Remove destroyed entities.
+
         _entities.erase(
             std::remove_if(_entities.begin(), _entities.end(),
                 [](const std::unique_ptr<Entity>& e) {
@@ -212,7 +198,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
 void GameWorld::spawnMonster()
 {
     uint32_t monsterId = generateEntityId();
-    int r = std::rand() % 3; // 0, 1, or 2
+    int r = std::rand() % 3;
     EntityType type;
     switch(r) {
         case 0:  type = EntityType::Monster;  break;
@@ -297,9 +283,21 @@ std::vector<Entity*> GameWorld::getPlayersSnapshot() const {
     return players;
 }
 
-void GameWorld::reset() {
+void GameWorld::reset()
+{
     std::lock_guard<std::mutex> lock(_entitiesMutex);
+    _globalScore = 0;
+    _bossSpawned = false;
     _entities.clear();
     _monsterSpawnTimer = 0.0;
-    // Reset any other state as needed.
+}
+
+uint32_t GameWorld::getScore()
+{
+    return _globalScore;
+}
+
+void GameWorld::setScore(uint32_t score)
+{
+    _globalScore = score;
 }
