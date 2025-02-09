@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['disconnect_0',['disconnect',['../classNetworkClient.html#a7f69f5c30fd349d670fae18598737b86',1,'NetworkClient']]],
-  ['draw_1',['draw',['../classHUD.html#a3d091bd239fa675783a41de2139e4ea6',1,'HUD']]]
+  ['addentity_0',['addEntity',['../classGameWorld.html#a58594b7017d8599f345e49a9dd7d68aa',1,'GameWorld']]],
+  ['addscore_1',['addScore',['../classPlayer.html#aa4f77ba51081e8e66bf465421cab1694',1,'Player']]]
 ];

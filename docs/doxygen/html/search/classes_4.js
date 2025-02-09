@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['networkclient_0',['NetworkClient',['../classNetworkClient.html',1,'']]]
+  ['handlebackground_0',['HandleBackground',['../classHandleBackground.html',1,'']]],
+  ['hud_1',['HUD',['../classHUD.html',1,'']]]
 ];

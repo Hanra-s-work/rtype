@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['entity_0',['Entity',['../classEntity.html',1,'']]],
-  ['entitymanager_1',['EntityManager',['../classEntityManager.html',1,'']]]
+  ['destroyevent_0',['DestroyEvent',['../structGameWorld_1_1DestroyEvent.html',1,'GameWorld']]]
 ];

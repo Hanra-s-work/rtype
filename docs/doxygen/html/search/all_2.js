@@ -1,8 +1,12 @@
 var searchData=
 [
-  ['entity_0',['Entity',['../classEntity.html',1,'']]],
-  ['entity_2ehpp_1',['Entity.hpp',['../Entity_8hpp.html',1,'']]],
-  ['entitymanager_2',['EntityManager',['../classEntityManager.html',1,'']]],
-  ['entitymanager_2ecpp_3',['EntityManager.cpp',['../EntityManager_8cpp.html',1,'']]],
-  ['entitymanager_2ehpp_4',['EntityManager.hpp',['../EntityManager_8hpp.html',1,'']]]
+  ['broadcastentitydestroy_0',['broadcastEntityDestroy',['../classNetworkManager.html#af230711df1b288f56d28d47b7ace5a04',1,'NetworkManager::broadcastEntityDestroy(Entity *entity)'],['../classNetworkManager.html#aaaf0824efb9bc2e10bbff4612027d84a',1,'NetworkManager::broadcastEntityDestroy(uint8_t type, uint32_t id)']]],
+  ['broadcastentityupdate_1',['broadcastEntityUpdate',['../classNetworkManager.html#a2ba6bcca6d225ecdc77f74a05fa982a8',1,'NetworkManager']]],
+  ['broadcastplayerleft_2',['broadcastPlayerLeft',['../classNetworkManager.html#a435e0a40a76af282de58d411462b724a',1,'NetworkManager']]],
+  ['broadcastserveradvertisement_3',['broadcastServerAdvertisement',['../NetworkManager_8hpp.html#a7335d3130350f98adae401db35c821eb',1,'broadcastServerAdvertisement(asio::io_context &amp;io_context, unsigned short advertisementPort, unsigned short serverPort):&#160;NetworkManager.cpp'],['../NetworkManager_8cpp.html#a7335d3130350f98adae401db35c821eb',1,'broadcastServerAdvertisement(asio::io_context &amp;io_context, unsigned short advertisementPort, unsigned short serverPort):&#160;NetworkManager.cpp']]],
+  ['builddestroyentitypayload_4',['buildDestroyEntityPayload',['../NetworkManager_8hpp.html#a55ff5973d68a185ec168d3ffe5e6fe72',1,'buildDestroyEntityPayload(Entity *entity):&#160;NetworkManager.cpp'],['../NetworkManager_8cpp.html#a55ff5973d68a185ec168d3ffe5e6fe72',1,'buildDestroyEntityPayload(Entity *entity):&#160;NetworkManager.cpp']]],
+  ['buildentitypayload_5',['buildEntityPayload',['../NetworkManager_8hpp.html#a604ec93afc6aff97fa3cc5b7c232b784',1,'buildEntityPayload(Entity *entity):&#160;NetworkManager.cpp'],['../NetworkManager_8cpp.html#a604ec93afc6aff97fa3cc5b7c232b784',1,'buildEntityPayload(Entity *entity):&#160;NetworkManager.cpp']]],
+  ['buildlifepayload_6',['buildLifePayload',['../NetworkManager_8hpp.html#a2133f1091fd7c44da476c5a4f39696a2',1,'buildLifePayload(Entity *entity, uint8_t life_remaining):&#160;NetworkManager.hpp'],['../NetworkManager_8cpp.html#a20d16e48cb291f7dede19b117d367e08',1,'buildLifePayload(Player *player):&#160;NetworkManager.cpp']]],
+  ['buildmessage_7',['buildMessage',['../NetworkManager_8hpp.html#a29a7b4409c813acfea4a9cc13da92a7f',1,'NetworkManager.hpp']]],
+  ['buildscorepayload_8',['buildScorePayload',['../NetworkManager_8hpp.html#afb83664c2bf2672d53835c1ca26701ca',1,'buildScorePayload(uint32_t score):&#160;NetworkManager.cpp'],['../NetworkManager_8cpp.html#afb83664c2bf2672d53835c1ca26701ca',1,'buildScorePayload(uint32_t score):&#160;NetworkManager.cpp']]]
 ];

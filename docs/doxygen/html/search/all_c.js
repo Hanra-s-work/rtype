@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['update_0',['update',['../classEntity.html#a20563d72d08ac8bdf84bfe1944530a20',1,'Entity::update()'],['../classEntityManager.html#a6224a3ad56cfcae1770c03ed5731ff23',1,'EntityManager::update()'],['../classHandleBackground.html#a59591beda4056771cae4f22015de3840',1,'HandleBackground::update()'],['../classSpriteEntity.html#a08890b6680df981b31d9bc72d9b74326',1,'SpriteEntity::update()']]],
-  ['updateentity_1',['updateEntity',['../classEntityManager.html#ab31c7ada4c8b4775374cddf8739879bb',1,'EntityManager']]],
-  ['updatelife_2',['updateLife',['../classEntityManager.html#aebbee8bf437929515a3ffd8883fd40ef',1,'EntityManager']]],
-  ['updateplayer_3',['updatePlayer',['../classHUD.html#ad05f3184c3426e150b18dcf9ca00b305',1,'HUD']]]
+  ['oncollision_0',['onCollision',['../classEntity.html#a37c26229b94d2256848a11b07101a08a',1,'Entity::onCollision()'],['../classMissile.html#a818b50a6d88771e1b85598893c2858ed',1,'Missile::onCollision()'],['../classMonster.html#a150d97378d158b6a196eaa65cd38ce18',1,'Monster::onCollision()'],['../classPlayer.html#a85b6cce0b30a833fee9bd6dc1f1ba0fe',1,'Player::onCollision()']]],
+  ['oncollisionevent_1',['onCollisionEvent',['../classGameWorld.html#aa514545adaa85fd5dc5f744860cf0ee7',1,'GameWorld']]],
+  ['onnewconnection_2',['onNewConnection',['../classNetworkManager.html#aff5036a797f7be40c90b1b9184963b50',1,'NetworkManager']]],
+  ['onscoreupdate_3',['onScoreUpdate',['../classGameWorld.html#a67d9fd229d792fcb384c7af92f82b1f7',1,'GameWorld']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['texturemanager_0',['TextureManager',['../classTextureManager.html',1,'']]]
+  ['networkclient_0',['NetworkClient',['../classNetworkClient.html',1,'']]],
+  ['networkmanager_1',['NetworkManager',['../classNetworkManager.html',1,'']]]
 ];

@@ -85,12 +85,13 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for SpriteEntity:</div>
 <div class="dyncontent">
- <div class="center">
-  <img src="classSpriteEntity.png" usemap="#SpriteEntity_map" alt=""/>
-  <map id="SpriteEntity_map" name="SpriteEntity_map">
-<area href="classEntity.html" title="Base interface for all game entities." alt="Entity" shape="rect" coords="0,0,76,24"/>
-  </map>
-</div></div>
+<div class="center"><img src="classSpriteEntity__inherit__graph.png" border="0" usemap="#aSpriteEntity_inherit__map" alt="Inheritance graph"/></div>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+<div class="dynheader">
+Collaboration diagram for SpriteEntity:</div>
+<div class="dyncontent">
+<div class="center"><img src="classSpriteEntity__coll__graph.png" border="0" usemap="#aSpriteEntity_coll__map" alt="Collaboration graph"/></div>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,8 +127,59 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8c8a729e4ae5d792a9e4661cc8ddceb8" id="r_a8c8a729e4ae5d792a9e4661cc8ddceb8"><td class="memItemLeft" align="right" valign="top">sf::Vector2f&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c8a729e4ae5d792a9e4661cc8ddceb8">getSize</a> () const</td></tr>
 <tr class="separator:a8c8a729e4ae5d792a9e4661cc8ddceb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classEntity"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classEntity')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classEntity.html">Entity</a></td></tr>
-<tr class="memitem:ac479d009ddde62dfb378ca0a70d81307 inherit pub_methods_classEntity" id="r_ac479d009ddde62dfb378ca0a70d81307"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#ac479d009ddde62dfb378ca0a70d81307">~Entity</a> ()=default</td></tr>
-<tr class="separator:ac479d009ddde62dfb378ca0a70d81307 inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6ecb9c57b29b60cc49fe44ad4088ecf inherit pub_methods_classEntity" id="r_aa6ecb9c57b29b60cc49fe44ad4088ecf"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#aa6ecb9c57b29b60cc49fe44ad4088ecf">~Entity</a> ()=default</td></tr>
+<tr class="separator:aa6ecb9c57b29b60cc49fe44ad4088ecf inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1881d4ac41861bc782bbcb0572a04e6d inherit pub_methods_classEntity" id="r_a1881d4ac41861bc782bbcb0572a04e6d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a1881d4ac41861bc782bbcb0572a04e6d">Entity</a> (EntityType type, uint32_t id)</td></tr>
+<tr class="memdesc:a1881d4ac41861bc782bbcb0572a04e6d inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new <a class="el" href="classEntity.html" title="Base interface for all game entities.">Entity</a> object.  <br /></td></tr>
+<tr class="separator:a1881d4ac41861bc782bbcb0572a04e6d inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a588098978eea6a3486b7361605ff3f0f inherit pub_methods_classEntity" id="r_a588098978eea6a3486b7361605ff3f0f"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a588098978eea6a3486b7361605ff3f0f">~Entity</a> ()</td></tr>
+<tr class="memdesc:a588098978eea6a3486b7361605ff3f0f inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the <a class="el" href="classEntity.html" title="Base interface for all game entities.">Entity</a> object.  <br /></td></tr>
+<tr class="separator:a588098978eea6a3486b7361605ff3f0f inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27f44cef02de22382f78ab1363ae6012 inherit pub_methods_classEntity" id="r_a27f44cef02de22382f78ab1363ae6012"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a27f44cef02de22382f78ab1363ae6012">collidesWith</a> (const <a class="el" href="classEntity.html">Entity</a> &amp;other) const =0</td></tr>
+<tr class="memdesc:a27f44cef02de22382f78ab1363ae6012 inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks for collision with another entity.  <br /></td></tr>
+<tr class="separator:a27f44cef02de22382f78ab1363ae6012 inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37c26229b94d2256848a11b07101a08a inherit pub_methods_classEntity" id="r_a37c26229b94d2256848a11b07101a08a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a37c26229b94d2256848a11b07101a08a">onCollision</a> (<a class="el" href="classEntity.html">Entity</a> &amp;other)=0</td></tr>
+<tr class="memdesc:a37c26229b94d2256848a11b07101a08a inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles collision with another entity.  <br /></td></tr>
+<tr class="separator:a37c26229b94d2256848a11b07101a08a inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a691dbe5f9ec930c27af2af0b97907a9e inherit pub_methods_classEntity" id="r_a691dbe5f9ec930c27af2af0b97907a9e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a691dbe5f9ec930c27af2af0b97907a9e">destroy</a> ()</td></tr>
+<tr class="memdesc:a691dbe5f9ec930c27af2af0b97907a9e inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks the entity as destroyed.  <br /></td></tr>
+<tr class="separator:a691dbe5f9ec930c27af2af0b97907a9e inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a938cddf03ff5239be09195452142c5e6 inherit pub_methods_classEntity" id="r_a938cddf03ff5239be09195452142c5e6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a938cddf03ff5239be09195452142c5e6">isDestroyed</a> () const</td></tr>
+<tr class="memdesc:a938cddf03ff5239be09195452142c5e6 inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the entity has been destroyed.  <br /></td></tr>
+<tr class="separator:a938cddf03ff5239be09195452142c5e6 inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71b3d5377689dc9ea99de6974481cc2b inherit pub_methods_classEntity" id="r_a71b3d5377689dc9ea99de6974481cc2b"><td class="memItemLeft" align="right" valign="top">EntityType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a71b3d5377689dc9ea99de6974481cc2b">getType</a> () const</td></tr>
+<tr class="memdesc:a71b3d5377689dc9ea99de6974481cc2b inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the entity type.  <br /></td></tr>
+<tr class="separator:a71b3d5377689dc9ea99de6974481cc2b inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93c54f49ef525fb5461ef456593abcbb inherit pub_methods_classEntity" id="r_a93c54f49ef525fb5461ef456593abcbb"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a93c54f49ef525fb5461ef456593abcbb">getId</a> () const</td></tr>
+<tr class="memdesc:a93c54f49ef525fb5461ef456593abcbb inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the unique identifier of the entity.  <br /></td></tr>
+<tr class="separator:a93c54f49ef525fb5461ef456593abcbb inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c602a08a0e0a794a8484d50a0ef8ece inherit pub_methods_classEntity" id="r_a7c602a08a0e0a794a8484d50a0ef8ece"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structVector2.html">Vector2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a7c602a08a0e0a794a8484d50a0ef8ece">getPosition</a> () const</td></tr>
+<tr class="memdesc:a7c602a08a0e0a794a8484d50a0ef8ece inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current position of the entity.  <br /></td></tr>
+<tr class="separator:a7c602a08a0e0a794a8484d50a0ef8ece inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69cbfd3960114fca2b25a847554fcd04 inherit pub_methods_classEntity" id="r_a69cbfd3960114fca2b25a847554fcd04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a69cbfd3960114fca2b25a847554fcd04">setPosition</a> (const <a class="el" href="structVector2.html">Vector2</a> &amp;pos)</td></tr>
+<tr class="memdesc:a69cbfd3960114fca2b25a847554fcd04 inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the position of the entity.  <br /></td></tr>
+<tr class="separator:a69cbfd3960114fca2b25a847554fcd04 inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14f910e006ec2f2fcf964b1fe2a0128a inherit pub_methods_classEntity" id="r_a14f910e006ec2f2fcf964b1fe2a0128a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structVector2.html">Vector2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a14f910e006ec2f2fcf964b1fe2a0128a">getVelocity</a> () const</td></tr>
+<tr class="memdesc:a14f910e006ec2f2fcf964b1fe2a0128a inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the current velocity of the entity.  <br /></td></tr>
+<tr class="separator:a14f910e006ec2f2fcf964b1fe2a0128a inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ca062f513e38944c614bf027c9e23ad inherit pub_methods_classEntity" id="r_a1ca062f513e38944c614bf027c9e23ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a1ca062f513e38944c614bf027c9e23ad">setVelocity</a> (const <a class="el" href="structVector2.html">Vector2</a> &amp;vel)</td></tr>
+<tr class="memdesc:a1ca062f513e38944c614bf027c9e23ad inherit pub_methods_classEntity"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the velocity of the entity.  <br /></td></tr>
+<tr class="separator:a1ca062f513e38944c614bf027c9e23ad inherit pub_methods_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_attribs_classEntity"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_attribs_classEntity')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classEntity.html">Entity</a></td></tr>
+<tr class="memitem:a2c78e7de0f5d059054a423162fbae1e0 inherit pub_attribs_classEntity" id="r_a2c78e7de0f5d059054a423162fbae1e0"><td class="memItemLeft" align="right" valign="top">EntityType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a2c78e7de0f5d059054a423162fbae1e0">_type</a></td></tr>
+<tr class="separator:a2c78e7de0f5d059054a423162fbae1e0 inherit pub_attribs_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classEntity"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pro_attribs_classEntity')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classEntity.html">Entity</a></td></tr>
+<tr class="memitem:ab4da2d8f014bdb601929f701ed5a99f0 inherit pro_attribs_classEntity" id="r_ab4da2d8f014bdb601929f701ed5a99f0"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#ab4da2d8f014bdb601929f701ed5a99f0">_id</a></td></tr>
+<tr class="separator:ab4da2d8f014bdb601929f701ed5a99f0 inherit pro_attribs_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa87ca6238a8002ba04f849d897d6cc4a inherit pro_attribs_classEntity" id="r_aa87ca6238a8002ba04f849d897d6cc4a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structVector2.html">Vector2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#aa87ca6238a8002ba04f849d897d6cc4a">_position</a> {0.f, 0.f}</td></tr>
+<tr class="separator:aa87ca6238a8002ba04f849d897d6cc4a inherit pro_attribs_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af38e370c75862f129a6b1fa29212cf7b inherit pro_attribs_classEntity" id="r_af38e370c75862f129a6b1fa29212cf7b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structVector2.html">Vector2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#af38e370c75862f129a6b1fa29212cf7b">_velocity</a> {0.f, 0.f}</td></tr>
+<tr class="separator:af38e370c75862f129a6b1fa29212cf7b inherit pro_attribs_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2712c68bf4ddffe15205203dcf5e990f inherit pro_attribs_classEntity" id="r_a2712c68bf4ddffe15205203dcf5e990f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntity.html#a2712c68bf4ddffe15205203dcf5e990f">_destroyed</a> {false}</td></tr>
+<tr class="separator:a2712c68bf4ddffe15205203dcf5e990f inherit pro_attribs_classEntity"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a graphical entity using a sprite. </p>
@@ -218,7 +270,7 @@ Public Member Functions</h2></td></tr>
 <p>Gets the current position of the entity. </p>
 <dl class="section return"><dt>Returns</dt><dd>The position as a 2D vector. </dd></dl>
 
-<p>Implements <a class="el" href="classEntity.html#a76f3fcc43203852eef7ec35d48a46bf4">Entity</a>.</p>
+<p>Implements <a class="el" href="classEntity.html#a47d465aee2ac4dc6e8a0c0843e324764">Entity</a>.</p>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['handlebackground_0',['HandleBackground',['../classHandleBackground.html',1,'']]],
-  ['hud_1',['HUD',['../classHUD.html',1,'']]]
+  ['entity_0',['Entity',['../classEntity.html',1,'']]],
+  ['entitymanager_1',['EntityManager',['../classEntityManager.html',1,'']]]
 ];
