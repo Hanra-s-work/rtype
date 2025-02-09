@@ -29,7 +29,8 @@ void Monster::update(float dt)
             vx = -bulletSpeed;
             vy = 0.f;
         } else if (_type == EntityType::Monster3) {
-            float angle = -45.f * 3.14159f / 180.f;
+            float angleDeg = (std::rand() % 2 == 0) ? 135.f : 225.f;
+            float angle = angleDeg * 3.14159f / 180.f;
             vx = std::cos(angle) * bulletSpeed;
             vy = std::sin(angle) * bulletSpeed;
         } else if (_type == EntityType::Boss) {

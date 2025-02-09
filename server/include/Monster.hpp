@@ -24,6 +24,6 @@ class Monster : public Entity {
 
     private:
         float _shootTimer = 0.f;
-        float _shootInterval = 2.f;
+        float _shootInterval = 3.f;
         GameWorld& _world;
 };

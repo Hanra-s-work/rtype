@@ -2,7 +2,7 @@
 #include "NetworkManager.hpp"
 
 static const unsigned short SERVER_PORT = 9000;
-static const float speed = 200.f;
+static const float speed = 250.f;
 
 NetworkManager::NetworkManager(GameWorld& world): _gameWorld(world)
 {
