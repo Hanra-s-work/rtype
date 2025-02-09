@@ -78,3 +78,8 @@ std::unique_ptr<Entity> EntityManager::createEntity(EntityType type, float posX,
             return std::make_unique<SpriteEntity>("client/assets/debugsprite.jpg", posX, posY);
     }
 }
+
+void EntityManager::clear()
+{
+    this->_entities.clear();
+}

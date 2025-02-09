@@ -1,29 +1,60 @@
-//Monster.hpp
+/**
+ * @file Monster.hpp
+ * @brief Declaration of the Monster class.
+ */
+
 #pragma once
 
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
-
 #include "Entity.hpp"
 #include "GameWorld.hpp"
 #include "Missile.hpp"
 
-class GameWorld;
-
+/**
+ * @class Monster
+ * @brief Represents a monster in the game.
+ *
+ * The Monster class moves in the game world and periodically fires missiles.
+ */
 class Monster : public Entity {
-    public:
-        Monster(uint32_t id, GameWorld& world);
-        virtual ~Monster();
+public:
+    /**
+     * @brief Constructs a new Monster object.
+     * @param id The unique ID for the monster.
+     * @param world Reference to the game world.
+     */
+    Monster(uint32_t id, GameWorld& world);
 
-        void update(float dt) override;
-        bool collidesWith(const Entity& other) const override;
-        void onCollision(Entity& other) override;
+    /**
+     * @brief Destroys the Monster object.
+     */
+    virtual ~Monster();
 
-        int _health = 1;
+    /**
+     * @brief Updates the monster's state.
+     * @param dt Time elapsed since the last update (in seconds).
+     */
+    void update(float dt) override;
 
-    private:
-        float _shootTimer = 0.f;
-        float _shootInterval = 2.f;
-        GameWorld& _world;
+    /**
+     * @brief Checks if the monster collides with another entity.
+     * @param other The other entity.
+     * @return true if a collision is detected, false otherwise.
+     */
+    bool collidesWith(const Entity& other) const override;
+
+    /**
+     * @brief Handles collision with another entity.
+     * @param other The other entity involved in the collision.
+     */
+    void onCollision(Entity& other) override;
+
+    int _health = 1; /**< Health of the monster. */
+
+private:
+    float _shootTimer = 0.f;      /**< Timer for shooting. */
+    float _shootInterval = 3.f;     /**< Time between shots (seconds). */
+    GameWorld& _world;            /**< Reference to the game world. */
 };

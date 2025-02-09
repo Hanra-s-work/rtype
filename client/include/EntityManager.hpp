@@ -21,6 +21,7 @@ class EntityManager {
         void removeEntity(uint32_t id);
         void updateLife(uint32_t id, EntityType type, uint32_t life);
         SpriteEntity* getSpriteEntity(uint32_t id);
+        void clear();
     private:
         std::unique_ptr<Entity> createEntity(EntityType type, float posX, float posY);
         std::unordered_map<uint32_t, std::unique_ptr<Entity>> _entities; ///< Container for entities

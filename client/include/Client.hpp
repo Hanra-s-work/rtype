@@ -66,6 +66,8 @@ class Client {
         sf::Sprite _settingsSprite;       ///< Sprite for the settings button
         sf::Text _settingsText;           ///< Text for the settings button
         bool _hoverSettings{ false };     ///< Indicates if the settings button is hovered
+        bool _gameOver = false;           ///< Indicates if game is over or not
+        sf::Clock _gameOverClock;         ///< Tracks when the game was set to over
 };
 
 #endif // CLIENT_HPP

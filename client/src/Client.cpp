@@ -169,6 +169,12 @@ void Client::update(float dt)
         heartbeat = 0.f;
         _networkClient->sendBinaryMessage(MessageType::HEARTBEAT, {});
     }
+    if (_gameOver) {
+        if (_gameOverClock.getElapsedTime().asSeconds() >= 10.f) {
+            _entityManager.clear();
+            _gameOver = false;
+        }
+    }
 }
 
 void Client::processMessages()
@@ -239,12 +245,16 @@ void Client::processMessages()
             _hud.showNotification("Defeat", sf::Color::Red, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
             _music.pauseBackgroundMusic();
             _music.playLoose();
+            _gameOver = true;
+            _gameOverClock.restart();
         }
         else if (msg.type == MessageType::WIN) {
             _networkClient->disconnect();
             _hud.showNotification("Victory", sf::Color::Green, { _window.getSize().x / 2.f, _window.getSize().y / 2.f });
             _music.pauseBackgroundMusic();
             _music.playWin();
+            _gameOver = true;
+            _gameOverClock.restart();
         }
     }
 }

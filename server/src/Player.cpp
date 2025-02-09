@@ -52,5 +52,6 @@ void Player::decreaseLife()
     _invulnTimer = 1.0f;
     if (_life == 0) {
         std::cout << "Player " << getId() << " has died." << std::endl;
+        this->destroy();
     }
 }

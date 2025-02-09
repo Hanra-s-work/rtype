@@ -2,9 +2,7 @@
 #include "Server.hpp"
 
 void Server::resetGameSession() {
-    _gameWorld = std::make_unique<GameWorld>();
-    _globalScore = 0;
-    _bossSpawned = false;
+    _gameWorld->reset();
     _sessionActive = true;
     std::cout << "Game session reset." << std::endl;
 }
@@ -12,7 +10,7 @@ void Server::resetGameSession() {
 Server::Server() {
     _gameWorld = std::make_unique<GameWorld>();
     _networkManager = std::make_unique<NetworkManager>(*_gameWorld);
-    
+
     _networkManager->onNewConnection = [this](const asio::ip::udp::endpoint& ep) {
         if (!_sessionActive) {
             _sessionActive = true;
@@ -22,8 +20,8 @@ Server::Server() {
     };
 
     _gameWorld->onScoreUpdate = [this](int points) {
-        _globalScore += points;
-        std::cout << "Global score updated to " << _globalScore << std::endl;
+        _gameWorld->setScore(_gameWorld->getScore() + points);
+        std::cout << "Global score updated to " << _gameWorld->getScore()  << std::endl;
     };
 }
 
@@ -70,9 +68,10 @@ void Server::gameLoop() {
             
             if (!_networkManager->hasClients()) {
                 std::cout << "No players connected. Ending game session." << std::endl;
-                _networkManager->sendBinaryMessage(MessageType::HUB, {});
+                _gameWorld->reset();
                 sessionRunning = false;
                 _sessionActive = false;
+                _networkManager->sendBinaryMessage(MessageType::HUB, {});
                 break;
             }
             
@@ -102,37 +101,45 @@ void Server::gameLoop() {
                     }
                 }
                 for (const auto &ep : _networkManager->getClients()) {
-                    _networkManager->sendScoreMessage(_globalScore, ep);
+                    _networkManager->sendScoreMessage(_gameWorld->getScore(), ep);
+                }
+            }
+            bool anyPlayerAlive = false;
+            for (const auto &ev : destroyEvents) {
+                _networkManager->broadcastEntityDestroy(ev.type, ev.id);
+                
+                if (ev.type == static_cast<uint8_t>(EntityType::Player)) {
+                    try {
+                        asio::ip::udp::endpoint ep = _networkManager->getEndpointForEntity(ev.id);
+                        _networkManager->sendBinaryMessage(MessageType::DEFEAT, {}, ep);
+                    } catch (const std::exception &ex) {
+                        std::cerr << "Error sending defeat message for player " << ev.id << ": " << ex.what() << std::endl;
+                    }
                 }
             }
             
-            for (const auto &ev : destroyEvents) {
-                _networkManager->broadcastEntityDestroy(ev.type, ev.id);
-            }
-            
-            bool allPlayersDead = true;
             auto playersSnapshot = _gameWorld->getPlayersSnapshot();
             for (Entity* e : playersSnapshot) {
                 if (Player* p = dynamic_cast<Player*>(e)) {
                     if (p->getLife() > 0) {
-                        allPlayersDead = false;
+                        anyPlayerAlive = true;
                         break;
                     }
                 }
             }
-            if (allPlayersDead && !playersSnapshot.empty()) {
-                _networkManager->sendBinaryMessage(MessageType::DEFEAT, {});
+            if (!anyPlayerAlive && !playersSnapshot.empty()) {
                 std::cout << "All players are dead: DEFEAT condition reached." << std::endl;
                 sessionRunning = false;
                 _sessionActive = false;
-                _networkManager->sendBinaryMessage(MessageType::HUB, {});
+                _gameWorld->reset();
+                // _networkManager->sendBinaryMessage(MessageType::HUB, {});
             }
             
-            if (_globalScore >= 2000 && !_bossSpawned) {
-                _bossSpawned = true;
+            if (_gameWorld->getScore() >= 2000 && !_gameWorld->_bossSpawned) {
+                _gameWorld->_bossSpawned = true;
                 _gameWorld->spawnBoss();
             }
-            if (_bossSpawned) {
+            if (_gameWorld->_bossSpawned) {
                 Entity* boss = nullptr;
                 auto snapshot = _gameWorld->getEntitiesSnapshot();
                 for (Entity* e : snapshot) {
@@ -146,14 +153,14 @@ void Server::gameLoop() {
                     std::cout << "Boss defeated: WIN condition reached." << std::endl;
                     sessionRunning = false;
                     _sessionActive = false;
-                    _networkManager->sendBinaryMessage(MessageType::HUB, {});
+                    _gameWorld->reset();
+                    // _networkManager->sendBinaryMessage(MessageType::HUB, {});
                 }
             }
-            
+
             _networkManager->checkHeartbeats();
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
-        
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
     std::cout << "Game loop ended." << std::endl;
