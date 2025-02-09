@@ -74,7 +74,7 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
         if (e)
             e->update(dt);
     }
-
+    
     std::vector<DestroyEvent> localDestroyEvents;
     std::vector<CollisionEvent> localCollisionEvents;
     {
@@ -87,9 +87,10 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                     continue;
                 if (e1->isDestroyed() || e2->isDestroyed())
                     continue;
+                
                 if ((e1->getType() == EntityType::PlayerMissile && e2->getType() == EntityType::Player) ||
-                (e1->getType() == EntityType::Player && e2->getType() == EntityType::PlayerMissile)) {
-                    Missile* m = (e1->getType() == EntityType::PlayerMissile) ? dynamic_cast<Missile*>(e1) 
+                    (e1->getType() == EntityType::Player && e2->getType() == EntityType::PlayerMissile)) {
+                    Missile* m = (e1->getType() == EntityType::PlayerMissile) ? dynamic_cast<Missile*>(e1)
                                                                                : dynamic_cast<Missile*>(e2);
                     Player* p = (e1->getType() == EntityType::Player) ? dynamic_cast<Player*>(e1)
                                                                       : dynamic_cast<Player*>(e2);
@@ -118,15 +119,8 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                           e1->getType() == EntityType::Boss) &&
                          e2->getType() == EntityType::PlayerMissile))
                     {
-                        Entity* missileEntity = nullptr;
-                        Entity* targetEntity = nullptr;
-                        if (e1->getType() == EntityType::PlayerMissile) {
-                            missileEntity = e1;
-                            targetEntity = e2;
-                        } else {
-                            missileEntity = e2;
-                            targetEntity = e1;
-                        }
+                        Entity* missileEntity = (e1->getType() == EntityType::PlayerMissile) ? e1 : e2;
+                        Entity* targetEntity = (e1->getType() == EntityType::PlayerMissile) ? e2 : e1;
                         missileEntity->destroy();
                         if (targetEntity->getType() == EntityType::Boss) {
                             Monster* boss = dynamic_cast<Monster*>(targetEntity);
@@ -178,7 +172,6 @@ void GameWorld::update(float dt, bool spawnEnemies, std::vector<DestroyEvent>& d
                 localDestroyEvents.push_back(ev);
             }
         }
-
         _entities.erase(
             std::remove_if(_entities.begin(), _entities.end(),
                 [](const std::unique_ptr<Entity>& e) {

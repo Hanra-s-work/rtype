@@ -41,7 +41,7 @@ void Server::run() {
 
 void Server::gameLoop() {
     using clock = std::chrono::steady_clock;
-
+    
     while (_running) {
         while (_running && !_networkManager->hasClients()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -49,38 +49,40 @@ void Server::gameLoop() {
         }
         if (!_running)
             break;
-
+        
         if (!_sessionActive) {
             resetGameSession();
             std::cout << "Starting new game session." << std::endl;
         }
-
+        
         auto previous = clock::now();
         double broadcastTimer = 0.0;
         const double broadcastInterval = 0.1;
-
+        
         bool sessionRunning = true;
         while (_running && sessionRunning) {
             auto current = clock::now();
             double dt = std::chrono::duration<double>(current - previous).count();
             previous = current;
             broadcastTimer += dt;
-
+            
             if (!_networkManager->hasClients()) {
                 std::cout << "No players connected. Ending game session." << std::endl;
                 _gameWorld->reset();
                 sessionRunning = false;
                 _sessionActive = false;
+                _networkManager->sendBinaryMessage(MessageType::HUB, {});
                 break;
             }
-
+            
             std::vector<GameWorld::DestroyEvent> destroyEvents;
             std::vector<GameWorld::CollisionEvent> collisionEvents;
             _gameWorld->update(static_cast<float>(dt), true, destroyEvents, collisionEvents);
-
+            
             for (const auto &colEv : collisionEvents) {
                 _networkManager->sendCollisionUpdate(colEv.posX, colEv.posY);
             }
+            
             if (broadcastTimer >= broadcastInterval) {
                 broadcastTimer = 0.0;
                 auto entitiesSnapshot = _gameWorld->getEntitiesSnapshot();
@@ -99,30 +101,41 @@ void Server::gameLoop() {
                     }
                 }
                 for (const auto &ep : _networkManager->getClients()) {
-                    _networkManager->sendScoreMessage(_gameWorld->getScore() , ep);
+                    _networkManager->sendScoreMessage(_gameWorld->getScore(), ep);
                 }
             }
+            bool anyPlayerAlive = false;
             for (const auto &ev : destroyEvents) {
                 _networkManager->broadcastEntityDestroy(ev.type, ev.id);
+                
+                if (ev.type == static_cast<uint8_t>(EntityType::Player)) {
+                    try {
+                        asio::ip::udp::endpoint ep = _networkManager->getEndpointForEntity(ev.id);
+                        _networkManager->sendBinaryMessage(MessageType::DEFEAT, {}, ep);
+                    } catch (const std::exception &ex) {
+                        std::cerr << "Error sending defeat message for player " << ev.id << ": " << ex.what() << std::endl;
+                    }
+                }
             }
-            bool allPlayersDead = true;
+            
             auto playersSnapshot = _gameWorld->getPlayersSnapshot();
             for (Entity* e : playersSnapshot) {
                 if (Player* p = dynamic_cast<Player*>(e)) {
                     if (p->getLife() > 0) {
-                        allPlayersDead = false;
+                        anyPlayerAlive = true;
                         break;
                     }
                 }
             }
-            if (allPlayersDead && !playersSnapshot.empty()) {
-                _networkManager->sendBinaryMessage(MessageType::DEFEAT, {});
+            if (!anyPlayerAlive && !playersSnapshot.empty()) {
                 std::cout << "All players are dead: DEFEAT condition reached." << std::endl;
                 sessionRunning = false;
                 _sessionActive = false;
                 _gameWorld->reset();
+                // _networkManager->sendBinaryMessage(MessageType::HUB, {});
             }
-            if (_gameWorld->getScore()  >= 2000 && !_gameWorld->_bossSpawned) {
+            
+            if (_gameWorld->getScore() >= 2000 && !_gameWorld->_bossSpawned) {
                 _gameWorld->_bossSpawned = true;
                 _gameWorld->spawnBoss();
             }
@@ -141,8 +154,10 @@ void Server::gameLoop() {
                     sessionRunning = false;
                     _sessionActive = false;
                     _gameWorld->reset();
+                    // _networkManager->sendBinaryMessage(MessageType::HUB, {});
                 }
             }
+
             _networkManager->checkHeartbeats();
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
