@@ -26,12 +26,14 @@ add_executable(r-type_server
 # If your server needs includes from "server/src", do:
 target_include_directories(r-type_server PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${ASIO_INCLUDE_DIR}
 )
 
 # Link the server to the library from game_source
 target_link_libraries(r-type_server
     PRIVATE
     RTypeSource # from game_source/CMakeLists
+    rtype_server_libraries # includes toml
 
     # Threads::Threads # if needed
 
