@@ -9,8 +9,10 @@
 #include <iostream>
 #include <cmath>
 #include "Entity.hpp"
-#include "GameWorld.hpp"
 #include "Missile.hpp"
+
+ // Forward declarations
+class GameWorld;
 
 /**
  * @class Monster
@@ -19,13 +21,13 @@
  * The Monster class moves in the game world and periodically fires missiles.
  */
 class Monster : public Entity {
-public:
+    public:
     /**
      * @brief Constructs a new Monster object.
      * @param id The unique ID for the monster.
      * @param world Reference to the game world.
      */
-    Monster(uint32_t id, GameWorld& world);
+    Monster(uint32_t id, GameWorld &world);
 
     /**
      * @brief Destroys the Monster object.
@@ -43,18 +45,18 @@ public:
      * @param other The other entity.
      * @return true if a collision is detected, false otherwise.
      */
-    bool collidesWith(const Entity& other) const override;
+    bool collidesWith(const Entity &other) const override;
 
     /**
      * @brief Handles collision with another entity.
      * @param other The other entity involved in the collision.
      */
-    void onCollision(Entity& other) override;
+    void onCollision(Entity &other) override;
 
     int _health = 1; /**< Health of the monster. */
 
-private:
+    private:
     float _shootTimer = 0.f;      /**< Timer for shooting. */
     float _shootInterval = 3.f;     /**< Time between shots (seconds). */
-    GameWorld& _world;            /**< Reference to the game world. */
+    GameWorld &_world;            /**< Reference to the game world. */
 };

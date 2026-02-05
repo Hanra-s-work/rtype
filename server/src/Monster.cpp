@@ -1,12 +1,13 @@
 //Monster.cpp
 #include "Monster.hpp"
+#include "GameWorld.hpp"
 
 static float degToRad(float deg)
 {
     return deg * 3.14159f / 180.f;
 }
 
-Monster::Monster(uint32_t id, GameWorld& world): Entity(EntityType::Monster, id), _world(world), _shootTimer(0.f), _shootInterval(2.f)
+Monster::Monster(uint32_t id, GameWorld &world) : Entity(EntityType::Monster, id), _world(world), _shootTimer(0.f), _shootInterval(2.f)
 {
 }
 
@@ -50,12 +51,12 @@ void Monster::update(float dt)
         uint32_t bulletId = generateEntityId();
         auto bullet = std::make_unique<Missile>(bulletId, EntityType::MonsterMissile);
         bullet->setPosition(_position);
-        bullet->setVelocity({vx, vy});
+        bullet->setVelocity({ vx, vy });
         _world.addEntity(std::move(bullet));
     }
 }
 
-bool Monster::collidesWith(const Entity& other) const
+bool Monster::collidesWith(const Entity &other) const
 {
     float dx = _position.x - other.getPosition().x;
     float dy = _position.y - other.getPosition().y;
@@ -71,6 +72,6 @@ bool Monster::collidesWith(const Entity& other) const
     return distSq <= (radius + otherRadius) * (radius + otherRadius);
 }
 
-void Monster::onCollision(Entity& other)
+void Monster::onCollision(Entity &other)
 {
 }
